@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# EarnHub (Startup Platform)
 
-## Getting Started
+Role-based micro-task marketplace with:
+- Next.js App Router + NextAuth
+- Prisma + PostgreSQL (Neon)
+- USER / BUSINESS / ADMIN flows
+- Wallet ledger, submissions, withdrawals, treasury
+- Razorpay business wallet funding (real payment flow)
 
-First, run the development server:
+## 1) Setup
+
+```bash
+npm install
+cp .env.example .env
+```
+
+Fill required `.env` values.
+
+## 2) Prisma
+
+Generate client:
+
+```bash
+npx prisma generate
+```
+
+Apply migrations (uses `DIRECT_DATABASE_URL` automatically if present in `prisma.config.ts`):
+
+```bash
+npx prisma migrate deploy
+```
+
+If Neon lock error `P1002` appears, ensure:
+- `DIRECT_DATABASE_URL` points to direct Neon host (not `-pooler`)
+- no other Prisma process is running
+- retry `npm run db:migrate:deploy`
+
+## 3) Run
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Real Payment Funding Flow
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Business wallet funding now uses Razorpay:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. `POST /api/business/fund/checkout` creates Razorpay order + local `PaymentOrder`.
+2. Checkout completes on client.
+3. Server verifies signature via `POST /api/business/fund/verify`.
+4. Webhook `POST /api/payments/razorpay/webhook` provides idempotent backup settlement.
+5. Wallet is credited atomically and ledger entry is recorded.
 
-## Learn More
+Legacy direct credit endpoint `POST /api/business/fund` is disabled.
 
-To learn more about Next.js, take a look at the following resources:
+## Production Checklist
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Set all secrets in deployment environment (never commit secrets).
+- Configure Razorpay webhook URL:
+  - `https://your-domain.com/api/payments/razorpay/webhook`
+- Use HTTPS and valid `NEXTAUTH_URL`.
+- Use direct DB URL for migrations, pooled URL for app traffic.
+- Keep `RAZORPAY_KEY_SECRET`, `NEXTAUTH_SECRET`, SMTP creds server-side only.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deploy on Vercel + Neon
 
-## Deploy on Vercel
+1. Neon:
+- Copy pooled connection string -> set as `DATABASE_URL`
+- Copy direct connection string -> set as `DIRECT_DATABASE_URL`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. Vercel Project Environment Variables:
+- `DATABASE_URL`
+- `DIRECT_DATABASE_URL`
+- `NEXTAUTH_URL` (your Vercel domain)
+- `NEXTAUTH_SECRET`
+- `RAZORPAY_KEY_ID`
+- `RAZORPAY_KEY_SECRET`
+- `RAZORPAY_WEBHOOK_SECRET`
+- Optional: `MIN_FUNDING_THRESHOLD`, `NEXT_PUBLIC_MIN_FUNDING_THRESHOLD`, `MIN_WITHDRAWAL_AMOUNT`, `WITHDRAWAL_COMMISSION_RATE`, SMTP vars
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. Before first production deploy, apply migrations once:
+```bash
+npm run db:migrate:deploy
+```
+
+4. Deploy on Vercel (Git import or `vercel --prod`).
+
+5. In Razorpay Dashboard, set webhook:
+- URL: `https://<your-domain>/api/payments/razorpay/webhook`
+- Event: `payment.captured`

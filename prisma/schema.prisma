@@ -1,0 +1,184 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          String       @id @default(uuid())
+  name        String?
+  email       String       @unique
+  password    String
+  role        Role         @default(USER)
+  balance     Float        @default(0)
+  createdAt   DateTime     @default(now())
+  ipAddress   String?
+  isSuspicious Boolean     @default(false)
+  suspiciousReason String?
+  flaggedAt   DateTime?
+  submissions Submission[]
+  tasks       Task[]       @relation("BusinessTasks")
+  transactions WalletTransaction[]
+  withdrawals Withdrawal[]
+  notifications Notification[]
+  paymentOrders PaymentOrder[]
+}
+
+model Task {
+  id              String       @id @default(uuid())
+  title           String
+  description     String
+  reward          Float
+  totalBudget     Float
+  remainingBudget Float
+  status          TaskStatus   @default(PENDING)
+  createdAt       DateTime     @default(now())
+  businessId      String
+  submissions     Submission[]
+  business        User         @relation("BusinessTasks", fields: [businessId], references: [id])
+}
+
+model Submission {
+  id        String           @id @default(uuid())
+  proof     String
+  ipAddress String?
+  status    SubmissionStatus @default(PENDING)
+  createdAt DateTime         @default(now())
+  userId    String
+  taskId    String
+  task      Task             @relation(fields: [taskId], references: [id])
+  user      User             @relation(fields: [userId], references: [id])
+}
+
+model Withdrawal {
+  id        String           @id @default(uuid())
+  amount    Float
+  status    WithdrawalStatus @default(PENDING)
+  createdAt DateTime         @default(now())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+}
+
+model WalletTransaction {
+  id        String          @id @default(uuid())
+  userId    String
+  amount    Float
+  type      TransactionType
+  note      String?
+  createdAt DateTime        @default(now())
+
+  user      User            @relation(fields: [userId], references: [id])
+}
+
+model PlatformEarning {
+  id        String   @id @default(uuid())
+  amount    Float
+  source    String?
+  createdAt DateTime @default(now())
+}
+
+model PlatformTreasury {
+  id        String   @id @default("main")
+  balance   Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PlatformPayout {
+  id          String               @id @default(uuid())
+  amount      Float
+  note        String?
+  status      PlatformPayoutStatus @default(PENDING)
+  createdAt   DateTime             @default(now())
+  processedAt DateTime?
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  actorUserId String?
+  actorRole   String?
+  targetUserId String?
+  action      String
+  details     String?
+  createdAt   DateTime @default(now())
+}
+
+model PaymentOrder {
+  id                String             @id @default(uuid())
+  userId            String
+  provider          String             @default("RAZORPAY")
+  providerOrderId   String?            @unique
+  providerPaymentId String?            @unique
+  amount            Float
+  currency          String             @default("INR")
+  status            PaymentOrderStatus @default(CREATED)
+  receipt           String             @unique
+  metadata          String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  paidAt            DateTime?
+
+  user              User               @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType @default(INFO)
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user      User             @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  USER
+  BUSINESS
+  ADMIN
+}
+
+enum TaskStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  REJECTED
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+}
+
+enum WithdrawalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+}
+
+enum PlatformPayoutStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PaymentOrderStatus {
+  CREATED
+  PAID
+  FAILED
+}

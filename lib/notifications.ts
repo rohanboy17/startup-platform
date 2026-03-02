@@ -1,0 +1,53 @@
+import nodemailer from "nodemailer";
+
+const LOW_BALANCE_ALERT_THRESHOLD = Number(
+  process.env.LOW_BALANCE_ALERT_THRESHOLD ?? 1000
+);
+
+function getTransporter() {
+  const host = process.env.SMTP_HOST;
+  const port = Number(process.env.SMTP_PORT ?? 587);
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+
+  if (!host || !user || !pass) {
+    return null;
+  }
+
+  return nodemailer.createTransport({
+    host,
+    port,
+    secure: port === 465,
+    auth: { user, pass },
+  });
+}
+
+export async function sendLowBalanceAlertEmail(params: {
+  to: string;
+  balance: number;
+}) {
+  if (params.balance >= LOW_BALANCE_ALERT_THRESHOLD) {
+    return;
+  }
+
+  const transporter = getTransporter();
+  const from = process.env.SMTP_FROM || "no-reply@earnhub.local";
+
+  if (!transporter) {
+    console.info(
+      `[LowBalanceAlert] SMTP not configured. Intended recipient=${params.to}, balance=${params.balance}`
+    );
+    return;
+  }
+
+  await transporter.sendMail({
+    from,
+    to: params.to,
+    subject: "EarnHub: Low Wallet Balance Alert",
+    text: `Your business wallet balance is low (INR ${params.balance}). Please top up to keep campaigns running without interruption.`,
+  });
+}
+
+export function getMinFundingThreshold() {
+  return Number(process.env.MIN_FUNDING_THRESHOLD ?? 500);
+}
