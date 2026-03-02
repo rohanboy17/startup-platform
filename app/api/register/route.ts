@@ -52,7 +52,8 @@ export async function POST(req: Request) {
       { message: "User created successfully", userId: user.id },
       { status: 201 }
     );
-  } catch {
+  } catch (error) {
+    console.error("Register route failed:", error);
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }
 }
