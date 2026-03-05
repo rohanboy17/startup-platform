@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 export default function CreateCampaign() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("marketing");
+  const [taskLink, setTaskLink] = useState("");
   const [reward, setReward] = useState("");
   const [budget, setBudget] = useState("");
   const [message, setMessage] = useState("");
@@ -19,7 +21,7 @@ export default function CreateCampaign() {
     setMessage("");
     setError("");
 
-    const res = await fetch("/api/business/tasks", {
+    const res = await fetch("/api/v2/business/campaigns", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,7 +29,9 @@ export default function CreateCampaign() {
       body: JSON.stringify({
         title,
         description,
-        reward: Number(reward),
+        category,
+        taskLink: taskLink || null,
+        rewardPerTask: Number(reward),
         totalBudget: Number(budget),
       }),
     });
@@ -43,6 +47,8 @@ export default function CreateCampaign() {
     setMessage("Campaign created successfully!");
     setTitle("");
     setDescription("");
+    setCategory("marketing");
+    setTaskLink("");
     setReward("");
     setBudget("");
   };
@@ -61,6 +67,18 @@ export default function CreateCampaign() {
         placeholder="Description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
+      />
+
+      <Input
+        placeholder="Category (e.g. marketing, one-time)"
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+      />
+
+      <Input
+        placeholder="Task Link (optional)"
+        value={taskLink}
+        onChange={(e) => setTaskLink(e.target.value)}
       />
 
       <Input

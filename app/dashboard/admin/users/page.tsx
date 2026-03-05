@@ -1,13 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import AdminUserFlagActions from "@/components/admin-user-flag-actions";
+import AdminUserRoleActions from "@/components/admin-user-role-actions";
+import { formatMoney } from "@/lib/format-money";
 
 export default async function AdminUsersPage() {
   let users: Array<{
     id: string;
     name: string | null;
     email: string;
-    role: "USER" | "BUSINESS" | "ADMIN";
+    role: "USER" | "BUSINESS" | "MANAGER" | "ADMIN";
     balance: number;
     ipAddress: string | null;
     isSuspicious: boolean;
@@ -53,7 +55,7 @@ export default async function AdminUsersPage() {
                 <h3 className="text-lg font-semibold">{user.name || "Unnamed User"}</h3>
                 <p className="text-sm text-white/70">{user.email}</p>
                 <p className="text-sm">Role: {user.role}</p>
-                <p className="text-sm">Balance: INR {user.balance}</p>
+                <p className="text-sm">Balance: INR {formatMoney(user.balance)}</p>
                 <p className="text-sm text-white/60">Last IP: {user.ipAddress || "unknown"}</p>
                 <p
                   className={`text-sm ${
@@ -73,6 +75,8 @@ export default async function AdminUsersPage() {
                 <p className="text-xs text-white/50">
                   Joined: {new Date(user.createdAt).toLocaleDateString()}
                 </p>
+
+                <AdminUserRoleActions userId={user.id} currentRole={user.role} />
 
                 {user.role !== "ADMIN" ? (
                   <AdminUserFlagActions userId={user.id} isSuspicious={user.isSuspicious} />

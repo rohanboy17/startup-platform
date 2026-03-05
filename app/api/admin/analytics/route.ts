@@ -19,9 +19,9 @@ export async function GET() {
     const [
       totalUsers,
       totalBusinesses,
-      totalTasks,
-      activeTasks,
-      pendingTasks,
+      totalCampaigns,
+      liveCampaigns,
+      pendingCampaigns,
       totalSubmissions,
       pendingSubmissions,
       totalWithdrawals,
@@ -30,9 +30,9 @@ export async function GET() {
     ] = await Promise.all([
       prisma.user.count({ where: { role: "USER" } }),
       prisma.user.count({ where: { role: "BUSINESS" } }),
-      prisma.task.count(),
-      prisma.task.count({ where: { status: "ACTIVE" } }),
-      prisma.task.count({ where: { status: "PENDING" } }),
+      prisma.campaign.count(),
+      prisma.campaign.count({ where: { status: "LIVE" } }),
+      prisma.campaign.count({ where: { status: "PENDING" } }),
       prisma.submission.count(),
       prisma.submission.count({ where: { status: "PENDING" } }),
       prisma.withdrawal.count(),
@@ -53,10 +53,15 @@ export async function GET() {
     return NextResponse.json({
       users: totalUsers,
       businesses: totalBusinesses,
+      campaigns: {
+        total: totalCampaigns,
+        live: liveCampaigns,
+        pending: pendingCampaigns,
+      },
       tasks: {
-        total: totalTasks,
-        active: activeTasks,
-        pending: pendingTasks,
+        total: totalCampaigns,
+        active: liveCampaigns,
+        pending: pendingCampaigns,
       },
       submissions: {
         total: totalSubmissions,

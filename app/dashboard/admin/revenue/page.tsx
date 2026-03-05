@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import PlatformPayoutRequest from "@/components/platform-payout-request";
 import PlatformPayoutActions from "@/components/platform-payout-actions";
 import { reconcileTreasuryBalance } from "@/lib/treasury";
+import { formatMoney } from "@/lib/format-money";
 
 export default async function AdminRevenuePage() {
   const delegates = prisma as unknown as {
@@ -64,14 +65,14 @@ export default async function AdminRevenuePage() {
           <CardContent className="p-6">
             <p className="text-sm text-white/60">Total Commission Earned</p>
             <p className="mt-1 text-2xl font-semibold">
-              INR {platformRevenue._sum.amount || 0}
+              INR {formatMoney(platformRevenue._sum.amount)}
             </p>
           </CardContent>
         </Card>
         <Card className="rounded-2xl border-white/10 bg-white/5">
           <CardContent className="p-6">
             <p className="text-sm text-white/60">Treasury Available (Reconciled)</p>
-            <p className="mt-1 text-2xl font-semibold">INR {reconciledBalance}</p>
+            <p className="mt-1 text-2xl font-semibold">INR {formatMoney(reconciledBalance)}</p>
           </CardContent>
         </Card>
       </div>
@@ -99,7 +100,7 @@ export default async function AdminRevenuePage() {
             <Card key={payout.id} className="rounded-2xl border-white/10 bg-white/5">
               <CardContent className="space-y-3 p-6">
                 <div className="flex items-center justify-between">
-                  <p className="font-medium">INR {payout.amount}</p>
+                  <p className="font-medium">INR {formatMoney(payout.amount)}</p>
                   <p className="text-sm text-white/70">{payout.status}</p>
                 </div>
                 {payout.note ? <p className="text-sm text-white/70">{payout.note}</p> : null}

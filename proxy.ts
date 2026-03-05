@@ -7,7 +7,7 @@ export default withAuth(
     const isDashboard = req.nextUrl.pathname.startsWith("/dashboard");
 
     if (isDashboard && !isLoggedIn) {
-      return NextResponse.redirect(new URL("/api/auth/signin", req.url));
+      return NextResponse.redirect(new URL("/login", req.url));
     }
 
     return NextResponse.next();
@@ -15,6 +15,9 @@ export default withAuth(
   {
     callbacks: {
       authorized: () => true,
+    },
+    pages: {
+      signIn: "/login",
     },
   }
 );

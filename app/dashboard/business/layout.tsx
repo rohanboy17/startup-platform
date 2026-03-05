@@ -9,6 +9,7 @@ import {
   PlusCircle,
   CircleDollarSign,
 } from "lucide-react";
+import LogoutButton from "@/components/logout-button";
 
 export default async function BusinessLayout({
   children,
@@ -18,7 +19,7 @@ export default async function BusinessLayout({
   const session = await auth();
 
   if (!session || !session.user.role) {
-    redirect("/api/auth/signin");
+    redirect("/login");
   }
 
   if (session.user.role !== "BUSINESS") {
@@ -72,6 +73,10 @@ export default async function BusinessLayout({
               Funding
             </Link>
           </nav>
+
+          <div className="pt-4">
+            <LogoutButton />
+          </div>
         </aside>
 
         <main className="flex-1 p-10">{children}</main>

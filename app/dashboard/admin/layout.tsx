@@ -5,12 +5,13 @@ import Link from "next/link";
 import {
   LayoutDashboard,
   Users,
-  Briefcase,
   Wallet,
   ClipboardCheck,
   Landmark,
   ScrollText,
+  Megaphone,
 } from "lucide-react";
+import LogoutButton from "@/components/logout-button";
 
 export default async function AdminLayout({
   children,
@@ -20,7 +21,7 @@ export default async function AdminLayout({
   const session = await auth();
 
   if (!session || !session.user.role) {
-    redirect("/api/auth/signin");
+    redirect("/login");
   }
 
   if (session.user.role !== "ADMIN") {
@@ -43,19 +44,19 @@ export default async function AdminLayout({
             </Link>
 
             <Link
-              href="/dashboard/admin/tasks"
+              href="/dashboard/admin/campaigns"
               className="flex items-center gap-3 text-white/70 transition hover:text-white"
             >
-              <Briefcase size={18} />
-              Tasks
+              <Megaphone size={18} />
+              Campaign Queue
             </Link>
 
             <Link
-              href="/dashboard/admin/submissions"
+              href="/dashboard/admin/reviews"
               className="flex items-center gap-3 text-white/70 transition hover:text-white"
             >
               <ClipboardCheck size={18} />
-              Submissions
+              Final Reviews
             </Link>
 
             <Link
@@ -90,6 +91,10 @@ export default async function AdminLayout({
               Audit Logs
             </Link>
           </nav>
+
+          <div className="pt-4">
+            <LogoutButton />
+          </div>
         </aside>
 
         <main className="flex-1 p-10">{children}</main>

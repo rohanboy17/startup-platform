@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import PageTransition from "@/components/page-transition";
 import { prisma } from "@/lib/prisma";
+import LogoutButton from "@/components/logout-button";
 
 export default async function UserLayout({
   children,
@@ -21,7 +22,7 @@ export default async function UserLayout({
   const session = await auth();
 
   if (!session || !session.user.role) {
-    redirect("/api/auth/signin");
+    redirect("/login");
   }
 
   if (session.user.role !== "USER") {
@@ -102,6 +103,10 @@ export default async function UserLayout({
               ) : null}
             </Link>
           </nav>
+
+          <div className="pt-4">
+            <LogoutButton />
+          </div>
         </aside>
 
         <main className="flex-1 p-6 md:p-10">

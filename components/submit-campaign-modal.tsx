@@ -5,11 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-export default function SubmitTaskModal({
-  taskId,
-}: {
-  taskId: string;
-}) {
+export default function SubmitCampaignModal({ campaignId }: { campaignId: string }) {
   const [open, setOpen] = useState(false);
   const [proof, setProof] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,15 +20,21 @@ export default function SubmitTaskModal({
     setLoading(true);
     setMessage("");
 
-    const res = await fetch(`/api/tasks/${taskId}/submit`, {
+    const res = await fetch(`/api/v2/campaigns/${campaignId}/submissions`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ proof }),
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ proofText: proof }),
     });
 
-    const data = (await res.json()) as { error?: string };
+    const raw = await res.text();
+    let data: { error?: string } = {};
+    try {
+      data = raw ? (JSON.parse(raw) as { error?: string }) : {};
+    } catch {
+      data = { error: "Unexpected server response" };
+    }
+
     setLoading(false);
 
     if (!res.ok) {
@@ -40,39 +42,31 @@ export default function SubmitTaskModal({
       return;
     }
 
-    setMessage("Submission successful!");
+    setMessage("Submission sent for manager review.");
     setProof("");
   };
 
   return (
     <>
-      <Button
-        onClick={() => setOpen(true)}
-        className="bg-white text-black transition hover:scale-105 hover:bg-white"
-      >
+      <Button onClick={() => setOpen(true)} className="bg-white text-black hover:bg-white">
         Submit
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="rounded-2xl">
           <DialogHeader>
-            <DialogTitle>Submit Task Proof</DialogTitle>
+            <DialogTitle>Submit Campaign Proof</DialogTitle>
           </DialogHeader>
-
           <div className="space-y-4">
             <Input
               placeholder="Paste proof link or details..."
               value={proof}
               onChange={(e) => setProof(e.target.value)}
             />
-
             <Button onClick={handleSubmit} disabled={loading} className="w-full">
               {loading ? "Submitting..." : "Submit"}
             </Button>
-
-            {message && (
-              <p className="text-muted-foreground text-center text-sm">{message}</p>
-            )}
+            {message ? <p className="text-center text-sm text-muted-foreground">{message}</p> : null}
           </div>
         </DialogContent>
       </Dialog>

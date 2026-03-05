@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatMoney } from "@/lib/format-money";
 
 const MIN_FUNDING_THRESHOLD = Number(process.env.NEXT_PUBLIC_MIN_FUNDING_THRESHOLD ?? 500);
 const RAZORPAY_SDK_URL = "https://checkout.razorpay.com/v1/checkout.js";
@@ -145,13 +146,14 @@ export default function BusinessFundingPage() {
       <Card className="rounded-2xl border-white/10 bg-white/5 backdrop-blur-md">
         <CardContent className="space-y-5 p-6">
           <p className="text-sm text-white/70">
-            Add balance before launching campaigns. Minimum funding is INR {MIN_FUNDING_THRESHOLD}.
+            Add balance before launching campaigns. Minimum funding is INR{" "}
+            {formatMoney(MIN_FUNDING_THRESHOLD)}.
           </p>
 
           <div className="flex flex-wrap gap-2">
             {presets.map((value) => (
               <Button key={value} variant="outline" onClick={() => setAmount(String(value))}>
-                INR {value}
+                INR {formatMoney(value)}
               </Button>
             ))}
           </div>
@@ -160,7 +162,7 @@ export default function BusinessFundingPage() {
             <Input
               type="number"
               min={MIN_FUNDING_THRESHOLD}
-              placeholder={`Enter amount (min INR ${MIN_FUNDING_THRESHOLD})`}
+              placeholder={`Enter amount (min INR ${formatMoney(MIN_FUNDING_THRESHOLD)})`}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
             />

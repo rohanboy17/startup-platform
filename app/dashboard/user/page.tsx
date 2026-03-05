@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatMoney } from "@/lib/format-money";
 
 export default async function UserDashboard() {
   const session = await auth();
@@ -20,7 +21,7 @@ export default async function UserDashboard() {
           <CardContent className="p-6">
             <p className="text-white/60">Wallet Balance</p>
             <h2 className="mt-2 text-3xl font-bold text-green-400">
-              ₹ {user?.balance || 0}
+              INR {formatMoney(user?.balance)}
             </h2>
           </CardContent>
         </Card>

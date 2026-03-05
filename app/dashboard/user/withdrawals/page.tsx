@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import WithdrawRequestCard from "@/components/withdraw-request-card";
+import { formatMoney } from "@/lib/format-money";
 
 export default async function WithdrawalsPage() {
   const session = await auth();
@@ -21,7 +22,9 @@ export default async function WithdrawalsPage() {
   return (
     <div className="space-y-8">
       <h2 className="text-3xl font-semibold">Withdrawals</h2>
-      <p className="text-sm text-white/60">Current wallet balance: INR {user?.balance || 0}</p>
+      <p className="text-sm text-white/60">
+        Current wallet balance: INR {formatMoney(user?.balance)}
+      </p>
 
       <WithdrawRequestCard minAmount={minWithdrawal} />
 
@@ -38,7 +41,7 @@ export default async function WithdrawalsPage() {
                 </p>
               </div>
               <div className="text-right">
-                <p>INR {w.amount}</p>
+                <p>INR {formatMoney(w.amount)}</p>
                 <p className="text-sm text-white/60">{w.status}</p>
               </div>
             </div>

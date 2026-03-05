@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { formatMoney } from "@/lib/format-money";
 
 export default function WithdrawRequestCard({
   minAmount,
@@ -46,11 +47,13 @@ export default function WithdrawRequestCard({
   return (
     <div className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-6">
       <h3 className="text-lg font-semibold">Request Withdrawal</h3>
-      <p className="text-sm text-white/60">Minimum withdrawal amount: INR {minAmount}</p>
+      <p className="text-sm text-white/60">
+        Minimum withdrawal amount: INR {formatMoney(minAmount)}
+      </p>
       <Input
         type="number"
         min={minAmount}
-        placeholder={`Enter amount (min INR ${minAmount})`}
+        placeholder={`Enter amount (min INR ${formatMoney(minAmount)})`}
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
       />

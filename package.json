@@ -10,7 +10,9 @@
     "start": "next start",
     "lint": "eslint",
     "db:generate": "prisma generate",
-    "db:migrate:deploy": "prisma migrate deploy"
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:legacy:report": "node scripts/legacy-preflight.mjs",
+    "db:legacy:strict": "node scripts/legacy-preflight.mjs --strict"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",

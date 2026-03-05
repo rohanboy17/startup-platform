@@ -12,43 +12,42 @@ model User {
   email       String       @unique
   password    String
   role        Role         @default(USER)
+  level       UserLevel    @default(L1)
   balance     Float        @default(0)
+  dailySubmits Int         @default(0)
+  totalApproved Int        @default(0)
+  totalRejected Int        @default(0)
+  emergencyWithdrawCount Int @default(0)
+  lastLevelResetAt DateTime @default(now())
   createdAt   DateTime     @default(now())
   ipAddress   String?
   isSuspicious Boolean     @default(false)
   suspiciousReason String?
   flaggedAt   DateTime?
   submissions Submission[]
-  tasks       Task[]       @relation("BusinessTasks")
+  campaigns   Campaign[]   @relation("BusinessCampaignsV2")
   transactions WalletTransaction[]
   withdrawals Withdrawal[]
+  withdrawRequests WithdrawRequest[]
   notifications Notification[]
   paymentOrders PaymentOrder[]
-}
-
-model Task {
-  id              String       @id @default(uuid())
-  title           String
-  description     String
-  reward          Float
-  totalBudget     Float
-  remainingBudget Float
-  status          TaskStatus   @default(PENDING)
-  createdAt       DateTime     @default(now())
-  businessId      String
-  submissions     Submission[]
-  business        User         @relation("BusinessTasks", fields: [businessId], references: [id])
+  businessWallet BusinessWallet?
 }
 
 model Submission {
   id        String           @id @default(uuid())
   proof     String
+  proofLink String?
+  proofText String?
   ipAddress String?
   status    SubmissionStatus @default(PENDING)
+  managerStatus SubmissionStatus @default(PENDING)
+  adminStatus SubmissionStatus @default(PENDING)
+  rewardAmount Float @default(0)
   createdAt DateTime         @default(now())
   userId    String
-  taskId    String
-  task      Task             @relation(fields: [taskId], references: [id])
+  campaignId String?
+  campaign  Campaign?        @relation(fields: [campaignId], references: [id])
   user      User             @relation(fields: [userId], references: [id])
 }
 
@@ -105,6 +104,41 @@ model AuditLog {
   createdAt   DateTime @default(now())
 }
 
+model Campaign {
+  id              String                @id @default(cuid())
+  businessId      String
+  business        User                  @relation("BusinessCampaignsV2", fields: [businessId], references: [id])
+  title           String
+  description     String
+  category        String
+  taskLink        String?
+  rewardPerTask   Float
+  totalBudget     Float
+  remainingBudget Float
+  status          CampaignStatus        @default(PENDING)
+  createdAt       DateTime              @default(now())
+  submissions     Submission[]
+  instructions    CampaignInstruction[]
+}
+
+model CampaignInstruction {
+  id              String   @id @default(cuid())
+  campaignId      String
+  campaign        Campaign @relation(fields: [campaignId], references: [id])
+  instructionText String
+  sequence        Int
+}
+
+model WithdrawRequest {
+  id        String         @id @default(cuid())
+  userId    String
+  user      User           @relation(fields: [userId], references: [id])
+  amount    Float
+  upiId     String
+  status    WithdrawStatus @default(PENDING)
+  createdAt DateTime       @default(now())
+}
+
 model PaymentOrder {
   id                String             @id @default(uuid())
   userId            String
@@ -123,6 +157,25 @@ model PaymentOrder {
   user              User               @relation(fields: [userId], references: [id])
 }
 
+model BusinessWallet {
+  id          String @id @default(cuid())
+  businessId  String @unique
+  business    User   @relation(fields: [businessId], references: [id])
+  balance     Float  @default(0)
+  totalFunded Float  @default(0)
+  totalSpent  Float  @default(0)
+  totalRefund Float  @default(0)
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  details   String?
+  createdAt DateTime @default(now())
+}
+
 model Notification {
   id        String           @id @default(uuid())
   userId    String
@@ -138,18 +191,32 @@ model Notification {
 enum Role {
   USER
   BUSINESS
+  MANAGER
   ADMIN
 }
 
-enum TaskStatus {
+enum UserLevel {
+  L1
+  L2
+  L3
+  L4
+  L5
+}
+
+enum CampaignStatus {
   PENDING
-  ACTIVE
-  COMPLETED
+  APPROVED
   REJECTED
+  LIVE
+  COMPLETED
 }
 
 enum SubmissionStatus {
   PENDING
+  MANAGER_APPROVED
+  MANAGER_REJECTED
+  ADMIN_APPROVED
+  ADMIN_REJECTED
   APPROVED
   REJECTED
 }
@@ -162,6 +229,13 @@ enum TransactionType {
 enum WithdrawalStatus {
   PENDING
   APPROVED
+  REJECTED
+}
+
+enum WithdrawStatus {
+  PENDING
+  APPROVED
+  PAID
   REJECTED
 }
 

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { formatMoney } from "@/lib/format-money";
 
 export default async function WalletPage() {
   const session = await auth();
@@ -42,7 +43,7 @@ export default async function WalletPage() {
             </div>
 
             <span className={tx.type === "CREDIT" ? "text-green-400" : "text-red-400"}>
-              {tx.type === "CREDIT" ? "+" : "-"} ₹ {tx.amount}
+              {tx.type === "CREDIT" ? "+" : "-"} INR {formatMoney(tx.amount)}
             </span>
           </div>
         ))}

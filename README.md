@@ -62,6 +62,27 @@ Legacy direct credit endpoint `POST /api/business/fund` is disabled.
 - Use direct DB URL for migrations, pooled URL for app traffic.
 - Keep `RAZORPAY_KEY_SECRET`, `NEXTAUTH_SECRET`, SMTP creds server-side only.
 
+## Safe Legacy Cleanup (Neon-safe)
+
+Legacy `Task` model and `Submission.taskId` are currently deprecated in code but still present in DB for safety.
+
+1. Run read-only legacy report:
+```bash
+npm run db:legacy:report
+```
+
+2. Run strict preflight (fails if legacy rows still exist):
+```bash
+npm run db:legacy:strict
+```
+
+3. Only when strict preflight passes (`safeToDropLegacyTaskSchema: true`), plan destructive migration.
+
+4. Before destructive migration on production:
+- create Neon backup/branch snapshot first
+- run migration on a staging branch DB first
+- then deploy to production
+
 ## Deploy on Vercel + Neon
 
 1. Neon:

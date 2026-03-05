@@ -19,18 +19,32 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
+        const email = credentials.email.trim().toLowerCase();
+        const inputPassword = credentials.password;
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+          where: { email },
         });
 
         if (!user) {
           return null;
         }
 
-        const isValidPassword = await bcrypt.compare(
-          credentials.password,
-          user.password
-        );
+        let isValidPassword = false;
+
+        if (user.password.startsWith("$2")) {
+          isValidPassword = await bcrypt.compare(inputPassword, user.password);
+        } else {
+          // Backward compatibility for legacy plain-text passwords; rehash on successful login.
+          isValidPassword = inputPassword === user.password;
+          if (isValidPassword) {
+            const hashed = await bcrypt.hash(inputPassword, 10);
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { password: hashed },
+            });
+          }
+        }
 
         if (!isValidPassword) {
           return null;
@@ -52,8 +66,8 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role;
       }
 
-      // Backfill missing claims for older sessions created before role/id were stored.
-      if ((!token.id || !token.role) && token.email) {
+      // Keep role/id in sync with DB so role changes apply without stale JWT behavior.
+      if (token.email) {
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
           select: { id: true, role: true },

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import AdminWithdrawalActions from "@/components/admin-withdrawal-actions";
+import { formatMoney } from "@/lib/format-money";
 
 export default async function AdminWithdrawalsPage() {
   const commissionRate = Number(process.env.WITHDRAWAL_COMMISSION_RATE ?? 0.02);
@@ -73,14 +74,14 @@ export default async function AdminWithdrawalsPage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">INR {w.amount}</p>
+                      <p className="font-semibold">INR {formatMoney(w.amount)}</p>
                       <p className="text-sm text-white/70">{w.status}</p>
                     </div>
                   </div>
 
                   <div className="text-sm text-white/70">
-                    Estimated fee ({(commissionRate * 100).toFixed(1)}%): INR {fee} | User payout: INR{" "}
-                    {payout}
+                    Estimated fee ({(commissionRate * 100).toFixed(1)}%): INR {formatMoney(fee)} |
+                    User payout: INR {formatMoney(payout)}
                   </div>
 
                   {w.status === "PENDING" ? (

@@ -21,20 +21,20 @@ export default function LoginForm({ registered }: { registered: boolean }) {
     setError("");
 
     const result = await signIn("credentials", {
-      email,
+      email: email.trim(),
       password,
       redirect: false,
       callbackUrl: "/dashboard",
     });
 
-    setLoading(false);
-
-    if (!result || result.error) {
+    if (result && result.error) {
+      setLoading(false);
       setError("Invalid email or password");
       return;
     }
 
-    router.push(result.url || "/dashboard");
+    setLoading(false);
+    router.replace(result?.url || "/dashboard");
     router.refresh();
   }
 
