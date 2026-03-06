@@ -24,7 +24,6 @@ export default async function ManagerLayout({
       <div className="flex flex-col md:flex-row">
         <aside className="w-full space-y-8 border-b border-white/10 p-6 backdrop-blur-xl md:w-72 md:border-b-0 md:border-r">
           <DashboardTabNav
-            title="Manager Panel"
             displayName={displayName}
             role="MANAGER"
             userId={session.user.id}

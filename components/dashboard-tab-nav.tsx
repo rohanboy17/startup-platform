@@ -73,13 +73,11 @@ type NavAlertsResponse = {
 };
 
 export default function DashboardTabNav({
-  title,
   displayName,
   role,
   userId,
   items,
 }: {
-  title: string;
   displayName: string;
   role: DashboardRole;
   userId: string;
@@ -89,6 +87,7 @@ export default function DashboardTabNav({
   const [alerts, setAlerts] = useState<Record<string, string>>({});
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [hour, setHour] = useState<number | null>(null);
 
   const storagePrefix = `nav_seen:${userId}:`;
 
@@ -101,6 +100,13 @@ export default function DashboardTabNav({
   }, [role]);
 
   useLiveRefresh(load, 10000);
+
+  useEffect(() => {
+    const updateHour = () => setHour(new Date().getHours());
+    updateHour();
+    const timer = window.setInterval(updateHour, 60 * 1000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     if (!pathname) return;
@@ -137,10 +143,26 @@ export default function DashboardTabNav({
     [alerts, counts, items, pathname, storagePrefix]
   );
 
+  const firstName = useMemo(() => {
+    const trimmed = displayName.trim();
+    if (!trimmed) return "User";
+    return trimmed.split(" ")[0] || "User";
+  }, [displayName]);
+
+  const greeting = useMemo(() => {
+    if (hour === null) return `Welcome back, ${firstName}!`;
+    if (hour < 12) return `Good morning, ${firstName}!`;
+    if (hour < 17) return `Good afternoon, ${firstName}!`;
+    return `Good evening, ${firstName}!`;
+  }, [firstName, hour]);
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between md:block">
-        <h1 className="text-xl font-semibold tracking-tight md:text-2xl">{title}</h1>
+        <div>
+          <h1 className="text-lg font-semibold tracking-tight md:text-xl">{greeting}</h1>
+          <p className="text-xs text-white/60 md:text-sm">Welcome back!</p>
+        </div>
         <button
           type="button"
           onClick={() => setMobileOpen((prev) => !prev)}
