@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatMoney } from "@/lib/format-money";
+import { useLiveRefresh } from "@/lib/live-refresh";
 
 type Submission = {
   id: string;
@@ -25,26 +26,27 @@ export default function UserV2SubmissionsPanel() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function load() {
-      const res = await fetch("/api/v2/users/me/submissions", { credentials: "include" });
-      const raw = await res.text();
-      let data: { submissions?: Submission[]; error?: string } = {};
-      try {
-        data = raw ? (JSON.parse(raw) as { submissions?: Submission[]; error?: string }) : {};
-      } catch {
-        setError("Unexpected server response");
-        setLoading(false);
-        return;
-      }
-
-      if (!res.ok) setError(data.error || "Failed to load submissions");
-      else setSubmissions(data.submissions || []);
+  const load = useCallback(async () => {
+    const res = await fetch("/api/v2/users/me/submissions", { credentials: "include" });
+    const raw = await res.text();
+    let data: { submissions?: Submission[]; error?: string } = {};
+    try {
+      data = raw ? (JSON.parse(raw) as { submissions?: Submission[]; error?: string }) : {};
+    } catch {
+      setError("Unexpected server response");
       setLoading(false);
+      return;
     }
 
-    void load();
+    if (!res.ok) setError(data.error || "Failed to load submissions");
+    else {
+      setError("");
+      setSubmissions(data.submissions || []);
+    }
+    setLoading(false);
   }, []);
+
+  useLiveRefresh(load, 10000);
 
   if (loading) return <p className="text-sm text-white/60">Loading submissions...</p>;
   if (error) return <p className="text-sm text-rose-300">{error}</p>;

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
 type Role = "USER" | "BUSINESS" | "MANAGER" | "ADMIN";
 
@@ -45,6 +46,7 @@ export default function AdminUserRoleActions({
     setLoading(false);
     setMessage(data.message || data.error || "Updated");
     router.refresh();
+    emitDashboardLiveRefresh();
   }
 
   return (

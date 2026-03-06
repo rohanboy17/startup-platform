@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatMoney } from "@/lib/format-money";
+import { useLiveRefresh } from "@/lib/live-refresh";
 
 type Campaign = {
   id: string;
@@ -20,24 +21,26 @@ export default function BusinessCampaignsPanel() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function load() {
-      const res = await fetch("/api/v2/business/campaigns", { credentials: "include" });
-      const raw = await res.text();
-      let data: { campaigns?: Campaign[]; error?: string } = {};
-      try {
-        data = raw ? (JSON.parse(raw) as { campaigns?: Campaign[]; error?: string }) : {};
-      } catch {
-        setError("Unexpected server response");
-        setLoading(false);
-        return;
-      }
-      if (!res.ok) setError(data.error || "Failed to load campaigns");
-      else setCampaigns(data.campaigns || []);
+  const load = useCallback(async () => {
+    const res = await fetch("/api/v2/business/campaigns", { credentials: "include" });
+    const raw = await res.text();
+    let data: { campaigns?: Campaign[]; error?: string } = {};
+    try {
+      data = raw ? (JSON.parse(raw) as { campaigns?: Campaign[]; error?: string }) : {};
+    } catch {
+      setError("Unexpected server response");
       setLoading(false);
+      return;
     }
-    void load();
+    if (!res.ok) setError(data.error || "Failed to load campaigns");
+    else {
+      setError("");
+      setCampaigns(data.campaigns || []);
+    }
+    setLoading(false);
   }, []);
+
+  useLiveRefresh(load, 10000);
 
   if (loading) return <p className="text-sm text-white/60">Loading campaigns...</p>;
   if (error) return <p className="text-sm text-rose-300">{error}</p>;

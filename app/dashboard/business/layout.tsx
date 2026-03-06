@@ -1,15 +1,8 @@
 import { ReactNode } from "react";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import {
-  LayoutDashboard,
-  Megaphone,
-  BarChart3,
-  PlusCircle,
-  CircleDollarSign,
-} from "lucide-react";
 import LogoutButton from "@/components/logout-button";
+import DashboardTabNav, { HomeNavLink } from "@/components/dashboard-tab-nav";
 
 export default async function BusinessLayout({
   children,
@@ -17,6 +10,7 @@ export default async function BusinessLayout({
   children: ReactNode;
 }) {
   const session = await auth();
+  const displayName = session?.user?.name?.trim() || session?.user?.email || "User";
 
   if (!session || !session.user.role) {
     redirect("/login");
@@ -31,50 +25,25 @@ export default async function BusinessLayout({
       <div className="flex flex-col md:flex-row">
         <aside className="w-full space-y-8 border-r border-white/10 p-6 backdrop-blur-xl md:w-72">
           <h1 className="text-2xl font-semibold tracking-tight">Campaign Manager</h1>
+          <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+            <p className="text-xs text-white/50">Signed in as</p>
+            <p className="text-sm font-medium text-white/90">{displayName}</p>
+          </div>
 
-          <nav className="space-y-4 text-sm">
-            <Link
-              href="/dashboard/business"
-              className="flex items-center gap-3 text-white/70 transition hover:text-white"
-            >
-              <LayoutDashboard size={18} />
-              Overview
-            </Link>
-
-            <Link
-              href="/dashboard/business/campaigns"
-              className="flex items-center gap-3 text-white/70 transition hover:text-white"
-            >
-              <Megaphone size={18} />
-              Campaigns
-            </Link>
-
-            <Link
-              href="/dashboard/business/create"
-              className="flex items-center gap-3 text-white/70 transition hover:text-white"
-            >
-              <PlusCircle size={18} />
-              Create Campaign
-            </Link>
-
-            <Link
-              href="/dashboard/business/analytics"
-              className="flex items-center gap-3 text-white/70 transition hover:text-white"
-            >
-              <BarChart3 size={18} />
-              Analytics
-            </Link>
-
-            <Link
-              href="/dashboard/business/funding"
-              className="flex items-center gap-3 text-white/70 transition hover:text-white"
-            >
-              <CircleDollarSign size={18} />
-              Funding
-            </Link>
-          </nav>
+          <DashboardTabNav
+            role="BUSINESS"
+            userId={session.user.id}
+            items={[
+              { key: "business.overview", href: "/dashboard/business", label: "Overview", icon: "overview" },
+              { key: "business.campaigns", href: "/dashboard/business/campaigns", label: "Campaigns", icon: "campaigns" },
+              { key: "business.create", href: "/dashboard/business/create", label: "Create Campaign", icon: "create" },
+              { key: "business.analytics", href: "/dashboard/business/analytics", label: "Analytics", icon: "analytics" },
+              { key: "business.funding", href: "/dashboard/business/funding", label: "Funding", icon: "funding" },
+            ]}
+          />
 
           <div className="pt-4">
+            <HomeNavLink />
             <LogoutButton />
           </div>
         </aside>

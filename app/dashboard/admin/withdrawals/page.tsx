@@ -70,6 +70,9 @@ export default async function AdminWithdrawalsPage() {
                       <p className="font-medium">{w.user.name || w.user.email}</p>
                       <p className="text-sm text-white/60">{w.user.email}</p>
                       <p className="text-xs text-white/50">
+                        UPI: {w.upiName || "N/A"} | {w.upiId || "N/A"}
+                      </p>
+                      <p className="text-xs text-white/50">
                         {new Date(w.createdAt).toLocaleString()}
                       </p>
                     </div>

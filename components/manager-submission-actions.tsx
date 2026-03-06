@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
 export default function ManagerSubmissionActions({ submissionId }: { submissionId: string }) {
   const router = useRouter();
@@ -37,6 +38,7 @@ export default function ManagerSubmissionActions({ submissionId }: { submissionI
 
     setMessage(data.message || "Updated");
     router.refresh();
+    emitDashboardLiveRefresh();
   }
 
   return (

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, ShieldCheck, Zap, TrendingUp } from "lucide-react";
+import HomeLiveSection from "@/components/home-live-section";
 
 export default function Home() {
   return (
@@ -64,7 +65,7 @@ export default function Home() {
               <p className="text-sm text-white/60">Total Platform Payout</p>
               <p className="mt-1 text-3xl font-bold">INR 12.4L+</p>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="rounded-2xl border border-white/10 bg-black/40 p-5">
                 <p className="text-sm text-white/60">Tasks Completed</p>
                 <p className="mt-1 text-2xl font-semibold">45,000+</p>
@@ -72,6 +73,10 @@ export default function Home() {
               <div className="rounded-2xl border border-white/10 bg-black/40 p-5">
                 <p className="text-sm text-white/60">Business Accounts</p>
                 <p className="mt-1 text-2xl font-semibold">1,900+</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-black/40 p-5">
+                <p className="text-sm text-white/60">Total Users</p>
+                <p className="mt-1 text-2xl font-semibold">72,000+</p>
               </div>
             </div>
           </div>
@@ -101,6 +106,8 @@ export default function Home() {
           </p>
         </div>
       </section>
+
+      <HomeLiveSection />
     </div>
   );
 }

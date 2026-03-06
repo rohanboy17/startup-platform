@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getLevelFromDailySubmits, shouldResetLevel } from "@/lib/level";
+import { shouldResetDailyCounter } from "@/lib/level";
 
 export async function POST(
   req: Request,
@@ -28,6 +28,7 @@ export async function POST(
       id: true,
       status: true,
       rewardPerTask: true,
+      totalBudget: true,
       remainingBudget: true,
     },
   });
@@ -40,65 +41,77 @@ export async function POST(
     return NextResponse.json({ error: "Campaign budget exhausted" }, { status: 400 });
   }
 
-  const existing = await prisma.submission.findFirst({
-    where: {
-      userId: session.user.id,
-      campaignId,
-    },
-    select: { id: true },
-  });
+  const maxCampaignSubmissions = Math.max(
+    1,
+    Math.floor(campaign.totalBudget / campaign.rewardPerTask)
+  );
 
-  if (existing) {
-    return NextResponse.json({ error: "Already submitted" }, { status: 400 });
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      const user = await tx.user.findUnique({
+        where: { id: session.user.id },
+        select: { dailySubmits: true, lastLevelResetAt: true },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      const resetNeeded = shouldResetDailyCounter(user.lastLevelResetAt);
+      const currentSubmits = resetNeeded ? 0 : user.dailySubmits;
+      const nextSubmits = currentSubmits + 1;
+
+      const occupiedSubmissionCount = await tx.submission.count({
+        where: {
+          campaignId,
+          NOT: [
+            { managerStatus: "MANAGER_REJECTED" },
+            { adminStatus: "ADMIN_REJECTED" },
+            { status: "REJECTED" },
+          ],
+        },
+      });
+
+      if (occupiedSubmissionCount >= maxCampaignSubmissions) {
+        throw new Error("Campaign submission capacity is full. Try again later.");
+      }
+
+      await tx.user.update({
+        where: { id: session.user.id },
+        data: {
+          dailySubmits: nextSubmits,
+          lastLevelResetAt: resetNeeded ? new Date() : user.lastLevelResetAt,
+        },
+      });
+
+      const submission = await tx.submission.create({
+        data: {
+          userId: session.user.id,
+          campaignId,
+          proof: proofText || proofLink || "",
+          proofLink,
+          proofText,
+          managerStatus: "PENDING",
+          adminStatus: "PENDING",
+        },
+      });
+
+      await tx.activityLog.create({
+        data: {
+          userId: session.user.id,
+          action: "SUBMISSION_CREATED",
+          entity: "Submission",
+          details: `submissionId=${submission.id}, campaignId=${campaignId}`,
+        },
+      });
+
+      return submission;
+    });
+
+    return NextResponse.json({ message: "Submission created", submission: result }, { status: 201 });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Submission failed";
+    const status = message.includes("capacity is full") ? 400 : 500;
+    return NextResponse.json({ error: message }, { status });
   }
-
-  const result = await prisma.$transaction(async (tx) => {
-    const user = await tx.user.findUnique({
-      where: { id: session.user.id },
-      select: { dailySubmits: true, level: true, lastLevelResetAt: true },
-    });
-
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    const resetNeeded = shouldResetLevel(user.lastLevelResetAt);
-    const currentSubmits = resetNeeded ? 0 : user.dailySubmits;
-    const nextSubmits = currentSubmits + 1;
-    const nextLevel = getLevelFromDailySubmits(nextSubmits);
-
-    await tx.user.update({
-      where: { id: session.user.id },
-      data: {
-        dailySubmits: nextSubmits,
-        level: nextLevel,
-        lastLevelResetAt: resetNeeded ? new Date() : user.lastLevelResetAt,
-      },
-    });
-
-    const submission = await tx.submission.create({
-      data: {
-        userId: session.user.id,
-        campaignId,
-        proof: proofText || proofLink || "",
-        proofLink,
-        proofText,
-        managerStatus: "PENDING",
-        adminStatus: "PENDING",
-      },
-    });
-
-    await tx.activityLog.create({
-      data: {
-        userId: session.user.id,
-        action: "SUBMISSION_CREATED",
-        entity: "Submission",
-        details: `submissionId=${submission.id}, campaignId=${campaignId}`,
-      },
-    });
-
-    return submission;
-  });
-
-  return NextResponse.json({ message: "Submission created", submission: result }, { status: 201 });
 }

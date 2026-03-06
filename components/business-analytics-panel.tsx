@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatMoney } from "@/lib/format-money";
+import { useLiveRefresh } from "@/lib/live-refresh";
 
 type Analytics = {
   totalCampaigns: number;
@@ -18,32 +19,32 @@ export default function BusinessAnalyticsPanel() {
   const [data, setData] = useState<Analytics | null>(null);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    async function load() {
-      const res = await fetch("/api/v2/business/analytics", { credentials: "include" });
-      const raw = await res.text();
-      let parsed: Analytics = {
-        totalCampaigns: 0,
-        liveCampaigns: 0,
-        pendingCampaigns: 0,
-        approvedSubmissions: 0,
-        totalBudget: 0,
-        remainingBudget: 0,
-      };
-      try {
-        parsed = raw ? (JSON.parse(raw) as Analytics) : parsed;
-      } catch {
-        setError("Unexpected server response");
-        return;
-      }
-      if (!res.ok) {
-        setError(parsed.error || "Failed to load analytics");
-        return;
-      }
-      setData(parsed);
+  const load = useCallback(async () => {
+    const res = await fetch("/api/v2/business/analytics", { credentials: "include" });
+    const raw = await res.text();
+    let parsed: Analytics = {
+      totalCampaigns: 0,
+      liveCampaigns: 0,
+      pendingCampaigns: 0,
+      approvedSubmissions: 0,
+      totalBudget: 0,
+      remainingBudget: 0,
+    };
+    try {
+      parsed = raw ? (JSON.parse(raw) as Analytics) : parsed;
+    } catch {
+      setError("Unexpected server response");
+      return;
     }
-    void load();
+    if (!res.ok) {
+      setError(parsed.error || "Failed to load analytics");
+      return;
+    }
+    setError("");
+    setData(parsed);
   }, []);
+
+  useLiveRefresh(load, 10000);
 
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
   if (!data) return <p className="text-sm text-white/60">Loading analytics...</p>;

@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatMoney } from "@/lib/format-money";
+import { useLiveRefresh } from "@/lib/live-refresh";
 
 type OverviewResponse = {
   wallet: { balance: number; totalFunded: number; totalSpent: number; totalRefund: number };
@@ -17,31 +18,30 @@ export default function BusinessOverviewPanel() {
   const [data, setData] = useState<OverviewResponse | null>(null);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    async function load() {
-      const res = await fetch("/api/v2/business/overview", { credentials: "include" });
-      const raw = await res.text();
-      let parsed: OverviewResponse = {
-        wallet: { balance: 0, totalFunded: 0, totalSpent: 0, totalRefund: 0 },
-        totalCampaigns: 0,
-        liveCampaigns: 0,
-        pendingCampaigns: 0,
-      };
-      try {
-        parsed = raw ? (JSON.parse(raw) as OverviewResponse) : parsed;
-      } catch {
-        setError("Unexpected server response");
-        return;
-      }
-      if (!res.ok) {
-        setError(parsed.error || "Failed to load overview");
-        return;
-      }
-      setData(parsed);
+  const load = useCallback(async () => {
+    const res = await fetch("/api/v2/business/overview", { credentials: "include" });
+    const raw = await res.text();
+    let parsed: OverviewResponse = {
+      wallet: { balance: 0, totalFunded: 0, totalSpent: 0, totalRefund: 0 },
+      totalCampaigns: 0,
+      liveCampaigns: 0,
+      pendingCampaigns: 0,
+    };
+    try {
+      parsed = raw ? (JSON.parse(raw) as OverviewResponse) : parsed;
+    } catch {
+      setError("Unexpected server response");
+      return;
     }
-
-    void load();
+    if (!res.ok) {
+      setError(parsed.error || "Failed to load overview");
+      return;
+    }
+    setError("");
+    setData(parsed);
   }, []);
+
+  useLiveRefresh(load, 10000);
 
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
   if (!data) return <p className="text-sm text-white/60">Loading business overview...</p>;

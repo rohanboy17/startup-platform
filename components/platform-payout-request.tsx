@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
 export default function PlatformPayoutRequest() {
   const router = useRouter();
@@ -45,6 +46,7 @@ export default function PlatformPayoutRequest() {
     setAmount("");
     setNote("");
     router.refresh();
+    emitDashboardLiveRefresh();
   }
 
   return (

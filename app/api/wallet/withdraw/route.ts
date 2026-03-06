@@ -23,13 +23,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const { amount } = await req.json();
+    const { amount, upiId, upiName } = await req.json();
     const amountNumber = Number(amount);
     const minWithdrawal = Number(process.env.MIN_WITHDRAWAL_AMOUNT ?? 200);
+    const normalizedUpiId = typeof upiId === "string" ? upiId.trim() : "";
+    const normalizedUpiName = typeof upiName === "string" ? upiName.trim() : "";
 
     if (Number.isNaN(amountNumber) || amountNumber < minWithdrawal) {
       return NextResponse.json(
         { error: `Minimum withdrawal amount is INR ${minWithdrawal}` },
+        { status: 400 }
+      );
+    }
+
+    if (!normalizedUpiId || !normalizedUpiName) {
+      return NextResponse.json(
+        { error: "UPI ID/Number and UPI Name are required" },
         { status: 400 }
       );
     }
@@ -58,6 +67,8 @@ export async function POST(req: Request) {
     const withdrawal = await prisma.withdrawal.create({
       data: {
         amount: amountNumber,
+        upiId: normalizedUpiId,
+        upiName: normalizedUpiName,
         userId: session.user.id,
       },
     });

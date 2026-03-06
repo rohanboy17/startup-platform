@@ -1,17 +1,8 @@
 import { ReactNode } from "react";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import {
-  LayoutDashboard,
-  Users,
-  Wallet,
-  ClipboardCheck,
-  Landmark,
-  ScrollText,
-  Megaphone,
-} from "lucide-react";
 import LogoutButton from "@/components/logout-button";
+import DashboardTabNav, { HomeNavLink } from "@/components/dashboard-tab-nav";
 
 export default async function AdminLayout({
   children,
@@ -19,6 +10,7 @@ export default async function AdminLayout({
   children: ReactNode;
 }) {
   const session = await auth();
+  const displayName = session?.user?.name?.trim() || session?.user?.email || "User";
 
   if (!session || !session.user.role) {
     redirect("/login");
@@ -33,66 +25,27 @@ export default async function AdminLayout({
       <div className="flex">
         <aside className="w-72 space-y-8 border-r border-white/10 p-6 backdrop-blur-xl">
           <h1 className="text-2xl font-semibold tracking-tight">Admin Panel</h1>
+          <div className="rounded-lg border border-white/10 bg-white/5 p-3">
+            <p className="text-xs text-white/50">Signed in as</p>
+            <p className="text-sm font-medium text-white/90">{displayName}</p>
+          </div>
 
-          <nav className="space-y-4 text-sm">
-            <Link
-              href="/dashboard/admin"
-              className="flex items-center gap-3 text-white/70 transition hover:text-white"
-            >
-              <LayoutDashboard size={18} />
-              Overview
-            </Link>
-
-            <Link
-              href="/dashboard/admin/campaigns"
-              className="flex items-center gap-3 text-white/70 transition hover:text-white"
-            >
-              <Megaphone size={18} />
-              Campaign Queue
-            </Link>
-
-            <Link
-              href="/dashboard/admin/reviews"
-              className="flex items-center gap-3 text-white/70 transition hover:text-white"
-            >
-              <ClipboardCheck size={18} />
-              Final Reviews
-            </Link>
-
-            <Link
-              href="/dashboard/admin/users"
-              className="flex items-center gap-3 text-white/70 transition hover:text-white"
-            >
-              <Users size={18} />
-              Users
-            </Link>
-
-            <Link
-              href="/dashboard/admin/withdrawals"
-              className="flex items-center gap-3 text-white/70 transition hover:text-white"
-            >
-              <Wallet size={18} />
-              Withdrawals
-            </Link>
-
-            <Link
-              href="/dashboard/admin/revenue"
-              className="flex items-center gap-3 text-white/70 transition hover:text-white"
-            >
-              <Landmark size={18} />
-              Revenue
-            </Link>
-
-            <Link
-              href="/dashboard/admin/audit"
-              className="flex items-center gap-3 text-white/70 transition hover:text-white"
-            >
-              <ScrollText size={18} />
-              Audit Logs
-            </Link>
-          </nav>
+          <DashboardTabNav
+            role="ADMIN"
+            userId={session.user.id}
+            items={[
+              { key: "admin.overview", href: "/dashboard/admin", label: "Overview", icon: "overview" },
+              { key: "admin.campaigns", href: "/dashboard/admin/campaigns", label: "Campaign Queue", icon: "campaigns" },
+              { key: "admin.reviews", href: "/dashboard/admin/reviews", label: "Final Reviews", icon: "reviews" },
+              { key: "admin.users", href: "/dashboard/admin/users", label: "Users", icon: "users" },
+              { key: "admin.withdrawals", href: "/dashboard/admin/withdrawals", label: "Withdrawals", icon: "wallet" },
+              { key: "admin.revenue", href: "/dashboard/admin/revenue", label: "Revenue", icon: "revenue" },
+              { key: "admin.audit", href: "/dashboard/admin/audit", label: "Audit Logs", icon: "audit" },
+            ]}
+          />
 
           <div className="pt-4">
+            <HomeNavLink />
             <LogoutButton />
           </div>
         </aside>

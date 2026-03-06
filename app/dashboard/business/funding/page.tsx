@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatMoney } from "@/lib/format-money";
+import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
 const MIN_FUNDING_THRESHOLD = Number(process.env.NEXT_PUBLIC_MIN_FUNDING_THRESHOLD ?? 500);
 const RAZORPAY_SDK_URL = "https://checkout.razorpay.com/v1/checkout.js";
@@ -131,6 +132,7 @@ export default function BusinessFundingPage() {
 
         setMessage(verifyData.message || "Wallet funded successfully");
         setAmount("");
+        emitDashboardLiveRefresh();
       },
       theme: { color: "#10b981" },
     });

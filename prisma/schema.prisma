@@ -54,6 +54,8 @@ model Submission {
 model Withdrawal {
   id        String           @id @default(uuid())
   amount    Float
+  upiId     String?
+  upiName   String?
   status    WithdrawalStatus @default(PENDING)
   createdAt DateTime         @default(now())
   userId    String

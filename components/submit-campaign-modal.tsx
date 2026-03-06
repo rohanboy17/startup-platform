@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
 export default function SubmitCampaignModal({ campaignId }: { campaignId: string }) {
   const [open, setOpen] = useState(false);
@@ -44,6 +45,8 @@ export default function SubmitCampaignModal({ campaignId }: { campaignId: string
 
     setMessage("Submission sent for manager review.");
     setProof("");
+    setOpen(false);
+    emitDashboardLiveRefresh();
   };
 
   return (

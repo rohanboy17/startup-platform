@@ -26,5 +26,45 @@ export async function GET() {
     orderBy: { createdAt: "desc" },
   });
 
-  return NextResponse.json({ campaigns });
+  const campaignIds = campaigns.map((campaign) => campaign.id);
+  const occupiedCounts = campaignIds.length
+    ? await prisma.submission.groupBy({
+        by: ["campaignId"],
+        where: {
+          campaignId: { in: campaignIds },
+          NOT: [
+            { managerStatus: "MANAGER_REJECTED" },
+            { adminStatus: "ADMIN_REJECTED" },
+            { status: "REJECTED" },
+          ],
+        },
+        _count: { _all: true },
+      })
+    : [];
+
+  const occupiedCountMap = new Map(
+    occupiedCounts.map((item) => [item.campaignId, item._count._all])
+  );
+
+  const campaignsWithLimits = campaigns.map((campaign) => {
+    const allowedSubmissions = Math.max(
+      1,
+      Math.floor(campaign.totalBudget / campaign.rewardPerTask)
+    );
+    const occupiedSubmissions = occupiedCountMap.get(campaign.id) ?? 0;
+    const leftSubmissions = Math.max(0, allowedSubmissions - occupiedSubmissions);
+
+    return {
+      ...campaign,
+      allowedSubmissions,
+      usedSubmissions: occupiedSubmissions,
+      leftSubmissions,
+    };
+  });
+
+  const visibleCampaigns = campaignsWithLimits.filter(
+    (campaign) => campaign.leftSubmissions > 0
+  );
+
+  return NextResponse.json({ campaigns: visibleCampaigns });
 }

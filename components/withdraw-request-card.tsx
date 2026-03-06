@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatMoney } from "@/lib/format-money";
+import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
 export default function WithdrawRequestCard({
   minAmount,
@@ -11,6 +12,8 @@ export default function WithdrawRequestCard({
   minAmount: number;
 }) {
   const [amount, setAmount] = useState("");
+  const [upiId, setUpiId] = useState("");
+  const [upiName, setUpiName] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -22,7 +25,11 @@ export default function WithdrawRequestCard({
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ amount: Number(amount) }),
+      body: JSON.stringify({
+        amount: Number(amount),
+        upiId,
+        upiName,
+      }),
     });
 
     const raw = await res.text();
@@ -42,6 +49,9 @@ export default function WithdrawRequestCard({
 
     setMessage(data.message || "Withdrawal request created");
     setAmount("");
+    setUpiId("");
+    setUpiName("");
+    emitDashboardLiveRefresh();
   }
 
   return (
@@ -56,6 +66,16 @@ export default function WithdrawRequestCard({
         placeholder={`Enter amount (min INR ${formatMoney(minAmount)})`}
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
+      />
+      <Input
+        placeholder="Enter UPI ID or Mobile Number"
+        value={upiId}
+        onChange={(e) => setUpiId(e.target.value)}
+      />
+      <Input
+        placeholder="Enter UPI Name or Banking Name"
+        value={upiName}
+        onChange={(e) => setUpiName(e.target.value)}
       />
       <Button onClick={requestWithdrawal} disabled={loading} className="w-full">
         {loading ? "Submitting..." : "Submit Withdrawal Request"}

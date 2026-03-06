@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
 type NotificationItem = {
   id: string;
@@ -50,6 +51,7 @@ export default function UserNotificationsList({
 
     setMessage(data.message || "Updated");
     router.refresh();
+    emitDashboardLiveRefresh();
   }
 
   return (

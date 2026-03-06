@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getSubmissionCommissionRate } from "@/lib/commission";
+import { getLevelFromApprovedCount } from "@/lib/level";
 
 export async function PATCH(
   req: Request,
@@ -26,6 +27,7 @@ export async function PATCH(
         select: {
           id: true,
           level: true,
+          totalApproved: true,
         },
       },
       campaign: {
@@ -114,11 +116,15 @@ export async function PATCH(
       },
     });
 
+    const nextApprovedCount = submission.user.totalApproved + 1;
+    const nextLevel = getLevelFromApprovedCount(nextApprovedCount);
+
     await tx.user.update({
       where: { id: submission.user.id },
       data: {
         balance: { increment: netReward },
         totalApproved: { increment: 1 },
+        level: nextLevel,
       },
     });
 

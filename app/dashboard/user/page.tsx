@@ -5,18 +5,38 @@ import { formatMoney } from "@/lib/format-money";
 
 export default async function UserDashboard() {
   const session = await auth();
-  const user = await prisma.user.findUnique({
-    where: { id: session!.user.id },
-  });
-  const submissions = await prisma.submission.count({
-    where: { userId: session!.user.id },
-  });
+  const [user, submissions, pendingWithdrawalAmount, totalWithdrawn] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session!.user.id },
+    }),
+    prisma.submission.count({
+      where: { userId: session!.user.id },
+    }),
+    prisma.withdrawal.aggregate({
+      where: {
+        userId: session!.user.id,
+        status: "PENDING",
+      },
+      _sum: {
+        amount: true,
+      },
+    }),
+    prisma.withdrawal.aggregate({
+      where: {
+        userId: session!.user.id,
+        status: "APPROVED",
+      },
+      _sum: {
+        amount: true,
+      },
+    }),
+  ]);
 
   return (
     <div className="space-y-8">
       <h2 className="text-3xl font-semibold">Welcome back</h2>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-5">
         <Card className="rounded-2xl border-white/10 bg-white/5">
           <CardContent className="p-6">
             <p className="text-white/60">Wallet Balance</p>
@@ -37,6 +57,24 @@ export default async function UserDashboard() {
           <CardContent className="p-6">
             <p className="text-white/60">Account Status</p>
             <h2 className="mt-2 text-3xl font-bold text-blue-400">Active</h2>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl border-white/10 bg-white/5">
+          <CardContent className="p-6">
+            <p className="text-white/60">Pending Withdrawal Amount</p>
+            <h2 className="mt-2 text-3xl font-bold text-amber-300">
+              INR {formatMoney(pendingWithdrawalAmount._sum.amount)}
+            </h2>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-2xl border-white/10 bg-white/5">
+          <CardContent className="p-6">
+            <p className="text-white/60">Total Withdrawn</p>
+            <h2 className="mt-2 text-3xl font-bold text-cyan-300">
+              INR {formatMoney(totalWithdrawn._sum.amount)}
+            </h2>
           </CardContent>
         </Card>
       </div>
