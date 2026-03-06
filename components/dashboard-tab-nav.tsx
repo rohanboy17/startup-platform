@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ComponentType } from "react";
 import {
+  ChevronDown,
   BarChart3,
   Bell,
   CircleDollarSign,
@@ -81,6 +82,7 @@ export default function DashboardTabNav({
   const pathname = usePathname();
   const [alerts, setAlerts] = useState<Record<string, string>>({});
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const storagePrefix = `nav_seen:${userId}:`;
 
@@ -130,27 +132,44 @@ export default function DashboardTabNav({
   );
 
   return (
-    <nav className="space-y-4 text-sm">
-      {itemsWithState.map((item) => (
-        <Link
-          key={item.key}
-          href={item.href}
-          className="flex items-center justify-between text-white/70 transition hover:text-white"
-        >
-          <span className="flex items-center gap-3">
-            <item.Icon size={18} />
-            {item.label}
-          </span>
-          {item.badgeCount > 0 ? (
-            <span className="rounded-full bg-emerald-400 px-2 py-0.5 text-xs font-semibold text-black">
-              {item.badgeCount}
+    <div>
+      <button
+        type="button"
+        onClick={() => setMobileOpen((prev) => !prev)}
+        className="mb-3 flex w-full items-center justify-between rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-white/90 md:hidden"
+      >
+        <span>Menu</span>
+        <ChevronDown
+          size={16}
+          className={`transition ${mobileOpen ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      <nav
+        className={`space-y-4 text-sm ${mobileOpen ? "block" : "hidden"} max-h-[55vh] overflow-y-auto pr-1 md:block md:max-h-none md:overflow-visible md:pr-0`}
+      >
+        {itemsWithState.map((item) => (
+          <Link
+            key={item.key}
+            href={item.href}
+            onClick={() => setMobileOpen(false)}
+            className="flex items-center justify-between text-white/70 transition hover:text-white"
+          >
+            <span className="flex items-center gap-3">
+              <item.Icon size={18} />
+              {item.label}
             </span>
-          ) : item.showDot ? (
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-          ) : null}
-        </Link>
-      ))}
-    </nav>
+            {item.badgeCount > 0 ? (
+              <span className="rounded-full bg-emerald-400 px-2 py-0.5 text-xs font-semibold text-black">
+                {item.badgeCount}
+              </span>
+            ) : item.showDot ? (
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+            ) : null}
+          </Link>
+        ))}
+      </nav>
+    </div>
   );
 }
 
