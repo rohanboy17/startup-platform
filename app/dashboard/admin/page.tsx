@@ -39,46 +39,46 @@ export default async function AdminDashboard() {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-6">
         <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-6">
+          <CardContent className="p-5 sm:p-6">
             <p className="text-muted-foreground">Total Users</p>
-            <h2 className="mt-2 text-3xl font-bold">{users}</h2>
+            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">{users}</h2>
           </CardContent>
         </Card>
 
         <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-6">
+          <CardContent className="p-5 sm:p-6">
             <p className="text-muted-foreground">Businesses</p>
-            <h2 className="mt-2 text-3xl font-bold">{businesses}</h2>
+            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">{businesses}</h2>
           </CardContent>
         </Card>
 
         <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-6">
+          <CardContent className="p-5 sm:p-6">
             <p className="text-muted-foreground">Revenue</p>
-            <h2 className="mt-2 text-3xl font-bold text-green-500">
+            <h2 className="mt-2 text-2xl font-bold text-green-500 sm:text-3xl">
               INR {formatMoney(revenue._sum.amount)}
             </h2>
           </CardContent>
         </Card>
 
         <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-6">
+          <CardContent className="p-5 sm:p-6">
             <p className="text-muted-foreground">Live Campaigns</p>
-            <h2 className="mt-2 text-3xl font-bold">{liveCampaigns}</h2>
+            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">{liveCampaigns}</h2>
           </CardContent>
         </Card>
 
         <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-6">
+          <CardContent className="p-5 sm:p-6">
             <p className="text-muted-foreground">Managers</p>
-            <h2 className="mt-2 text-3xl font-bold">{managers}</h2>
+            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">{managers}</h2>
           </CardContent>
         </Card>
 
         <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-6">
+          <CardContent className="p-5 sm:p-6">
             <p className="text-muted-foreground">Pending Campaigns</p>
-            <h2 className="mt-2 text-3xl font-bold">{pendingCampaigns}</h2>
+            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">{pendingCampaigns}</h2>
             <p className="mt-2 text-xs text-white/60">Final Reviews: {pendingFinalReviews}</p>
           </CardContent>
         </Card>

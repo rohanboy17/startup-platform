@@ -62,7 +62,7 @@ export default function BusinessCampaignsPanel() {
               <CardContent className="space-y-4 p-6">
                 <h3 className="text-xl font-semibold">{campaign.title}</h3>
                 <p className="text-sm text-white/60">{campaign.description}</p>
-                <div className="flex justify-between text-sm">
+                <div className="flex flex-col gap-1 text-sm sm:flex-row sm:justify-between">
                   <span>Status: {campaign.status}</span>
                   <span>Budget Left: INR {formatMoney(campaign.remainingBudget)}</span>
                 </div>

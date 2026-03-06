@@ -46,7 +46,7 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
 
   return (
     <div className="space-y-8">
-      <h2 className="text-3xl font-semibold">Withdrawals</h2>
+      <h2 className="text-2xl font-semibold md:text-3xl">Withdrawals</h2>
       <p className="text-sm text-white/60">
         Current wallet balance: INR {formatMoney(data?.balance)}
       </p>
@@ -62,7 +62,7 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
           <div className="p-6 text-sm text-white/60">No withdrawal history yet.</div>
         ) : (
           data.withdrawals.map((w) => (
-            <div key={w.id} className="flex justify-between p-6">
+            <div key={w.id} className="flex flex-col gap-2 p-5 sm:flex-row sm:justify-between sm:p-6">
               <div>
                 <p className="font-medium">Withdrawal Request</p>
                 <p className="text-sm text-white/50">{new Date(w.createdAt).toLocaleDateString()}</p>
@@ -72,7 +72,7 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
                   </p>
                 ) : null}
               </div>
-              <div className="text-right">
+              <div className="sm:text-right">
                 <p>INR {formatMoney(w.amount)}</p>
                 <p className="text-sm text-white/60">{w.status}</p>
               </div>

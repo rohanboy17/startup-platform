@@ -99,7 +99,7 @@ export default async function AdminRevenuePage() {
           payouts.map((payout) => (
             <Card key={payout.id} className="rounded-2xl border-white/10 bg-white/5">
               <CardContent className="space-y-3 p-6">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <p className="font-medium">INR {formatMoney(payout.amount)}</p>
                   <p className="text-sm text-white/70">{payout.status}</p>
                 </div>

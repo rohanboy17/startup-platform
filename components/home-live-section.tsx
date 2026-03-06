@@ -51,11 +51,11 @@ export default function HomeLiveSection() {
     : "";
 
   return (
-    <section className="mx-auto w-full max-w-6xl px-6 pb-20">
-      <div className="rounded-3xl border border-white/15 bg-white/5 p-6 backdrop-blur-xl md:p-8">
-        <div className="mb-6 flex items-center justify-between">
+    <section className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6 sm:pb-20">
+      <div className="rounded-3xl border border-white/15 bg-white/5 p-4 backdrop-blur-xl sm:p-6 md:p-8">
+        <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 className="text-2xl font-semibold">Live Platform Activity</h2>
+            <h2 className="text-xl font-semibold sm:text-2xl">Live Platform Activity</h2>
             <p className="text-sm text-white/60">Anonymized real-time feed. No personal data shown.</p>
           </div>
           <span className="inline-flex items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300">
@@ -69,7 +69,7 @@ export default function HomeLiveSection() {
 
         {data ? (
           <>
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
               <div className="rounded-xl border border-white/10 bg-black/30 p-4">
                 <p className="text-xs text-white/60">Active Online Users</p>
                 <p className="mt-1 text-xl font-semibold">{data.stats.activeOnlineUsers}</p>

@@ -54,8 +54,8 @@ export default function CreateCampaign() {
   };
 
   return (
-    <div className="max-w-xl space-y-6">
-      <h2 className="text-3xl font-semibold">Create Campaign</h2>
+    <div className="max-w-xl space-y-5 md:space-y-6">
+      <h2 className="text-2xl font-semibold md:text-3xl">Create Campaign</h2>
 
       <Input
         placeholder="Campaign Title"

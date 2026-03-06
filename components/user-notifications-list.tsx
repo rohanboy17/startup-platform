@@ -56,7 +56,7 @@ export default function UserNotificationsList({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-white/60">Unread: {notifications.filter((n) => !n.isRead).length}</p>
         <Button
           variant="outline"
@@ -80,7 +80,7 @@ export default function UserNotificationsList({
             }`}
           >
             <CardContent className="space-y-2 p-6">
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <p className="font-semibold">{n.title}</p>
                 {!n.isRead ? (
                   <Button

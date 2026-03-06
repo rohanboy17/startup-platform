@@ -65,7 +65,7 @@ export default async function AdminWithdrawalsPage() {
             return (
               <Card key={w.id} className="rounded-2xl border-white/10 bg-white/5">
                 <CardContent className="space-y-4 p-6">
-                  <div className="flex items-center justify-between gap-4">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                     <div>
                       <p className="font-medium">{w.user.name || w.user.email}</p>
                       <p className="text-sm text-white/60">{w.user.email}</p>

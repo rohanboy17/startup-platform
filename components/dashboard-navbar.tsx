@@ -14,11 +14,11 @@ export default function DashboardNavbar() {
   );
 
   return (
-    <div className="mb-10 flex items-center justify-between">
+    <div className="mb-8 flex flex-wrap items-center justify-between gap-3 md:mb-10">
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-3xl font-semibold"
+        className="text-2xl font-semibold md:text-3xl"
       >
         Dashboard
       </motion.h1>

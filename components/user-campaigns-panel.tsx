@@ -89,8 +89,11 @@ export default function UserCampaignsPanel() {
                   </span>
                 </div>
                 <p className="text-xs text-white/60">
-                  Allowed: {campaign.allowedSubmissions} | Used: {campaign.usedSubmissions} |
-                  Slots Left: {campaign.leftSubmissions}
+                  Allowed: {campaign.allowedSubmissions}
+                  <span className="mx-1 hidden sm:inline">|</span>
+                  <span className="block sm:inline">Used: {campaign.usedSubmissions}</span>
+                  <span className="mx-1 hidden sm:inline">|</span>
+                  <span className="block sm:inline">Slots Left: {campaign.leftSubmissions}</span>
                 </p>
                 <SubmitCampaignModal campaignId={campaign.id} />
               </CardContent>
