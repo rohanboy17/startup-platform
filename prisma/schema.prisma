@@ -12,6 +12,12 @@ model User {
   email       String       @unique
   password    String
   role        Role         @default(USER)
+  accountStatus UserAccountStatus @default(ACTIVE)
+  statusReason String?
+  statusUpdatedAt DateTime?
+  kycStatus   KycStatus    @default(PENDING)
+  kycNotes    String?
+  kycVerifiedAt DateTime?
   level       UserLevel    @default(L1)
   balance     Float        @default(0)
   dailySubmits Int         @default(0)
@@ -57,6 +63,8 @@ model Withdrawal {
   upiId     String?
   upiName   String?
   status    WithdrawalStatus @default(PENDING)
+  adminNote String?
+  processedAt DateTime?
   createdAt DateTime         @default(now())
   userId    String
   user      User             @relation(fields: [userId], references: [id])
@@ -118,6 +126,8 @@ model Campaign {
   totalBudget     Float
   remainingBudget Float
   status          CampaignStatus        @default(PENDING)
+  escalatedAt     DateTime?
+  escalationReason String?
   createdAt       DateTime              @default(now())
   submissions     Submission[]
   instructions    CampaignInstruction[]
@@ -195,6 +205,18 @@ enum Role {
   BUSINESS
   MANAGER
   ADMIN
+}
+
+enum UserAccountStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+enum KycStatus {
+  PENDING
+  VERIFIED
+  REJECTED
 }
 
 enum UserLevel {

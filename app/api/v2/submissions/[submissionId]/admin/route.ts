@@ -14,7 +14,7 @@ export async function PATCH(
   }
 
   const { submissionId } = await params;
-  const { action } = (await req.json()) as { action?: "APPROVE" | "REJECT" };
+  const { action } = (await req.json()) as { action?: "APPROVE" | "REJECT" | "REOPEN" };
 
   if (!action) {
     return NextResponse.json({ error: "Action is required" }, { status: 400 });
@@ -28,6 +28,7 @@ export async function PATCH(
           id: true,
           level: true,
           totalApproved: true,
+          totalRejected: true,
         },
       },
       campaign: {
@@ -53,8 +54,153 @@ export async function PATCH(
     );
   }
 
-  if (submission.adminStatus !== "PENDING") {
+  if (action !== "REOPEN" && submission.adminStatus !== "PENDING") {
     return NextResponse.json({ error: "Admin already reviewed this submission" }, { status: 400 });
+  }
+
+  if (action === "REOPEN") {
+    if (!["ADMIN_APPROVED", "ADMIN_REJECTED"].includes(submission.adminStatus)) {
+      return NextResponse.json({ error: "Only reviewed submissions can be reopened" }, { status: 400 });
+    }
+
+    if (submission.adminStatus === "ADMIN_REJECTED") {
+      const reopened = await prisma.$transaction(async (tx) => {
+        const updated = await tx.submission.update({
+          where: { id: submissionId },
+          data: {
+            adminStatus: "PENDING",
+            status: "PENDING",
+          },
+        });
+
+        await tx.user.update({
+          where: { id: submission.user.id },
+          data: { totalRejected: { decrement: submission.user.totalRejected > 0 ? 1 : 0 } },
+        });
+
+        await tx.notification.create({
+          data: {
+            userId: submission.user.id,
+            title: "Submission reopened",
+            message: "Your submission was reopened for final admin re-verification.",
+            type: "INFO",
+          },
+        });
+
+        await tx.activityLog.create({
+          data: {
+            userId: session.user.id,
+            action: "ADMIN_REOPENED_SUBMISSION",
+            entity: "Submission",
+            details: `submissionId=${submissionId}, previous=ADMIN_REJECTED`,
+          },
+        });
+
+        return updated;
+      });
+
+      return NextResponse.json({ message: "Submission reopened", submission: reopened });
+    }
+
+    const netReward = submission.rewardAmount || 0;
+    const grossReward = submission.campaign.rewardPerTask;
+    const commission = Number((grossReward - netReward).toFixed(2));
+
+    const reopened = await prisma.$transaction(async (tx) => {
+      const freshUser = await tx.user.findUnique({
+        where: { id: submission.user.id },
+        select: { balance: true, totalApproved: true },
+      });
+
+      if (!freshUser || freshUser.balance < netReward) {
+        throw new Error("User balance is insufficient to reverse this approval");
+      }
+
+      const treasury = await tx.platformTreasury.upsert({
+        where: { id: "main" },
+        update: {},
+        create: { id: "main", balance: 0 },
+      });
+
+      if (commission > 0 && treasury.balance < commission) {
+        throw new Error("Treasury balance is insufficient to reverse commission");
+      }
+
+      await tx.campaign.update({
+        where: { id: submission.campaign!.id },
+        data: {
+          remainingBudget: { increment: grossReward },
+        },
+      });
+
+      const nextApprovedCount = Math.max(0, freshUser.totalApproved - 1);
+      const nextLevel = getLevelFromApprovedCount(nextApprovedCount);
+
+      await tx.user.update({
+        where: { id: submission.user.id },
+        data: {
+          balance: { decrement: netReward },
+          totalApproved: { decrement: 1 },
+          level: nextLevel,
+        },
+      });
+
+      await tx.walletTransaction.create({
+        data: {
+          userId: submission.user.id,
+          amount: netReward,
+          type: "DEBIT",
+          note: `Admin reopen reversal (${submission.campaign!.title})`,
+        },
+      });
+
+      if (commission > 0) {
+        await tx.platformEarning.create({
+          data: {
+            amount: -commission,
+            source: `Reversal - ${submission.campaign!.title}`,
+          },
+        });
+
+        await tx.platformTreasury.update({
+          where: { id: "main" },
+          data: {
+            balance: { decrement: commission },
+          },
+        });
+      }
+
+      const updated = await tx.submission.update({
+        where: { id: submissionId },
+        data: {
+          adminStatus: "PENDING",
+          status: "PENDING",
+          rewardAmount: 0,
+        },
+      });
+
+      await tx.notification.create({
+        data: {
+          userId: submission.user.id,
+          title: "Submission reopened",
+          message: "A previously approved submission was reopened for final admin re-verification.",
+          type: "WARNING",
+        },
+      });
+
+      await tx.activityLog.create({
+        data: {
+          userId: session.user.id,
+          action: "ADMIN_REOPENED_SUBMISSION",
+          entity: "Submission",
+          details: `submissionId=${submissionId}, previous=ADMIN_APPROVED, net=${netReward}, commission=${commission}`,
+        },
+      });
+
+      return updated;
+    });
+
+    return NextResponse.json({ message: "Submission reopened", submission: reopened });
   }
 
   if (action === "REJECT") {

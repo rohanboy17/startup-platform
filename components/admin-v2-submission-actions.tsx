@@ -7,14 +7,16 @@ import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
 export default function AdminV2SubmissionActions({
   submissionId,
+  allowReopen = false,
 }: {
   submissionId: string;
+  allowReopen?: boolean;
 }) {
   const router = useRouter();
-  const [loading, setLoading] = useState<"APPROVE" | "REJECT" | null>(null);
+  const [loading, setLoading] = useState<"APPROVE" | "REJECT" | "REOPEN" | null>(null);
   const [message, setMessage] = useState("");
 
-  async function review(action: "APPROVE" | "REJECT") {
+  async function review(action: "APPROVE" | "REJECT" | "REOPEN") {
     setLoading(action);
     setMessage("");
 
@@ -53,6 +55,11 @@ export default function AdminV2SubmissionActions({
         <Button variant="destructive" onClick={() => review("REJECT")} disabled={loading !== null}>
           {loading === "REJECT" ? "Rejecting..." : "Reject"}
         </Button>
+        {allowReopen ? (
+          <Button variant="outline" onClick={() => review("REOPEN")} disabled={loading !== null}>
+            {loading === "REOPEN" ? "Reopening..." : "Reopen"}
+          </Button>
+        ) : null}
       </div>
       {message ? <p className="text-xs text-white/60">{message}</p> : null}
     </div>

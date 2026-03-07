@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import DashboardTabNav from "@/components/dashboard-tab-nav";
+import PresenceHeartbeat from "@/components/presence-heartbeat";
 
 export default async function BusinessLayout({
   children,
@@ -21,6 +22,7 @@ export default async function BusinessLayout({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white">
+      <PresenceHeartbeat />
       <div className="flex flex-col md:flex-row">
         <aside className="w-full space-y-8 border-b border-white/10 p-6 backdrop-blur-xl md:w-72 md:border-b-0 md:border-r">
           <DashboardTabNav

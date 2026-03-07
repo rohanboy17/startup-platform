@@ -34,7 +34,7 @@ export default async function UserDashboard() {
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-semibold md:text-3xl">Welcome back</h2>
+      <h2 className="text-2xl font-semibold md:text-3xl">User Overview</h2>
 
       <div className="grid gap-6 md:grid-cols-5">
         <Card className="rounded-2xl border-white/10 bg-white/5">

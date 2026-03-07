@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { getMinFundingThreshold } from "@/lib/notifications";
+import { writeAuditLog } from "@/lib/audit";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -39,6 +40,19 @@ export async function POST(req: Request) {
       },
     });
 
+    await tx.businessWallet.upsert({
+      where: { businessId },
+      update: {
+        balance: { increment: amountNumber },
+        totalFunded: { increment: amountNumber },
+      },
+      create: {
+        businessId,
+        balance: amountNumber,
+        totalFunded: amountNumber,
+      },
+    });
+
     await tx.walletTransaction.create({
       data: {
         userId: businessId,
@@ -47,6 +61,14 @@ export async function POST(req: Request) {
         note: "Admin funded business wallet",
       },
     });
+  });
+
+  await writeAuditLog({
+    actorUserId: session.user.id,
+    actorRole: session.user.role,
+    targetUserId: businessId,
+    action: "BUSINESS_WALLET_FUNDED_BY_ADMIN",
+    details: `amount=${amountNumber}`,
   });
 
   return NextResponse.json({

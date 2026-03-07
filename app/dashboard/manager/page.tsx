@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default async function ManagerDashboardPage() {
-  const session = await auth();
+  await auth();
 
   const [pendingForManager, managerApprovedPendingAdmin, managerRejected] = await Promise.all([
     prisma.submission.count({
@@ -19,7 +19,7 @@ export default async function ManagerDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <h2 className="text-3xl font-semibold">Welcome, {session?.user?.email}</h2>
+      <h2 className="text-3xl font-semibold">Manager Overview</h2>
 
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="rounded-2xl border-white/10 bg-white/5">

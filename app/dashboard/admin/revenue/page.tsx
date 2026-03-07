@@ -1,11 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link";
 import PlatformPayoutRequest from "@/components/platform-payout-request";
 import PlatformPayoutActions from "@/components/platform-payout-actions";
 import { reconcileTreasuryBalance } from "@/lib/treasury";
 import { formatMoney } from "@/lib/format-money";
 
 export default async function AdminRevenuePage() {
+  const payoutDailyLimit = Number(process.env.PAYOUT_DAILY_LIMIT ?? 200000);
+  const payoutPerRequestLimit = Number(process.env.PAYOUT_MAX_REQUEST ?? 50000);
   const delegates = prisma as unknown as {
     platformTreasury?: {
       upsert: (args: {
@@ -55,6 +58,12 @@ export default async function AdminRevenuePage() {
     delegates.platformTreasury && delegates.platformPayout && delegates.platformEarning
       ? await reconcileTreasuryBalance()
       : treasury.balance;
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const todayPayouts = payouts.filter((p) => p.createdAt >= todayStart);
+  const todayRequestedAmount = todayPayouts
+    .filter((p) => p.status === "PENDING" || p.status === "APPROVED")
+    .reduce((sum, p) => sum + p.amount, 0);
 
   return (
     <div className="space-y-8">
@@ -73,6 +82,13 @@ export default async function AdminRevenuePage() {
           <CardContent className="p-6">
             <p className="text-sm text-white/60">Treasury Available (Reconciled)</p>
             <p className="mt-1 text-2xl font-semibold">INR {formatMoney(reconciledBalance)}</p>
+            <p className="mt-2 text-xs text-white/50">
+              Payout limits: per request INR {formatMoney(payoutPerRequestLimit)} | daily INR{" "}
+              {formatMoney(payoutDailyLimit)}
+            </p>
+            <p className="text-xs text-white/50">
+              Today requested: INR {formatMoney(todayRequestedAmount)}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -88,7 +104,15 @@ export default async function AdminRevenuePage() {
       )}
 
       <div className="space-y-4">
-        <h3 className="text-xl font-semibold">Payout Requests</h3>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-xl font-semibold">Payout Requests</h3>
+          <Link
+            href="/api/admin/revenue/payouts/export?status=ALL"
+            className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-sm text-white hover:bg-white/10"
+          >
+            Export Payout CSV
+          </Link>
+        </div>
         {payouts.length === 0 ? (
           <Card className="rounded-2xl border-white/10 bg-white/5">
             <CardContent className="p-6 text-sm text-white/60">
@@ -112,8 +136,8 @@ export default async function AdminRevenuePage() {
                     Processed: {new Date(payout.processedAt).toLocaleString()}
                   </p>
                 ) : null}
-                {payout.status === "PENDING" ? (
-                  <PlatformPayoutActions payoutId={payout.id} />
+                {payout.status !== "APPROVED" ? (
+                  <PlatformPayoutActions payoutId={payout.id} status={payout.status as "PENDING" | "APPROVED" | "REJECTED"} />
                 ) : null}
               </CardContent>
             </Card>

@@ -11,6 +11,7 @@ export default function AdminWithdrawalActions({
   withdrawalId: string;
 }) {
   const router = useRouter();
+  const [note, setNote] = useState("");
   const [loading, setLoading] = useState<"APPROVED" | "REJECTED" | null>(null);
   const [message, setMessage] = useState("");
 
@@ -22,7 +23,7 @@ export default function AdminWithdrawalActions({
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ action }),
+      body: JSON.stringify({ action, note }),
     });
 
     const raw = await res.text();
@@ -47,6 +48,12 @@ export default function AdminWithdrawalActions({
 
   return (
     <div className="space-y-2">
+      <input
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+        placeholder="Admin note (optional)"
+      />
       <div className="flex gap-3">
         <Button onClick={() => review("APPROVED")} disabled={loading !== null}>
           {loading === "APPROVED" ? "Approving..." : "Approve"}

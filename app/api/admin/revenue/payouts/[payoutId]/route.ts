@@ -18,13 +18,22 @@ export async function PATCH(
       findUnique: (args: { where: { id: string } }) => Promise<{
         id: string;
         amount: number;
+        note: string | null;
         status: "PENDING" | "APPROVED" | "REJECTED";
       } | null>;
       update: (args: {
         where: { id: string };
         data: {
+          note?: string | null;
           status: "APPROVED" | "REJECTED";
           processedAt: Date;
+        };
+      }) => Promise<unknown>;
+      create: (args: {
+        data: {
+          amount: number;
+          note: string | null;
+          status: "PENDING";
         };
       }) => Promise<unknown>;
     };
@@ -38,8 +47,12 @@ export async function PATCH(
     );
   }
 
-  const { action } = await req.json();
-  if (!["APPROVED", "REJECTED"].includes(action)) {
+  const { action, note } = (await req.json()) as {
+    action?: "APPROVED" | "REJECTED" | "RETRY";
+    note?: string;
+  };
+  const noteText = note?.trim() || null;
+  if (!["APPROVED", "REJECTED", "RETRY"].includes(action || "")) {
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   }
 
@@ -53,14 +66,30 @@ export async function PATCH(
     return NextResponse.json({ error: "Payout request not found" }, { status: 404 });
   }
 
-  if (payout.status !== "PENDING") {
+  if (action !== "RETRY" && payout.status !== "PENDING") {
     return NextResponse.json({ error: "Already processed" }, { status: 400 });
+  }
+
+  if (action === "RETRY") {
+    if (payout.status !== "REJECTED") {
+      return NextResponse.json({ error: "Only rejected payouts can be retried" }, { status: 400 });
+    }
+
+    const retry = await delegates.platformPayout.create({
+      data: {
+        amount: payout.amount,
+        note: noteText || `Retry of payout ${payout.id}${payout.note ? ` | ${payout.note}` : ""}`,
+        status: "PENDING",
+      },
+    });
+
+    return NextResponse.json({ message: "Payout retried as new request", payout: retry });
   }
 
   if (action === "REJECTED") {
     const rejected = await delegates.platformPayout.update({
       where: { id: payoutId },
-      data: { status: "REJECTED", processedAt: new Date() },
+      data: { status: "REJECTED", processedAt: new Date(), note: noteText || payout.note },
     });
 
     return NextResponse.json({ message: "Payout rejected", payout: rejected });
@@ -94,6 +123,7 @@ export async function PATCH(
       data: {
         status: "APPROVED",
         processedAt: new Date(),
+        note: noteText || payout.note,
       },
     });
 

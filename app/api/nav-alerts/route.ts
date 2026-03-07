@@ -27,7 +27,19 @@ export async function GET() {
 
   try {
     if (role === "ADMIN") {
-      const [pendingCampaigns, reviewSubmissions, usersTotal, pendingWithdrawals, earnings, payouts, audits] =
+      const [
+        pendingCampaigns,
+        reviewSubmissions,
+        usersTotal,
+        businessesPendingKyc,
+        pendingWithdrawals,
+        earnings,
+        payouts,
+        audits,
+        escalatedCampaigns,
+        riskyWithdrawals,
+        flaggedUsers,
+      ] =
         await Promise.all([
           prisma.campaign.findMany({
             where: { status: "PENDING" },
@@ -43,6 +55,12 @@ export async function GET() {
           }),
           prisma.user.findMany({
             select: { createdAt: true, flaggedAt: true },
+            orderBy: { createdAt: "desc" },
+            take: 200,
+          }),
+          prisma.user.findMany({
+            where: { role: "BUSINESS", kycStatus: "PENDING" },
+            select: { createdAt: true, statusUpdatedAt: true },
             orderBy: { createdAt: "desc" },
             take: 200,
           }),
@@ -67,12 +85,42 @@ export async function GET() {
             orderBy: { createdAt: "desc" },
             take: 100,
           }),
+          prisma.campaign.findMany({
+            where: { status: "PENDING", escalatedAt: { not: null } },
+            select: { escalatedAt: true, createdAt: true },
+            orderBy: { escalatedAt: "desc" },
+            take: 100,
+          }),
+          prisma.withdrawal.findMany({
+            where: { status: "PENDING", amount: { gte: Number(process.env.RISK_WITHDRAWAL_ALERT_AMOUNT ?? 3000) } },
+            select: { createdAt: true },
+            orderBy: { createdAt: "desc" },
+            take: 100,
+          }),
+          prisma.user.findMany({
+            where: { isSuspicious: true },
+            select: { flaggedAt: true, createdAt: true },
+            orderBy: { flaggedAt: "desc" },
+            take: 100,
+          }),
         ]);
 
       const tabs = {
         "admin.campaigns": token(pendingCampaigns.length, pendingCampaigns[0]?.createdAt),
+        "admin.risk": token(
+          escalatedCampaigns.length + riskyWithdrawals.length + flaggedUsers.length,
+          maxDate(
+            escalatedCampaigns[0]?.escalatedAt || escalatedCampaigns[0]?.createdAt,
+            riskyWithdrawals[0]?.createdAt,
+            flaggedUsers[0]?.flaggedAt || flaggedUsers[0]?.createdAt
+          )
+        ),
         "admin.reviews": token(reviewSubmissions.length, reviewSubmissions[0]?.createdAt),
         "admin.users": token(usersTotal.length, maxDate(usersTotal[0]?.createdAt, usersTotal[0]?.flaggedAt)),
+        "admin.businesses": token(
+          businessesPendingKyc.length,
+          maxDate(businessesPendingKyc[0]?.createdAt, businessesPendingKyc[0]?.statusUpdatedAt)
+        ),
         "admin.withdrawals": token(pendingWithdrawals.length, pendingWithdrawals[0]?.createdAt),
         "admin.revenue": token(
           earnings.length + payouts.length,
@@ -87,7 +135,9 @@ export async function GET() {
           "admin.overview": Object.values(tabs).join("|"),
           ...tabs,
         },
-        counts: {},
+        counts: {
+          "admin.risk": escalatedCampaigns.length + riskyWithdrawals.length + flaggedUsers.length,
+        },
       });
     }
 

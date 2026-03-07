@@ -1,10 +1,35 @@
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 
-export default async function AdminAuditPage() {
+type SearchParams = {
+  q?: string;
+  action?: string;
+  actorRole?: string;
+};
+
+export default async function AdminAuditPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const params = await searchParams;
+  const q = params.q?.trim() || "";
+  const action = params.action?.trim() || "";
+  const actorRole = params.actorRole?.trim() || "ALL";
+
   const delegate = (prisma as unknown as {
     auditLog?: {
       findMany: (args: {
+        where?: {
+          action?: { contains: string; mode: "insensitive" };
+          actorRole?: string;
+          OR?: Array<
+            | { details: { contains: string; mode: "insensitive" } }
+            | { action: { contains: string; mode: "insensitive" } }
+            | { targetUserId: { contains: string; mode: "insensitive" } }
+            | { actorUserId: { contains: string; mode: "insensitive" } }
+          >;
+        };
         orderBy: { createdAt: "desc" };
         take: number;
       }) => Promise<
@@ -35,8 +60,22 @@ export default async function AdminAuditPage() {
   if (delegate) {
     try {
       logs = await delegate.findMany({
+        where: {
+          ...(action ? { action: { contains: action, mode: "insensitive" } } : {}),
+          ...(actorRole !== "ALL" ? { actorRole } : {}),
+          ...(q
+            ? {
+                OR: [
+                  { details: { contains: q, mode: "insensitive" } },
+                  { action: { contains: q, mode: "insensitive" } },
+                  { targetUserId: { contains: q, mode: "insensitive" } },
+                  { actorUserId: { contains: q, mode: "insensitive" } },
+                ],
+              }
+            : {}),
+        },
         orderBy: { createdAt: "desc" },
-        take: 100,
+        take: 250,
       });
     } catch (error: unknown) {
       loadError = error instanceof Error ? error.message : "Failed to load audit logs";
@@ -46,6 +85,52 @@ export default async function AdminAuditPage() {
   return (
     <div className="space-y-8">
       <h2 className="text-3xl font-semibold">Audit Logs</h2>
+
+      <Card className="rounded-2xl border-white/10 bg-white/5">
+        <CardContent className="p-4">
+          <form className="grid gap-3 md:grid-cols-4">
+            <input
+              type="text"
+              name="q"
+              defaultValue={q}
+              placeholder="Search details, actor, target"
+              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            />
+            <input
+              type="text"
+              name="action"
+              defaultValue={action}
+              placeholder="Action contains (optional)"
+              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            />
+            <select
+              name="actorRole"
+              defaultValue={actorRole}
+              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            >
+              <option value="ALL">All Actor Roles</option>
+              <option value="ADMIN">ADMIN</option>
+              <option value="MANAGER">MANAGER</option>
+              <option value="BUSINESS">BUSINESS</option>
+              <option value="USER">USER</option>
+            </select>
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                className="rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/20"
+              >
+                Apply Filters
+              </button>
+              <a
+                href="/dashboard/admin/audit"
+                className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-sm text-white hover:bg-white/10"
+              >
+                Clear
+              </a>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
 
       {!delegate ? (
         <Card className="rounded-2xl border-amber-300/20 bg-amber-500/10">

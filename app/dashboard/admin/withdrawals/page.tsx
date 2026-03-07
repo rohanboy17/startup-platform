@@ -24,6 +24,13 @@ export default async function AdminWithdrawalsPage() {
   const pendingCount = totals.find((t) => t.status === "PENDING")?._count._all || 0;
   const approvedCount = totals.find((t) => t.status === "APPROVED")?._count._all || 0;
   const rejectedCount = totals.find((t) => t.status === "REJECTED")?._count._all || 0;
+  const pendingItems = withdrawals.filter((w) => w.status === "PENDING");
+  const pendingGross = pendingItems.reduce((sum, w) => sum + w.amount, 0);
+  const pendingFee = pendingItems.reduce(
+    (sum, w) => sum + Number((w.amount * commissionRate).toFixed(2)),
+    0
+  );
+  const pendingPayout = Number((pendingGross - pendingFee).toFixed(2));
 
   return (
     <div className="space-y-8">
@@ -46,6 +53,27 @@ export default async function AdminWithdrawalsPage() {
           <CardContent className="p-5">
             <p className="text-sm text-white/60">Rejected</p>
             <p className="mt-1 text-2xl font-semibold">{rejectedCount}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card className="rounded-2xl border-white/10 bg-white/5">
+          <CardContent className="p-5">
+            <p className="text-sm text-white/60">Pending Gross</p>
+            <p className="mt-1 text-2xl font-semibold">INR {formatMoney(pendingGross)}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl border-white/10 bg-white/5">
+          <CardContent className="p-5">
+            <p className="text-sm text-white/60">Pending Commission</p>
+            <p className="mt-1 text-2xl font-semibold">INR {formatMoney(pendingFee)}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl border-white/10 bg-white/5">
+          <CardContent className="p-5">
+            <p className="text-sm text-white/60">Pending Payout (Net)</p>
+            <p className="mt-1 text-2xl font-semibold">INR {formatMoney(pendingPayout)}</p>
           </CardContent>
         </Card>
       </div>
@@ -86,6 +114,12 @@ export default async function AdminWithdrawalsPage() {
                     Estimated fee ({(commissionRate * 100).toFixed(1)}%): INR {formatMoney(fee)} |
                     User payout: INR {formatMoney(payout)}
                   </div>
+                  {w.adminNote ? <p className="text-xs text-white/60">Admin note: {w.adminNote}</p> : null}
+                  {w.processedAt ? (
+                    <p className="text-xs text-white/50">
+                      Processed: {new Date(w.processedAt).toLocaleString()}
+                    </p>
+                  ) : null}
 
                   {w.status === "PENDING" ? (
                     <AdminWithdrawalActions withdrawalId={w.id} />

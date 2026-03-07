@@ -9,7 +9,6 @@ export async function GET() {
   }
 
   const campaigns = await prisma.campaign.findMany({
-    where: { status: "PENDING" },
     include: {
       business: {
         select: { id: true, name: true, email: true },

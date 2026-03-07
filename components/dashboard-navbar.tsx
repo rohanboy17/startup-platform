@@ -20,7 +20,7 @@ export default function DashboardNavbar() {
         animate={{ opacity: 1, y: 0 }}
         className="text-2xl font-semibold md:text-3xl"
       >
-        Dashboard
+        Admin Overview
       </motion.h1>
 
       <button

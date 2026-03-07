@@ -1,0 +1,75 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
+
+type KycStatus = "PENDING" | "VERIFIED" | "REJECTED";
+
+export default function AdminBusinessKycActions({
+  userId,
+  currentStatus,
+}: {
+  userId: string;
+  currentStatus: KycStatus;
+}) {
+  const router = useRouter();
+  const [kycStatus, setKycStatus] = useState<KycStatus>(currentStatus);
+  const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function saveKyc() {
+    setLoading(true);
+    setMessage("");
+
+    const res = await fetch(`/api/admin/users/${userId}/kyc`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ kycStatus, notes }),
+    });
+
+    const raw = await res.text();
+    let data: { message?: string; error?: string } = {};
+    try {
+      data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
+    } catch {
+      data = { error: "Unexpected server response" };
+    }
+
+    setLoading(false);
+    setMessage(data.message || data.error || "Updated");
+    router.refresh();
+    emitDashboardLiveRefresh();
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap gap-2">
+        <select
+          value={kycStatus}
+          onChange={(e) => setKycStatus(e.target.value as KycStatus)}
+          className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          disabled={loading}
+        >
+          <option value="PENDING">PENDING</option>
+          <option value="VERIFIED">VERIFIED</option>
+          <option value="REJECTED">REJECTED</option>
+        </select>
+        <Button onClick={saveKyc} disabled={loading}>
+          {loading ? "Saving..." : "Update KYC"}
+        </Button>
+      </div>
+      <Input
+        placeholder="KYC notes (optional)"
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+      />
+      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+    </div>
+  );
+}
+

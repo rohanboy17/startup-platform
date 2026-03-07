@@ -26,9 +26,10 @@ export async function PATCH(
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
-  const { action } = await req.json();
+  const { action, note } = (await req.json()) as { action?: "APPROVED" | "REJECTED"; note?: string };
+  const noteText = note?.trim() || null;
 
-  if (!["APPROVED", "REJECTED"].includes(action)) {
+  if (!action || !["APPROVED", "REJECTED"].includes(action)) {
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   }
 
@@ -66,7 +67,7 @@ export async function PATCH(
     if (action === "REJECTED") {
       const rejected = await prisma.withdrawal.update({
         where: { id: withdrawal.id },
-        data: { status: "REJECTED" },
+        data: { status: "REJECTED", adminNote: noteText, processedAt: new Date() },
       });
 
       await writeAuditLog({
@@ -74,7 +75,7 @@ export async function PATCH(
         actorRole: session.user.role,
         targetUserId: withdrawal.userId,
         action: "WITHDRAWAL_REJECTED",
-        details: `withdrawalId=${withdrawal.id}, amount=${withdrawal.amount}`,
+        details: `withdrawalId=${withdrawal.id}, amount=${withdrawal.amount}, note=${noteText || "-"}`,
       });
 
       if (delegates.notification) {
@@ -82,7 +83,7 @@ export async function PATCH(
           data: {
             userId: withdrawal.userId,
             title: "Withdrawal Rejected",
-            message: `Your withdrawal request of INR ${withdrawal.amount} was rejected.`,
+            message: `Your withdrawal request of INR ${withdrawal.amount} was rejected.${noteText ? ` Note: ${noteText}` : ""}`,
             type: "WARNING",
           },
         });
@@ -184,7 +185,7 @@ export async function PATCH(
 
       const approved = await tx.withdrawal.update({
         where: { id: withdrawal.id },
-        data: { status: "APPROVED" },
+        data: { status: "APPROVED", adminNote: noteText, processedAt: new Date() },
       });
 
       return { approved, feeAmount, payoutAmount };
@@ -195,7 +196,7 @@ export async function PATCH(
         data: {
           userId: withdrawal.userId,
           title: "Withdrawal Approved",
-          message: `Your withdrawal of INR ${withdrawal.amount} was approved. Payout INR ${result.payoutAmount}, fee INR ${result.feeAmount}.`,
+          message: `Your withdrawal of INR ${withdrawal.amount} was approved. Payout INR ${result.payoutAmount}, fee INR ${result.feeAmount}.${noteText ? ` Note: ${noteText}` : ""}`,
           type: "SUCCESS",
         },
       });
@@ -206,7 +207,7 @@ export async function PATCH(
       actorRole: session.user.role,
       targetUserId: withdrawal.userId,
       action: "WITHDRAWAL_APPROVED",
-      details: `withdrawalId=${withdrawal.id}, amount=${withdrawal.amount}, fee=${result.feeAmount}`,
+      details: `withdrawalId=${withdrawal.id}, amount=${withdrawal.amount}, fee=${result.feeAmount}, note=${noteText || "-"}`,
     });
 
     return NextResponse.json({

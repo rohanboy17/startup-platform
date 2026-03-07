@@ -79,9 +79,34 @@ export async function POST(req: Request) {
 
   const { amount, note } = await req.json();
   const amountNumber = Number(amount);
+  const perRequestLimit = Number(process.env.PAYOUT_MAX_REQUEST ?? 50000);
+  const dailyLimit = Number(process.env.PAYOUT_DAILY_LIMIT ?? 200000);
 
   if (Number.isNaN(amountNumber) || amountNumber <= 0) {
     return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
+  }
+  if (Number.isFinite(perRequestLimit) && amountNumber > perRequestLimit) {
+    return NextResponse.json(
+      { error: `Payout exceeds per-request limit (INR ${perRequestLimit})` },
+      { status: 400 }
+    );
+  }
+
+  const dayStart = new Date();
+  dayStart.setHours(0, 0, 0, 0);
+  const todayRequested = await prisma.platformPayout.aggregate({
+    where: {
+      createdAt: { gte: dayStart },
+      status: { in: ["PENDING", "APPROVED"] },
+    },
+    _sum: { amount: true },
+  });
+  const currentDayTotal = todayRequested._sum.amount || 0;
+  if (Number.isFinite(dailyLimit) && currentDayTotal + amountNumber > dailyLimit) {
+    return NextResponse.json(
+      { error: `Daily payout limit exceeded (limit INR ${dailyLimit})` },
+      { status: 400 }
+    );
   }
 
   const reconciledBalance = await reconcileTreasuryBalance();
