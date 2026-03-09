@@ -3,10 +3,24 @@ import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 import { consumeRateLimit } from "@/lib/rate-limit";
 import { getClientIp } from "@/lib/ip";
+import { checkIpAccess, createSecurityEvent } from "@/lib/security";
+import { getAppSettings } from "@/lib/system-settings";
 
 export async function POST(req: Request) {
   try {
     const ip = getClientIp(req);
+    const ipAccess = await checkIpAccess({ ip });
+    if (ipAccess.blocked) {
+      await createSecurityEvent({
+        kind: "WITHDRAW_BLOCKED_IP",
+        severity: "HIGH",
+        ipAddress: ip,
+        message: "Withdrawal request blocked by IP access rule",
+        metadata: { reason: ipAccess.reason },
+      });
+      return NextResponse.json({ error: "Access denied from this network" }, { status: 403 });
+    }
+
     const rate = consumeRateLimit({
       key: `withdraw:${ip}`,
       limit: 15,
@@ -24,8 +38,9 @@ export async function POST(req: Request) {
     }
 
     const { amount, upiId, upiName } = await req.json();
+    const appSettings = await getAppSettings();
     const amountNumber = Number(amount);
-    const minWithdrawal = Number(process.env.MIN_WITHDRAWAL_AMOUNT ?? 200);
+    const minWithdrawal = appSettings.minWithdrawalAmount;
     const normalizedUpiId = typeof upiId === "string" ? upiId.trim() : "";
     const normalizedUpiName = typeof upiName === "string" ? upiName.trim() : "";
 

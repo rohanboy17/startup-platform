@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import PlatformPayoutRequest from "@/components/platform-payout-request";
 import PlatformPayoutActions from "@/components/platform-payout-actions";
+import AdminWalletAdjustmentReviewActions from "@/components/admin-wallet-adjustment-review-actions";
 import { reconcileTreasuryBalance } from "@/lib/treasury";
 import { formatMoney } from "@/lib/format-money";
 
@@ -32,9 +33,30 @@ export default async function AdminRevenuePage() {
     platformEarning?: {
       aggregate: (args: { _sum: { amount: true } }) => Promise<{ _sum: { amount: number | null } }>;
     };
+    walletAdjustmentRequest?: {
+      findMany: (args: {
+        where: { status: "PENDING" };
+        include: {
+          targetUser: { select: { name: true; email: true } };
+          requestedByUser: { select: { name: true; email: true } };
+        };
+        orderBy: { createdAt: "desc" };
+        take: number;
+      }) => Promise<
+        Array<{
+          id: string;
+          amount: number;
+          type: "CREDIT" | "DEBIT";
+          reason: string;
+          createdAt: Date;
+          targetUser: { name: string | null; email: string };
+          requestedByUser: { name: string | null; email: string };
+        }>
+      >;
+    };
   };
 
-  const [treasury, platformRevenue, payouts] = await Promise.all([
+  const [treasury, platformRevenue, payouts, pendingAdjustments] = await Promise.all([
     delegates.platformTreasury
       ? delegates.platformTreasury.upsert({
           where: { id: "main" },
@@ -51,6 +73,17 @@ export default async function AdminRevenuePage() {
       ? delegates.platformPayout.findMany({
           orderBy: { createdAt: "desc" },
           take: 50,
+        })
+      : Promise.resolve([]),
+    delegates.walletAdjustmentRequest
+      ? delegates.walletAdjustmentRequest.findMany({
+          where: { status: "PENDING" },
+          include: {
+            targetUser: { select: { name: true, email: true } },
+            requestedByUser: { select: { name: true, email: true } },
+          },
+          orderBy: { createdAt: "desc" },
+          take: 30,
         })
       : Promise.resolve([]),
   ]);
@@ -102,6 +135,38 @@ export default async function AdminRevenuePage() {
       ) : (
         <PlatformPayoutRequest />
       )}
+
+      <div className="space-y-4">
+        <h3 className="text-xl font-semibold">Wallet Adjustment Approvals (Immutable)</h3>
+        {pendingAdjustments.length === 0 ? (
+          <Card className="rounded-2xl border-white/10 bg-white/5">
+            <CardContent className="p-6 text-sm text-white/60">
+              No pending wallet adjustment requests.
+            </CardContent>
+          </Card>
+        ) : (
+          pendingAdjustments.map((item) => (
+            <Card key={item.id} className="rounded-2xl border-white/10 bg-white/5">
+              <CardContent className="space-y-3 p-6">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="font-medium">
+                    {item.type} INR {formatMoney(item.amount)}
+                  </p>
+                  <p className="text-sm text-white/70">{new Date(item.createdAt).toLocaleString()}</p>
+                </div>
+                <p className="text-sm text-white/70">
+                  Target: {item.targetUser.name || "Unnamed"} ({item.targetUser.email})
+                </p>
+                <p className="text-sm text-white/70">
+                  Requested by: {item.requestedByUser.name || "Unnamed"} ({item.requestedByUser.email})
+                </p>
+                <p className="text-sm text-white/70">Reason: {item.reason}</p>
+                <AdminWalletAdjustmentReviewActions requestId={item.id} />
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
 
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-2">

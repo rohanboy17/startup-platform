@@ -50,6 +50,9 @@ export default function RootLayout({
                 <Link href="/contact" className="hover:text-white">
                   Contact
                 </Link>
+                <Link href="/faq" className="hover:text-white">
+                  FAQ
+                </Link>
                 <Link href="/cookie-policy" className="hover:text-white">
                   Cookie Policy
                 </Link>

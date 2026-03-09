@@ -22,6 +22,7 @@ import {
   Wallet,
   ArrowUpCircle,
   AlertTriangle,
+  Settings2,
 } from "lucide-react";
 import { useLiveRefresh } from "@/lib/live-refresh";
 import LogoutButton from "@/components/logout-button";
@@ -42,7 +43,8 @@ type IconName =
   | "submissions"
   | "wallet"
   | "notifications"
-  | "risk";
+  | "risk"
+  | "cms";
 
 type Item = {
   key: string;
@@ -68,6 +70,7 @@ const iconMap: Record<IconName, ComponentType<{ size?: number }>> = {
   wallet: Wallet,
   notifications: Bell,
   risk: AlertTriangle,
+  cms: Settings2,
 };
 
 type NavAlertsResponse = {

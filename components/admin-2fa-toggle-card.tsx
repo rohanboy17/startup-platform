@@ -1,0 +1,58 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+
+export default function AdminTwoFactorToggleCard({
+  enabled,
+  enabledAt,
+}: {
+  enabled: boolean;
+  enabledAt: string | null;
+}) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  async function toggle(next: boolean) {
+    setLoading(true);
+    setMessage("");
+    const res = await fetch("/api/admin/security/2fa", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ enabled: next }),
+    });
+
+    const raw = await res.text();
+    const data = raw ? (JSON.parse(raw) as { error?: string; message?: string }) : {};
+    setLoading(false);
+    setMessage(data.message || data.error || "Updated");
+
+    if (res.ok) {
+      router.refresh();
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+      <p className="text-sm text-white/60">Admin 2FA</p>
+      <p className="mt-1 text-sm text-white/80">
+        Status: <span className={enabled ? "text-emerald-300" : "text-amber-300"}>{enabled ? "Enabled" : "Disabled"}</span>
+      </p>
+      <p className="mt-1 text-xs text-white/55">
+        {enabledAt ? `Enabled at: ${new Date(enabledAt).toLocaleString()}` : "Not enabled yet"}
+      </p>
+      <div className="mt-3 flex gap-2">
+        <Button onClick={() => toggle(true)} disabled={loading || enabled}>
+          Enable
+        </Button>
+        <Button variant="outline" onClick={() => toggle(false)} disabled={loading || !enabled}>
+          Disable
+        </Button>
+      </div>
+      {message ? <p className="mt-2 text-xs text-white/70">{message}</p> : null}
+    </div>
+  );
+}

@@ -1,15 +1,58 @@
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import AdminV2SubmissionActions from "@/components/admin-v2-submission-actions";
+import AdminV2SubmissionBulkActions from "@/components/admin-v2-submission-bulk-actions";
 import { formatMoney } from "@/lib/format-money";
 
-export default async function AdminReviewsPage() {
+type SearchParams = {
+  q?: string;
+  sort?: "newest" | "fraud";
+};
+
+function getFraudScore(opts: {
+  ipSubmissionCount: number;
+  rapidSubmissionCount: number;
+  hasLowDetailProof: boolean;
+}) {
+  let score = 0;
+  if (opts.ipSubmissionCount >= 8) score += 50;
+  else if (opts.ipSubmissionCount >= 5) score += 35;
+  else if (opts.ipSubmissionCount >= 3) score += 20;
+
+  if (opts.rapidSubmissionCount >= 5) score += 40;
+  else if (opts.rapidSubmissionCount >= 3) score += 25;
+  else if (opts.rapidSubmissionCount >= 2) score += 10;
+
+  if (opts.hasLowDetailProof) score += 20;
+  return score;
+}
+
+export default async function AdminReviewsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const params = await searchParams;
+  const q = params.q?.trim() || "";
+  const sort = params.sort || "fraud";
   const now = new Date();
   const submissions = await prisma.submission.findMany({
     where: {
       campaignId: { not: null },
       managerStatus: "MANAGER_APPROVED",
       adminStatus: "PENDING",
+      ...(q
+        ? {
+            OR: [
+              { proof: { contains: q, mode: "insensitive" } },
+              { proofText: { contains: q, mode: "insensitive" } },
+              { proofLink: { contains: q, mode: "insensitive" } },
+              { user: { email: { contains: q, mode: "insensitive" } } },
+              { user: { name: { contains: q, mode: "insensitive" } } },
+              { campaign: { title: { contains: q, mode: "insensitive" } } },
+            ],
+          }
+        : {}),
     },
     include: {
       user: {
@@ -68,24 +111,101 @@ export default async function AdminReviewsPage() {
       : Promise.resolve([]),
   ]);
 
-  const ipCountMap = new Map(
-    ipCounts.map((row) => [row.ipAddress || "unknown", row._count._all])
-  );
+  const ipCountMap = new Map(ipCounts.map((row) => [row.ipAddress || "unknown", row._count._all]));
   const rapidCountMap = new Map(rapidUserCounts.map((row) => [row.userId, row._count._all]));
+
+  const pendingWithFraud = submissions.map((submission) => {
+    const ipCount = submission.ipAddress ? (ipCountMap.get(submission.ipAddress) || 0) : 0;
+    const rapidCount = rapidCountMap.get(submission.user.id) || 0;
+    const lowDetail = !submission.proofLink && !submission.proofText;
+    return {
+      ...submission,
+      fraudScore: getFraudScore({
+        ipSubmissionCount: ipCount,
+        rapidSubmissionCount: rapidCount,
+        hasLowDetailProof: lowDetail,
+      }),
+    };
+  });
+
+  const sortedPending =
+    sort === "fraud"
+      ? [...pendingWithFraud].sort((a, b) => b.fraudScore - a.fraudScore || b.createdAt.getTime() - a.createdAt.getTime())
+      : [...pendingWithFraud].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+  const historyCutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const recentActivityLogs = await prisma.activityLog.findMany({
+    where: {
+      entity: "Submission",
+      createdAt: { gte: historyCutoff },
+      action: {
+        startsWith: "ADMIN_",
+      },
+    },
+    select: {
+      action: true,
+      details: true,
+      createdAt: true,
+    },
+    orderBy: { createdAt: "desc" },
+    take: 1000,
+  });
+
+  function getSubmissionHistory(submissionId: string) {
+    return recentActivityLogs.filter((log) => (log.details || "").includes(`submissionId=${submissionId}`)).slice(0, 6);
+  }
 
   return (
     <div className="space-y-8">
       <h2 className="text-3xl font-semibold">Final Admin Verification</h2>
 
+      <Card className="rounded-2xl border-white/10 bg-white/5">
+        <CardContent className="p-4">
+          <form className="grid gap-3 md:grid-cols-3">
+            <input
+              type="text"
+              name="q"
+              defaultValue={q}
+              placeholder="Search campaign / user / proof"
+              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            />
+            <select
+              name="sort"
+              defaultValue={sort}
+              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            >
+              <option value="fraud">Sort by Fraud Score</option>
+              <option value="newest">Sort by Newest</option>
+            </select>
+            <button
+              type="submit"
+              className="rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/20"
+            >
+              Apply
+            </button>
+          </form>
+        </CardContent>
+      </Card>
+
+      {sortedPending.length > 0 ? (
+        <AdminV2SubmissionBulkActions
+          items={sortedPending.map((submission) => ({
+            id: submission.id,
+            label: `${submission.campaign?.title || "Campaign"} | ${submission.user.email}`,
+            fraudScore: submission.fraudScore,
+          }))}
+        />
+      ) : null}
+
       <div className="space-y-4">
-        {submissions.length === 0 ? (
+        {sortedPending.length === 0 ? (
           <Card className="rounded-2xl border-white/10 bg-white/5">
             <CardContent className="p-6 text-sm text-white/60">
               No manager-approved submissions pending admin verification.
             </CardContent>
           </Card>
         ) : (
-          submissions.map((submission) => (
+          sortedPending.map((submission) => (
             <Card key={submission.id} className="rounded-2xl border-white/10 bg-white/5">
               <CardContent className="space-y-4 p-6">
                 <div className="flex flex-wrap items-center justify-between gap-2">
@@ -94,6 +214,7 @@ export default async function AdminReviewsPage() {
                     Reward: INR {formatMoney(submission.campaign?.rewardPerTask)}
                   </p>
                 </div>
+                <p className="text-sm text-amber-200">Fraud Score: {submission.fraudScore}</p>
                 <p className="text-sm text-white/70">
                   User: {submission.user.name || "Unnamed"} ({submission.user.email}) | Level:{" "}
                   {submission.user.level}
@@ -125,7 +246,7 @@ export default async function AdminReviewsPage() {
                   Submitted: {new Date(submission.createdAt).toLocaleString()}
                 </p>
 
-                <AdminV2SubmissionActions submissionId={submission.id} />
+                <AdminV2SubmissionActions submissionId={submission.id} allowEscalate />
               </CardContent>
             </Card>
           ))
@@ -157,7 +278,21 @@ export default async function AdminReviewsPage() {
                 <p className="text-xs text-white/50">
                   Submitted: {new Date(submission.createdAt).toLocaleString()}
                 </p>
-                <AdminV2SubmissionActions submissionId={submission.id} allowReopen />
+
+                <div className="space-y-2 rounded-md border border-white/10 bg-black/20 p-3">
+                  <p className="text-xs text-white/70">Undo History</p>
+                  {getSubmissionHistory(submission.id).length === 0 ? (
+                    <p className="text-xs text-white/50">No admin history found.</p>
+                  ) : (
+                    getSubmissionHistory(submission.id).map((log, idx) => (
+                      <p key={`${submission.id}-${idx}`} className="text-xs text-white/60">
+                        {new Date(log.createdAt).toLocaleString()} | {log.action} | {log.details}
+                      </p>
+                    ))
+                  )}
+                </div>
+
+                <AdminV2SubmissionActions submissionId={submission.id} allowReopen allowEscalate />
               </CardContent>
             </Card>
           ))

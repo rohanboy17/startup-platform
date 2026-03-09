@@ -73,15 +73,14 @@ export default function AdminUserWalletAdjustment({ userId }: { userId: string }
         />
       </div>
       <Input
-        placeholder="Adjustment note (optional)"
+        placeholder="Adjustment reason (required)"
         value={note}
         onChange={(e) => setNote(e.target.value)}
       />
       <Button onClick={submitAdjustment} disabled={loading}>
-        {loading ? "Applying..." : "Apply Wallet Adjustment"}
+        {loading ? "Submitting..." : "Create Adjustment Request"}
       </Button>
       {message ? <p className="text-xs text-white/60">{message}</p> : null}
     </div>
   );
 }
-

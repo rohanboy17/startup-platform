@@ -71,6 +71,9 @@ export async function PATCH(
         accountStatus: "BANNED",
         statusReason: `SOFT_DELETE: ${trimmedReason}`,
         statusUpdatedAt: new Date(),
+        deletedAt: new Date(),
+        deletedByUserId: session.user.id,
+        deletionReason: trimmedReason,
       },
       select: {
         id: true,
@@ -86,6 +89,8 @@ export async function PATCH(
       targetUserId: userId,
       action: "USER_SOFT_DELETED",
       details: `email=${target.email}, reason=${trimmedReason}`,
+      beforeState: target,
+      afterState: updated,
     });
 
     return NextResponse.json({ message: "User soft-deleted", user: updated });
@@ -97,6 +102,9 @@ export async function PATCH(
       accountStatus: "ACTIVE",
       statusReason: null,
       statusUpdatedAt: new Date(),
+      deletedAt: null,
+      deletedByUserId: null,
+      deletionReason: null,
     },
     select: {
       id: true,
@@ -112,6 +120,8 @@ export async function PATCH(
     targetUserId: userId,
     action: "USER_REACTIVATED",
     details: `email=${target.email}`,
+    beforeState: target,
+    afterState: updated,
   });
 
   return NextResponse.json({ message: "User reactivated", user: updated });

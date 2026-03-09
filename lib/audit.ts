@@ -6,6 +6,9 @@ type AuditInput = {
   targetUserId?: string | null;
   action: string;
   details?: string | null;
+  beforeState?: unknown;
+  afterState?: unknown;
+  ipAddress?: string | null;
 };
 
 export async function writeAuditLog(input: AuditInput) {
@@ -18,6 +21,9 @@ export async function writeAuditLog(input: AuditInput) {
           targetUserId?: string | null;
           action: string;
           details?: string | null;
+          beforeState?: unknown;
+          afterState?: unknown;
+          ipAddress?: string | null;
         };
       }) => Promise<unknown>;
     };
@@ -35,6 +41,11 @@ export async function writeAuditLog(input: AuditInput) {
         targetUserId: input.targetUserId ?? null,
         action: input.action,
         details: input.details ?? null,
+        beforeState:
+          input.beforeState === undefined ? undefined : JSON.parse(JSON.stringify(input.beforeState)),
+        afterState:
+          input.afterState === undefined ? undefined : JSON.parse(JSON.stringify(input.afterState)),
+        ipAddress: input.ipAddress ?? null,
       },
     });
   } catch {

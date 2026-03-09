@@ -41,6 +41,10 @@ export async function PATCH(
   if (Number.isNaN(amountNumber) || amountNumber <= 0) {
     return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
   }
+  const reason = note?.trim() || "";
+  if (!reason) {
+    return NextResponse.json({ error: "Reason is required" }, { status: 400 });
+  }
 
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -50,45 +54,36 @@ export async function PATCH(
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  if (action === "DEBIT" && user.balance < amountNumber) {
-    return NextResponse.json({ error: "Insufficient user balance" }, { status: 400 });
-  }
-
-  const updated = await prisma.$transaction(async (tx) => {
-    const updatedUser = await tx.user.update({
-      where: { id: userId },
-      data: {
-        balance:
-          action === "CREDIT"
-            ? { increment: amountNumber }
-            : { decrement: amountNumber },
-      },
-      select: { id: true, email: true, balance: true },
-    });
-
-    await tx.walletTransaction.create({
-      data: {
-        userId,
-        amount: amountNumber,
-        type: action,
-        note: note?.trim() || `Admin ${action.toLowerCase()} adjustment`,
-      },
-    });
-
-    return updatedUser;
+  const request = await prisma.walletAdjustmentRequest.create({
+    data: {
+      targetUserId: userId,
+      requestedByUserId: session.user.id,
+      amount: amountNumber,
+      type: action,
+      reason,
+      status: "PENDING",
+    },
+    select: {
+      id: true,
+      targetUserId: true,
+      amount: true,
+      type: true,
+      reason: true,
+      status: true,
+      createdAt: true,
+    },
   });
 
   await writeAuditLog({
     actorUserId: session.user.id,
     actorRole: session.user.role,
     targetUserId: userId,
-    action: "USER_WALLET_ADJUSTED",
-    details: `email=${user.email}, action=${action}, amount=${amountNumber}, note=${note?.trim() || "-"}`,
+    action: "USER_WALLET_ADJUSTMENT_REQUESTED",
+    details: `requestId=${request.id}, email=${user.email}, action=${action}, amount=${amountNumber}, reason=${reason}`,
   });
 
   return NextResponse.json({
-    message: "Wallet updated",
-    user: updated,
+    message: "Wallet adjustment request created for approval",
+    request,
   });
 }
-

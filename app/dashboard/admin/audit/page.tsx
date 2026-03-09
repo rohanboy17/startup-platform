@@ -40,6 +40,9 @@ export default async function AdminAuditPage({
           targetUserId: string | null;
           action: string;
           details: string | null;
+          ipAddress: string | null;
+          beforeState: unknown | null;
+          afterState: unknown | null;
           createdAt: Date;
         }>
       >;
@@ -53,6 +56,9 @@ export default async function AdminAuditPage({
     targetUserId: string | null;
     action: string;
     details: string | null;
+    ipAddress: string | null;
+    beforeState: unknown | null;
+    afterState: unknown | null;
     createdAt: Date;
   }> = [];
   let loadError = "";
@@ -159,6 +165,17 @@ export default async function AdminAuditPage({
                   <p className="text-sm text-white/70">Target User: {log.targetUserId}</p>
                 ) : null}
                 {log.details ? <p className="text-sm text-white/60">{log.details}</p> : null}
+                {log.ipAddress ? <p className="text-xs text-white/50">IP: {log.ipAddress}</p> : null}
+                {log.beforeState ? (
+                  <pre className="max-h-40 overflow-auto rounded-md border border-white/10 bg-black/20 p-2 text-xs text-white/60">
+                    Before: {JSON.stringify(log.beforeState)}
+                  </pre>
+                ) : null}
+                {log.afterState ? (
+                  <pre className="max-h-40 overflow-auto rounded-md border border-white/10 bg-black/20 p-2 text-xs text-white/60">
+                    After: {JSON.stringify(log.afterState)}
+                  </pre>
+                ) : null}
                 <p className="text-xs text-white/50">{new Date(log.createdAt).toLocaleString()}</p>
               </CardContent>
             </Card>

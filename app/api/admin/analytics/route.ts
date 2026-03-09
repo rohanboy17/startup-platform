@@ -26,6 +26,7 @@ export async function GET() {
       pendingSubmissions,
       totalWithdrawals,
       pendingWithdrawals,
+      pendingWalletAdjustments,
       treasury,
     ] = await Promise.all([
       prisma.user.count({ where: { role: "USER" } }),
@@ -37,6 +38,7 @@ export async function GET() {
       prisma.submission.count({ where: { status: "PENDING" } }),
       prisma.withdrawal.count(),
       prisma.withdrawal.count({ where: { status: "PENDING" } }),
+      prisma.walletAdjustmentRequest.count({ where: { status: "PENDING" } }),
       prisma.platformTreasury.upsert({
         where: { id: "main" },
         update: {},
@@ -70,6 +72,9 @@ export async function GET() {
       withdrawals: {
         total: totalWithdrawals,
         pending: pendingWithdrawals,
+      },
+      walletAdjustments: {
+        pending: pendingWalletAdjustments,
       },
       platformRevenue: platformRevenue._sum.amount || 0,
       treasuryBalance: treasury.balance,

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { applyFundingFee } from "@/lib/commission";
+import { getAppSettings } from "@/lib/system-settings";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -16,7 +17,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
   }
 
-  const { fee, net, feeRate } = applyFundingFee(amountNumber);
+  const appSettings = await getAppSettings();
+  const { fee, net, feeRate } = applyFundingFee(amountNumber, appSettings.fundingFeeRate);
 
   const result = await prisma.$transaction(async (tx) => {
     const wallet = await tx.businessWallet.upsert({
@@ -42,7 +44,7 @@ export async function POST(req: Request) {
     await tx.platformEarning.create({
       data: {
         amount: fee,
-        source: "Business deposit fee (3%)",
+        source: `Business deposit fee (${(feeRate * 100).toFixed(2)}%)`,
       },
     });
 

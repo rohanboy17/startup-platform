@@ -5,10 +5,23 @@ import { getMinFundingThreshold } from "@/lib/notifications";
 import { consumeRateLimit } from "@/lib/rate-limit";
 import { getClientIp } from "@/lib/ip";
 import { createRazorpayOrder, getRazorpayConfig } from "@/lib/razorpay";
+import { checkIpAccess, createSecurityEvent } from "@/lib/security";
 
 export async function POST(req: Request) {
   try {
     const ip = getClientIp(req);
+    const ipAccess = await checkIpAccess({ ip });
+    if (ipAccess.blocked) {
+      await createSecurityEvent({
+        kind: "FUND_CHECKOUT_BLOCKED_IP",
+        severity: "HIGH",
+        ipAddress: ip,
+        message: "Funding checkout blocked by IP access rule",
+        metadata: { reason: ipAccess.reason },
+      });
+      return NextResponse.json({ error: "Access denied from this network" }, { status: 403 });
+    }
+
     const rate = consumeRateLimit({
       key: `business-fund-checkout:${ip}`,
       limit: 20,

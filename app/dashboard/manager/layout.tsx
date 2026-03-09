@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import DashboardTabNav from "@/components/dashboard-tab-nav";
 import PresenceHeartbeat from "@/components/presence-heartbeat";
+import { getAppSettings } from "@/lib/system-settings";
 
 export default async function ManagerLayout({
   children,
@@ -18,6 +19,11 @@ export default async function ManagerLayout({
 
   if (session.user.role !== "MANAGER") {
     redirect("/dashboard");
+  }
+
+  const settings = await getAppSettings();
+  if (settings.maintenanceMode) {
+    redirect("/maintenance");
   }
 
   return (

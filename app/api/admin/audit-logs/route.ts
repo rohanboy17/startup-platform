@@ -36,6 +36,9 @@ export async function GET(req: Request) {
           targetUserId: string | null;
           action: string;
           details: string | null;
+          ipAddress: string | null;
+          beforeState: unknown | null;
+          afterState: unknown | null;
           createdAt: Date;
         }>
       >;

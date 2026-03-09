@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getAppSettings } from "@/lib/system-settings";
 
 function isAuthorized(req: Request) {
   const configured = process.env.CRON_SECRET;
@@ -21,8 +22,8 @@ function isAuthorized(req: Request) {
 }
 
 async function runReset() {
-
-  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  const appSettings = await getAppSettings();
+  const cutoff = new Date(Date.now() - appSettings.levelResetHours * 60 * 60 * 1000);
 
   const result = await prisma.user.updateMany({
     where: {
@@ -40,6 +41,7 @@ async function runReset() {
   return NextResponse.json({
     message: "Daily level reset completed",
     updatedUsers: result.count,
+    resetWindowHours: appSettings.levelResetHours,
   });
 }
 

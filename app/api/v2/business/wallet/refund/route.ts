@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { applyFundingFee } from "@/lib/commission";
+import { getAppSettings } from "@/lib/system-settings";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -24,7 +25,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Insufficient business wallet balance" }, { status: 400 });
   }
 
-  const { fee, net, feeRate } = applyFundingFee(amountNumber);
+  const appSettings = await getAppSettings();
+  const { fee, net, feeRate } = applyFundingFee(amountNumber, appSettings.fundingFeeRate);
 
   const updated = await prisma.$transaction(async (tx) => {
     const next = await tx.businessWallet.update({
@@ -45,7 +47,7 @@ export async function POST(req: Request) {
     await tx.platformEarning.create({
       data: {
         amount: fee,
-        source: "Business refund fee (3%)",
+        source: `Business refund fee (${(feeRate * 100).toFixed(2)}%)`,
       },
     });
 

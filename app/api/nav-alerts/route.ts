@@ -39,6 +39,10 @@ export async function GET() {
         escalatedCampaigns,
         riskyWithdrawals,
         flaggedUsers,
+        pendingAdjustments,
+        openSecurityEvents,
+        failedNotificationLogs,
+        legalEvidence,
       ] =
         await Promise.all([
           prisma.campaign.findMany({
@@ -103,16 +107,40 @@ export async function GET() {
             orderBy: { flaggedAt: "desc" },
             take: 100,
           }),
+          prisma.walletAdjustmentRequest.findMany({
+            where: { status: "PENDING" },
+            select: { createdAt: true },
+            orderBy: { createdAt: "desc" },
+            take: 100,
+          }),
+          prisma.securityEvent.findMany({
+            where: { status: "OPEN" },
+            select: { createdAt: true },
+            orderBy: { createdAt: "desc" },
+            take: 100,
+          }),
+          prisma.notificationDeliveryLog.findMany({
+            where: { status: "FAILED" },
+            select: { createdAt: true },
+            orderBy: { createdAt: "desc" },
+            take: 100,
+          }),
+          prisma.legalEvidence.findMany({
+            select: { createdAt: true },
+            orderBy: { createdAt: "desc" },
+            take: 100,
+          }),
         ]);
 
       const tabs = {
         "admin.campaigns": token(pendingCampaigns.length, pendingCampaigns[0]?.createdAt),
         "admin.risk": token(
-          escalatedCampaigns.length + riskyWithdrawals.length + flaggedUsers.length,
+          escalatedCampaigns.length + riskyWithdrawals.length + flaggedUsers.length + openSecurityEvents.length,
           maxDate(
             escalatedCampaigns[0]?.escalatedAt || escalatedCampaigns[0]?.createdAt,
             riskyWithdrawals[0]?.createdAt,
-            flaggedUsers[0]?.flaggedAt || flaggedUsers[0]?.createdAt
+            flaggedUsers[0]?.flaggedAt || flaggedUsers[0]?.createdAt,
+            openSecurityEvents[0]?.createdAt
           )
         ),
         "admin.reviews": token(reviewSubmissions.length, reviewSubmissions[0]?.createdAt),
@@ -123,10 +151,19 @@ export async function GET() {
         ),
         "admin.withdrawals": token(pendingWithdrawals.length, pendingWithdrawals[0]?.createdAt),
         "admin.revenue": token(
-          earnings.length + payouts.length,
-          maxDate(earnings[0]?.createdAt, payouts[0]?.createdAt, payouts[0]?.processedAt)
+          earnings.length + payouts.length + pendingAdjustments.length,
+          maxDate(
+            earnings[0]?.createdAt,
+            payouts[0]?.createdAt,
+            payouts[0]?.processedAt,
+            pendingAdjustments[0]?.createdAt
+          )
         ),
         "admin.audit": token(audits.length, audits[0]?.createdAt),
+        "admin.cms": token(0, null),
+        "admin.notifications": token(failedNotificationLogs.length, failedNotificationLogs[0]?.createdAt),
+        "admin.settings": token(0, null),
+        "admin.compliance": token(legalEvidence.length, legalEvidence[0]?.createdAt),
       };
 
       return NextResponse.json({
@@ -136,7 +173,11 @@ export async function GET() {
           ...tabs,
         },
         counts: {
-          "admin.risk": escalatedCampaigns.length + riskyWithdrawals.length + flaggedUsers.length,
+          "admin.risk":
+            escalatedCampaigns.length + riskyWithdrawals.length + flaggedUsers.length + openSecurityEvents.length,
+          "admin.revenue": pendingAdjustments.length,
+          "admin.notifications": failedNotificationLogs.length,
+          "admin.compliance": legalEvidence.length,
         },
       });
     }

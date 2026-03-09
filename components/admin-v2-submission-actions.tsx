@@ -8,15 +8,22 @@ import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 export default function AdminV2SubmissionActions({
   submissionId,
   allowReopen = false,
+  allowEscalate = false,
 }: {
   submissionId: string;
   allowReopen?: boolean;
+  allowEscalate?: boolean;
 }) {
   const router = useRouter();
-  const [loading, setLoading] = useState<"APPROVE" | "REJECT" | "REOPEN" | null>(null);
+  const [loading, setLoading] = useState<"APPROVE" | "REJECT" | "REOPEN" | "ESCALATE" | null>(null);
+  const [reason, setReason] = useState("");
   const [message, setMessage] = useState("");
 
   async function review(action: "APPROVE" | "REJECT" | "REOPEN") {
+    if (action === "REOPEN" && !reason.trim()) {
+      setMessage("Reopen reason is required");
+      return;
+    }
     setLoading(action);
     setMessage("");
 
@@ -24,7 +31,7 @@ export default function AdminV2SubmissionActions({
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ action }),
+      body: JSON.stringify({ action, reason: reason.trim() || undefined }),
     });
 
     const raw = await res.text();
@@ -42,12 +49,54 @@ export default function AdminV2SubmissionActions({
     }
 
     setMessage(data.message || "Updated");
+    if (action === "REOPEN") {
+      setReason("");
+    }
+    router.refresh();
+    emitDashboardLiveRefresh();
+  }
+
+  async function escalate() {
+    setLoading("ESCALATE");
+    setMessage("");
+
+    const res = await fetch(`/api/v2/submissions/${submissionId}/escalate`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ reason: reason.trim() || undefined }),
+    });
+
+    const raw = await res.text();
+    let data: { message?: string; error?: string } = {};
+    try {
+      data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
+    } catch {
+      data = { error: "Unexpected server response" };
+    }
+    setLoading(null);
+
+    if (!res.ok) {
+      setMessage(data.error || "Escalation failed");
+      return;
+    }
+
+    setMessage(data.message || "Escalated");
+    setReason("");
     router.refresh();
     emitDashboardLiveRefresh();
   }
 
   return (
     <div className="space-y-2">
+      {(allowReopen || allowEscalate) ? (
+        <input
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          placeholder={allowReopen ? "Reason (required for reopen)" : "Escalation reason (optional)"}
+        />
+      ) : null}
       <div className="flex gap-3">
         <Button onClick={() => review("APPROVE")} disabled={loading !== null}>
           {loading === "APPROVE" ? "Approving..." : "Approve"}
@@ -58,6 +107,11 @@ export default function AdminV2SubmissionActions({
         {allowReopen ? (
           <Button variant="outline" onClick={() => review("REOPEN")} disabled={loading !== null}>
             {loading === "REOPEN" ? "Reopening..." : "Reopen"}
+          </Button>
+        ) : null}
+        {allowEscalate ? (
+          <Button variant="secondary" onClick={escalate} disabled={loading !== null}>
+            {loading === "ESCALATE" ? "Escalating..." : "Escalate"}
           </Button>
         ) : null}
       </div>

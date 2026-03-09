@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { getAppSettings } from "@/lib/system-settings";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -9,6 +10,11 @@ export default async function DashboardPage() {
   }
 
   const role = session.user.role;
+  const settings = await getAppSettings();
+
+  if (settings.maintenanceMode && role !== "ADMIN") {
+    redirect("/maintenance");
+  }
 
   if (role === "USER") redirect("/dashboard/user");
   if (role === "BUSINESS") redirect("/dashboard/business");

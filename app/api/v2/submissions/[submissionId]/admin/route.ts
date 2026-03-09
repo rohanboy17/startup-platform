@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getSubmissionCommissionRate } from "@/lib/commission";
 import { getLevelFromApprovedCount } from "@/lib/level";
+import { getAppSettings } from "@/lib/system-settings";
 
 export async function PATCH(
   req: Request,
@@ -14,7 +15,12 @@ export async function PATCH(
   }
 
   const { submissionId } = await params;
-  const { action } = (await req.json()) as { action?: "APPROVE" | "REJECT" | "REOPEN" };
+  const appSettings = await getAppSettings();
+  const { action, reason } = (await req.json()) as {
+    action?: "APPROVE" | "REJECT" | "REOPEN";
+    reason?: string;
+  };
+  const reviewReason = reason?.trim() || "";
 
   if (!action) {
     return NextResponse.json({ error: "Action is required" }, { status: 400 });
@@ -59,6 +65,9 @@ export async function PATCH(
   }
 
   if (action === "REOPEN") {
+    if (!reviewReason) {
+      return NextResponse.json({ error: "Reopen reason is required" }, { status: 400 });
+    }
     if (!["ADMIN_APPROVED", "ADMIN_REJECTED"].includes(submission.adminStatus)) {
       return NextResponse.json({ error: "Only reviewed submissions can be reopened" }, { status: 400 });
     }
@@ -78,12 +87,22 @@ export async function PATCH(
           data: { totalRejected: { decrement: submission.user.totalRejected > 0 ? 1 : 0 } },
         });
 
-        await tx.notification.create({
+        const notification = await tx.notification.create({
           data: {
             userId: submission.user.id,
             title: "Submission reopened",
-            message: "Your submission was reopened for final admin re-verification.",
+            message: `Your submission was reopened for final admin re-verification. Reason: ${reviewReason}`,
             type: "INFO",
+          },
+        });
+        await tx.notificationDeliveryLog.create({
+          data: {
+            userId: submission.user.id,
+            notificationId: notification.id,
+            templateKey: "submission.reopened",
+            channel: "IN_APP",
+            status: "SENT",
+            payload: { submissionId, mode: "REOPEN_FROM_REJECTED" },
           },
         });
 
@@ -92,7 +111,7 @@ export async function PATCH(
             userId: session.user.id,
             action: "ADMIN_REOPENED_SUBMISSION",
             entity: "Submission",
-            details: `submissionId=${submissionId}, previous=ADMIN_REJECTED`,
+            details: `submissionId=${submissionId}, previous=ADMIN_REJECTED, reason=${reviewReason}`,
           },
         });
 
@@ -179,12 +198,22 @@ export async function PATCH(
         },
       });
 
-      await tx.notification.create({
+      const notification = await tx.notification.create({
         data: {
           userId: submission.user.id,
           title: "Submission reopened",
-          message: "A previously approved submission was reopened for final admin re-verification.",
+          message: `A previously approved submission was reopened for final admin re-verification. Reason: ${reviewReason}`,
           type: "WARNING",
+        },
+      });
+      await tx.notificationDeliveryLog.create({
+        data: {
+          userId: submission.user.id,
+          notificationId: notification.id,
+          templateKey: "submission.reopened",
+          channel: "IN_APP",
+          status: "SENT",
+          payload: { submissionId, mode: "REOPEN_FROM_APPROVED" },
         },
       });
 
@@ -193,7 +222,7 @@ export async function PATCH(
           userId: session.user.id,
           action: "ADMIN_REOPENED_SUBMISSION",
           entity: "Submission",
-          details: `submissionId=${submissionId}, previous=ADMIN_APPROVED, net=${netReward}, commission=${commission}`,
+          details: `submissionId=${submissionId}, previous=ADMIN_APPROVED, net=${netReward}, commission=${commission}, reason=${reviewReason}`,
         },
       });
 
@@ -215,12 +244,22 @@ export async function PATCH(
         data: { totalRejected: { increment: 1 } },
       });
 
-      await tx.notification.create({
+      const notification = await tx.notification.create({
         data: {
           userId: submission.user.id,
           title: "Submission rejected by admin",
-          message: "Your submission did not pass final admin review.",
+          message: `Your submission did not pass final admin review.${reviewReason ? ` Reason: ${reviewReason}` : ""}`,
           type: "WARNING",
+        },
+      });
+      await tx.notificationDeliveryLog.create({
+        data: {
+          userId: submission.user.id,
+          notificationId: notification.id,
+          templateKey: "submission.admin_rejected",
+          channel: "IN_APP",
+          status: "SENT",
+          payload: { submissionId },
         },
       });
 
@@ -229,7 +268,7 @@ export async function PATCH(
           userId: session.user.id,
           action: "ADMIN_REJECTED_SUBMISSION",
           entity: "Submission",
-          details: `submissionId=${submissionId}`,
+          details: `submissionId=${submissionId}, reason=${reviewReason || "-"}`,
         },
       });
 
@@ -242,6 +281,7 @@ export async function PATCH(
   const commissionRate = getSubmissionCommissionRate({
     category: submission.campaign.category,
     userLevel: submission.user.level,
+    oneTimeRateOverride: appSettings.commissionRateDefault,
   });
 
   const grossReward = submission.campaign.rewardPerTask;
@@ -305,12 +345,22 @@ export async function PATCH(
       },
     });
 
-    await tx.notification.create({
+    const notification = await tx.notification.create({
       data: {
         userId: submission.user.id,
         title: "Submission approved by admin",
         message: `Final approval complete. INR ${netReward} credited to your wallet.`,
         type: "SUCCESS",
+      },
+    });
+    await tx.notificationDeliveryLog.create({
+      data: {
+        userId: submission.user.id,
+        notificationId: notification.id,
+        templateKey: "submission.admin_approved",
+        channel: "IN_APP",
+        status: "SENT",
+        payload: { submissionId, netReward },
       },
     });
 

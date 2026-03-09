@@ -4,6 +4,8 @@ import { NextResponse } from "next/server";
 import { consumeRateLimit } from "@/lib/rate-limit";
 import { getClientIp } from "@/lib/ip";
 import { writeAuditLog } from "@/lib/audit";
+import { getAppSettings } from "@/lib/system-settings";
+import { renderTemplateMessage, sendInAppNotification } from "@/lib/notify";
 
 export async function PATCH(
   req: Request,
@@ -78,16 +80,23 @@ export async function PATCH(
         details: `withdrawalId=${withdrawal.id}, amount=${withdrawal.amount}, note=${noteText || "-"}`,
       });
 
-      if (delegates.notification) {
-        await delegates.notification.create({
-          data: {
-            userId: withdrawal.userId,
-            title: "Withdrawal Rejected",
-            message: `Your withdrawal request of INR ${withdrawal.amount} was rejected.${noteText ? ` Note: ${noteText}` : ""}`,
-            type: "WARNING",
-          },
-        });
-      }
+      const rendered = await renderTemplateMessage({
+        key: "withdrawal.rejected",
+        fallbackTitle: "Withdrawal Rejected",
+        fallbackBody: `Your withdrawal request of INR {{amount}} was rejected.{{note}}`,
+        vars: {
+          amount: withdrawal.amount.toFixed(2),
+          note: noteText ? ` Note: ${noteText}` : "",
+        },
+      });
+      await sendInAppNotification({
+        userId: withdrawal.userId,
+        title: rendered.title,
+        message: rendered.message,
+        type: "WARNING",
+        templateKey: rendered.templateKey,
+        payload: { withdrawalId: withdrawal.id, action: "REJECTED" },
+      });
 
       return NextResponse.json({
         message: "Withdrawal rejected",
@@ -105,7 +114,8 @@ export async function PATCH(
       );
     }
 
-    const rawRate = Number(process.env.WITHDRAWAL_COMMISSION_RATE ?? 0.02);
+    const appSettings = await getAppSettings();
+    const rawRate = Number(appSettings.withdrawalFeeRate);
     const commissionRate = Number.isFinite(rawRate)
       ? Math.min(Math.max(rawRate, 0), 0.5)
       : 0.02;
@@ -191,16 +201,26 @@ export async function PATCH(
       return { approved, feeAmount, payoutAmount };
     });
 
-    if (delegates.notification) {
-      await delegates.notification.create({
-        data: {
-          userId: withdrawal.userId,
-          title: "Withdrawal Approved",
-          message: `Your withdrawal of INR ${withdrawal.amount} was approved. Payout INR ${result.payoutAmount}, fee INR ${result.feeAmount}.${noteText ? ` Note: ${noteText}` : ""}`,
-          type: "SUCCESS",
-        },
-      });
-    }
+    const rendered = await renderTemplateMessage({
+      key: "withdrawal.approved",
+      fallbackTitle: "Withdrawal Approved",
+      fallbackBody:
+        "Your withdrawal of INR {{amount}} was approved. Payout INR {{payoutAmount}}, fee INR {{feeAmount}}.{{note}}",
+      vars: {
+        amount: withdrawal.amount.toFixed(2),
+        payoutAmount: result.payoutAmount.toFixed(2),
+        feeAmount: result.feeAmount.toFixed(2),
+        note: noteText ? ` Note: ${noteText}` : "",
+      },
+    });
+    await sendInAppNotification({
+      userId: withdrawal.userId,
+      title: rendered.title,
+      message: rendered.message,
+      type: "SUCCESS",
+      templateKey: rendered.templateKey,
+      payload: { withdrawalId: withdrawal.id, action: "APPROVED" },
+    });
 
     await writeAuditLog({
       actorUserId: session.user.id,

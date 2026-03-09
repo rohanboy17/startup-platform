@@ -2,11 +2,27 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { shouldResetDailyCounter } from "@/lib/level";
+import { getClientIp } from "@/lib/ip";
+import { checkIpAccess, createSecurityEvent } from "@/lib/security";
+import { autoFlagSuspiciousUser } from "@/lib/safety";
 
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ campaignId: string }> }
 ) {
+  const ip = getClientIp(req);
+  const ipAccess = await checkIpAccess({ ip });
+  if (ipAccess.blocked) {
+    await createSecurityEvent({
+      kind: "SUBMISSION_BLOCKED_IP",
+      severity: "HIGH",
+      ipAddress: ip,
+      message: "Submission attempt blocked by IP access rule",
+      metadata: { reason: ipAccess.reason },
+    });
+    return NextResponse.json({ error: "Access denied from this network" }, { status: 403 });
+  }
+
   const session = await auth();
   if (!session || session.user.role !== "USER") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
@@ -91,6 +107,7 @@ export async function POST(
           proof: proofText || proofLink || "",
           proofLink,
           proofText,
+          ipAddress: ip !== "unknown" ? ip : null,
           managerStatus: "PENDING",
           adminStatus: "PENDING",
         },
@@ -107,6 +124,33 @@ export async function POST(
 
       return submission;
     });
+
+    if (ip !== "unknown") {
+      const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000);
+      const recentIpSubmissions = await prisma.submission.findMany({
+        where: {
+          ipAddress: ip,
+          createdAt: { gte: last24h },
+        },
+        select: { userId: true },
+      });
+
+      const uniqueUsers = new Set(recentIpSubmissions.map((row) => row.userId)).size;
+      if (uniqueUsers >= 8) {
+        await autoFlagSuspiciousUser({
+          userId: session.user.id,
+          reason: `IP anomaly: ${uniqueUsers} distinct users submitted from IP ${ip} in 24h`,
+        });
+        await createSecurityEvent({
+          kind: "IP_SUBMISSION_ANOMALY",
+          severity: "HIGH",
+          ipAddress: ip,
+          userId: session.user.id,
+          message: "High multi-account submission activity from same IP",
+          metadata: { uniqueUsers, windowHours: 24 },
+        });
+      }
+    }
 
     return NextResponse.json({ message: "Submission created", submission: result }, { status: 201 });
   } catch (error) {

@@ -36,8 +36,19 @@ model User {
   withdrawals Withdrawal[]
   withdrawRequests WithdrawRequest[]
   notifications Notification[]
+  notificationDeliveryLogs NotificationDeliveryLog[]
   paymentOrders PaymentOrder[]
   businessWallet BusinessWallet?
+  twoFactorEnabled Boolean @default(false)
+  twoFactorEnabledAt DateTime?
+  requestedWalletAdjustments WalletAdjustmentRequest[] @relation("WalletAdjustmentRequester")
+  targetWalletAdjustments WalletAdjustmentRequest[] @relation("WalletAdjustmentTarget")
+  reviewedWalletAdjustments WalletAdjustmentRequest[] @relation("WalletAdjustmentReviewer")
+  adminTwoFactorChallenges AdminTwoFactorChallenge[]
+  adminTwoFactorRecoveryCodes AdminTwoFactorRecoveryCode[]
+  deletedAt DateTime?
+  deletedByUserId String?
+  deletionReason String?
 }
 
 model Submission {
@@ -77,8 +88,29 @@ model WalletTransaction {
   type      TransactionType
   note      String?
   createdAt DateTime        @default(now())
+  walletAdjustmentRequest WalletAdjustmentRequest?
 
   user      User            @relation(fields: [userId], references: [id])
+}
+
+model WalletAdjustmentRequest {
+  id                 String                 @id @default(uuid())
+  targetUserId       String
+  requestedByUserId  String
+  reviewedByUserId   String?
+  amount             Float
+  type               TransactionType
+  reason             String
+  reviewNote         String?
+  status             WalletAdjustmentStatus @default(PENDING)
+  walletTransactionId String?               @unique
+  createdAt          DateTime               @default(now())
+  reviewedAt         DateTime?
+
+  targetUser         User                   @relation("WalletAdjustmentTarget", fields: [targetUserId], references: [id])
+  requestedByUser    User                   @relation("WalletAdjustmentRequester", fields: [requestedByUserId], references: [id])
+  reviewedByUser     User?                  @relation("WalletAdjustmentReviewer", fields: [reviewedByUserId], references: [id])
+  walletTransaction  WalletTransaction?     @relation(fields: [walletTransactionId], references: [id])
 }
 
 model PlatformEarning {
@@ -111,6 +143,9 @@ model AuditLog {
   targetUserId String?
   action      String
   details     String?
+  beforeState Json?
+  afterState  Json?
+  ipAddress   String?
   createdAt   DateTime @default(now())
 }
 
@@ -198,6 +233,128 @@ model Notification {
   createdAt DateTime         @default(now())
 
   user      User             @relation(fields: [userId], references: [id])
+  deliveryLogs NotificationDeliveryLog[]
+}
+
+model CmsContent {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model FeatureFlag {
+  key         String   @id
+  enabled     Boolean  @default(true)
+  description String?
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+}
+
+model Announcement {
+  id        String   @id @default(uuid())
+  title     String
+  message   String
+  link      String?
+  isActive  Boolean  @default(true)
+  startsAt  DateTime?
+  endsAt    DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model IpAccessRule {
+  id        String     @id @default(uuid())
+  ip        String     @unique
+  type      IpRuleType @default(BLOCK)
+  note      String?
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  expiresAt DateTime?
+}
+
+model SecurityEvent {
+  id          String               @id @default(uuid())
+  kind        String
+  severity    SecurityEventSeverity @default(LOW)
+  status      SecurityEventStatus  @default(OPEN)
+  ipAddress   String?
+  userId      String?
+  message     String
+  metadata    Json?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  resolvedAt  DateTime?
+  resolvedByUserId String?
+}
+
+model AdminTwoFactorChallenge {
+  id        String   @id @default(uuid())
+  userId    String
+  ipAddress String?
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  consumedAt DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model AdminTwoFactorRecoveryCode {
+  id        String   @id @default(uuid())
+  userId    String
+  codeHash  String
+  createdAt DateTime @default(now())
+  usedAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model NotificationTemplate {
+  id        String          @id @default(uuid())
+  key       String          @unique
+  name      String
+  channel   DeliveryChannel @default(IN_APP)
+  subject   String?
+  body      String
+  enabled   Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+}
+
+model NotificationDeliveryLog {
+  id             String          @id @default(uuid())
+  userId         String
+  notificationId String?
+  templateKey    String?
+  channel        DeliveryChannel
+  status         DeliveryStatus  @default(SENT)
+  error          String?
+  payload        Json?
+  createdAt      DateTime        @default(now())
+
+  user         User          @relation(fields: [userId], references: [id])
+  notification Notification? @relation(fields: [notificationId], references: [id])
+}
+
+model SystemSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model LegalEvidence {
+  id               String   @id @default(uuid())
+  entityType       String
+  entityId         String
+  submittedByUserId String?
+  note             String?
+  fileUrl          String?
+  metadata         Json?
+  createdAt        DateTime @default(now())
 }
 
 enum Role {
@@ -250,6 +407,12 @@ enum TransactionType {
   DEBIT
 }
 
+enum WalletAdjustmentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum WithdrawalStatus {
   PENDING
   APPROVED
@@ -279,4 +442,33 @@ enum PaymentOrderStatus {
   CREATED
   PAID
   FAILED
+}
+
+enum IpRuleType {
+  BLOCK
+  ALLOW
+}
+
+enum SecurityEventSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum SecurityEventStatus {
+  OPEN
+  RESOLVED
+  DISMISSED
+}
+
+enum DeliveryChannel {
+  IN_APP
+  EMAIL
+}
+
+enum DeliveryStatus {
+  SENT
+  FAILED
+  SKIPPED
 }

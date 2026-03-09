@@ -4,7 +4,12 @@ import AdminUserFlagActions from "@/components/admin-user-flag-actions";
 import AdminUserReactivateButton from "@/components/admin-user-reactivate-button";
 import AdminCampaignEscalationButton from "@/components/admin-campaign-escalation-button";
 import AdminWithdrawalActions from "@/components/admin-withdrawal-actions";
+import AdminSecurityControlPanel from "@/components/admin-security-control-panel";
+import AdminTwoFactorToggleCard from "@/components/admin-2fa-toggle-card";
+import AdminTwoFactorRecoveryCodesCard from "@/components/admin-2fa-recovery-codes-card";
 import { formatMoney } from "@/lib/format-money";
+import { getRateLimitStats } from "@/lib/rate-limit";
+import { auth } from "@/lib/auth";
 
 type QueueItem = {
   id: string;
@@ -18,11 +23,25 @@ function hoursSince(date: Date, nowMs: number) {
 }
 
 export default async function AdminRiskCenterPage() {
+  const session = await auth();
+  if (!session) return null;
   const riskyWithdrawalThreshold = Number(process.env.RISK_WITHDRAWAL_ALERT_AMOUNT ?? 3000);
   const now = new Date();
   const staleCutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-  const [flaggedUsers, blockedUsers, escalatedCampaigns, riskyWithdrawals] = await Promise.all([
+  const [
+    flaggedUsers,
+    blockedUsers,
+    escalatedCampaigns,
+    riskyWithdrawals,
+    ipRules,
+    securityEvents,
+    me,
+    recoveryActiveCount,
+    recoveryUsedCount,
+    latestRecoveryCode,
+  ] =
+    await Promise.all([
     prisma.user.findMany({
       where: { isSuspicious: true },
       select: {
@@ -78,6 +97,29 @@ export default async function AdminRiskCenterPage() {
       },
       orderBy: [{ amount: "desc" }, { createdAt: "asc" }],
       take: 50,
+    }),
+    prisma.ipAccessRule.findMany({
+      orderBy: [{ isActive: "desc" }, { updatedAt: "desc" }],
+      take: 120,
+    }),
+    prisma.securityEvent.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 120,
+    }),
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { twoFactorEnabled: true, twoFactorEnabledAt: true },
+    }),
+    prisma.adminTwoFactorRecoveryCode.count({
+      where: { userId: session.user.id, usedAt: null },
+    }),
+    prisma.adminTwoFactorRecoveryCode.count({
+      where: { userId: session.user.id, usedAt: { not: null } },
+    }),
+    prisma.adminTwoFactorRecoveryCode.findFirst({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      select: { createdAt: true },
     }),
   ]);
 
@@ -266,6 +308,39 @@ export default async function AdminRiskCenterPage() {
           </CardContent>
         </Card>
       </div>
+
+      <AdminSecurityControlPanel
+        rules={ipRules.map((rule) => ({
+          id: rule.id,
+          ip: rule.ip,
+          type: rule.type,
+          note: rule.note,
+          isActive: rule.isActive,
+          expiresAt: rule.expiresAt ? rule.expiresAt.toISOString() : null,
+        }))}
+        events={securityEvents.map((event) => ({
+          id: event.id,
+          kind: event.kind,
+          severity: event.severity,
+          status: event.status,
+          ipAddress: event.ipAddress,
+          userId: event.userId,
+          message: event.message,
+          createdAt: event.createdAt.toISOString(),
+        }))}
+        rateStats={getRateLimitStats()}
+      />
+
+      <AdminTwoFactorToggleCard
+        enabled={Boolean(me?.twoFactorEnabled)}
+        enabledAt={me?.twoFactorEnabledAt ? me.twoFactorEnabledAt.toISOString() : null}
+      />
+      <AdminTwoFactorRecoveryCodesCard
+        enabled={Boolean(me?.twoFactorEnabled)}
+        activeCount={recoveryActiveCount}
+        usedCount={recoveryUsedCount}
+        lastGeneratedAt={latestRecoveryCode?.createdAt ? latestRecoveryCode.createdAt.toISOString() : null}
+      />
     </div>
   );
 }

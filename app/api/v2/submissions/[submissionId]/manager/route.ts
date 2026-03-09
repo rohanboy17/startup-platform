@@ -49,7 +49,7 @@ export async function PATCH(
       },
     });
 
-    await tx.notification.create({
+    const notification = await tx.notification.create({
       data: {
         userId: submission.userId,
         title: action === "APPROVE" ? "Submission approved by manager" : "Submission rejected by manager",
@@ -58,6 +58,16 @@ export async function PATCH(
             ? "Your submission passed manager review and is pending admin verification."
             : "Your submission was rejected at manager review stage.",
         type: action === "APPROVE" ? "INFO" : "WARNING",
+      },
+    });
+    await tx.notificationDeliveryLog.create({
+      data: {
+        userId: submission.userId,
+        notificationId: notification.id,
+        templateKey: action === "APPROVE" ? "submission.manager_approved" : "submission.manager_rejected",
+        channel: "IN_APP",
+        status: "SENT",
+        payload: { submissionId, action },
       },
     });
 

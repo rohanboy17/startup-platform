@@ -51,3 +51,27 @@ export async function sendLowBalanceAlertEmail(params: {
 export function getMinFundingThreshold() {
   return Number(process.env.MIN_FUNDING_THRESHOLD ?? 500);
 }
+
+export async function sendAdminOtpEmail(params: {
+  to: string;
+  otp: string;
+  expiresInMinutes: number;
+}) {
+  const transporter = getTransporter();
+  const from = process.env.SMTP_FROM || "no-reply@earnhub.local";
+
+  if (!transporter) {
+    console.info(
+      `[Admin2FA] SMTP not configured. Intended recipient=${params.to}, otp=${params.otp}`
+    );
+    return { delivered: false as const, channel: "log" as const };
+  }
+
+  await transporter.sendMail({
+    from,
+    to: params.to,
+    subject: "EarnHub Admin Login Verification Code",
+    text: `Your one-time admin login code is ${params.otp}. It expires in ${params.expiresInMinutes} minutes.`,
+  });
+  return { delivered: true as const, channel: "smtp" as const };
+}
