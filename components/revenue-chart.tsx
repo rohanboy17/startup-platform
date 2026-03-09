@@ -9,14 +9,13 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  { month: "Jan", revenue: 400 },
-  { month: "Feb", revenue: 800 },
-  { month: "Mar", revenue: 1200 },
-  { month: "Apr", revenue: 1600 },
-];
+type RevenuePoint = {
+  month: string;
+  revenue: number;
+  payout: number;
+};
 
-export default function RevenueChart() {
+export default function RevenueChart({ data }: { data: RevenuePoint[] }) {
   return (
     <div className="h-80 rounded-2xl bg-muted p-6">
       <ResponsiveContainer width="100%" height="100%">
@@ -29,6 +28,14 @@ export default function RevenueChart() {
             dataKey="revenue"
             stroke="#10b981"
             strokeWidth={3}
+            name="Revenue"
+          />
+          <Line
+            type="monotone"
+            dataKey="payout"
+            stroke="#f59e0b"
+            strokeWidth={3}
+            name="Payout"
           />
         </LineChart>
       </ResponsiveContainer>

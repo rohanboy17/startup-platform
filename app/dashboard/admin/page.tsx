@@ -8,6 +8,9 @@ export default async function AdminDashboard() {
   const now = new Date();
   const staleResetCutoff = new Date(now.getTime() - 26 * 60 * 60 * 1000);
   const staleQueueCutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const chartMonthCount = 6;
+  const chartStart = new Date(now.getFullYear(), now.getMonth() - (chartMonthCount - 1), 1);
 
   const [
     users,
@@ -24,6 +27,8 @@ export default async function AdminDashboard() {
     failedPayments,
     oldPendingWithdrawals,
     oldPendingAdminReviews,
+    earningsForChart,
+    payoutsForChart,
   ] = await Promise.all([
     prisma.user.count({ where: { role: "USER" } }),
     prisma.user.count({ where: { role: "BUSINESS" } }),
@@ -53,6 +58,21 @@ export default async function AdminDashboard() {
         adminStatus: "PENDING",
         createdAt: { lt: staleQueueCutoff },
       },
+    }),
+    prisma.platformEarning.findMany({
+      where: {
+        createdAt: { gte: chartStart },
+      },
+      select: { amount: true, createdAt: true },
+      orderBy: { createdAt: "asc" },
+    }),
+    prisma.platformPayout.findMany({
+      where: {
+        createdAt: { gte: chartStart },
+        status: "APPROVED",
+      },
+      select: { amount: true, createdAt: true },
+      orderBy: { createdAt: "asc" },
     }),
   ]);
 
@@ -89,6 +109,34 @@ export default async function AdminDashboard() {
   if (staleLevelResets > 0) {
     alerts.push(`Cron reset lag detected for ${staleLevelResets} user(s).`);
   }
+
+  const chartBuckets = new Map<string, number>();
+  const payoutBuckets = new Map<string, number>();
+  for (let i = chartMonthCount - 1; i >= 0; i -= 1) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    chartBuckets.set(key, 0);
+    payoutBuckets.set(key, 0);
+  }
+  for (const item of earningsForChart) {
+    const key = `${item.createdAt.getFullYear()}-${String(item.createdAt.getMonth() + 1).padStart(2, "0")}`;
+    if (!chartBuckets.has(key)) continue;
+    chartBuckets.set(key, (chartBuckets.get(key) || 0) + item.amount);
+  }
+  for (const item of payoutsForChart) {
+    const key = `${item.createdAt.getFullYear()}-${String(item.createdAt.getMonth() + 1).padStart(2, "0")}`;
+    if (!payoutBuckets.has(key)) continue;
+    payoutBuckets.set(key, (payoutBuckets.get(key) || 0) + item.amount);
+  }
+  const revenueChartData = Array.from(chartBuckets.entries()).map(([key, amount]) => {
+    const [year, month] = key.split("-");
+    const monthNumber = Number(month);
+    return {
+      month: `${monthNames[monthNumber - 1]} '${year.slice(2)}`,
+      revenue: Number(amount.toFixed(2)),
+      payout: Number((payoutBuckets.get(key) || 0).toFixed(2)),
+    };
+  });
 
   return (
     <div className="space-y-8">
@@ -214,7 +262,7 @@ export default async function AdminDashboard() {
       </div>
 
       <div>
-        <RevenueChart />
+        <RevenueChart data={revenueChartData} />
       </div>
     </div>
   );
