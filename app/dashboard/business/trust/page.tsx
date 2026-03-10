@@ -156,31 +156,31 @@ export default async function BusinessTrustPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
           <p className="text-sm text-white/60">Funding fee</p>
           <p className="mt-2 text-3xl font-semibold text-white">{(settings.fundingFeeRate * 100).toFixed(2)}%</p>
           <p className="mt-2 text-xs text-white/45">Applied on wallet top-ups and refund requests.</p>
         </div>
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
           <p className="text-sm text-white/60">Locked campaign budget</p>
           <p className="mt-2 text-3xl font-semibold text-white">INR {formatMoney(lockedBudget)}</p>
           <p className="mt-2 text-xs text-white/45">Budget reserved across pending, approved, and live campaigns.</p>
         </div>
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
           <p className="text-sm text-white/60">Avg manager review time</p>
           <p className="mt-2 text-3xl font-semibold text-white">{formatHours(avgManagerHours)}</p>
           <p className="mt-2 text-xs text-white/45">Based on recent submissions reviewed by managers.</p>
         </div>
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
+        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
           <p className="text-sm text-white/60">Avg admin final review time</p>
           <p className="mt-2 text-3xl font-semibold text-white">{formatHours(avgAdminHours)}</p>
           <p className="mt-2 text-xs text-white/45">Measured from submission creation to final admin decision.</p>
         </div>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
-        <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+      <div className="grid gap-6 2xl:grid-cols-[1.05fr_0.95fr]">
+        <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
           <div>
             <p className="text-sm text-white/60">Commercial model</p>
             <h3 className="text-xl font-semibold text-white">How money moves</h3>
@@ -199,7 +199,7 @@ export default async function BusinessTrustPage() {
           </div>
         </section>
 
-        <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+        <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
           <div>
             <p className="text-sm text-white/60">Review workflow</p>
             <h3 className="text-xl font-semibold text-white">What happens after launch</h3>
@@ -225,8 +225,8 @@ export default async function BusinessTrustPage() {
         </section>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-        <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+      <div className="grid gap-6 2xl:grid-cols-[0.95fr_1.05fr]">
+        <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
           <div>
             <p className="text-sm text-white/60">Fraud and safety controls</p>
             <h3 className="text-xl font-semibold text-white">What protects campaign quality</h3>
@@ -245,7 +245,7 @@ export default async function BusinessTrustPage() {
           </div>
         </section>
 
-        <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+        <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
           <div>
             <p className="text-sm text-white/60">Service timing and operational status</p>
             <h3 className="text-xl font-semibold text-white">Current queue conditions</h3>

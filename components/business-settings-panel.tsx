@@ -94,7 +94,7 @@ export default function BusinessSettingsPanel() {
     <div className="space-y-6">
       <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="space-y-4 p-6">
+          <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-sm text-white/60">Business profile</p>
               <h3 className="text-xl font-semibold text-white">Brand and contact identity</h3>
@@ -153,7 +153,7 @@ export default function BusinessSettingsPanel() {
               </div>
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/60">
-              <p>Account email: {data.profile.email}</p>
+              <p className="break-all">Account email: {data.profile.email}</p>
               <p>KYC status: {data.profile.kycStatus}</p>
               <p>
                 Joined:{" "}
@@ -168,7 +168,7 @@ export default function BusinessSettingsPanel() {
         </Card>
 
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="space-y-4 p-6">
+          <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-sm text-white/60">Billing and policies</p>
               <h3 className="text-xl font-semibold text-white">Refund and billing preferences</h3>
@@ -202,7 +202,7 @@ export default function BusinessSettingsPanel() {
       </div>
 
       <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-        <CardContent className="space-y-4 p-6">
+        <CardContent className="space-y-4 p-4 sm:p-6">
           <div>
             <p className="text-sm text-white/60">Notification preferences</p>
             <h3 className="text-xl font-semibold text-white">Choose which business alerts matter</h3>
@@ -239,8 +239,8 @@ export default function BusinessSettingsPanel() {
               </label>
             ))}
           </div>
-          <div className="flex items-center gap-3">
-            <Button onClick={save} disabled={saving}>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Button onClick={save} disabled={saving} className="w-full sm:w-auto">
               {saving ? "Saving..." : "Save Settings"}
             </Button>
             {message ? <p className="text-sm text-emerald-300">{message}</p> : null}

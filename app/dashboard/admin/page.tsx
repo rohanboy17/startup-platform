@@ -142,7 +142,7 @@ export default async function AdminDashboard() {
     <div className="space-y-8">
       <DashboardNavbar />
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-4 xl:grid-cols-8">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5">
         <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
           <CardContent className="p-5 sm:p-6">
             <p className="text-muted-foreground">Total Users</p>
@@ -212,28 +212,28 @@ export default async function AdminDashboard() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
         <Card className="rounded-2xl border-white/10 bg-white/5 lg:col-span-2">
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <p className="mb-4 text-sm text-white/60">System Health</p>
             <div className="space-y-3 text-sm">
-              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+              <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 <span>Database</span>
                 <span className={dbHealthy ? "text-emerald-300" : "text-rose-300"}>
                   {dbHealthy ? "HEALTHY" : "ISSUE"}
                 </span>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+              <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 <span>Cron (Daily Reset)</span>
                 <span className={cronHealthy ? "text-emerald-300" : "text-amber-300"}>
                   {cronHealthy ? "ON TIME" : "DELAYED"}
                 </span>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+              <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 <span>Payouts</span>
                 <span className={payoutHealthy ? "text-emerald-300" : "text-amber-300"}>
                   {payoutHealthy ? "NO FAILURES" : "CHECK NEEDED"}
                 </span>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-3 py-2">
+              <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 <span>Moderation Queue</span>
                 <span className={queueHealthy ? "text-emerald-300" : "text-amber-300"}>
                   {queueHealthy ? "HEALTHY" : "STALE ITEMS"}
@@ -244,7 +244,7 @@ export default async function AdminDashboard() {
         </Card>
 
         <Card className="rounded-2xl border-white/10 bg-white/5 lg:col-span-2">
-          <CardContent className="p-6">
+          <CardContent className="p-4 sm:p-6">
             <p className="mb-4 text-sm text-white/60">Action Alerts</p>
             {alerts.length === 0 ? (
               <p className="text-sm text-emerald-300">No critical alert right now.</p>
@@ -261,7 +261,11 @@ export default async function AdminDashboard() {
         </Card>
       </div>
 
-      <div>
+      <div className="space-y-3">
+        <div>
+          <p className="text-sm text-white/60">Platform trend</p>
+          <h3 className="text-xl font-semibold text-white">Revenue vs payout</h3>
+        </div>
         <RevenueChart data={revenueChartData} />
       </div>
     </div>

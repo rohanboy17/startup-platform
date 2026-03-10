@@ -110,7 +110,7 @@ export default function BusinessNotificationsPanel() {
               }`}
             >
               <CardContent className="space-y-2 p-6">
-                <div className="flex items-center justify-between gap-3">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <p className="font-semibold text-white">{alert.title}</p>
                   <span className="text-xs text-white/45">
                     {new Date(alert.createdAt).toLocaleString("en-IN", {
@@ -122,7 +122,7 @@ export default function BusinessNotificationsPanel() {
                     })}
                   </span>
                 </div>
-                <p className="text-sm text-white/75">{alert.message}</p>
+                <p className="break-words text-sm text-white/75">{alert.message}</p>
               </CardContent>
             </Card>
           ))

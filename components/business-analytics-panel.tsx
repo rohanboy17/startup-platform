@@ -114,7 +114,7 @@ export default function BusinessAnalyticsPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
           <CardContent className="p-5">
             <p className="text-sm text-white/60">Approved results</p>
@@ -151,19 +151,19 @@ export default function BusinessAnalyticsPanel() {
         </Card>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+      <div className="grid gap-6 2xl:grid-cols-[1.15fr_0.85fr]">
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="space-y-4 p-6">
+          <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-sm text-white/60">14-day trend</p>
               <h3 className="text-xl font-semibold text-white">Spend vs approved output</h3>
             </div>
-            <ChartContainer config={trendChartConfig} className="h-[320px] w-full">
+            <ChartContainer config={trendChartConfig} className="aspect-auto h-[220px] w-full overflow-hidden sm:h-[320px]">
               <LineChart data={data.trend}>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis dataKey="day" tickLine={false} axisLine={false} />
+                <XAxis dataKey="day" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} interval="preserveStartEnd" minTickGap={24} />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <ChartLegend content={<ChartLegendContent />} />
+                <ChartLegend content={<ChartLegendContent className="hidden sm:flex text-[11px] sm:text-xs" />} />
                 <Line type="monotone" dataKey="approved" stroke="var(--color-approved)" strokeWidth={3} dot={false} />
                 <Line
                   type="monotone"
@@ -179,7 +179,7 @@ export default function BusinessAnalyticsPanel() {
         </Card>
 
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="space-y-4 p-6">
+          <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-sm text-white/60">Category performance</p>
               <h3 className="text-xl font-semibold text-white">Which task type is working</h3>
@@ -193,7 +193,7 @@ export default function BusinessAnalyticsPanel() {
               <div className="space-y-3">
                 {data.categoryPerformance.map((row) => (
                   <div key={row.category} className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <div className="flex items-center justify-between gap-3">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <p className="font-medium text-white">{getCampaignCategoryLabel(row.category)}</p>
                       <span className="text-sm text-emerald-200">{row.approvalRate.toFixed(2)}%</span>
                     </div>
@@ -215,19 +215,19 @@ export default function BusinessAnalyticsPanel() {
         </Card>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+      <div className="grid gap-6 2xl:grid-cols-[0.9fr_1.1fr]">
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="space-y-4 p-6">
+          <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-sm text-white/60">Moderation flow</p>
               <h3 className="text-xl font-semibold text-white">Approved vs rejected volume</h3>
             </div>
-            <ChartContainer config={moderationChartConfig} className="h-[280px] w-full">
+            <ChartContainer config={moderationChartConfig} className="aspect-auto h-[210px] w-full overflow-hidden sm:h-[280px]">
               <BarChart data={data.trend}>
                 <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                <XAxis dataKey="day" tickLine={false} axisLine={false} />
+                <XAxis dataKey="day" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} interval="preserveStartEnd" minTickGap={24} />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <ChartLegend content={<ChartLegendContent />} />
+                <ChartLegend content={<ChartLegendContent className="hidden sm:flex text-[11px] sm:text-xs" />} />
                 <Bar dataKey="approved" fill="var(--color-approved)" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="rejected" fill="var(--color-rejected)" radius={[4, 4, 0, 0]} />
               </BarChart>
@@ -236,7 +236,7 @@ export default function BusinessAnalyticsPanel() {
         </Card>
 
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="space-y-4 p-6">
+          <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-sm text-white/60">Top campaigns</p>
               <h3 className="text-xl font-semibold text-white">Ranking by approved output</h3>
@@ -249,9 +249,9 @@ export default function BusinessAnalyticsPanel() {
               <div className="space-y-3">
                 {data.topCampaigns.map((campaign) => (
                   <div key={campaign.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <div className="flex items-start justify-between gap-3">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div>
-                        <p className="font-medium text-white">{campaign.title}</p>
+                        <p className="break-words font-medium text-white">{campaign.title}</p>
                         <p className="mt-1 text-xs text-white/45">
                           {getCampaignCategoryLabel(campaign.category)} | {campaign.status}
                         </p>

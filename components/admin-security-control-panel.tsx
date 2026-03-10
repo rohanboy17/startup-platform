@@ -106,7 +106,7 @@ export default function AdminSecurityControlPanel({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+      <div className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
         <p className="mb-3 text-sm text-white/60">IP Blacklist / Whitelist</p>
         <div className="grid gap-3 md:grid-cols-4">
           <Input
@@ -127,7 +127,7 @@ export default function AdminSecurityControlPanel({
             onChange={(e) => setNote(e.target.value)}
             placeholder="Note (optional)"
           />
-          <Button onClick={createRule} disabled={!ip || loading !== null}>
+          <Button onClick={createRule} disabled={!ip || loading !== null} className="w-full md:w-auto">
             {loading === "create" ? "Saving..." : "Save Rule"}
           </Button>
         </div>
@@ -137,16 +137,16 @@ export default function AdminSecurityControlPanel({
             <p className="text-sm text-white/50">No IP rules configured.</p>
           ) : (
             rules.slice(0, 40).map((rule) => (
-              <div key={rule.id} className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm">
+              <div key={rule.id} className="flex flex-col gap-3 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="font-medium">
+                  <p className="break-all font-medium">
                     {rule.ip} | {rule.type}
                   </p>
                   <p className="text-xs text-white/60">
                     {rule.note || "No note"} | {rule.isActive ? "Active" : "Inactive"}
                   </p>
                 </div>
-                <Button variant="outline" onClick={() => toggleRule(rule)} disabled={loading !== null}>
+                <Button variant="outline" onClick={() => toggleRule(rule)} disabled={loading !== null} className="w-full sm:w-auto">
                   {rule.isActive ? "Disable" : "Enable"}
                 </Button>
               </div>
@@ -155,7 +155,7 @@ export default function AdminSecurityControlPanel({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+      <div className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
         <p className="mb-3 text-sm text-white/60">Rate Limit Dashboard (runtime)</p>
         <div className="space-y-2">
           {rateStats.length === 0 ? (
@@ -173,7 +173,7 @@ export default function AdminSecurityControlPanel({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+      <div className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
         <p className="mb-3 text-sm text-white/60">Login & Security Anomaly Alerts</p>
         <div className="space-y-2">
           {events.length === 0 ? (
@@ -187,11 +187,11 @@ export default function AdminSecurityControlPanel({
                   status={event.status} | ip={event.ipAddress || "unknown"} | user={event.userId || "N/A"} | {new Date(event.createdAt).toLocaleString()}
                 </p>
                 {event.status === "OPEN" ? (
-                  <div className="flex gap-2">
-                    <Button variant="outline" onClick={() => updateEventStatus(event.id, "RESOLVED")} disabled={loading !== null}>
+                  <div className="flex flex-col gap-2 sm:flex-row">
+                    <Button variant="outline" onClick={() => updateEventStatus(event.id, "RESOLVED")} disabled={loading !== null} className="w-full sm:w-auto">
                       Resolve
                     </Button>
-                    <Button variant="outline" onClick={() => updateEventStatus(event.id, "DISMISSED")} disabled={loading !== null}>
+                    <Button variant="outline" onClick={() => updateEventStatus(event.id, "DISMISSED")} disabled={loading !== null} className="w-full sm:w-auto">
                       Dismiss
                     </Button>
                   </div>

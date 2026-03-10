@@ -169,11 +169,11 @@ export default async function AdminRevenuePage() {
       </div>
 
       <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <h3 className="text-xl font-semibold">Payout Requests</h3>
           <Link
             href="/api/admin/revenue/payouts/export?status=ALL"
-            className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-sm text-white hover:bg-white/10"
+            className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-center text-sm text-white hover:bg-white/10"
           >
             Export Payout CSV
           </Link>

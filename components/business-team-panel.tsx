@@ -160,8 +160,8 @@ export default function BusinessTeamPanel() {
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
           <p className="text-sm text-white/60">Owner</p>
-          <p className="mt-2 text-lg font-semibold text-white">{data.owner?.name || data.owner?.email || "-"}</p>
-          <p className="mt-1 text-xs text-white/45">{data.owner?.email}</p>
+          <p className="mt-2 break-words text-lg font-semibold text-white">{data.owner?.name || data.owner?.email || "-"}</p>
+          <p className="mt-1 break-all text-xs text-white/45">{data.owner?.email}</p>
         </div>
         <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
           <p className="text-sm text-white/60">Team members</p>
@@ -174,7 +174,7 @@ export default function BusinessTeamPanel() {
       </div>
 
       {canManage ? (
-        <div className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+        <div className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
           <div>
             <p className="text-sm text-white/60">Add team member</p>
             <h3 className="text-xl font-semibold text-white">Attach an existing business account</h3>
@@ -193,7 +193,7 @@ export default function BusinessTeamPanel() {
               <option value="EDITOR">Editor</option>
               <option value="VIEWER">Viewer</option>
             </select>
-            <Button type="button" onClick={() => void addMember()} disabled={busy === "add"}>
+            <Button type="button" onClick={() => void addMember()} disabled={busy === "add"} className="w-full md:w-auto">
               {busy === "add" ? "Adding..." : "Add member"}
             </Button>
           </div>
@@ -210,7 +210,7 @@ export default function BusinessTeamPanel() {
       {message ? <p className="text-sm text-emerald-300">{message}</p> : null}
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
-      <div className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+      <div className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
         <div>
           <p className="text-sm text-white/60">Workspace members</p>
           <h3 className="text-xl font-semibold text-white">Owner, editors, and viewers</h3>
@@ -229,10 +229,10 @@ export default function BusinessTeamPanel() {
               >
                 <div>
                   <p className="text-sm font-medium text-white">{member.name || member.email}</p>
-                  <p className="text-xs text-white/45">{member.email}</p>
+                  <p className="break-all text-xs text-white/45">{member.email}</p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                   <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/70">
                     {member.accessRole}
                   </span>
@@ -242,7 +242,7 @@ export default function BusinessTeamPanel() {
                       <select
                         value={member.accessRole}
                         onChange={(e) => void updateRole(member.id, e.target.value as "EDITOR" | "VIEWER")}
-                        className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white outline-none"
+                        className="w-full rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white outline-none sm:w-auto"
                         disabled={busy === `role:${member.id}`}
                       >
                         <option value="EDITOR">Editor</option>
@@ -254,6 +254,7 @@ export default function BusinessTeamPanel() {
                         variant="outline"
                         onClick={() => void removeMember(member.id)}
                         disabled={busy === `remove:${member.id}`}
+                        className="w-full sm:w-auto"
                       >
                         {busy === `remove:${member.id}` ? "Removing..." : "Remove"}
                       </Button>

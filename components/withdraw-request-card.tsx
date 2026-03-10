@@ -55,7 +55,7 @@ export default function WithdrawRequestCard({
   }
 
   return (
-    <div className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-6">
+    <div className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-6">
       <h3 className="text-base font-semibold sm:text-lg">Request Withdrawal</h3>
       <p className="text-sm text-white/60">
         Minimum withdrawal amount: INR {formatMoney(minAmount)}

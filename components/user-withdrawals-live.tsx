@@ -67,7 +67,7 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
                 <p className="font-medium">Withdrawal Request</p>
                 <p className="text-sm text-white/50">{new Date(w.createdAt).toLocaleDateString()}</p>
                 {(w.upiId || w.upiName) ? (
-                  <p className="text-xs text-white/40">
+                  <p className="break-all text-xs text-white/40">
                     {w.upiName || "UPI"} | {w.upiId || "-"}
                   </p>
                 ) : null}

@@ -322,7 +322,7 @@ export default function BusinessFundingPage() {
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="space-y-5 p-6">
+          <CardContent className="space-y-5 p-4 sm:p-6">
             <div className="flex items-center gap-3">
               <ArrowUpCircle className="text-emerald-200" size={18} />
               <div>
@@ -333,7 +333,7 @@ export default function BusinessFundingPage() {
 
             <div className="flex flex-wrap gap-2">
               {presets.map((value) => (
-                <Button key={value} variant="outline" onClick={() => setFundAmount(String(value))}>
+                <Button key={value} variant="outline" onClick={() => setFundAmount(String(value))} className="flex-1 sm:flex-none">
                   INR {formatMoney(value)}
                 </Button>
               ))}
@@ -348,17 +348,17 @@ export default function BusinessFundingPage() {
             />
 
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/70">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-3">
                 <span>Gross amount</span>
-                <span>INR {formatMoney(fundNumber)}</span>
+                <span className="text-right">INR {formatMoney(fundNumber)}</span>
               </div>
-              <div className="mt-2 flex items-center justify-between">
+              <div className="mt-2 flex items-center justify-between gap-3">
                 <span>Platform funding fee ({(feeRate * 100).toFixed(2)}%)</span>
-                <span>INR {formatMoney(fundFee)}</span>
+                <span className="text-right">INR {formatMoney(fundFee)}</span>
               </div>
-              <div className="mt-2 flex items-center justify-between font-medium text-emerald-200">
+              <div className="mt-2 flex items-center justify-between gap-3 font-medium text-emerald-200">
                 <span>Net wallet credit</span>
-                <span>INR {formatMoney(fundNet)}</span>
+                <span className="text-right">INR {formatMoney(fundNet)}</span>
               </div>
             </div>
 
@@ -369,7 +369,7 @@ export default function BusinessFundingPage() {
         </Card>
 
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="space-y-5 p-6">
+          <CardContent className="space-y-5 p-4 sm:p-6">
             <div className="flex items-center gap-3">
               <ArrowDownCircle className="text-sky-200" size={18} />
               <div>
@@ -388,17 +388,17 @@ export default function BusinessFundingPage() {
             />
 
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/70">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-3">
                 <span>Requested amount</span>
-                <span>INR {formatMoney(refundNumber)}</span>
+                <span className="text-right">INR {formatMoney(refundNumber)}</span>
               </div>
-              <div className="mt-2 flex items-center justify-between">
+              <div className="mt-2 flex items-center justify-between gap-3">
                 <span>Refund processing fee ({(feeRate * 100).toFixed(2)}%)</span>
-                <span>INR {formatMoney(refundFee)}</span>
+                <span className="text-right">INR {formatMoney(refundFee)}</span>
               </div>
-              <div className="mt-2 flex items-center justify-between font-medium text-sky-200">
+              <div className="mt-2 flex items-center justify-between gap-3 font-medium text-sky-200">
                 <span>Net refund</span>
-                <span>INR {formatMoney(refundNet)}</span>
+                <span className="text-right">INR {formatMoney(refundNet)}</span>
               </div>
             </div>
 
@@ -423,7 +423,7 @@ export default function BusinessFundingPage() {
 
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="space-y-4 p-6">
+          <CardContent className="space-y-4 p-4 sm:p-6">
             <div className="flex items-center gap-3">
               <ReceiptText size={18} className="text-white/75" />
               <div>
@@ -440,10 +440,10 @@ export default function BusinessFundingPage() {
               <div className="space-y-3">
                 {data.paymentOrders.map((order) => (
                   <div key={order.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <div className="flex items-start justify-between gap-3">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div>
                         <p className="font-medium text-white">INR {formatMoney(order.amount)}</p>
-                        <p className="mt-1 text-xs text-white/45">Receipt: {order.receipt}</p>
+                        <p className="mt-1 break-all text-xs text-white/45">Receipt: {order.receipt}</p>
                       </div>
                       <span className={`text-sm font-medium ${orderTone(order.status)}`}>{order.status}</span>
                     </div>
@@ -460,7 +460,7 @@ export default function BusinessFundingPage() {
         </Card>
 
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="space-y-4 p-6">
+          <CardContent className="space-y-4 p-4 sm:p-6">
             <div className="flex items-center gap-3">
               <Wallet size={18} className="text-white/75" />
               <div>
@@ -477,12 +477,12 @@ export default function BusinessFundingPage() {
               <div className="space-y-3">
                 {data.transactions.map((transaction) => (
                   <div key={transaction.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <div className="flex items-start justify-between gap-3">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div>
-                        <p className="font-medium text-white">{transaction.note || "Wallet transaction"}</p>
+                        <p className="font-medium text-white break-words">{transaction.note || "Wallet transaction"}</p>
                         <p className="mt-1 text-xs text-white/45">{dateTimeLabel(transaction.createdAt)}</p>
                       </div>
-                      <span className={transaction.type === "CREDIT" ? "text-emerald-200" : "text-rose-200"}>
+                      <span className={transaction.type === "CREDIT" ? "text-emerald-200 sm:text-right" : "text-rose-200 sm:text-right"}>
                         {transaction.type === "CREDIT" ? "+" : "-"} INR {formatMoney(transaction.amount)}
                       </span>
                     </div>

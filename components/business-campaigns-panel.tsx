@@ -154,7 +154,7 @@ export default function BusinessCampaignsPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
           <CardContent className="p-5">
             <p className="text-sm text-white/60">Total campaigns</p>
@@ -188,11 +188,11 @@ export default function BusinessCampaignsPanel() {
               <p className="text-sm text-white/60">Campaign management</p>
               <h3 className="text-xl font-semibold text-white">Track status, budget, and moderation flow</h3>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
               {canManageCampaigns ? (
                 <Link
                   href="/dashboard/business/create"
-                  className="inline-flex items-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm text-emerald-100 transition hover:bg-emerald-400/20"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm text-emerald-100 transition hover:bg-emerald-400/20 sm:w-auto"
                 >
                   Create campaign
                   <ArrowRight size={16} />
@@ -200,7 +200,7 @@ export default function BusinessCampaignsPanel() {
               ) : null}
               <Link
                 href="/dashboard/business/analytics"
-                className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-black/20 px-4 py-2 text-sm text-white/80 transition hover:bg-black/30"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-black/20 px-4 py-2 text-sm text-white/80 transition hover:bg-black/30 sm:w-auto"
               >
                 Open analytics
               </Link>
@@ -223,7 +223,7 @@ export default function BusinessCampaignsPanel() {
                   key={filter.value}
                   type="button"
                   onClick={() => setStatusFilter(filter.value)}
-                  className={`rounded-xl border px-3 py-2 text-sm transition ${
+                  className={`rounded-xl border px-3 py-2 text-sm transition sm:px-3 ${
                     statusFilter === filter.value
                       ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-100"
                       : "border-white/10 bg-black/20 text-white/70 hover:bg-black/30 hover:text-white"
@@ -239,7 +239,7 @@ export default function BusinessCampaignsPanel() {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 xl:grid-cols-2">
+      <div className="grid gap-6 2xl:grid-cols-2">
         {filteredCampaigns.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-white/10 bg-white/5 p-10 text-center text-white/50 xl:col-span-2">
             No campaigns found for the selected filters.
@@ -259,7 +259,7 @@ export default function BusinessCampaignsPanel() {
                 key={campaign.id}
                 className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 transition hover:shadow-2xl hover:ring-1 hover:ring-white/20"
               >
-                <CardContent className="space-y-5 p-6">
+                <CardContent className="space-y-5 p-4 sm:p-6">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div className="space-y-2">
                       <div className="flex flex-wrap items-center gap-2">
@@ -268,7 +268,7 @@ export default function BusinessCampaignsPanel() {
                           {campaign.status}
                         </span>
                       </div>
-                      <p className="text-sm text-white/60">{campaign.description}</p>
+                      <p className="break-words text-sm text-white/60">{campaign.description}</p>
                       <div className="flex flex-wrap gap-3 text-xs text-white/45">
                         <span>{getCampaignCategoryLabel(campaign.category)}</span>
                         <span>Created {timeLabel(campaign.createdAt)}</span>
@@ -276,11 +276,12 @@ export default function BusinessCampaignsPanel() {
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
                       {canManageCampaigns && campaign.status === "LIVE" ? (
                         <Button
                           type="button"
                           variant="outline"
+                          className="w-full sm:w-auto"
                           disabled={busyAction === `${campaign.id}:PAUSE`}
                           onClick={() => void runAction(campaign.id, "PAUSE")}
                         >
@@ -292,6 +293,7 @@ export default function BusinessCampaignsPanel() {
                         <Button
                           type="button"
                           variant="outline"
+                          className="w-full sm:w-auto"
                           disabled={busyAction === `${campaign.id}:RESUME`}
                           onClick={() => void runAction(campaign.id, "RESUME")}
                         >
@@ -303,6 +305,7 @@ export default function BusinessCampaignsPanel() {
                         <Button
                           type="button"
                           variant="outline"
+                          className="w-full sm:w-auto"
                           disabled={busyAction === `${campaign.id}:CLOSE`}
                           onClick={() => void runAction(campaign.id, "CLOSE")}
                         >
@@ -310,8 +313,8 @@ export default function BusinessCampaignsPanel() {
                           {busyAction === `${campaign.id}:CLOSE` ? "Closing..." : "Close"}
                         </Button>
                       ) : null}
-                      <Link href={`/dashboard/business/campaigns/${campaign.id}`}>
-                        <Button type="button" variant="outline">
+                      <Link href={`/dashboard/business/campaigns/${campaign.id}`} className="w-full sm:w-auto">
+                        <Button type="button" variant="outline" className="w-full sm:w-auto">
                           {canManageCampaigns ? "View / Edit" : "View"}
                         </Button>
                       </Link>

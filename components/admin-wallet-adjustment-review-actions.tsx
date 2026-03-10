@@ -54,11 +54,11 @@ export default function AdminWalletAdjustmentReviewActions({
         className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
         placeholder="Review note (optional)"
       />
-      <div className="flex gap-2">
-        <Button onClick={() => run("APPROVE")} disabled={loading !== null}>
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <Button onClick={() => run("APPROVE")} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "APPROVE" ? "Approving..." : "Approve"}
         </Button>
-        <Button variant="destructive" onClick={() => run("REJECT")} disabled={loading !== null}>
+        <Button variant="destructive" onClick={() => run("REJECT")} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "REJECT" ? "Rejecting..." : "Reject"}
         </Button>
       </div>
@@ -66,4 +66,3 @@ export default function AdminWalletAdjustmentReviewActions({
     </div>
   );
 }
-

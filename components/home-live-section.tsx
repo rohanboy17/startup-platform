@@ -69,7 +69,7 @@ export default function HomeLiveSection() {
 
         {data ? (
           <>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
               <div className="rounded-xl border border-white/10 bg-black/30 p-4">
                 <p className="text-xs text-white/60">Active Online Users</p>
                 <p className="mt-1 text-xl font-semibold">{data.stats.activeOnlineUsers}</p>
@@ -81,6 +81,10 @@ export default function HomeLiveSection() {
               <div className="rounded-xl border border-white/10 bg-black/30 p-4">
                 <p className="text-xs text-white/60">Live Tasks</p>
                 <p className="mt-1 text-xl font-semibold">{data.stats.liveTasks}</p>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-black/30 p-4">
+                <p className="text-xs text-white/60">Live Withdraw Requests</p>
+                <p className="mt-1 text-xl font-semibold">{data.stats.liveWithdraws}</p>
               </div>
             </div>
 

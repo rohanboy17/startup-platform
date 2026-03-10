@@ -51,11 +51,11 @@ export default function AdminUserRoleActions({
 
   return (
     <div className="space-y-2">
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <select
           value={role}
           onChange={(e) => setRole(e.target.value as Role)}
-          className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white sm:w-auto"
           disabled={loading}
         >
           <option value="USER">USER</option>
@@ -63,7 +63,7 @@ export default function AdminUserRoleActions({
           <option value="MANAGER">MANAGER</option>
           <option value="ADMIN">ADMIN</option>
         </select>
-        <Button onClick={saveRole} disabled={loading}>
+        <Button onClick={saveRole} disabled={loading} className="w-full sm:w-auto">
           {loading ? "Saving..." : "Update Role"}
         </Button>
       </div>

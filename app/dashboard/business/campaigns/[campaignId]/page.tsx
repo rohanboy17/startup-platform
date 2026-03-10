@@ -112,19 +112,19 @@ export default async function BusinessCampaignDetailPage({
           <p className="mt-2 max-w-3xl text-sm text-white/65 md:text-base">{campaign.description}</p>
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           {campaign.taskLink ? (
             <Link
               href={campaign.taskLink}
               target="_blank"
-              className="inline-flex rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/85 transition hover:bg-white/10"
+              className="inline-flex w-full items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/85 transition hover:bg-white/10 sm:w-auto"
             >
               Open task link
             </Link>
           ) : null}
           <Link
             href="/dashboard/business/analytics"
-            className="inline-flex rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm text-emerald-100 transition hover:bg-emerald-400/20"
+            className="inline-flex w-full items-center justify-center rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm text-emerald-100 transition hover:bg-emerald-400/20 sm:w-auto"
           >
             Open analytics
           </Link>
@@ -182,7 +182,7 @@ export default async function BusinessCampaignDetailPage({
 
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="space-y-6 p-6">
+          <CardContent className="space-y-6 p-4 sm:p-6">
             <div>
               <p className="text-sm text-white/60">Budget performance</p>
               <h3 className="text-xl font-semibold text-white">Campaign economics</h3>
@@ -235,7 +235,7 @@ export default async function BusinessCampaignDetailPage({
         </Card>
 
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="space-y-4 p-6">
+          <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-sm text-white/60">Task details</p>
               <h3 className="text-xl font-semibold text-white">Instruction checklist</h3>
@@ -248,7 +248,7 @@ export default async function BusinessCampaignDetailPage({
             ) : (
               <ol className="space-y-3">
                 {campaign.instructions.map((instruction) => (
-                  <li key={instruction.id} className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/80">
+                  <li key={instruction.id} className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/80 break-words">
                     <span className="mr-2 text-white/40">{instruction.sequence}.</span>
                     {instruction.instructionText}
                   </li>
@@ -260,7 +260,7 @@ export default async function BusinessCampaignDetailPage({
       </div>
 
       <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-        <CardContent className="space-y-4 p-6">
+        <CardContent className="space-y-4 p-4 sm:p-6">
           <div>
             <p className="text-sm text-white/60">Activity timeline</p>
             <h3 className="text-xl font-semibold text-white">Recent campaign events</h3>
@@ -274,7 +274,7 @@ export default async function BusinessCampaignDetailPage({
             <div className="space-y-3">
               {activityItems.map((item) => (
                 <div key={item.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <p className="text-sm text-white/85">{item.label}</p>
+                  <p className="break-words text-sm text-white/85">{item.label}</p>
                   <p className="mt-1 text-xs text-white/40">
                     {item.createdAt.toLocaleString("en-IN", {
                       day: "2-digit",

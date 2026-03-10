@@ -80,11 +80,11 @@ export default function UserCampaignsPanel() {
                     Open task link
                   </a>
                 ) : null}
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <span className="font-bold text-green-400">
                     INR {formatMoney(campaign.rewardPerTask)}
                   </span>
-                  <span className="text-xs text-white/60">
+                  <span className="text-xs text-white/60 sm:text-right">
                     Budget left: INR {formatMoney(campaign.remainingBudget)}
                   </span>
                 </div>
@@ -95,7 +95,9 @@ export default function UserCampaignsPanel() {
                   <span className="mx-1 hidden sm:inline">|</span>
                   <span className="block sm:inline">Slots Left: {campaign.leftSubmissions}</span>
                 </p>
-                <SubmitCampaignModal campaignId={campaign.id} />
+                <div className="w-full">
+                  <SubmitCampaignModal campaignId={campaign.id} />
+                </div>
               </CardContent>
             </Card>
           );

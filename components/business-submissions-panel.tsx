@@ -170,12 +170,12 @@ export default function BusinessSubmissionsPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-5"><p className="text-sm text-white/60">Total</p><p className="mt-2 text-3xl font-semibold text-white">{data.counts.total}</p></CardContent></Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-5"><p className="text-sm text-white/60">Pending Manager</p><p className="mt-2 text-3xl font-semibold text-amber-100">{data.counts.pendingManager}</p></CardContent></Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-5"><p className="text-sm text-white/60">Pending Admin</p><p className="mt-2 text-3xl font-semibold text-amber-100">{data.counts.pendingAdmin}</p></CardContent></Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-5"><p className="text-sm text-white/60">Approved</p><p className="mt-2 text-3xl font-semibold text-emerald-200">{data.counts.approved}</p></CardContent></Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-5"><p className="text-sm text-white/60">Rejected</p><p className="mt-2 text-3xl font-semibold text-rose-200">{data.counts.rejected}</p></CardContent></Card>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">Total</p><p className="mt-2 text-3xl font-semibold text-white">{data.counts.total}</p></CardContent></Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">Pending Manager</p><p className="mt-2 text-3xl font-semibold text-amber-100">{data.counts.pendingManager}</p></CardContent></Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">Pending Admin</p><p className="mt-2 text-3xl font-semibold text-amber-100">{data.counts.pendingAdmin}</p></CardContent></Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">Approved</p><p className="mt-2 text-3xl font-semibold text-emerald-200">{data.counts.approved}</p></CardContent></Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">Rejected</p><p className="mt-2 text-3xl font-semibold text-rose-200">{data.counts.rejected}</p></CardContent></Card>
       </div>
 
       <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
@@ -185,7 +185,7 @@ export default function BusinessSubmissionsPanel() {
               <p className="text-sm text-white/60">Submission review</p>
               <h3 className="text-xl font-semibold text-white">Read-only moderation pipeline</h3>
             </div>
-            <Button type="button" variant="outline" onClick={exportCsv}>
+            <Button type="button" variant="outline" onClick={exportCsv} className="w-full sm:w-auto">
               <Download size={16} />
               Export CSV
             </Button>
@@ -229,7 +229,7 @@ export default function BusinessSubmissionsPanel() {
         ) : (
           filtered.map((submission) => (
             <Card key={submission.id} className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-              <CardContent className="space-y-4 p-6">
+              <CardContent className="space-y-4 p-4 sm:p-6">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <div className="flex flex-wrap items-center gap-2">

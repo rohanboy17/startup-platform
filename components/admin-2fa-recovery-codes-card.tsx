@@ -51,7 +51,7 @@ export default function AdminTwoFactorRecoveryCodesCard({
   }
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
       <p className="text-sm text-white/60">Admin Recovery Codes</p>
       <p className="mt-1 text-xs text-white/55">Use these one-time codes if email OTP is unavailable.</p>
       <p className="mt-2 text-xs text-white/60">
@@ -61,11 +61,11 @@ export default function AdminTwoFactorRecoveryCodesCard({
         {lastGeneratedAt ? `Last generated: ${new Date(lastGeneratedAt).toLocaleString()}` : "Never generated"}
       </p>
 
-      <div className="mt-3 flex gap-2">
-        <Button onClick={generateCodes} disabled={loading || !enabled}>
+      <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+        <Button onClick={generateCodes} disabled={loading || !enabled} className="w-full sm:w-auto">
           {loading ? "Generating..." : "Generate New Codes"}
         </Button>
-        <Button variant="outline" onClick={copyAll} disabled={!codes.length}>
+        <Button variant="outline" onClick={copyAll} disabled={!codes.length} className="w-full sm:w-auto">
           Copy
         </Button>
       </div>

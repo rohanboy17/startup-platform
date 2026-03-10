@@ -104,13 +104,13 @@ export default async function AdminWithdrawalsPage() {
                         {new Date(w.createdAt).toLocaleString()}
                       </p>
                     </div>
-                    <div className="text-right">
+                    <div className="sm:text-right">
                       <p className="font-semibold">INR {formatMoney(w.amount)}</p>
                       <p className="text-sm text-white/70">{w.status}</p>
                     </div>
                   </div>
 
-                  <div className="text-sm text-white/70">
+                  <div className="text-sm text-white/70 break-words">
                     Estimated fee ({(commissionRate * 100).toFixed(1)}%): INR {formatMoney(fee)} |
                     User payout: INR {formatMoney(payout)}
                   </div>

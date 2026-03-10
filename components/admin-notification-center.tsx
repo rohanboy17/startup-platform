@@ -94,7 +94,7 @@ export default function AdminNotificationCenter({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-3">
+      <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Broadcast</h3>
         <select
           className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm"
@@ -115,12 +115,12 @@ export default function AdminNotificationCenter({
           placeholder="Message"
         />
         <Input value={templateKey} onChange={(e) => setTemplateKey(e.target.value)} placeholder="Template key (optional)" />
-        <Button onClick={sendBroadcast} disabled={loading !== null}>
+        <Button onClick={sendBroadcast} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "broadcast" ? "Sending..." : "Send Broadcast"}
         </Button>
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-3">
+      <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Template Manager</h3>
         <Input value={newKey} onChange={(e) => setNewKey(e.target.value)} placeholder="template.key" />
         <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Template name" />
@@ -130,16 +130,16 @@ export default function AdminNotificationCenter({
           className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm"
           placeholder="Body (supports {{var}} tokens)"
         />
-        <Button onClick={saveTemplate} disabled={loading !== null}>Save Template</Button>
+        <Button onClick={saveTemplate} disabled={loading !== null} className="w-full sm:w-auto">Save Template</Button>
 
         <div className="space-y-2">
           {templates.map((t) => (
-            <div key={t.id} className="rounded-md border border-white/10 bg-black/20 p-3 flex items-center justify-between">
+            <div key={t.id} className="flex flex-col gap-3 rounded-md border border-white/10 bg-black/20 p-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="font-medium">{t.key}</p>
+                <p className="break-all font-medium">{t.key}</p>
                 <p className="text-xs text-white/60">{t.name} | {t.channel} | {t.enabled ? "enabled" : "disabled"}</p>
               </div>
-              <Button variant="outline" onClick={() => toggleTemplate(t.id, t.enabled)} disabled={loading !== null}>
+              <Button variant="outline" onClick={() => toggleTemplate(t.id, t.enabled)} disabled={loading !== null} className="w-full sm:w-auto">
                 {t.enabled ? "Disable" : "Enable"}
               </Button>
             </div>
@@ -147,14 +147,14 @@ export default function AdminNotificationCenter({
         </div>
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-2">
+      <div className="space-y-2 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Delivery Logs</h3>
         {logs.length === 0 ? (
           <p className="text-sm text-white/60">No logs yet.</p>
         ) : (
           logs.map((log) => (
             <div key={log.id} className="rounded-md border border-white/10 bg-black/20 p-3 text-sm">
-              <p className="font-medium">{log.status} | {log.channel} | {log.user.email}</p>
+              <p className="break-all font-medium">{log.status} | {log.channel} | {log.user.email}</p>
               <p className="text-xs text-white/60">template={log.templateKey || "-"} | {new Date(log.createdAt).toLocaleString()}</p>
               {log.error ? <p className="text-xs text-rose-300">{log.error}</p> : null}
             </div>

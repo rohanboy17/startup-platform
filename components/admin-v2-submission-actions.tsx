@@ -97,20 +97,20 @@ export default function AdminV2SubmissionActions({
           placeholder={allowReopen ? "Reason (required for reopen)" : "Escalation reason (optional)"}
         />
       ) : null}
-      <div className="flex gap-3">
-        <Button onClick={() => review("APPROVE")} disabled={loading !== null}>
+      <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <Button onClick={() => review("APPROVE")} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "APPROVE" ? "Approving..." : "Approve"}
         </Button>
-        <Button variant="destructive" onClick={() => review("REJECT")} disabled={loading !== null}>
+        <Button variant="destructive" onClick={() => review("REJECT")} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "REJECT" ? "Rejecting..." : "Reject"}
         </Button>
         {allowReopen ? (
-          <Button variant="outline" onClick={() => review("REOPEN")} disabled={loading !== null}>
+          <Button variant="outline" onClick={() => review("REOPEN")} disabled={loading !== null} className="w-full sm:w-auto">
             {loading === "REOPEN" ? "Reopening..." : "Reopen"}
           </Button>
         ) : null}
         {allowEscalate ? (
-          <Button variant="secondary" onClick={escalate} disabled={loading !== null}>
+          <Button variant="secondary" onClick={escalate} disabled={loading !== null} className="w-full sm:w-auto">
             {loading === "ESCALATE" ? "Escalating..." : "Escalate"}
           </Button>
         ) : null}

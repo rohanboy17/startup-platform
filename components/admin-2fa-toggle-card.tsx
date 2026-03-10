@@ -36,7 +36,7 @@ export default function AdminTwoFactorToggleCard({
   }
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
       <p className="text-sm text-white/60">Admin 2FA</p>
       <p className="mt-1 text-sm text-white/80">
         Status: <span className={enabled ? "text-emerald-300" : "text-amber-300"}>{enabled ? "Enabled" : "Disabled"}</span>
@@ -44,11 +44,11 @@ export default function AdminTwoFactorToggleCard({
       <p className="mt-1 text-xs text-white/55">
         {enabledAt ? `Enabled at: ${new Date(enabledAt).toLocaleString()}` : "Not enabled yet"}
       </p>
-      <div className="mt-3 flex gap-2">
-        <Button onClick={() => toggle(true)} disabled={loading || enabled}>
+      <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+        <Button onClick={() => toggle(true)} disabled={loading || enabled} className="w-full sm:w-auto">
           Enable
         </Button>
-        <Button variant="outline" onClick={() => toggle(false)} disabled={loading || !enabled}>
+        <Button variant="outline" onClick={() => toggle(false)} disabled={loading || !enabled} className="w-full sm:w-auto">
           Disable
         </Button>
       </div>

@@ -57,18 +57,18 @@ export default function AdminUserStatusActions({
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as AccountStatus)}
-          className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white sm:w-auto"
           disabled={loading}
         >
           <option value="ACTIVE">ACTIVE</option>
           <option value="SUSPENDED">SUSPENDED</option>
           <option value="BANNED">BANNED</option>
         </select>
-        <Button onClick={saveStatus} disabled={loading}>
+        <Button onClick={saveStatus} disabled={loading} className="w-full sm:w-auto">
           {loading ? "Saving..." : "Update Status"}
         </Button>
       </div>

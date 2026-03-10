@@ -115,11 +115,11 @@ export default function BusinessOverviewPanel() {
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           {canManageBilling ? (
             <Link
               href="/dashboard/business/funding"
-              className="inline-flex items-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-100 transition hover:bg-emerald-400/20"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-100 transition hover:bg-emerald-400/20 sm:w-auto"
             >
               <Wallet size={16} />
               Add Funds
@@ -128,7 +128,7 @@ export default function BusinessOverviewPanel() {
           {canManageCampaigns ? (
             <Link
               href="/dashboard/business/create"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white/85 transition hover:bg-white/10"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white/85 transition hover:bg-white/10 sm:w-auto"
             >
               <Megaphone size={16} />
               Create Campaign
@@ -165,9 +165,9 @@ export default function BusinessOverviewPanel() {
         </Card>
       ) : null}
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-6">
+          <CardContent className="space-y-3 p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <p className="text-sm text-white/60">Available wallet</p>
               <Wallet size={18} className="text-emerald-300" />
@@ -181,7 +181,7 @@ export default function BusinessOverviewPanel() {
         </Card>
 
         <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-6">
+          <CardContent className="space-y-3 p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <p className="text-sm text-white/60">Locked campaign budget</p>
               <Layers3 size={18} className="text-sky-300" />
@@ -194,7 +194,7 @@ export default function BusinessOverviewPanel() {
         </Card>
 
         <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-6">
+          <CardContent className="space-y-3 p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <p className="text-sm text-white/60">Campaign status</p>
               <Megaphone size={18} className="text-violet-300" />
@@ -207,7 +207,7 @@ export default function BusinessOverviewPanel() {
         </Card>
 
         <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-6">
+          <CardContent className="space-y-3 p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <p className="text-sm text-white/60">Approved results</p>
               <CircleDollarSign size={18} className="text-amber-300" />
@@ -221,9 +221,9 @@ export default function BusinessOverviewPanel() {
         </Card>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+      <div className="grid gap-6 2xl:grid-cols-[1.2fr_0.8fr]">
         <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-6 p-6">
+          <CardContent className="space-y-6 p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-white/60">Performance snapshot</p>
@@ -237,7 +237,7 @@ export default function BusinessOverviewPanel() {
               </Link>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                 <p className="text-xs uppercase tracking-[0.2em] text-white/45">Today spend</p>
                 <p className="mt-2 text-2xl font-semibold text-white">INR {formatMoney(data.todaySpend)}</p>
@@ -288,7 +288,7 @@ export default function BusinessOverviewPanel() {
         </Card>
 
         <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-5 p-6">
+          <CardContent className="space-y-5 p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-white/60">Recent activity</p>
@@ -310,8 +310,8 @@ export default function BusinessOverviewPanel() {
               <div className="space-y-3">
                 {data.activityFeed.map((item) => (
                   <div key={item.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-medium text-white/90">{item.message}</p>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+                      <p className="text-sm font-medium text-white/90 break-words">{item.message}</p>
                       <span className="shrink-0 text-xs text-white/45">{relativeTimeLabel(item.createdAt)}</span>
                     </div>
                     <p className="mt-2 text-xs uppercase tracking-[0.16em] text-white/35">{item.kind}</p>

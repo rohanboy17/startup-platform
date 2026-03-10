@@ -54,14 +54,15 @@ export default function AdminWithdrawalActions({
         className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
         placeholder="Admin note (optional)"
       />
-      <div className="flex gap-3">
-        <Button onClick={() => review("APPROVED")} disabled={loading !== null}>
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Button onClick={() => review("APPROVED")} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "APPROVED" ? "Approving..." : "Approve"}
         </Button>
         <Button
           variant="destructive"
           onClick={() => review("REJECTED")}
           disabled={loading !== null}
+          className="w-full sm:w-auto"
         >
           {loading === "REJECTED" ? "Rejecting..." : "Reject"}
         </Button>

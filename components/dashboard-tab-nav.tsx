@@ -189,13 +189,13 @@ export default function DashboardTabNav({
           <p className="text-sm font-medium text-white/90">{displayName}</p>
         </div>
 
-        <nav className="max-h-[45vh] space-y-4 overflow-y-auto pr-1 text-sm md:max-h-none md:overflow-visible md:pr-0">
+        <nav className="max-h-[45vh] space-y-3 overflow-y-auto pr-1 text-sm md:max-h-none md:space-y-4 md:overflow-visible md:pr-0">
           {itemsWithState.map((item) => (
             <Link
               key={item.key}
               href={item.href}
               onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-between text-white/70 transition hover:text-white"
+              className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-white/70 transition hover:bg-black/30 hover:text-white md:rounded-none md:border-0 md:bg-transparent md:px-0 md:py-0"
             >
               <span className="flex items-center gap-3">
                 <item.Icon size={18} />

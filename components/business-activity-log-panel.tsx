@@ -52,7 +52,7 @@ export default function BusinessActivityLogPanel() {
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="font-medium text-white">{item.action.replaceAll("_", " ")}</p>
-                  <p className="text-xs text-white/45">{item.kind} | {item.actor}</p>
+                  <p className="break-all text-xs text-white/45">{item.kind} | {item.actor}</p>
                 </div>
                 <p className="text-xs text-white/45">
                   {new Date(item.createdAt).toLocaleString("en-IN", {
@@ -64,7 +64,7 @@ export default function BusinessActivityLogPanel() {
                   })}
                 </p>
               </div>
-              <p className="text-sm text-white/75">{item.message}</p>
+              <p className="break-words text-sm text-white/75">{item.message}</p>
             </CardContent>
           </Card>
         ))

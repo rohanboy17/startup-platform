@@ -158,7 +158,7 @@ export default function AdminCmsPanel({
 
   return (
     <div className="space-y-8">
-      <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-5">
+      <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Landing Editor</h3>
         <Input value={landingHero} onChange={(e) => setLandingHero(e.target.value)} placeholder="Hero title" />
         <textarea
@@ -167,41 +167,41 @@ export default function AdminCmsPanel({
           className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
           placeholder="Hero subtitle"
         />
-        <Button onClick={() => saveContent("landing.home", { heroTitle: landingHero, heroSubtitle: landingSubtitle })} disabled={loading !== null}>
+        <Button onClick={() => saveContent("landing.home", { heroTitle: landingHero, heroSubtitle: landingSubtitle })} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "landing.home" ? "Saving..." : "Save Landing Content"}
         </Button>
       </section>
 
-      <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-5">
+      <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">FAQ & Legal Editor</h3>
         <textarea value={termsBody} onChange={(e) => setTermsBody(e.target.value)} className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white" placeholder="Terms body" />
-        <Button onClick={() => saveContent("legal.terms", { body: termsBody })} disabled={loading !== null}>
+        <Button onClick={() => saveContent("legal.terms", { body: termsBody })} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "legal.terms" ? "Saving..." : "Save Terms"}
         </Button>
         <textarea value={privacyBody} onChange={(e) => setPrivacyBody(e.target.value)} className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white" placeholder="Privacy body" />
-        <Button onClick={() => saveContent("legal.privacy", { body: privacyBody })} disabled={loading !== null}>
+        <Button onClick={() => saveContent("legal.privacy", { body: privacyBody })} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "legal.privacy" ? "Saving..." : "Save Privacy"}
         </Button>
         <textarea value={refundBody} onChange={(e) => setRefundBody(e.target.value)} className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white" placeholder="Refund policy body" />
-        <Button onClick={() => saveContent("legal.refund", { body: refundBody })} disabled={loading !== null}>
+        <Button onClick={() => saveContent("legal.refund", { body: refundBody })} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "legal.refund" ? "Saving..." : "Save Refund Policy"}
         </Button>
         <textarea value={faqBody} onChange={(e) => setFaqBody(e.target.value)} className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white" placeholder="FAQ body" />
-        <Button onClick={() => saveContent("legal.faq", { body: faqBody })} disabled={loading !== null}>
+        <Button onClick={() => saveContent("legal.faq", { body: faqBody })} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "legal.faq" ? "Saving..." : "Save FAQ"}
         </Button>
       </section>
 
-      <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-5">
+      <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Feature Flags</h3>
         <div className="space-y-2">
           {flags.map((flag) => (
-            <div key={flag.key} className="flex items-center justify-between rounded-md border border-white/10 bg-black/20 p-3">
+            <div key={flag.key} className="flex flex-col gap-3 rounded-md border border-white/10 bg-black/20 p-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm font-medium">{flag.key}</p>
+                <p className="break-all text-sm font-medium">{flag.key}</p>
                 <p className="text-xs text-white/60">{flag.description || "No description"}</p>
               </div>
-              <Button onClick={() => toggleFlag(flag)} disabled={loading !== null} variant="outline">
+              <Button onClick={() => toggleFlag(flag)} disabled={loading !== null} variant="outline" className="w-full sm:w-auto">
                 {flag.enabled ? "Disable" : "Enable"}
               </Button>
             </div>
@@ -209,7 +209,7 @@ export default function AdminCmsPanel({
         </div>
       </section>
 
-      <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-5">
+      <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Banners & Announcements</h3>
         <Input value={newAnnTitle} onChange={(e) => setNewAnnTitle(e.target.value)} placeholder="Announcement title" />
         <textarea
@@ -219,7 +219,7 @@ export default function AdminCmsPanel({
           placeholder="Announcement message"
         />
         <Input value={newAnnLink} onChange={(e) => setNewAnnLink(e.target.value)} placeholder="Optional link" />
-        <Button onClick={createAnnouncement} disabled={loading !== null}>
+        <Button onClick={createAnnouncement} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "announcement:create" ? "Saving..." : "Create Announcement"}
         </Button>
 
@@ -228,12 +228,13 @@ export default function AdminCmsPanel({
             <div key={item.id} className="rounded-md border border-white/10 bg-black/20 p-3">
               <p className="font-medium">{item.title}</p>
               <p className="text-sm text-white/70">{item.message}</p>
-              {item.link ? <p className="text-xs text-white/50">{item.link}</p> : null}
+              {item.link ? <p className="break-all text-xs text-white/50">{item.link}</p> : null}
               <div className="mt-2">
                 <Button
                   variant="outline"
                   onClick={() => toggleAnnouncement(item)}
                   disabled={loading !== null}
+                  className="w-full sm:w-auto"
                 >
                   {item.isActive ? "Deactivate" : "Activate"}
                 </Button>
@@ -247,4 +248,3 @@ export default function AdminCmsPanel({
     </div>
   );
 }
-

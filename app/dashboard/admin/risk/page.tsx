@@ -202,7 +202,7 @@ export default async function AdminRiskCenterPage() {
               {queue.slice(0, 25).map((item) => (
                 <div
                   key={`${item.kind}-${item.id}`}
-                  className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm"
+                  className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between"
                 >
                   <span className="text-white/80">
                     {item.kind} | Open for {hoursSince(item.openedAt, now.getTime())}h
@@ -224,7 +224,7 @@ export default async function AdminRiskCenterPage() {
             ) : (
               flaggedUsers.map((user) => (
                 <div key={user.id} className="space-y-2 rounded-lg border border-white/10 bg-black/20 p-3">
-                  <p className="font-medium">{user.name || "Unnamed"} ({user.email})</p>
+                  <p className="break-all font-medium">{user.name || "Unnamed"} ({user.email})</p>
                   <p className="text-xs text-white/60">
                     Role: {user.role} | Status: {user.accountStatus} | Flagged:{" "}
                     {user.flaggedAt ? new Date(user.flaggedAt).toLocaleString() : "N/A"}
@@ -247,7 +247,7 @@ export default async function AdminRiskCenterPage() {
             ) : (
               blockedUsers.map((user) => (
                 <div key={user.id} className="space-y-2 rounded-lg border border-white/10 bg-black/20 p-3">
-                  <p className="font-medium">{user.name || "Unnamed"} ({user.email})</p>
+                  <p className="break-all font-medium">{user.name || "Unnamed"} ({user.email})</p>
                   <p className="text-xs text-white/60">
                     Role: {user.role} | Status: {user.accountStatus} | Updated:{" "}
                     {user.statusUpdatedAt ? new Date(user.statusUpdatedAt).toLocaleString() : "N/A"}
@@ -271,7 +271,7 @@ export default async function AdminRiskCenterPage() {
               escalatedCampaigns.map((campaign) => (
                 <div key={campaign.id} className="space-y-2 rounded-lg border border-white/10 bg-black/20 p-3">
                   <p className="font-medium">{campaign.title}</p>
-                  <p className="text-xs text-white/60">
+                  <p className="break-all text-xs text-white/60">
                     Business: {campaign.business.name || "Unnamed"} ({campaign.business.email})
                   </p>
                   <p className="text-xs text-white/60">
@@ -297,10 +297,10 @@ export default async function AdminRiskCenterPage() {
               riskyWithdrawals.map((w) => (
                 <div key={w.id} className="space-y-2 rounded-lg border border-white/10 bg-black/20 p-3">
                   <p className="font-medium">INR {formatMoney(w.amount)}</p>
-                  <p className="text-xs text-white/60">
+                  <p className="break-all text-xs text-white/60">
                     {w.user.name || "Unnamed"} ({w.user.email}) | Created: {new Date(w.createdAt).toLocaleString()}
                   </p>
-                  <p className="text-xs text-white/60">UPI: {w.upiName || "N/A"} | {w.upiId || "N/A"}</p>
+                  <p className="break-all text-xs text-white/60">UPI: {w.upiName || "N/A"} | {w.upiId || "N/A"}</p>
                   <AdminWithdrawalActions withdrawalId={w.id} />
                 </div>
               ))

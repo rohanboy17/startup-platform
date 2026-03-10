@@ -154,7 +154,7 @@ export default async function AdminBusinessesPage({
           <Card key={business.id} className="rounded-2xl border-white/10 bg-white/5">
             <CardContent className="space-y-3 p-6">
               <h3 className="text-lg font-semibold">{business.name || "Unnamed Business"}</h3>
-              <p className="text-sm text-white/70">{business.email}</p>
+              <p className="break-all text-sm text-white/70">{business.email}</p>
               <p className="text-sm">
                 Account: <span className="text-white/90">{business.accountStatus}</span>
               </p>

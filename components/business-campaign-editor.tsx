@@ -154,7 +154,7 @@ export default function BusinessCampaignEditor({
   }
 
   return (
-    <div className="space-y-6 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+    <div className="space-y-6 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
           <p className="text-sm text-white/60">Campaign management</p>
@@ -164,7 +164,7 @@ export default function BusinessCampaignEditor({
           </p>
         </div>
 
-        <Button type="button" variant="outline" onClick={() => void duplicateCampaign()} disabled={dupLoading}>
+        <Button type="button" variant="outline" onClick={() => void duplicateCampaign()} disabled={dupLoading} className="w-full sm:w-auto">
           <Copy size={16} />
           {dupLoading ? "Duplicating..." : "Duplicate campaign"}
         </Button>
@@ -294,11 +294,11 @@ export default function BusinessCampaignEditor({
           <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
             <p className="text-xs uppercase tracking-[0.2em] text-white/40">Wallet impact</p>
             {stats.topUpAmount > 0 ? (
-              <p className="mt-2 text-sm text-amber-100">
+            <p className="mt-2 break-words text-sm text-amber-100">
                 This update needs an additional INR {formatMoney(stats.topUpAmount)} from the business wallet.
               </p>
             ) : stats.releaseAmount > 0 ? (
-              <p className="mt-2 text-sm text-emerald-200">
+              <p className="mt-2 break-words text-sm text-emerald-200">
                 This update releases INR {formatMoney(stats.releaseAmount)} back to the business wallet.
               </p>
             ) : (

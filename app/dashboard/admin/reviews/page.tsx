@@ -215,7 +215,7 @@ export default async function AdminReviewsPage({
                   </p>
                 </div>
                 <p className="text-sm text-amber-200">Fraud Score: {submission.fraudScore}</p>
-                <p className="text-sm text-white/70">
+                <p className="break-all text-sm text-white/70">
                   User: {submission.user.name || "Unnamed"} ({submission.user.email}) | Level:{" "}
                   {submission.user.level}
                 </p>
@@ -223,7 +223,7 @@ export default async function AdminReviewsPage({
                 <p className="text-sm text-white/70">
                   Budget left: INR {formatMoney(submission.campaign?.remainingBudget)}
                 </p>
-                <p className="text-sm text-white/70">Proof: {submission.proofText || submission.proofLink || submission.proof}</p>
+                <p className="break-words text-sm text-white/70">Proof: {submission.proofText || submission.proofLink || submission.proof}</p>
                 <div className="flex flex-wrap gap-2 text-xs">
                   {submission.ipAddress &&
                   (ipCountMap.get(submission.ipAddress) || 0) >= 5 ? (
@@ -269,10 +269,10 @@ export default async function AdminReviewsPage({
                   <p className="font-semibold">{submission.campaign?.title || "Campaign"}</p>
                   <p className="text-sm text-white/70">Admin Status: {submission.adminStatus}</p>
                 </div>
-                <p className="text-sm text-white/70">
+                <p className="break-all text-sm text-white/70">
                   User: {submission.user.name || "Unnamed"} ({submission.user.email})
                 </p>
-                <p className="text-sm text-white/70">
+                <p className="break-words text-sm text-white/70">
                   Proof: {submission.proofText || submission.proofLink || submission.proof}
                 </p>
                 <p className="text-xs text-white/50">

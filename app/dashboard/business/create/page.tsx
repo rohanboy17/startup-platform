@@ -135,7 +135,7 @@ export default function CreateCampaign() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_0.9fr]">
-        <div className="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+        <div className="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
           <div className="space-y-2">
             <label className="text-sm font-medium text-white/80">Task Title</label>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter task title" />
@@ -252,7 +252,7 @@ export default function CreateCampaign() {
           ) : null}
         </div>
 
-        <div className="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+        <div className="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
           <div>
             <p className="text-sm text-white/60">Campaign preview</p>
             <h3 className="mt-1 text-xl font-semibold text-white">{title || "Untitled campaign"}</h3>

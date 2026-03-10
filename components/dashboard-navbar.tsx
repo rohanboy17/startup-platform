@@ -18,7 +18,7 @@ export default function DashboardNavbar() {
       <motion.h1
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl font-semibold md:text-3xl"
+        className="pr-3 text-2xl font-semibold leading-tight md:text-3xl"
       >
         Admin Overview
       </motion.h1>

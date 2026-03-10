@@ -179,7 +179,7 @@ export default async function AdminCampaignsPage({
                   <p className="text-sm text-white/70">Category: {campaign.category}</p>
                 </div>
                 <p className="text-sm text-white/70">{campaign.description}</p>
-                <p className="text-sm text-white/70">
+                <p className="break-all text-sm text-white/70">
                   Business: {campaign.business.name || "Unnamed"} ({campaign.business.email})
                 </p>
                 <p className="text-sm text-white/70">

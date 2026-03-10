@@ -105,11 +105,11 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
         </span>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <Button type="button" variant="outline" onClick={selectAll} disabled={loading}>
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+        <Button type="button" variant="outline" onClick={selectAll} disabled={loading} className="w-full sm:w-auto">
           Select All (non-admin)
         </Button>
-        <Button type="button" variant="outline" onClick={clearAll} disabled={loading}>
+        <Button type="button" variant="outline" onClick={clearAll} disabled={loading} className="w-full sm:w-auto">
           Clear
         </Button>
       </div>
@@ -118,7 +118,7 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
         <select
           value={action}
           onChange={(e) => setAction(e.target.value as BulkAction)}
-          className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
           disabled={loading}
         >
           <option value="SET_STATUS">Set Status</option>
@@ -131,7 +131,7 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value as AccountStatus)}
-            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
             disabled={loading}
           >
             <option value="ACTIVE">ACTIVE</option>
@@ -142,7 +142,7 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
           <select
             value={role}
             onChange={(e) => setRole(e.target.value as Role)}
-            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
             disabled={loading}
           >
             <option value="USER">USER</option>
@@ -179,7 +179,7 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
         ))}
       </div>
 
-      <Button type="button" onClick={runBulk} disabled={loading}>
+      <Button type="button" onClick={runBulk} disabled={loading} className="w-full sm:w-auto">
         {loading ? "Applying..." : "Apply Bulk Action"}
       </Button>
       {message ? <p className="text-xs text-white/60">{message}</p> : null}

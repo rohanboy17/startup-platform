@@ -169,54 +169,54 @@ export default function AdminCampaignActions({
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         {canApprove ? (
-          <Button onClick={() => update("APPROVE")} disabled={loading !== null}>
+          <Button onClick={() => update("APPROVE")} disabled={loading !== null} className="w-full sm:w-auto">
             {loading === "APPROVE" ? "Approving..." : "Approve"}
           </Button>
         ) : null}
         {canMarkLive ? (
-          <Button onClick={() => update("LIVE")} disabled={loading !== null} variant="secondary">
+          <Button onClick={() => update("LIVE")} disabled={loading !== null} variant="secondary" className="w-full sm:w-auto">
             {loading === "LIVE" ? "Publishing..." : "Mark Live"}
           </Button>
         ) : null}
         {canPause ? (
-          <Button onClick={() => update("PAUSE")} disabled={loading !== null} variant="secondary">
+          <Button onClick={() => update("PAUSE")} disabled={loading !== null} variant="secondary" className="w-full sm:w-auto">
             {loading === "PAUSE" ? "Pausing..." : "Pause"}
           </Button>
         ) : null}
         {canResume ? (
-          <Button onClick={() => update("RESUME")} disabled={loading !== null} variant="secondary">
+          <Button onClick={() => update("RESUME")} disabled={loading !== null} variant="secondary" className="w-full sm:w-auto">
             {loading === "RESUME" ? "Resuming..." : "Resume"}
           </Button>
         ) : null}
         {canComplete ? (
-          <Button onClick={() => update("COMPLETE")} disabled={loading !== null} variant="secondary">
+          <Button onClick={() => update("COMPLETE")} disabled={loading !== null} variant="secondary" className="w-full sm:w-auto">
             {loading === "COMPLETE" ? "Completing..." : "Force Complete"}
           </Button>
         ) : null}
         {canReject ? (
-          <Button variant="destructive" onClick={() => update("REJECT")} disabled={loading !== null}>
+          <Button variant="destructive" onClick={() => update("REJECT")} disabled={loading !== null} className="w-full sm:w-auto">
             {loading === "REJECT" ? "Rejecting..." : "Reject"}
           </Button>
         ) : null}
         {canEdit ? (
-          <Button variant="outline" onClick={() => setEditOpen((v) => !v)} disabled={loading !== null}>
+          <Button variant="outline" onClick={() => setEditOpen((v) => !v)} disabled={loading !== null} className="w-full sm:w-auto">
             {editOpen ? "Close Edit" : "Edit"}
           </Button>
         ) : null}
         {canDelete ? (
-          <Button variant="destructive" onClick={removeCampaign} disabled={loading !== null}>
+          <Button variant="destructive" onClick={removeCampaign} disabled={loading !== null} className="w-full sm:w-auto">
             {loading === "DELETE" ? "Deleting..." : "Delete"}
           </Button>
         ) : null}
         {canEscalate ? (
-          <Button variant="outline" onClick={() => update("ESCALATE")} disabled={loading !== null}>
+          <Button variant="outline" onClick={() => update("ESCALATE")} disabled={loading !== null} className="w-full sm:w-auto">
             {loading === "ESCALATE" ? "Escalating..." : "Escalate"}
           </Button>
         ) : null}
         {escalatedAt ? (
-          <Button variant="outline" onClick={() => update("CLEAR_ESCALATION")} disabled={loading !== null}>
+          <Button variant="outline" onClick={() => update("CLEAR_ESCALATION")} disabled={loading !== null} className="w-full sm:w-auto">
             {loading === "CLEAR_ESCALATION" ? "Clearing..." : "Clear Escalation"}
           </Button>
         ) : null}

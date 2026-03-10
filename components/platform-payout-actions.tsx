@@ -56,23 +56,24 @@ export default function PlatformPayoutActions({
         className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
         placeholder="Payout note (optional)"
       />
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         {status === "PENDING" ? (
           <>
-            <Button onClick={() => update("APPROVED")} disabled={loading !== null}>
+            <Button onClick={() => update("APPROVED")} disabled={loading !== null} className="w-full sm:w-auto">
               {loading === "APPROVED" ? "Approving..." : "Approve"}
             </Button>
             <Button
               variant="destructive"
               onClick={() => update("REJECTED")}
               disabled={loading !== null}
+              className="w-full sm:w-auto"
             >
               {loading === "REJECTED" ? "Rejecting..." : "Reject"}
             </Button>
           </>
         ) : null}
         {status === "REJECTED" ? (
-          <Button variant="outline" onClick={() => update("RETRY")} disabled={loading !== null}>
+          <Button variant="outline" onClick={() => update("RETRY")} disabled={loading !== null} className="w-full sm:w-auto">
             {loading === "RETRY" ? "Retrying..." : "Retry"}
           </Button>
         ) : null}

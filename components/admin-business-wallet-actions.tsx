@@ -56,11 +56,11 @@ export default function AdminBusinessWalletActions({
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <select
           value={action}
           onChange={(e) => setAction(e.target.value as WalletAction)}
-          className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white sm:w-auto"
           disabled={loading}
         >
           <option value="CREDIT">CREDIT</option>
@@ -73,7 +73,7 @@ export default function AdminBusinessWalletActions({
           placeholder="Amount"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="max-w-[180px]"
+          className="w-full sm:max-w-[180px]"
         />
       </div>
       <Input
@@ -81,11 +81,10 @@ export default function AdminBusinessWalletActions({
         value={note}
         onChange={(e) => setNote(e.target.value)}
       />
-      <Button onClick={submit} disabled={loading}>
+      <Button onClick={submit} disabled={loading} className="w-full sm:w-auto">
         {loading ? "Applying..." : "Apply Business Wallet Update"}
       </Button>
       {message ? <p className="text-xs text-white/60">{message}</p> : null}
     </div>
   );
 }
-

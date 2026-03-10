@@ -45,7 +45,7 @@ export default function AdminSystemSettingsPanel({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-3">
+      <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Core Runtime Settings</h3>
         <label className="text-sm text-white/70">Default commission rate (0-0.9)</label>
         <Input
@@ -90,14 +90,14 @@ export default function AdminSystemSettingsPanel({
           Maintenance mode
         </label>
 
-        <Button onClick={save} disabled={loading}>{loading ? "Saving..." : "Save Settings"}</Button>
+        <Button onClick={save} disabled={loading} className="w-full sm:w-auto">{loading ? "Saving..." : "Save Settings"}</Button>
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-5 space-y-2">
+      <div className="space-y-2 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Environment Checks</h3>
         {Object.entries(envChecks.checks).map(([key, ok]) => (
-          <div key={key} className="flex items-center justify-between rounded-md border border-white/10 bg-black/20 px-3 py-2 text-sm">
-            <span>{key}</span>
+          <div key={key} className="flex flex-col gap-1 rounded-md border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+            <span className="break-all">{key}</span>
             <span className={ok ? "text-emerald-300" : "text-rose-300"}>{ok ? "SET" : "MISSING"}</span>
           </div>
         ))}
