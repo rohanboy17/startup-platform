@@ -30,7 +30,7 @@ export async function GET() {
       treasury,
     ] = await Promise.all([
       prisma.user.count({ where: { role: "USER" } }),
-      prisma.user.count({ where: { role: "BUSINESS" } }),
+      prisma.user.count({ where: { role: "BUSINESS", businessOwnerId: null } }),
       prisma.campaign.count(),
       prisma.campaign.count({ where: { status: "LIVE" } }),
       prisma.campaign.count({ where: { status: "PENDING" } }),

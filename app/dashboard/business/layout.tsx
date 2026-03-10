@@ -4,6 +4,12 @@ import { redirect } from "next/navigation";
 import DashboardTabNav from "@/components/dashboard-tab-nav";
 import PresenceHeartbeat from "@/components/presence-heartbeat";
 import { getAppSettings } from "@/lib/system-settings";
+import {
+  canManageBusinessBilling,
+  canManageBusinessCampaigns,
+  canManageBusinessSettings,
+  getBusinessContext,
+} from "@/lib/business-context";
 
 export default async function BusinessLayout({
   children,
@@ -20,11 +26,37 @@ export default async function BusinessLayout({
   if (session.user.role !== "BUSINESS") {
     redirect("/dashboard");
   }
+  const context = await getBusinessContext(session.user.id);
+  if (!context) {
+    redirect("/dashboard");
+  }
 
   const settings = await getAppSettings();
   if (settings.maintenanceMode) {
     redirect("/maintenance");
   }
+
+  const items = [
+    { key: "business.overview", href: "/dashboard/business", label: "Overview", icon: "overview" as const },
+    { key: "business.campaigns", href: "/dashboard/business/campaigns", label: "Campaigns", icon: "campaigns" as const },
+    { key: "business.reviews", href: "/dashboard/business/reviews", label: "Reviews", icon: "reviews" as const },
+    ...(canManageBusinessCampaigns(context.accessRole)
+      ? [{ key: "business.create", href: "/dashboard/business/create", label: "Create Campaign", icon: "create" as const }]
+      : []),
+    { key: "business.analytics", href: "/dashboard/business/analytics", label: "Analytics", icon: "analytics" as const },
+    ...(canManageBusinessBilling(context.accessRole)
+      ? [{ key: "business.funding", href: "/dashboard/business/funding", label: "Funding", icon: "funding" as const }]
+      : []),
+    { key: "business.notifications", href: "/dashboard/business/notifications", label: "Notifications", icon: "notifications" as const },
+    { key: "business.trust", href: "/dashboard/business/trust", label: "Trust", icon: "trust" as const },
+    { key: "business.activity", href: "/dashboard/business/activity", label: "Activity", icon: "audit" as const },
+    ...(canManageBusinessSettings(context.accessRole)
+      ? [
+          { key: "business.team", href: "/dashboard/business/team", label: "Team", icon: "users" as const },
+          { key: "business.settings", href: "/dashboard/business/settings", label: "Settings", icon: "cms" as const },
+        ]
+      : []),
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white">
@@ -35,13 +67,7 @@ export default async function BusinessLayout({
             displayName={displayName}
             role="BUSINESS"
             userId={session.user.id}
-            items={[
-              { key: "business.overview", href: "/dashboard/business", label: "Overview", icon: "overview" },
-              { key: "business.campaigns", href: "/dashboard/business/campaigns", label: "Campaigns", icon: "campaigns" },
-              { key: "business.create", href: "/dashboard/business/create", label: "Create Campaign", icon: "create" },
-              { key: "business.analytics", href: "/dashboard/business/analytics", label: "Analytics", icon: "analytics" },
-              { key: "business.funding", href: "/dashboard/business/funding", label: "Funding", icon: "funding" },
-            ]}
+            items={items}
           />
         </aside>
 

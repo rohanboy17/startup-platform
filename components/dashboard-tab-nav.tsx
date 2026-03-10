@@ -44,7 +44,8 @@ type IconName =
   | "wallet"
   | "notifications"
   | "risk"
-  | "cms";
+  | "cms"
+  | "trust";
 
 type Item = {
   key: string;
@@ -71,6 +72,7 @@ const iconMap: Record<IconName, ComponentType<{ size?: number }>> = {
   notifications: Bell,
   risk: AlertTriangle,
   cms: Settings2,
+  trust: ScrollText,
 };
 
 type NavAlertsResponse = {

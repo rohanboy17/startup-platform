@@ -31,7 +31,7 @@ export default async function AdminDashboard() {
     payoutsForChart,
   ] = await Promise.all([
     prisma.user.count({ where: { role: "USER" } }),
-    prisma.user.count({ where: { role: "BUSINESS" } }),
+    prisma.user.count({ where: { role: "BUSINESS", businessOwnerId: null } }),
     prisma.user.count({ where: { role: "MANAGER" } }),
     prisma.campaign.count({ where: { status: "PENDING" } }),
     prisma.submission.count({
@@ -44,7 +44,7 @@ export default async function AdminDashboard() {
     prisma.campaign.count({ where: { status: "LIVE" } }),
     prisma.submission.count({ where: { campaignId: { not: null } } }),
     prisma.withdrawal.count({ where: { status: "PENDING" } }),
-    prisma.user.count({ where: { role: "BUSINESS", kycStatus: "PENDING" } }),
+    prisma.user.count({ where: { role: "BUSINESS", businessOwnerId: null, kycStatus: "PENDING" } }),
     prisma.user.count({ where: { isSuspicious: true } }),
     prisma.user.count({ where: { lastLevelResetAt: { lt: staleResetCutoff } } }),
     prisma.paymentOrder.count({ where: { status: "FAILED" } }),

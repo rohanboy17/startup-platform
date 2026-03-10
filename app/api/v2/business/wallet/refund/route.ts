@@ -3,11 +3,19 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { applyFundingFee } from "@/lib/commission";
 import { getAppSettings } from "@/lib/system-settings";
+import { canManageBusinessBilling, getBusinessContext } from "@/lib/business-context";
 
 export async function POST(req: Request) {
   const session = await auth();
   if (!session || session.user.role !== "BUSINESS") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+  const context = await getBusinessContext(session.user.id);
+  if (!context) {
+    return NextResponse.json({ error: "Business context not found" }, { status: 404 });
+  }
+  if (!canManageBusinessBilling(context.accessRole)) {
+    return NextResponse.json({ error: "Only the business owner can request refunds" }, { status: 403 });
   }
 
   const { amount } = (await req.json()) as { amount?: number };
@@ -18,7 +26,7 @@ export async function POST(req: Request) {
   }
 
   const wallet = await prisma.businessWallet.findUnique({
-    where: { businessId: session.user.id },
+    where: { businessId: context.businessUserId },
   });
 
   if (!wallet || wallet.balance < amountNumber) {
@@ -30,7 +38,7 @@ export async function POST(req: Request) {
 
   const updated = await prisma.$transaction(async (tx) => {
     const next = await tx.businessWallet.update({
-      where: { businessId: session.user.id },
+      where: { businessId: context.businessUserId },
       data: {
         balance: { decrement: amountNumber },
         totalRefund: { increment: net },
@@ -38,7 +46,7 @@ export async function POST(req: Request) {
     });
 
     await tx.user.update({
-      where: { id: session.user.id },
+      where: { id: context.businessUserId },
       data: {
         balance: { decrement: amountNumber },
       },
@@ -59,7 +67,7 @@ export async function POST(req: Request) {
 
     await tx.walletTransaction.create({
       data: {
-        userId: session.user.id,
+        userId: context.businessUserId,
         type: "DEBIT",
         amount: amountNumber,
         note: `Business refund requested; ${(feeRate * 100).toFixed(0)}% fee applied`,
@@ -68,10 +76,10 @@ export async function POST(req: Request) {
 
     await tx.activityLog.create({
       data: {
-        userId: session.user.id,
+        userId: context.actorUserId,
         action: "BUSINESS_REFUND_REQUESTED",
         entity: "BusinessWallet",
-        details: `gross=${amountNumber}, fee=${fee}, netRefund=${net}`,
+        details: `businessId=${context.businessUserId}, gross=${amountNumber}, fee=${fee}, netRefund=${net}`,
       },
     });
 

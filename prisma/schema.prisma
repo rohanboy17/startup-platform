@@ -12,6 +12,8 @@ model User {
   email       String       @unique
   password    String
   role        Role         @default(USER)
+  businessOwnerId String?
+  businessAccessRole BusinessAccessRole?
   accountStatus UserAccountStatus @default(ACTIVE)
   statusReason String?
   statusUpdatedAt DateTime?
@@ -32,6 +34,8 @@ model User {
   flaggedAt   DateTime?
   submissions Submission[]
   campaigns   Campaign[]   @relation("BusinessCampaignsV2")
+  businessOwner User?      @relation("BusinessTeam", fields: [businessOwnerId], references: [id])
+  teamMembers  User[]      @relation("BusinessTeam")
   transactions WalletTransaction[]
   withdrawals Withdrawal[]
   withdrawRequests WithdrawRequest[]
@@ -362,6 +366,12 @@ enum Role {
   BUSINESS
   MANAGER
   ADMIN
+}
+
+enum BusinessAccessRole {
+  OWNER
+  EDITOR
+  VIEWER
 }
 
 enum UserAccountStatus {

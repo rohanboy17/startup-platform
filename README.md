@@ -51,7 +51,9 @@ Business wallet funding now uses Razorpay:
 4. Webhook `POST /api/payments/razorpay/webhook` provides idempotent backup settlement.
 5. Wallet is credited atomically and ledger entry is recorded.
 
-Legacy direct credit endpoint `POST /api/business/fund` is disabled.
+Legacy direct credit endpoint `POST /api/business/fund` has been removed.
+Legacy task endpoints `/api/business/tasks`, `/api/tasks`, and `/api/tasks/[taskId]/submit`
+have also been removed. Use the `v2` route family for current task and submission flows.
 
 ## Production Checklist
 
@@ -109,3 +111,11 @@ npm run db:migrate:deploy
 5. In Razorpay Dashboard, set webhook:
 - URL: `https://<your-domain>/api/payments/razorpay/webhook`
 - Event: `payment.captured`
+
+## Route Inventory
+
+Current production, internal, and removed legacy routes are listed in:
+
+```bash
+docs/route-inventory.md
+```

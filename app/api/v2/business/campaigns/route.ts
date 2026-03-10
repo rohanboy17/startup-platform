@@ -2,11 +2,20 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
+import { CAMPAIGN_CATEGORY_OPTIONS } from "@/lib/campaign-options";
+import { canManageBusinessCampaigns, getBusinessContext } from "@/lib/business-context";
 
 export async function POST(req: Request) {
   const session = await auth();
   if (!session || session.user.role !== "BUSINESS") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+  const context = await getBusinessContext(session.user.id);
+  if (!context) {
+    return NextResponse.json({ error: "Business context not found" }, { status: 404 });
+  }
+  if (!canManageBusinessCampaigns(context.accessRole)) {
+    return NextResponse.json({ error: "This business role cannot create campaigns" }, { status: 403 });
   }
 
   const { title, description, category, taskLink, rewardPerTask, totalBudget, instructions } =
@@ -22,8 +31,10 @@ export async function POST(req: Request) {
 
   const reward = Number(rewardPerTask);
   const budget = Number(totalBudget);
+  const normalizedCategory = category?.trim().toLowerCase() || "";
+  const allowedCategories = new Set<string>(CAMPAIGN_CATEGORY_OPTIONS.map((item) => item.value));
 
-  if (!title || !description || !category || Number.isNaN(reward) || Number.isNaN(budget)) {
+  if (!title || !description || !normalizedCategory || Number.isNaN(reward) || Number.isNaN(budget)) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -31,7 +42,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid reward or budget" }, { status: 400 });
   }
 
-  const wallet = await ensureBusinessWalletSynced(session.user.id);
+  if (!allowedCategories.has(normalizedCategory)) {
+    return NextResponse.json({ error: "Invalid category type" }, { status: 400 });
+  }
+
+  const wallet = await ensureBusinessWalletSynced(context.businessUserId);
 
   if (!wallet || wallet.balance < budget) {
     return NextResponse.json({ error: "Insufficient business wallet balance" }, { status: 400 });
@@ -39,7 +54,7 @@ export async function POST(req: Request) {
 
   const campaign = await prisma.$transaction(async (tx) => {
     await tx.businessWallet.update({
-      where: { businessId: session.user.id },
+      where: { businessId: context.businessUserId },
       data: {
         balance: { decrement: budget },
         totalSpent: { increment: budget },
@@ -47,7 +62,7 @@ export async function POST(req: Request) {
     });
 
     await tx.user.update({
-      where: { id: session.user.id },
+      where: { id: context.businessUserId },
       data: {
         balance: { decrement: budget },
       },
@@ -55,7 +70,7 @@ export async function POST(req: Request) {
 
     await tx.walletTransaction.create({
       data: {
-        userId: session.user.id,
+        userId: context.businessUserId,
         type: "DEBIT",
         amount: budget,
         note: `Campaign budget allocated: ${title}`,
@@ -64,10 +79,10 @@ export async function POST(req: Request) {
 
     const created = await tx.campaign.create({
       data: {
-        businessId: session.user.id,
+        businessId: context.businessUserId,
         title,
         description,
-        category,
+        category: normalizedCategory,
         taskLink,
         rewardPerTask: reward,
         totalBudget: budget,
@@ -90,10 +105,10 @@ export async function POST(req: Request) {
 
     await tx.activityLog.create({
       data: {
-        userId: session.user.id,
+        userId: context.actorUserId,
         action: "CAMPAIGN_CREATED",
         entity: "Campaign",
-        details: `campaignId=${created.id}, budget=${budget}`,
+        details: `campaignId=${created.id}, budget=${budget}, businessId=${context.businessUserId}`,
       },
     });
 
@@ -108,16 +123,58 @@ export async function GET() {
   if (!session || session.user.role !== "BUSINESS") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
+  const context = await getBusinessContext(session.user.id);
+  if (!context) {
+    return NextResponse.json({ error: "Business context not found" }, { status: 404 });
+  }
 
   const campaigns = await prisma.campaign.findMany({
-    where: { businessId: session.user.id },
+    where: { businessId: context.businessUserId },
     include: {
-      _count: {
-        select: { submissions: true },
+      submissions: {
+        select: {
+          id: true,
+          adminStatus: true,
+          managerStatus: true,
+        },
+      },
+      instructions: {
+        orderBy: { sequence: "asc" },
       },
     },
     orderBy: { createdAt: "desc" },
   });
 
-  return NextResponse.json({ campaigns });
+  const campaignsWithMetrics = campaigns.map((campaign) => {
+    const approvedCount = campaign.submissions.filter(
+      (submission) => submission.adminStatus === "ADMIN_APPROVED"
+    ).length;
+    const rejectedCount = campaign.submissions.filter(
+      (submission) => submission.adminStatus === "ADMIN_REJECTED"
+    ).length;
+    const pendingCount = campaign.submissions.filter(
+      (submission) => submission.managerStatus !== "MANAGER_REJECTED" && submission.adminStatus === "PENDING"
+    ).length;
+    const totalSlots =
+      campaign.rewardPerTask > 0 ? Math.floor(campaign.totalBudget / campaign.rewardPerTask) : 0;
+    const usedSlots = campaign.submissions.length;
+    const slotsLeft = Math.max(0, totalSlots - usedSlots);
+
+    return {
+      ...campaign,
+      _count: {
+        submissions: campaign.submissions.length,
+      },
+      metrics: {
+        approvedCount,
+        rejectedCount,
+        pendingCount,
+        totalSlots,
+        usedSlots,
+        slotsLeft,
+      },
+    };
+  });
+
+  return NextResponse.json({ accessRole: context.accessRole, campaigns: campaignsWithMetrics });
 }

@@ -3,11 +3,19 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { applyFundingFee } from "@/lib/commission";
 import { getAppSettings } from "@/lib/system-settings";
+import { canManageBusinessBilling, getBusinessContext } from "@/lib/business-context";
 
 export async function POST(req: Request) {
   const session = await auth();
   if (!session || session.user.role !== "BUSINESS") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+  const context = await getBusinessContext(session.user.id);
+  if (!context) {
+    return NextResponse.json({ error: "Business context not found" }, { status: 404 });
+  }
+  if (!canManageBusinessBilling(context.accessRole)) {
+    return NextResponse.json({ error: "Only the business owner can fund the wallet" }, { status: 403 });
   }
 
   const { amount } = (await req.json()) as { amount?: number };
@@ -22,20 +30,20 @@ export async function POST(req: Request) {
 
   const result = await prisma.$transaction(async (tx) => {
     const wallet = await tx.businessWallet.upsert({
-      where: { businessId: session.user.id },
+      where: { businessId: context.businessUserId },
       update: {
         balance: { increment: net },
         totalFunded: { increment: net },
       },
       create: {
-        businessId: session.user.id,
+        businessId: context.businessUserId,
         balance: net,
         totalFunded: net,
       },
     });
 
     await tx.user.update({
-      where: { id: session.user.id },
+      where: { id: context.businessUserId },
       data: {
         balance: { increment: net },
       },
@@ -56,7 +64,7 @@ export async function POST(req: Request) {
 
     await tx.walletTransaction.create({
       data: {
-        userId: session.user.id,
+        userId: context.businessUserId,
         type: "CREDIT",
         amount: net,
         note: `Business funding credited after ${(feeRate * 100).toFixed(0)}% fee`,

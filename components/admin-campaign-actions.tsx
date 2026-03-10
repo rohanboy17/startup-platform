@@ -42,6 +42,14 @@ export default function AdminCampaignActions({
   const [escalationNote, setEscalationNote] = useState("");
   const [editOpen, setEditOpen] = useState(false);
   const canEscalate = currentStatus === "PENDING" && queueAgeHours >= 4;
+  const canApprove = currentStatus === "PENDING";
+  const canReject = currentStatus === "PENDING";
+  const canMarkLive = currentStatus === "APPROVED";
+  const canPause = currentStatus === "LIVE";
+  const canResume = currentStatus === "APPROVED";
+  const canComplete = currentStatus === "LIVE" || currentStatus === "APPROVED";
+  const canEdit = currentStatus !== "COMPLETED";
+  const canDelete = currentStatus !== "LIVE" && currentStatus !== "COMPLETED";
 
   async function update(
     action:
@@ -162,30 +170,46 @@ export default function AdminCampaignActions({
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap gap-2">
-        <Button onClick={() => update("APPROVE")} disabled={loading !== null}>
-          {loading === "APPROVE" ? "Approving..." : "Approve"}
-        </Button>
-        <Button onClick={() => update("LIVE")} disabled={loading !== null} variant="secondary">
-          {loading === "LIVE" ? "Publishing..." : "Mark Live"}
-        </Button>
-        <Button onClick={() => update("PAUSE")} disabled={loading !== null} variant="secondary">
-          {loading === "PAUSE" ? "Pausing..." : "Pause"}
-        </Button>
-        <Button onClick={() => update("RESUME")} disabled={loading !== null} variant="secondary">
-          {loading === "RESUME" ? "Resuming..." : "Resume"}
-        </Button>
-        <Button onClick={() => update("COMPLETE")} disabled={loading !== null} variant="secondary">
-          {loading === "COMPLETE" ? "Completing..." : "Force Complete"}
-        </Button>
-        <Button variant="destructive" onClick={() => update("REJECT")} disabled={loading !== null}>
-          {loading === "REJECT" ? "Rejecting..." : "Reject"}
-        </Button>
-        <Button variant="outline" onClick={() => setEditOpen((v) => !v)} disabled={loading !== null}>
-          {editOpen ? "Close Edit" : "Edit"}
-        </Button>
-        <Button variant="destructive" onClick={removeCampaign} disabled={loading !== null}>
-          {loading === "DELETE" ? "Deleting..." : "Delete"}
-        </Button>
+        {canApprove ? (
+          <Button onClick={() => update("APPROVE")} disabled={loading !== null}>
+            {loading === "APPROVE" ? "Approving..." : "Approve"}
+          </Button>
+        ) : null}
+        {canMarkLive ? (
+          <Button onClick={() => update("LIVE")} disabled={loading !== null} variant="secondary">
+            {loading === "LIVE" ? "Publishing..." : "Mark Live"}
+          </Button>
+        ) : null}
+        {canPause ? (
+          <Button onClick={() => update("PAUSE")} disabled={loading !== null} variant="secondary">
+            {loading === "PAUSE" ? "Pausing..." : "Pause"}
+          </Button>
+        ) : null}
+        {canResume ? (
+          <Button onClick={() => update("RESUME")} disabled={loading !== null} variant="secondary">
+            {loading === "RESUME" ? "Resuming..." : "Resume"}
+          </Button>
+        ) : null}
+        {canComplete ? (
+          <Button onClick={() => update("COMPLETE")} disabled={loading !== null} variant="secondary">
+            {loading === "COMPLETE" ? "Completing..." : "Force Complete"}
+          </Button>
+        ) : null}
+        {canReject ? (
+          <Button variant="destructive" onClick={() => update("REJECT")} disabled={loading !== null}>
+            {loading === "REJECT" ? "Rejecting..." : "Reject"}
+          </Button>
+        ) : null}
+        {canEdit ? (
+          <Button variant="outline" onClick={() => setEditOpen((v) => !v)} disabled={loading !== null}>
+            {editOpen ? "Close Edit" : "Edit"}
+          </Button>
+        ) : null}
+        {canDelete ? (
+          <Button variant="destructive" onClick={removeCampaign} disabled={loading !== null}>
+            {loading === "DELETE" ? "Deleting..." : "Delete"}
+          </Button>
+        ) : null}
         {canEscalate ? (
           <Button variant="outline" onClick={() => update("ESCALATE")} disabled={loading !== null}>
             {loading === "ESCALATE" ? "Escalating..." : "Escalate"}

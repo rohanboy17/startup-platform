@@ -23,6 +23,7 @@ export default async function AdminBusinessesPage({
 
   const where = {
     role: "BUSINESS" as const,
+    businessOwnerId: null,
     ...(q
       ? {
           OR: [
@@ -35,7 +36,7 @@ export default async function AdminBusinessesPage({
     ...(statusFilter !== "ALL" ? { accountStatus: statusFilter } : {}),
   };
 
-  const [businesses, totals] = await Promise.all([
+  const [businesses, totals, teamMembers] = await Promise.all([
     prisma.user.findMany({
       where,
       orderBy: { createdAt: "desc" },
@@ -55,8 +56,14 @@ export default async function AdminBusinessesPage({
     }),
     prisma.user.groupBy({
       by: ["kycStatus"],
-      where: { role: "BUSINESS" },
+      where: { role: "BUSINESS", businessOwnerId: null },
       _count: { _all: true },
+    }),
+    prisma.user.count({
+      where: {
+        role: "BUSINESS",
+        businessOwnerId: { not: null },
+      },
     }),
   ]);
 
@@ -68,7 +75,7 @@ export default async function AdminBusinessesPage({
     <div className="space-y-8">
       <h2 className="text-3xl font-semibold">Business Management</h2>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-4">
         <Card className="rounded-2xl border-white/10 bg-white/5">
           <CardContent className="p-5">
             <p className="text-sm text-white/60">KYC Pending</p>
@@ -85,6 +92,12 @@ export default async function AdminBusinessesPage({
           <CardContent className="p-5">
             <p className="text-sm text-white/60">KYC Rejected</p>
             <p className="mt-1 text-2xl font-semibold text-rose-300">{rejectedKyc}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-2xl border-white/10 bg-white/5">
+          <CardContent className="p-5">
+            <p className="text-sm text-white/60">Business Team Members</p>
+            <p className="mt-1 text-2xl font-semibold text-sky-300">{teamMembers}</p>
           </CardContent>
         </Card>
       </div>
@@ -130,6 +143,13 @@ export default async function AdminBusinessesPage({
       </Card>
 
       <div className="grid gap-6 md:grid-cols-2">
+        {businesses.length === 0 ? (
+          <Card className="rounded-2xl border-white/10 bg-white/5 md:col-span-2">
+            <CardContent className="p-6 text-sm text-white/60">
+              No standalone business accounts found for the selected filters.
+            </CardContent>
+          </Card>
+        ) : null}
         {businesses.map((business) => (
           <Card key={business.id} className="rounded-2xl border-white/10 bg-white/5">
             <CardContent className="space-y-3 p-6">
@@ -178,4 +198,3 @@ export default async function AdminBusinessesPage({
     </div>
   );
 }
-

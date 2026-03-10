@@ -9,6 +9,7 @@ export default function ManagerSubmissionActions({ submissionId }: { submissionI
   const router = useRouter();
   const [loading, setLoading] = useState<"APPROVE" | "REJECT" | null>(null);
   const [message, setMessage] = useState("");
+  const [reason, setReason] = useState("");
 
   async function review(action: "APPROVE" | "REJECT") {
     setLoading(action);
@@ -18,7 +19,7 @@ export default function ManagerSubmissionActions({ submissionId }: { submissionI
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ action }),
+      body: JSON.stringify({ action, reason }),
     });
 
     const raw = await res.text();
@@ -36,18 +37,25 @@ export default function ManagerSubmissionActions({ submissionId }: { submissionI
       return;
     }
 
+    setReason("");
     setMessage(data.message || "Updated");
     router.refresh();
     emitDashboardLiveRefresh();
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
+      <textarea
+        value={reason}
+        onChange={(e) => setReason(e.target.value)}
+        placeholder="Rejection reason (required only when rejecting)"
+        className="min-h-20 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35"
+      />
       <div className="flex gap-3">
-        <Button onClick={() => review("APPROVE")} disabled={loading !== null}>
+        <Button onClick={() => void review("APPROVE")} disabled={loading !== null}>
           {loading === "APPROVE" ? "Approving..." : "Approve"}
         </Button>
-        <Button variant="destructive" onClick={() => review("REJECT")} disabled={loading !== null}>
+        <Button variant="destructive" onClick={() => void review("REJECT")} disabled={loading !== null}>
           {loading === "REJECT" ? "Rejecting..." : "Reject"}
         </Button>
       </div>

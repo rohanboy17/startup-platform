@@ -12,10 +12,15 @@ export async function PATCH(
   }
 
   const { submissionId } = await params;
-  const { action } = (await req.json()) as { action?: "APPROVE" | "REJECT" };
+  const { action, reason } = (await req.json()) as { action?: "APPROVE" | "REJECT"; reason?: string };
+  const reviewReason = reason?.trim() || "";
 
   if (!action) {
     return NextResponse.json({ error: "Action is required" }, { status: 400 });
+  }
+
+  if (action === "REJECT" && !reviewReason) {
+    return NextResponse.json({ error: "Rejection reason is required" }, { status: 400 });
   }
 
   const submission = await prisma.submission.findUnique({
@@ -45,7 +50,7 @@ export async function PATCH(
         userId: session.user.id,
         action: action === "APPROVE" ? "MANAGER_APPROVED_SUBMISSION" : "MANAGER_REJECTED_SUBMISSION",
         entity: "Submission",
-        details: `submissionId=${submissionId}`,
+        details: `submissionId=${submissionId}${reviewReason ? `, reason=${reviewReason}` : ""}`,
       },
     });
 
@@ -56,7 +61,7 @@ export async function PATCH(
         message:
           action === "APPROVE"
             ? "Your submission passed manager review and is pending admin verification."
-            : "Your submission was rejected at manager review stage.",
+            : `Your submission was rejected at manager review stage.${reviewReason ? ` Reason: ${reviewReason}` : ""}`,
         type: action === "APPROVE" ? "INFO" : "WARNING",
       },
     });

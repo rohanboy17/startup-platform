@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getBusinessContext } from "@/lib/business-context";
 
 type DashboardRole = "USER" | "BUSINESS" | "MANAGER" | "ADMIN";
 
@@ -63,7 +64,7 @@ export async function GET() {
             take: 200,
           }),
           prisma.user.findMany({
-            where: { role: "BUSINESS", kycStatus: "PENDING" },
+            where: { role: "BUSINESS", businessOwnerId: null, kycStatus: "PENDING" },
             select: { createdAt: true, statusUpdatedAt: true },
             orderBy: { createdAt: "desc" },
             take: 200,
@@ -183,41 +184,109 @@ export async function GET() {
     }
 
     if (role === "BUSINESS") {
-      const [campaigns, submissions, txs, payments] = await Promise.all([
+      const context = await getBusinessContext(userId);
+      if (!context) {
+        return NextResponse.json({ error: "Business context not found" }, { status: 404 });
+      }
+      const [
+        campaigns,
+        submissions,
+        txs,
+        payments,
+        unreadNotifications,
+        liveCampaigns,
+        breachedPendingCampaigns,
+      ] = await Promise.all([
         prisma.campaign.findMany({
-          where: { businessId: userId },
+          where: { businessId: context.businessUserId },
           select: { createdAt: true },
           orderBy: { createdAt: "desc" },
           take: 100,
         }),
         prisma.submission.findMany({
-          where: { campaign: { businessId: userId } },
+          where: { campaign: { businessId: context.businessUserId } },
           select: { createdAt: true },
           orderBy: { createdAt: "desc" },
           take: 100,
         }),
         prisma.walletTransaction.findMany({
-          where: { userId },
+          where: { userId: context.businessUserId },
           select: { createdAt: true },
           orderBy: { createdAt: "desc" },
           take: 100,
         }),
         prisma.paymentOrder.findMany({
-          where: { userId },
-          select: { createdAt: true, updatedAt: true, paidAt: true },
+          where: { userId: context.businessUserId },
+          select: { createdAt: true, updatedAt: true, paidAt: true, status: true },
+          orderBy: { createdAt: "desc" },
+          take: 100,
+        }),
+        prisma.notification.count({
+          where: { userId: context.actorUserId, isRead: false },
+        }),
+        prisma.campaign.findMany({
+          where: { businessId: context.businessUserId, status: "LIVE" },
+          select: {
+            createdAt: true,
+            remainingBudget: true,
+            rewardPerTask: true,
+          },
+          orderBy: { createdAt: "desc" },
+          take: 100,
+        }),
+        prisma.campaign.findMany({
+          where: {
+            businessId: context.businessUserId,
+            status: "PENDING",
+            createdAt: { lt: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+          },
+          select: { createdAt: true },
           orderBy: { createdAt: "desc" },
           take: 100,
         }),
       ]);
 
+      const exhaustedLiveCampaigns = liveCampaigns.filter(
+        (campaign) => campaign.remainingBudget < campaign.rewardPerTask
+      ).length;
+      const failedPayments = payments.filter((item) => item.status === "FAILED").length;
+      const activeAlertCount = exhaustedLiveCampaigns + breachedPendingCampaigns.length + failedPayments;
+
       const tabs = {
         "business.campaigns": token(campaigns.length, campaigns[0]?.createdAt),
+        "business.reviews": token(submissions.length, submissions[0]?.createdAt),
         "business.create": token(0, null),
         "business.analytics": token(submissions.length, submissions[0]?.createdAt),
         "business.funding": token(
           txs.length + payments.length,
           maxDate(txs[0]?.createdAt, payments[0]?.createdAt, payments[0]?.updatedAt, payments[0]?.paidAt)
         ),
+        "business.notifications": token(
+          unreadNotifications + activeAlertCount,
+          maxDate(
+            campaigns[0]?.createdAt,
+            submissions[0]?.createdAt,
+            txs[0]?.createdAt,
+            payments[0]?.updatedAt,
+            payments[0]?.createdAt
+          )
+        ),
+        "business.trust": token(
+          breachedPendingCampaigns.length + failedPayments,
+          maxDate(campaigns[0]?.createdAt, payments[0]?.updatedAt, payments[0]?.createdAt)
+        ),
+        "business.activity": token(
+          campaigns.length + submissions.length + txs.length + payments.length,
+          maxDate(
+            campaigns[0]?.createdAt,
+            submissions[0]?.createdAt,
+            txs[0]?.createdAt,
+            payments[0]?.updatedAt,
+            payments[0]?.createdAt
+          )
+        ),
+        "business.team": token(0, null),
+        "business.settings": token(0, null),
       };
 
       return NextResponse.json({
@@ -226,7 +295,9 @@ export async function GET() {
           "business.overview": Object.values(tabs).join("|"),
           ...tabs,
         },
-        counts: {},
+        counts: {
+          "business.notifications": unreadNotifications + activeAlertCount,
+        },
       });
     }
 
