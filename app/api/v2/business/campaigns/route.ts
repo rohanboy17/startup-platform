@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
 import { CAMPAIGN_CATEGORY_OPTIONS } from "@/lib/campaign-options";
 import { canManageBusinessCampaigns, getBusinessContext } from "@/lib/business-context";
+import { normalizeExternalUrl } from "@/lib/external-url";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -16,6 +17,22 @@ export async function POST(req: Request) {
   }
   if (!canManageBusinessCampaigns(context.accessRole)) {
     return NextResponse.json({ error: "This business role cannot create campaigns" }, { status: 403 });
+  }
+
+  const businessAccount = await prisma.user.findUnique({
+    where: { id: context.businessUserId },
+    select: { kycStatus: true },
+  });
+
+  if (!businessAccount) {
+    return NextResponse.json({ error: "Business account not found" }, { status: 404 });
+  }
+
+  if (businessAccount.kycStatus !== "VERIFIED") {
+    return NextResponse.json(
+      { error: "Business KYC verification is required before creating campaigns." },
+      { status: 403 }
+    );
   }
 
   const { title, description, category, taskLink, rewardPerTask, totalBudget, instructions } =
@@ -83,7 +100,7 @@ export async function POST(req: Request) {
         title,
         description,
         category: normalizedCategory,
-        taskLink,
+        taskLink: normalizeExternalUrl(taskLink),
         rewardPerTask: reward,
         totalBudget: budget,
         remainingBudget: budget,

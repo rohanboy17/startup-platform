@@ -43,10 +43,11 @@ export async function POST(req: Request) {
     const minWithdrawal = appSettings.minWithdrawalAmount;
     const normalizedUpiId = typeof upiId === "string" ? upiId.trim() : "";
     const normalizedUpiName = typeof upiName === "string" ? upiName.trim() : "";
+    const currentMonthKey = new Date().toISOString().slice(0, 7);
 
-    if (Number.isNaN(amountNumber) || amountNumber < minWithdrawal) {
+    if (Number.isNaN(amountNumber) || amountNumber <= 0) {
       return NextResponse.json(
-        { error: `Minimum withdrawal amount is INR ${minWithdrawal}` },
+        { error: "Enter a valid withdrawal amount" },
         { status: 400 }
       );
     }
@@ -72,24 +73,59 @@ export async function POST(req: Request) {
 
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { balance: true },
+      select: {
+        balance: true,
+        monthlyEmergencyWithdrawCount: true,
+        emergencyWithdrawMonthKey: true,
+      },
     });
 
     if (!user || user.balance < amountNumber) {
       return NextResponse.json({ error: "Insufficient balance" }, { status: 400 });
     }
 
-    const withdrawal = await prisma.withdrawal.create({
-      data: {
-        amount: amountNumber,
-        upiId: normalizedUpiId,
-        upiName: normalizedUpiName,
-        userId: session.user.id,
-      },
+    const isEmergency = amountNumber < minWithdrawal;
+    const monthlyEmergencyUsed =
+      user.emergencyWithdrawMonthKey === currentMonthKey ? user.monthlyEmergencyWithdrawCount : 0;
+
+    if (isEmergency && monthlyEmergencyUsed >= 2) {
+      return NextResponse.json(
+        { error: "Emergency withdrawal limit reached for this month" },
+        { status: 400 }
+      );
+    }
+
+    const withdrawal = await prisma.$transaction(async (tx) => {
+      if (isEmergency) {
+        await tx.user.update({
+          where: { id: session.user.id },
+          data: {
+            emergencyWithdrawCount: { increment: 1 },
+            monthlyEmergencyWithdrawCount:
+              user.emergencyWithdrawMonthKey === currentMonthKey
+                ? { increment: 1 }
+                : 1,
+            emergencyWithdrawMonthKey: currentMonthKey,
+          },
+        });
+      }
+
+      return tx.withdrawal.create({
+        data: {
+          amount: amountNumber,
+          upiId: normalizedUpiId,
+          upiName: normalizedUpiName,
+          isEmergency,
+          userId: session.user.id,
+        },
+      });
     });
 
     return NextResponse.json({
-      message: "Withdrawal request created",
+      message: isEmergency
+        ? "Emergency withdrawal request created"
+        : "Withdrawal request created",
+      emergency: isEmergency,
       withdrawal,
     });
   } catch (error) {

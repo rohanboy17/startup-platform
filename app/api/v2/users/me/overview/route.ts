@@ -1,0 +1,213 @@
+import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+
+function levelTarget(level: string) {
+  switch (level) {
+    case "L1":
+      return 10;
+    case "L2":
+      return 20;
+    case "L3":
+      return 50;
+    case "L4":
+      return 100;
+    default:
+      return null;
+  }
+}
+
+function levelProgress(totalApproved: number, level: string) {
+  if (level === "L5") {
+    return { current: totalApproved, target: null, percent: 100 };
+  }
+
+  const floor =
+    level === "L4" ? 50 :
+    level === "L3" ? 20 :
+    level === "L2" ? 10 :
+    0;
+  const target = levelTarget(level);
+  const span = Math.max(1, (target ?? totalApproved) - floor);
+  const percent = Math.max(0, Math.min(100, Math.round(((totalApproved - floor) / span) * 100)));
+
+  return {
+    current: totalApproved,
+    target,
+    percent,
+  };
+}
+
+function makeActivityItems(input: {
+  transactions: Array<{ id: string; createdAt: Date; note: string | null; type: "CREDIT" | "DEBIT"; amount: number }>;
+  withdrawals: Array<{ id: string; createdAt: Date; status: string; amount: number }>;
+  submissions: Array<{ id: string; createdAt: Date; adminStatus: string; campaign: { title: string } | null }>;
+}) {
+  const txItems = input.transactions.map((tx) => ({
+    id: `tx-${tx.id}`,
+    createdAt: tx.createdAt,
+    kind: tx.type === "CREDIT" ? "EARNING" : "WALLET",
+    message:
+      tx.type === "CREDIT"
+        ? `${tx.note || "Wallet credit"} for INR ${tx.amount.toFixed(2)}`
+        : `${tx.note || "Wallet debit"} for INR ${tx.amount.toFixed(2)}`,
+  }));
+
+  const withdrawalItems = input.withdrawals.map((withdrawal) => ({
+    id: `withdrawal-${withdrawal.id}`,
+    createdAt: withdrawal.createdAt,
+    kind: "WITHDRAWAL",
+    message: `Withdrawal request of INR ${withdrawal.amount.toFixed(2)} is ${withdrawal.status.toLowerCase()}`,
+  }));
+
+  const submissionItems = input.submissions.map((submission) => ({
+    id: `submission-${submission.id}`,
+    createdAt: submission.createdAt,
+    kind: "SUBMISSION",
+    message: `${submission.campaign?.title || "Campaign"} submission is ${submission.adminStatus.toLowerCase().replaceAll("_", " ")}`,
+  }));
+
+  return [...txItems, ...withdrawalItems, ...submissionItems]
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+    .slice(0, 6)
+    .map((item) => ({
+      id: item.id,
+      createdAt: item.createdAt.toISOString(),
+      kind: item.kind,
+      message: item.message,
+    }));
+}
+
+export async function GET() {
+  const session = await auth();
+  if (!session || session.user.role !== "USER") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+
+  const userId = session.user.id;
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const notificationDelegate = (prisma as unknown as {
+    notification?: {
+      count: (args: { where: { userId: string; isRead?: boolean } }) => Promise<number>;
+      findMany: (args: {
+        where: { userId: string };
+        orderBy: { createdAt: "desc" };
+        take: number;
+      }) => Promise<Array<{ id: string; title: string; message: string; createdAt: Date; isRead: boolean; type: string }>>;
+    };
+  }).notification;
+
+  const walletTransactionDelegate = (prisma as unknown as {
+    walletTransaction?: {
+      findMany: (args: {
+        where: { userId: string };
+        orderBy: { createdAt: "desc" };
+        take: number;
+      }) => Promise<Array<{ id: string; createdAt: Date; note: string | null; type: "CREDIT" | "DEBIT"; amount: number }>>;
+    };
+  }).walletTransaction;
+
+  const [user, pendingWithdrawalAmount, totalWithdrawn, approvedSubmissions, todayApprovedCount, unreadNotifications, recentNotifications, recentTransactions, recentWithdrawals, recentSubmissions] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        balance: true,
+        level: true,
+        totalApproved: true,
+        dailySubmits: true,
+      },
+    }),
+    prisma.withdrawal.aggregate({
+      where: { userId, status: "PENDING" },
+      _sum: { amount: true },
+    }),
+    prisma.withdrawal.aggregate({
+      where: { userId, status: "APPROVED" },
+      _sum: { amount: true },
+    }),
+    prisma.submission.count({
+      where: {
+        userId,
+        adminStatus: { in: ["ADMIN_APPROVED", "APPROVED"] },
+      },
+    }),
+    prisma.submission.count({
+      where: {
+        userId,
+        adminStatus: { in: ["ADMIN_APPROVED", "APPROVED"] },
+        createdAt: { gte: todayStart },
+      },
+    }),
+    notificationDelegate?.count({ where: { userId, isRead: false } }) ?? Promise.resolve(0),
+    notificationDelegate?.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: 4,
+    }) ?? Promise.resolve([]),
+    walletTransactionDelegate?.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+    }) ?? Promise.resolve([]),
+    prisma.withdrawal.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: 4,
+      select: { id: true, amount: true, status: true, createdAt: true },
+    }),
+    prisma.submission.findMany({
+      where: { userId },
+      orderBy: { createdAt: "desc" },
+      take: 4,
+      select: {
+        id: true,
+        createdAt: true,
+        adminStatus: true,
+        campaign: { select: { title: true } },
+      },
+    }),
+  ]);
+
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
+  const progress = levelProgress(user.totalApproved, user.level);
+
+  return NextResponse.json({
+    profile: {
+      displayName: user.name?.trim() || user.email,
+      level: user.level,
+      balance: user.balance,
+      totalApproved: user.totalApproved,
+      dailySubmits: user.dailySubmits,
+    },
+    metrics: {
+      availableBalance: user.balance,
+      pendingWithdrawalAmount: pendingWithdrawalAmount._sum.amount ?? 0,
+      totalWithdrawn: totalWithdrawn._sum.amount ?? 0,
+      approvedSubmissions,
+      todayApprovedCount,
+      unreadNotifications,
+    },
+    progress,
+    recentNotifications: recentNotifications.map((item) => ({
+      id: item.id,
+      title: item.title,
+      message: item.message,
+      type: item.type,
+      isRead: item.isRead,
+      createdAt: item.createdAt.toISOString(),
+    })),
+    recentActivity: makeActivityItems({
+      transactions: recentTransactions,
+      withdrawals: recentWithdrawals,
+      submissions: recentSubmissions,
+    }),
+  });
+}

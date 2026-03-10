@@ -8,8 +8,12 @@ import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
 export default function WithdrawRequestCard({
   minAmount,
+  availableBalance,
+  emergencyRemaining,
 }: {
   minAmount: number;
+  availableBalance?: number;
+  emergencyRemaining?: number;
 }) {
   const [amount, setAmount] = useState("");
   const [upiId, setUpiId] = useState("");
@@ -60,26 +64,40 @@ export default function WithdrawRequestCard({
       <p className="text-sm text-white/60">
         Minimum withdrawal amount: INR {formatMoney(minAmount)}
       </p>
+      {typeof availableBalance === "number" ? (
+        <p className="text-sm text-white/60">
+          Available balance: INR {formatMoney(availableBalance)}
+        </p>
+      ) : null}
+      <p className="text-sm text-white/60">
+        Emergency withdraws left this month: {emergencyRemaining ?? 0}
+      </p>
       <Input
         type="number"
-        min={minAmount}
-        placeholder={`Enter amount (min INR ${formatMoney(minAmount)})`}
+        min={1}
+        placeholder={`Enter amount (normal min INR ${formatMoney(minAmount)})`}
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
+        className="min-h-11"
       />
       <Input
         placeholder="Enter UPI ID or Mobile Number"
         value={upiId}
         onChange={(e) => setUpiId(e.target.value)}
+        className="min-h-11"
       />
       <Input
         placeholder="Enter UPI Name or Banking Name"
         value={upiName}
         onChange={(e) => setUpiName(e.target.value)}
+        className="min-h-11"
       />
       <Button onClick={requestWithdrawal} disabled={loading} className="w-full">
         {loading ? "Submitting..." : "Submit Withdrawal Request"}
       </Button>
+      <p className="text-xs text-white/45">
+        Amounts below INR {formatMoney(minAmount)} are treated as emergency withdrawals and are limited to 2 per month.
+      </p>
       {message ? <p className="text-sm text-white/70">{message}</p> : null}
     </div>
   );

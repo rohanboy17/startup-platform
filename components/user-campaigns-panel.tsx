@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import SubmitCampaignModal from "@/components/submit-campaign-modal";
 import { formatMoney } from "@/lib/format-money";
+import { normalizeExternalUrl } from "@/lib/external-url";
 import { useLiveRefresh } from "@/lib/live-refresh";
 
 type Campaign = {
@@ -54,7 +55,7 @@ export default function UserCampaignsPanel() {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid gap-4 lg:grid-cols-2">
       {campaigns.length === 0 ? (
         <div className="py-20 text-center text-white/50 md:col-span-2">No live campaigns right now.</div>
       ) : (
@@ -64,15 +65,15 @@ export default function UserCampaignsPanel() {
               key={campaign.id}
               className="rounded-2xl border-white/10 bg-white/5 backdrop-blur-md transition hover:scale-[1.02] hover:shadow-xl hover:ring-1 hover:ring-white/20"
             >
-              <CardContent className="space-y-4 p-6">
+              <CardContent className="space-y-4 p-4 sm:p-6">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="text-xl font-semibold">{campaign.title}</h3>
+                  <h3 className="text-lg font-semibold sm:text-xl">{campaign.title}</h3>
                   <span className="text-xs text-white/60">{campaign.category}</span>
                 </div>
                 <p className="text-sm text-white/60">{campaign.description}</p>
                 {campaign.taskLink ? (
                   <a
-                    href={campaign.taskLink}
+                    href={normalizeExternalUrl(campaign.taskLink) ?? "#"}
                     target="_blank"
                     rel="noreferrer"
                     className="text-xs text-blue-300 underline"
@@ -95,8 +96,19 @@ export default function UserCampaignsPanel() {
                   <span className="mx-1 hidden sm:inline">|</span>
                   <span className="block sm:inline">Slots Left: {campaign.leftSubmissions}</span>
                 </p>
-                <div className="w-full">
-                  <SubmitCampaignModal campaignId={campaign.id} />
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <Link
+                    href={`/dashboard/user/tasks/${campaign.id}`}
+                    className="inline-flex w-full items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10"
+                  >
+                    View Task
+                  </Link>
+                  <Link
+                    href={`/dashboard/user/tasks/${campaign.id}`}
+                    className="inline-flex w-full items-center justify-center rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-100 transition hover:bg-emerald-400/20"
+                  >
+                    Start Task
+                  </Link>
                 </div>
               </CardContent>
             </Card>

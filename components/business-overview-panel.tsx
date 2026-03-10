@@ -9,6 +9,8 @@ import { useLiveRefresh } from "@/lib/live-refresh";
 
 type OverviewResponse = {
   accessRole: "OWNER" | "EDITOR" | "VIEWER";
+  kycStatus?: string;
+  kycVerifiedAt?: string | null;
   wallet: { balance: number; totalFunded: number; totalSpent: number; totalRefund: number };
   lowBalanceThreshold: number;
   lowBalance: boolean;
@@ -61,6 +63,8 @@ export default function BusinessOverviewPanel() {
     let parsed: OverviewResponse = {
       wallet: { balance: 0, totalFunded: 0, totalSpent: 0, totalRefund: 0 },
       accessRole: "OWNER",
+      kycStatus: "PENDING",
+      kycVerifiedAt: null,
       lowBalanceThreshold: 500,
       lowBalance: false,
       totalCampaigns: 0,
@@ -102,6 +106,13 @@ export default function BusinessOverviewPanel() {
   const liveCampaignRate = percentage(data.liveCampaigns, data.totalCampaigns);
   const canManageBilling = data.accessRole === "OWNER";
   const canManageCampaigns = data.accessRole === "OWNER" || data.accessRole === "EDITOR";
+  const kycStatus = data.kycStatus || "PENDING";
+  const kycTone =
+    kycStatus === "VERIFIED"
+      ? "text-emerald-300"
+      : kycStatus === "REJECTED"
+        ? "text-rose-300"
+        : "text-amber-300";
 
   return (
     <div className="space-y-8">
@@ -209,6 +220,23 @@ export default function BusinessOverviewPanel() {
         <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
           <CardContent className="space-y-3 p-4 sm:p-6">
             <div className="flex items-center justify-between">
+              <p className="text-sm text-white/60">KYC status</p>
+              <CircleDollarSign size={18} className={kycTone} />
+            </div>
+            <p className={`text-3xl font-semibold ${kycTone}`}>{kycStatus}</p>
+            <p className="text-xs text-white/55">
+              {data.kycVerifiedAt
+                ? `Verified on ${new Date(data.kycVerifiedAt).toLocaleDateString()}`
+                : "Submit your KYC details to unlock campaign creation."}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-3 p-4 sm:p-6">
+            <div className="flex items-center justify-between">
               <p className="text-sm text-white/60">Approved results</p>
               <CircleDollarSign size={18} className="text-amber-300" />
             </div>
@@ -217,6 +245,41 @@ export default function BusinessOverviewPanel() {
               Avg cost per approval INR {formatMoney(data.averageCostPerApproval)} | Pending review{" "}
               {data.pendingReviews}
             </p>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-3 p-4 sm:p-6">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-white/60">Total budget</p>
+              <Layers3 size={18} className="text-sky-300" />
+            </div>
+            <p className="text-3xl font-semibold text-white">INR {formatMoney(data.totalBudget)}</p>
+            <p className="text-xs text-white/55">Remaining budget INR {formatMoney(data.remainingBudget)}</p>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-3 p-4 sm:p-6">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-white/60">Today spend</p>
+              <CircleDollarSign size={18} className="text-emerald-300" />
+            </div>
+            <p className="text-3xl font-semibold text-white">INR {formatMoney(data.todaySpend)}</p>
+            <p className="text-xs text-white/55">Approved spend from today.</p>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-3 p-4 sm:p-6">
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-white/60">Funding fee</p>
+              <CircleDollarSign size={18} className="text-emerald-300" />
+            </div>
+            <p className="text-3xl font-semibold text-white">
+              {(data.fundingFeeRate * 100).toFixed(2)}%
+            </p>
+            <p className="text-xs text-white/55">Applies to deposits + refunds.</p>
           </CardContent>
         </Card>
       </div>

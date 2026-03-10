@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import WithdrawRequestCard from "@/components/withdraw-request-card";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
@@ -11,13 +12,35 @@ type WithdrawalItem = {
   upiId?: string | null;
   upiName?: string | null;
   status: string;
+  adminNote?: string | null;
+  isEmergency?: boolean;
   createdAt: string;
 };
 
 type WithdrawalsPayload = {
   balance: number;
+  metrics: {
+    pendingAmount: number;
+    approvedAmount: number;
+    rejectedCount: number;
+    totalRequests: number;
+    emergencyRemaining: number;
+    emergencyUsed: number;
+  };
   withdrawals: WithdrawalItem[];
+  error?: string;
 };
+
+function statusTone(status: string) {
+  switch (status) {
+    case "APPROVED":
+      return "border-emerald-400/20 bg-emerald-500/10 text-emerald-100";
+    case "REJECTED":
+      return "border-rose-400/20 bg-rose-500/10 text-rose-100";
+    default:
+      return "border-amber-400/20 bg-amber-500/10 text-amber-100";
+  }
+}
 
 export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }) {
   const [data, setData] = useState<WithdrawalsPayload | null>(null);
@@ -46,39 +69,129 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-semibold md:text-3xl">Withdrawals</h2>
-      <p className="text-sm text-white/60">
-        Current wallet balance: INR {formatMoney(data?.balance)}
-      </p>
+      <div>
+        <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">Payout center</p>
+        <h2 className="mt-2 text-3xl font-semibold md:text-4xl">Withdrawals</h2>
+        <p className="mt-2 max-w-2xl text-sm text-white/65 md:text-base">
+          Request payouts, monitor pending review, and track approved or rejected withdrawal requests.
+        </p>
+      </div>
 
-      <WithdrawRequestCard minAmount={minAmount} />
+      <div className="grid gap-4 sm:grid-cols-2 min-[1500px]:grid-cols-5">
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-2 p-4 sm:p-6">
+            <p className="text-sm text-white/60">Available balance</p>
+            <p className="text-3xl font-semibold text-emerald-300">INR {formatMoney(data?.balance)}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-2 p-4 sm:p-6">
+            <p className="text-sm text-white/60">Pending amount</p>
+            <p className="text-3xl font-semibold text-amber-200">INR {formatMoney(data?.metrics.pendingAmount)}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-2 p-4 sm:p-6">
+            <p className="text-sm text-white/60">Approved payouts</p>
+            <p className="text-3xl font-semibold text-cyan-200">INR {formatMoney(data?.metrics.approvedAmount)}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-2 p-4 sm:p-6">
+            <p className="text-sm text-white/60">Rejected requests</p>
+            <p className="text-3xl font-semibold text-rose-300">{data?.metrics.rejectedCount ?? 0}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-2 p-4 sm:p-6">
+            <p className="text-sm text-white/60">Emergency uses left</p>
+            <p className="text-3xl font-semibold text-violet-200">{data?.metrics.emergencyRemaining ?? 2}</p>
+          </CardContent>
+        </Card>
+      </div>
 
-      {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-
-      <div className="divide-y divide-white/10 rounded-2xl bg-white/5">
-        {!data ? (
-          <div className="p-6 text-sm text-white/60">Loading withdrawal history...</div>
-        ) : data.withdrawals.length === 0 ? (
-          <div className="p-6 text-sm text-white/60">No withdrawal history yet.</div>
-        ) : (
-          data.withdrawals.map((w) => (
-            <div key={w.id} className="flex flex-col gap-2 p-5 sm:flex-row sm:justify-between sm:p-6">
-              <div>
-                <p className="font-medium">Withdrawal Request</p>
-                <p className="text-sm text-white/50">{new Date(w.createdAt).toLocaleDateString()}</p>
-                {(w.upiId || w.upiName) ? (
-                  <p className="break-all text-xs text-white/40">
-                    {w.upiName || "UPI"} | {w.upiId || "-"}
-                  </p>
-                ) : null}
-              </div>
-              <div className="sm:text-right">
-                <p>INR {formatMoney(w.amount)}</p>
-                <p className="text-sm text-white/60">{w.status}</p>
-              </div>
+      <div className="grid gap-6 min-[1500px]:grid-cols-[0.9fr_1.1fr]">
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-5 p-4 sm:p-6">
+            <div>
+              <p className="text-sm text-white/60">Request payout</p>
+              <h3 className="text-xl font-semibold text-white">Submit withdrawal details</h3>
             </div>
-          ))
-        )}
+
+            <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/65">
+              <p>Minimum withdrawal: INR {formatMoney(minAmount)}</p>
+              <p className="mt-2">Only one pending withdrawal request is allowed at a time.</p>
+              <p className="mt-2">Admin reviews determine approval or rejection.</p>
+              <p className="mt-2">
+                Emergency withdrawals below the minimum are allowed 2 times per month.
+              </p>
+            </div>
+
+            <WithdrawRequestCard
+              minAmount={minAmount}
+              availableBalance={data?.balance}
+              emergencyRemaining={data?.metrics.emergencyRemaining}
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-5 p-4 sm:p-6">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm text-white/60">Withdrawal history</p>
+                <h3 className="text-xl font-semibold text-white">Request status timeline</h3>
+              </div>
+              <p className="text-sm text-white/50">{data?.metrics.totalRequests ?? 0} total requests</p>
+            </div>
+
+            {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+
+            {!data ? (
+              <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-6 text-sm text-white/55">
+                Loading withdrawal history...
+              </div>
+            ) : data.withdrawals.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-6 text-sm text-white/55">
+                No withdrawal history yet.
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {data.withdrawals.map((w) => (
+                  <div key={w.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                      <div className="min-w-0">
+                        <p className="font-medium text-white">Withdrawal request</p>
+                        <p className="text-sm text-white/50">{new Date(w.createdAt).toLocaleString()}</p>
+                        {(w.upiId || w.upiName) ? (
+                          <p className="mt-2 break-all text-xs text-white/40">
+                            {w.upiName || "UPI"} | {w.upiId || "-"}
+                          </p>
+                        ) : null}
+                        {w.isEmergency ? (
+                          <p className="mt-2 text-xs uppercase tracking-[0.16em] text-violet-200">
+                            Emergency withdrawal
+                          </p>
+                        ) : null}
+                      </div>
+                      <div className="lg:text-right">
+                        <p className="text-lg font-semibold text-white">INR {formatMoney(w.amount)}</p>
+                        <span className={`mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${statusTone(w.status)}`}>
+                          {w.status}
+                        </span>
+                      </div>
+                    </div>
+                    {w.adminNote ? (
+                      <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3 text-sm text-white/70">
+                        Admin note: {w.adminNote}
+                      </div>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

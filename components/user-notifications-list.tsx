@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
@@ -12,6 +11,7 @@ type NotificationItem = {
   message: string;
   createdAt: string;
   isRead: boolean;
+  type?: string;
 };
 
 export default function UserNotificationsList({
@@ -19,7 +19,6 @@ export default function UserNotificationsList({
 }: {
   notifications: NotificationItem[];
 }) {
-  const router = useRouter();
   const [loading, setLoading] = useState<string | "all" | null>(null);
   const [message, setMessage] = useState("");
 
@@ -50,8 +49,8 @@ export default function UserNotificationsList({
     }
 
     setMessage(data.message || "Updated");
-    router.refresh();
     emitDashboardLiveRefresh();
+    window.location.reload();
   }
 
   return (
@@ -60,8 +59,9 @@ export default function UserNotificationsList({
         <p className="text-sm text-white/60">Unread: {notifications.filter((n) => !n.isRead).length}</p>
         <Button
           variant="outline"
-          onClick={() => markRead()}
+          onClick={() => void markRead()}
           disabled={loading !== null || notifications.every((n) => n.isRead)}
+          className="border-white/15 bg-transparent text-white hover:bg-white/10"
         >
           {loading === "all" ? "Updating..." : "Mark all as read"}
         </Button>
@@ -81,19 +81,22 @@ export default function UserNotificationsList({
           >
             <CardContent className="space-y-2 p-6">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-                <p className="font-semibold">{n.title}</p>
+                <div>
+                  <p className="font-semibold break-words">{n.title}</p>
+                  {n.type ? <p className="mt-1 text-xs uppercase tracking-[0.16em] text-white/45">{n.type}</p> : null}
+                </div>
                 {!n.isRead ? (
                   <Button
                     size="sm"
                     variant="secondary"
-                    onClick={() => markRead(n.id)}
+                    onClick={() => void markRead(n.id)}
                     disabled={loading !== null}
                   >
                     {loading === n.id ? "Saving..." : "Mark read"}
                   </Button>
                 ) : null}
               </div>
-              <p className="text-sm text-white/70">{n.message}</p>
+              <p className="text-sm text-white/70 break-words">{n.message}</p>
               <p className="text-xs text-white/50">{new Date(n.createdAt).toLocaleString()}</p>
             </CardContent>
           </Card>

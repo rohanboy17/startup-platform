@@ -38,6 +38,9 @@ export default async function ManagerLayout({
             items={[
               { key: "manager.overview", href: "/dashboard/manager", label: "Overview", icon: "overview" },
               { key: "manager.submissions", href: "/dashboard/manager/submissions", label: "Submission Queue", icon: "submissions" },
+              { key: "manager.notifications", href: "/dashboard/manager/notifications", label: "Notifications", icon: "notifications" },
+              { key: "manager.history", href: "/dashboard/manager/history", label: "History", icon: "audit" },
+              { key: "manager.risk", href: "/dashboard/manager/risk", label: "Risk", icon: "risk" },
             ]}
           />
         </aside>

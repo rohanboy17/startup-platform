@@ -6,6 +6,103 @@ import { getClientIp } from "@/lib/ip";
 import { checkIpAccess, createSecurityEvent } from "@/lib/security";
 import { autoFlagSuspiciousUser } from "@/lib/safety";
 
+function stableIndex(input: string, length: number) {
+  if (length <= 0) return 0;
+  let hash = 0;
+  for (let index = 0; index < input.length; index += 1) {
+    hash = (hash * 31 + input.charCodeAt(index)) >>> 0;
+  }
+  return hash % length;
+}
+
+export async function GET(
+  _req: Request,
+  { params }: { params: Promise<{ campaignId: string }> }
+) {
+  const session = await auth();
+  if (!session || session.user.role !== "USER") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+
+  const { campaignId } = await params;
+  const campaign = await prisma.campaign.findUnique({
+    where: { id: campaignId },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      category: true,
+      taskLink: true,
+      rewardPerTask: true,
+      totalBudget: true,
+      remainingBudget: true,
+      status: true,
+      instructions: {
+        orderBy: { sequence: "asc" },
+        select: {
+          id: true,
+          instructionText: true,
+          sequence: true,
+        },
+      },
+    },
+  });
+
+  if (!campaign) {
+    return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
+  }
+
+  const allowedSubmissions = Math.max(1, Math.floor(campaign.totalBudget / campaign.rewardPerTask));
+  const [occupiedSubmissions, userSubmissionCount] = await Promise.all([
+    prisma.submission.count({
+      where: {
+        campaignId,
+        NOT: [
+          { managerStatus: "MANAGER_REJECTED" },
+          { adminStatus: "ADMIN_REJECTED" },
+          { status: "REJECTED" },
+        ],
+      },
+    }),
+    prisma.submission.count({
+      where: {
+        campaignId,
+        userId: session.user.id,
+      },
+    }),
+  ]);
+
+  const leftSubmissions = Math.max(0, allowedSubmissions - occupiedSubmissions);
+  const isAvailable =
+    campaign.status === "LIVE" &&
+    campaign.remainingBudget >= campaign.rewardPerTask &&
+    leftSubmissions > 0;
+  const remainingInstructions = campaign.instructions.slice(occupiedSubmissions);
+  const instructionPool =
+    remainingInstructions.length > 0 ? remainingInstructions : campaign.instructions;
+  const currentInstruction =
+    isAvailable && instructionPool.length > 0
+      ? instructionPool[
+          stableIndex(
+            `${session.user.id}:${campaignId}:${occupiedSubmissions}:${userSubmissionCount}`,
+            instructionPool.length
+          )
+        ]
+      : null;
+
+  return NextResponse.json({
+    campaign: {
+      ...campaign,
+      allowedSubmissions,
+      usedSubmissions: occupiedSubmissions,
+      leftSubmissions,
+      userSubmissionCount,
+      isAvailable,
+      currentInstruction,
+    },
+  });
+}
+
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ campaignId: string }> }

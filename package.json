@@ -2,6 +2,9 @@
   "name": "startup-platform",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20 <23"
+  },
   "scripts": {
     "postinstall": "prisma generate",
     "dev": "next dev",
@@ -23,6 +26,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^17.3.1",
     "framer-motion": "^12.34.3",
+    "geist": "^1.7.0",
     "lucide-react": "^0.575.0",
     "next": "16.1.6",
     "next-auth": "^4.24.13",

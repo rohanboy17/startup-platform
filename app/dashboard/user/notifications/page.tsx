@@ -1,56 +1,16 @@
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
-import { Card, CardContent } from "@/components/ui/card";
-import UserNotificationsList from "@/components/user-notifications-list";
+import UserNotificationsPanel from "@/components/user-notifications-panel";
 
 export default async function UserNotificationsPage() {
-  const session = await auth();
-
-  const notificationDelegate = (prisma as unknown as {
-    notification?: {
-      findMany: (args: {
-        where: { userId: string };
-        orderBy: { createdAt: "desc" };
-      }) => Promise<
-        Array<{
-          id: string;
-          title: string;
-          message: string;
-          createdAt: Date;
-          isRead: boolean;
-        }>
-      >;
-    };
-  }).notification;
-
-  const notifications = notificationDelegate
-    ? await notificationDelegate.findMany({
-        where: { userId: session!.user.id },
-        orderBy: { createdAt: "desc" },
-      })
-    : [];
-
   return (
     <div className="space-y-8">
-      <h2 className="text-3xl font-semibold">Notifications</h2>
-
-      {!notificationDelegate ? (
-        <Card className="rounded-2xl border-amber-300/20 bg-amber-500/10">
-          <CardContent className="p-6 text-sm text-amber-200">
-            Notification system is initializing. Please restart the dev server.
-          </CardContent>
-        </Card>
-      ) : (
-        <UserNotificationsList
-          notifications={notifications.map((n) => ({
-            id: n.id,
-            title: n.title,
-            message: n.message,
-            createdAt: n.createdAt.toISOString(),
-            isRead: n.isRead,
-          }))}
-        />
-      )}
+      <div>
+        <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">Inbox</p>
+        <h2 className="mt-2 text-3xl font-semibold md:text-4xl">Notifications</h2>
+        <p className="mt-2 max-w-2xl text-sm text-white/65 md:text-base">
+          Review approvals, rejections, payout updates, and system notices in one live feed.
+        </p>
+      </div>
+      <UserNotificationsPanel />
     </div>
   );
 }

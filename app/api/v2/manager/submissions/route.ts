@@ -12,13 +12,33 @@ export async function GET() {
     where: {
       campaignId: { not: null },
       managerStatus: "PENDING",
+      managerEscalatedAt: null,
     },
     include: {
       user: {
-        select: { id: true, name: true, email: true },
+        select: {
+          id: true,
+          name: true,
+          level: true,
+          totalApproved: true,
+          totalRejected: true,
+          isSuspicious: true,
+          suspiciousReason: true,
+        },
       },
       campaign: {
-        select: { id: true, title: true, category: true, rewardPerTask: true },
+        select: {
+          id: true,
+          title: true,
+          category: true,
+          rewardPerTask: true,
+          description: true,
+          taskLink: true,
+          instructions: {
+            select: { sequence: true, instructionText: true },
+            orderBy: { sequence: "asc" },
+          },
+        },
       },
     },
     orderBy: { createdAt: "desc" },

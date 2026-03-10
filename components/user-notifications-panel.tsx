@@ -1,0 +1,234 @@
+"use client";
+
+import { useCallback, useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
+
+type NotificationFilter = "ALL" | "UNREAD" | "SUCCESS" | "WARNING" | "INFO";
+
+type NotificationItem = {
+  id: string;
+  title: string;
+  message: string;
+  createdAt: string;
+  isRead: boolean;
+  type: string;
+};
+
+type NotificationsResponse = {
+  unreadCount: number;
+  totalCount: number;
+  typeCounts: {
+    success: number;
+    warning: number;
+    info: number;
+  };
+  notifications: NotificationItem[];
+  error?: string;
+};
+
+const FILTERS: Array<{ value: NotificationFilter; label: string }> = [
+  { value: "ALL", label: "All" },
+  { value: "UNREAD", label: "Unread" },
+  { value: "SUCCESS", label: "Success" },
+  { value: "WARNING", label: "Warnings" },
+  { value: "INFO", label: "Info" },
+];
+
+function typeTone(type: string, isRead: boolean) {
+  if (isRead) return "border-white/10 bg-white/5 text-white";
+  if (type === "SUCCESS") return "border-emerald-400/20 bg-emerald-500/10 text-emerald-100";
+  if (type === "WARNING") return "border-amber-400/20 bg-amber-500/10 text-amber-100";
+  return "border-sky-400/20 bg-sky-500/10 text-sky-100";
+}
+
+export default function UserNotificationsPanel() {
+  const [data, setData] = useState<NotificationsResponse | null>(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState<string | "all" | null>(null);
+  const [message, setMessage] = useState("");
+  const [filter, setFilter] = useState<NotificationFilter>("ALL");
+
+  const load = useCallback(async () => {
+    const res = await fetch("/api/v2/users/me/notifications", { credentials: "include" });
+    const raw = await res.text();
+    let parsed: NotificationsResponse | null = null;
+
+    try {
+      parsed = raw ? (JSON.parse(raw) as NotificationsResponse) : null;
+    } catch {
+      setError("Unexpected server response");
+      setLoading(false);
+      return;
+    }
+
+    if (!res.ok) {
+      setError(parsed?.error || "Failed to load notifications");
+    } else {
+      setError("");
+      setData(parsed);
+    }
+    setLoading(false);
+  }, []);
+
+  useLiveRefresh(load, 10000);
+
+  const filtered = useMemo(() => {
+    const notifications = data?.notifications ?? [];
+    switch (filter) {
+      case "UNREAD":
+        return notifications.filter((item) => !item.isRead);
+      case "SUCCESS":
+      case "WARNING":
+      case "INFO":
+        return notifications.filter((item) => item.type === filter);
+      default:
+        return notifications;
+    }
+  }, [data, filter]);
+
+  async function markRead(notificationId?: string) {
+    setActionLoading(notificationId ?? "all");
+    setMessage("");
+
+    const res = await fetch("/api/notifications/read", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(notificationId ? { notificationId } : { all: true }),
+    });
+
+    const raw = await res.text();
+    let parsed: { error?: string; message?: string } = {};
+    try {
+      parsed = raw ? (JSON.parse(raw) as { error?: string; message?: string }) : {};
+    } catch {
+      parsed = { error: "Unexpected server response" };
+    }
+
+    setActionLoading(null);
+
+    if (!res.ok) {
+      setMessage(parsed.error || "Failed to update notifications");
+      return;
+    }
+
+    setMessage(parsed.message || "Notifications updated");
+    emitDashboardLiveRefresh();
+    await load();
+  }
+
+  if (loading) return <p className="text-sm text-white/60">Loading notifications...</p>;
+  if (error) return <p className="text-sm text-rose-300">{error}</p>;
+  if (!data) return <p className="text-sm text-white/60">Loading notifications...</p>;
+
+  return (
+    <div className="space-y-6">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-2 p-4 sm:p-6">
+            <p className="text-sm text-white/60">Total notifications</p>
+            <p className="text-3xl font-semibold text-white">{data.totalCount}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-2 p-4 sm:p-6">
+            <p className="text-sm text-white/60">Unread</p>
+            <p className="text-3xl font-semibold text-emerald-300">{data.unreadCount}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-2 p-4 sm:p-6">
+            <p className="text-sm text-white/60">Success updates</p>
+            <p className="text-3xl font-semibold text-cyan-200">{data.typeCounts.success}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <CardContent className="space-y-2 p-4 sm:p-6">
+            <p className="text-sm text-white/60">Warnings</p>
+            <p className="text-3xl font-semibold text-amber-200">{data.typeCounts.warning}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+        <CardContent className="space-y-4 p-4 sm:p-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-sm text-white/60">Inbox filters</p>
+              <h3 className="text-xl font-semibold text-white">Sort by unread or notification type</h3>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => void markRead()}
+              disabled={actionLoading !== null || data.notifications.every((item) => item.isRead)}
+              className="border-white/15 bg-transparent text-white hover:bg-white/10"
+            >
+              {actionLoading === "all" ? "Updating..." : "Mark all as read"}
+            </Button>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {FILTERS.map((item) => {
+              const active = filter === item.value;
+              return (
+                <button
+                  key={item.value}
+                  type="button"
+                  onClick={() => setFilter(item.value)}
+                  className={`rounded-full border px-3 py-2 text-sm transition ${
+                    active
+                      ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-100"
+                      : "border-white/10 bg-black/20 text-white/65 hover:bg-black/30 hover:text-white"
+                  }`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      {filtered.length === 0 ? (
+        <Card className="rounded-2xl border-white/10 bg-white/5">
+          <CardContent className="p-6 text-sm text-white/60">No notifications match the current filter.</CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-4">
+          {filtered.map((item) => (
+            <Card key={item.id} className={`rounded-3xl border shadow-xl shadow-black/20 backdrop-blur-md ${typeTone(item.type, item.isRead)}`}>
+              <CardContent className="space-y-3 p-4 sm:p-6">
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                  <div>
+                    <p className="text-lg font-semibold break-words">{item.title}</p>
+                    <p className="mt-1 text-sm opacity-80 break-words">{item.message}</p>
+                  </div>
+                  {!item.isRead ? (
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => void markRead(item.id)}
+                      disabled={actionLoading !== null}
+                    >
+                      {actionLoading === item.id ? "Saving..." : "Mark read"}
+                    </Button>
+                  ) : null}
+                </div>
+                <div className="flex flex-wrap items-center gap-3 text-xs opacity-70">
+                  <span>{new Date(item.createdAt).toLocaleString()}</span>
+                  <span className="uppercase tracking-[0.16em]">{item.type}</span>
+                  {!item.isRead ? <span className="uppercase tracking-[0.16em]">Unread</span> : null}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+    </div>
+  );
+}

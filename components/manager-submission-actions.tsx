@@ -7,7 +7,7 @@ import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
 export default function ManagerSubmissionActions({ submissionId }: { submissionId: string }) {
   const router = useRouter();
-  const [loading, setLoading] = useState<"APPROVE" | "REJECT" | null>(null);
+  const [loading, setLoading] = useState<"APPROVE" | "REJECT" | "ESCALATE" | null>(null);
   const [message, setMessage] = useState("");
   const [reason, setReason] = useState("");
 
@@ -43,23 +43,75 @@ export default function ManagerSubmissionActions({ submissionId }: { submissionI
     emitDashboardLiveRefresh();
   }
 
+  async function escalate() {
+    setLoading("ESCALATE");
+    setMessage("");
+
+    const res = await fetch(`/api/v2/submissions/${submissionId}/manager-escalate`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ reason }),
+    });
+
+    const raw = await res.text();
+    let data: { message?: string; error?: string } = {};
+    try {
+      data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
+    } catch {
+      data = { error: "Unexpected server response" };
+    }
+
+    setLoading(null);
+
+    if (!res.ok) {
+      setMessage(data.error || "Action failed");
+      return;
+    }
+
+    setReason("");
+    setMessage(data.message || "Escalated");
+    router.refresh();
+    emitDashboardLiveRefresh();
+  }
+
   return (
-    <div className="space-y-3">
-      <textarea
-        value={reason}
-        onChange={(e) => setReason(e.target.value)}
-        placeholder="Rejection reason (required only when rejecting)"
-        className="min-h-20 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35"
-      />
-      <div className="flex gap-3">
-        <Button onClick={() => void review("APPROVE")} disabled={loading !== null}>
-          {loading === "APPROVE" ? "Approving..." : "Approve"}
-        </Button>
-        <Button variant="destructive" onClick={() => void review("REJECT")} disabled={loading !== null}>
-          {loading === "REJECT" ? "Rejecting..." : "Reject"}
-        </Button>
+    <div className="md:relative">
+      <div className="sticky bottom-4 z-20 space-y-3 rounded-2xl border border-white/10 bg-black/60 p-4 shadow-xl shadow-black/40 backdrop-blur-md md:static md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-0">
+        <textarea
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder="Reason (required when rejecting, recommended when escalating)"
+          rows={3}
+          className="w-full resize-none rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35 md:bg-black/20"
+        />
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Button
+            onClick={() => void review("APPROVE")}
+            disabled={loading !== null}
+            className="min-h-11 w-full px-5 sm:w-auto"
+          >
+            {loading === "APPROVE" ? "Approving..." : "Approve"}
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={() => void review("REJECT")}
+            disabled={loading !== null}
+            className="min-h-11 w-full px-5 sm:w-auto"
+          >
+            {loading === "REJECT" ? "Rejecting..." : "Reject"}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => void escalate()}
+            disabled={loading !== null}
+            className="min-h-11 w-full px-5 sm:w-auto"
+          >
+            {loading === "ESCALATE" ? "Escalating..." : "Escalate"}
+          </Button>
+        </div>
+        {message ? <p className="text-xs text-white/70">{message}</p> : null}
       </div>
-      {message ? <p className="text-xs text-white/60">{message}</p> : null}
     </div>
   );
 }

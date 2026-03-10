@@ -196,6 +196,8 @@ export async function GET() {
         unreadNotifications,
         liveCampaigns,
         breachedPendingCampaigns,
+        businessProfile,
+        latestKycRequest,
       ] = await Promise.all([
         prisma.campaign.findMany({
           where: { businessId: context.businessUserId },
@@ -244,6 +246,15 @@ export async function GET() {
           orderBy: { createdAt: "desc" },
           take: 100,
         }),
+        prisma.user.findUnique({
+          where: { id: context.businessUserId },
+          select: { kycStatus: true, createdAt: true, kycVerifiedAt: true },
+        }),
+        prisma.businessKycRequest.findFirst({
+          where: { businessId: context.businessUserId },
+          orderBy: { createdAt: "desc" },
+          select: { createdAt: true, updatedAt: true },
+        }),
       ]);
 
       const exhaustedLiveCampaigns = liveCampaigns.filter(
@@ -257,6 +268,15 @@ export async function GET() {
         "business.reviews": token(submissions.length, submissions[0]?.createdAt),
         "business.create": token(0, null),
         "business.analytics": token(submissions.length, submissions[0]?.createdAt),
+        "business.kyc": token(
+          businessProfile?.kycStatus === "VERIFIED" ? 0 : 1,
+          maxDate(
+            businessProfile?.kycVerifiedAt,
+            latestKycRequest?.createdAt,
+            latestKycRequest?.updatedAt,
+            businessProfile?.createdAt
+          )
+        ),
         "business.funding": token(
           txs.length + payments.length,
           maxDate(txs[0]?.createdAt, payments[0]?.createdAt, payments[0]?.updatedAt, payments[0]?.paidAt)
@@ -297,37 +317,65 @@ export async function GET() {
         },
         counts: {
           "business.notifications": unreadNotifications + activeAlertCount,
+          "business.kyc": businessProfile?.kycStatus === "VERIFIED" ? 0 : 1,
         },
       });
     }
 
     if (role === "MANAGER") {
-      const [queue, audits] = await Promise.all([
+      const [queue, suspiciousQueue, decisions, openSecurityEvents] = await Promise.all([
         prisma.submission.findMany({
-          where: { managerStatus: "PENDING" },
+          where: { managerStatus: "PENDING", managerEscalatedAt: null },
           select: { createdAt: true },
           orderBy: { createdAt: "desc" },
           take: 100,
         }),
-        prisma.auditLog.findMany({
-          where: { actorUserId: userId },
+        prisma.submission.findMany({
+          where: { managerStatus: "PENDING", managerEscalatedAt: null, user: { isSuspicious: true } },
+          select: { createdAt: true },
+          orderBy: { createdAt: "desc" },
+          take: 100,
+        }),
+        prisma.activityLog.findMany({
+          where: {
+            userId,
+            entity: "Submission",
+            action: { in: ["MANAGER_APPROVED_SUBMISSION", "MANAGER_REJECTED_SUBMISSION", "MANAGER_ESCALATED_SUBMISSION"] },
+          },
           select: { createdAt: true },
           orderBy: { createdAt: "desc" },
           take: 50,
+        }),
+        prisma.securityEvent.findMany({
+          where: { status: "OPEN", kind: { startsWith: "MANAGER_" } },
+          select: { createdAt: true },
+          orderBy: { createdAt: "desc" },
+          take: 100,
         }),
       ]);
 
       const tabs = {
         "manager.submissions": token(queue.length, queue[0]?.createdAt),
+        "manager.history": token(decisions.length, decisions[0]?.createdAt),
+        "manager.risk": token(
+          suspiciousQueue.length + openSecurityEvents.length,
+          maxDate(suspiciousQueue[0]?.createdAt, openSecurityEvents[0]?.createdAt)
+        ),
+        "manager.notifications": token(
+          queue.length + suspiciousQueue.length + openSecurityEvents.length,
+          maxDate(queue[0]?.createdAt, suspiciousQueue[0]?.createdAt, openSecurityEvents[0]?.createdAt)
+        ),
       };
 
       return NextResponse.json({
         role,
         tabs: {
-          "manager.overview": `${Object.values(tabs).join("|")}|${token(audits.length, audits[0]?.createdAt)}`,
+          "manager.overview": Object.values(tabs).join("|"),
           ...tabs,
         },
-        counts: {},
+        counts: {
+          "manager.notifications": queue.length + suspiciousQueue.length + openSecurityEvents.length,
+        },
       });
     }
 

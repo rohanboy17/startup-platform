@@ -36,10 +36,11 @@ export default async function BusinessLayout({
     redirect("/maintenance");
   }
 
-  const items = [
-    { key: "business.overview", href: "/dashboard/business", label: "Overview", icon: "overview" as const },
-    { key: "business.campaigns", href: "/dashboard/business/campaigns", label: "Campaigns", icon: "campaigns" as const },
-    { key: "business.reviews", href: "/dashboard/business/reviews", label: "Reviews", icon: "reviews" as const },
+    const items = [
+      { key: "business.overview", href: "/dashboard/business", label: "Overview", icon: "overview" as const },
+      { key: "business.campaigns", href: "/dashboard/business/campaigns", label: "Campaigns", icon: "campaigns" as const },
+      { key: "business.reviews", href: "/dashboard/business/reviews", label: "Reviews", icon: "reviews" as const },
+      { key: "business.kyc", href: "/dashboard/business/kyc", label: "KYC", icon: "trust" as const },
     ...(canManageBusinessCampaigns(context.accessRole)
       ? [{ key: "business.create", href: "/dashboard/business/create", label: "Create Campaign", icon: "create" as const }]
       : []),

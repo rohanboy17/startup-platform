@@ -26,6 +26,8 @@ model User {
   totalApproved Int        @default(0)
   totalRejected Int        @default(0)
   emergencyWithdrawCount Int @default(0)
+  monthlyEmergencyWithdrawCount Int @default(0)
+  emergencyWithdrawMonthKey String?
   lastLevelResetAt DateTime @default(now())
   createdAt   DateTime     @default(now())
   ipAddress   String?
@@ -43,6 +45,7 @@ model User {
   notificationDeliveryLogs NotificationDeliveryLog[]
   paymentOrders PaymentOrder[]
   businessWallet BusinessWallet?
+  kycRequests BusinessKycRequest[]
   twoFactorEnabled Boolean @default(false)
   twoFactorEnabledAt DateTime?
   requestedWalletAdjustments WalletAdjustmentRequest[] @relation("WalletAdjustmentRequester")
@@ -55,6 +58,25 @@ model User {
   deletionReason String?
 }
 
+model BusinessKycRequest {
+  id            String     @id @default(uuid())
+  businessId    String
+  business      User       @relation(fields: [businessId], references: [id])
+  legalName     String
+  contactName   String
+  phone         String
+  address       String
+  website       String?
+  taxId         String?
+  documentUrl   String?
+  status        KycStatus  @default(PENDING)
+  notes         String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  reviewedAt    DateTime?
+  reviewedByUserId String?
+}
+
 model Submission {
   id        String           @id @default(uuid())
   proof     String
@@ -64,6 +86,9 @@ model Submission {
   status    SubmissionStatus @default(PENDING)
   managerStatus SubmissionStatus @default(PENDING)
   adminStatus SubmissionStatus @default(PENDING)
+  managerEscalatedAt DateTime?
+  managerEscalationReason String?
+  managerEscalatedByUserId String?
   rewardAmount Float @default(0)
   createdAt DateTime         @default(now())
   userId    String
@@ -77,6 +102,7 @@ model Withdrawal {
   amount    Float
   upiId     String?
   upiName   String?
+  isEmergency Boolean       @default(false)
   status    WithdrawalStatus @default(PENDING)
   adminNote String?
   processedAt DateTime?

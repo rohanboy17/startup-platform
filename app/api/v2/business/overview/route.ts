@@ -18,7 +18,7 @@ export async function GET() {
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
 
-  const [wallet, appSettings, campaigns, approvedSubmissions, pendingReviews, todayApprovals, recentTransactions] =
+  const [wallet, appSettings, campaigns, approvedSubmissions, pendingReviews, todayApprovals, recentTransactions, user] =
     await Promise.all([
     ensureBusinessWalletSynced(context.businessUserId),
     getAppSettings(),
@@ -83,6 +83,10 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
       take: 4,
     }),
+    prisma.user.findUnique({
+      where: { id: context.businessUserId },
+      select: { kycStatus: true, kycVerifiedAt: true },
+    }),
   ]);
 
   const totalCampaigns = campaigns.length;
@@ -128,6 +132,8 @@ export async function GET() {
 
   return NextResponse.json({
     accessRole: context.accessRole,
+    kycStatus: user?.kycStatus || "PENDING",
+    kycVerifiedAt: user?.kycVerifiedAt || null,
     wallet: {
       balance: wallet.balance,
       totalFunded: wallet.totalFunded,

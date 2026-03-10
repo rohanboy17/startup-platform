@@ -4,6 +4,7 @@ import { formatMoney } from "@/lib/format-money";
 import AdminBusinessKycActions from "@/components/admin-business-kyc-actions";
 import AdminBusinessWalletActions from "@/components/admin-business-wallet-actions";
 import AdminUserStatusActions from "@/components/admin-user-status-actions";
+import AdminKycRequestsPanel from "@/components/admin-kyc-requests-panel";
 
 type SearchParams = {
   q?: string;
@@ -100,6 +101,11 @@ export default async function AdminBusinessesPage({
             <p className="mt-1 text-2xl font-semibold text-sky-300">{teamMembers}</p>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="space-y-3">
+        <h3 className="text-xl font-semibold">Pending KYC Requests</h3>
+        <AdminKycRequestsPanel />
       </div>
 
       <Card className="rounded-2xl border-white/10 bg-white/5">

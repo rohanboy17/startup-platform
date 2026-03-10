@@ -43,6 +43,7 @@ type IconName =
   | "submissions"
   | "wallet"
   | "notifications"
+  | "help"
   | "risk"
   | "cms"
   | "trust";
@@ -70,6 +71,7 @@ const iconMap: Record<IconName, ComponentType<{ size?: number }>> = {
   submissions: ClipboardCheck,
   wallet: Wallet,
   notifications: Bell,
+  help: ScrollText,
   risk: AlertTriangle,
   cms: Settings2,
   trust: ScrollText,

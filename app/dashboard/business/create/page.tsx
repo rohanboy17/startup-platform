@@ -26,6 +26,7 @@ export default function CreateCampaign() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
+  const [kycStatus, setKycStatus] = useState<string | null>(null);
 
   const taskOptions = useMemo(
     () => CAMPAIGN_TASK_TYPE_OPTIONS[category] || CAMPAIGN_TASK_TYPE_OPTIONS[DEFAULT_CATEGORY],
@@ -54,7 +55,20 @@ export default function CreateCampaign() {
       }
     }
 
+    async function loadKycStatus() {
+      const res = await fetch("/api/v2/business/settings", { credentials: "include" });
+      const raw = await res.text();
+      if (!active) return;
+      try {
+        const data = raw ? (JSON.parse(raw) as { profile?: { kycStatus?: string } }) : {};
+        setKycStatus(data.profile?.kycStatus || "PENDING");
+      } catch {
+        setKycStatus("PENDING");
+      }
+    }
+
     void loadFundingState();
+    void loadKycStatus();
 
     return () => {
       active = false;
@@ -62,6 +76,11 @@ export default function CreateCampaign() {
   }, []);
 
   async function handleSubmit() {
+    if (kycStatus && kycStatus !== "VERIFIED") {
+      setError("Business KYC must be verified before creating campaigns.");
+      return;
+    }
+
     if (totalSlots < 1) {
       setError("Budget must be enough to fund at least one slot.");
       return;
@@ -124,6 +143,8 @@ export default function CreateCampaign() {
     setWalletBalance((current) => (current === null ? current : Math.max(0, current - budgetValue)));
   }
 
+  const kycBlocked = Boolean(kycStatus && kycStatus !== "VERIFIED");
+
   return (
     <div className="space-y-8">
       <div>
@@ -133,6 +154,30 @@ export default function CreateCampaign() {
           Launch a structured campaign with clear task type, instructions, reward, and total budget.
         </p>
       </div>
+
+      {kycBlocked ? (
+        <div className="rounded-3xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm text-amber-100">
+          <p className="font-semibold">KYC verification required</p>
+          <p className="mt-2 text-amber-100/80">
+            Your business KYC status is <span className="font-semibold">{kycStatus}</span>. Admin approval is required
+            before you can create campaigns.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-3">
+            <Link
+              href="/dashboard/business/settings"
+              className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 px-4 py-1 text-xs text-amber-100 hover:bg-amber-500/20"
+            >
+              Review business settings
+            </Link>
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 px-4 py-1 text-xs text-amber-100 hover:bg-amber-500/20"
+            >
+              Contact support
+            </Link>
+          </div>
+        </div>
+      ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[1fr_0.9fr]">
         <div className="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
@@ -234,7 +279,7 @@ export default function CreateCampaign() {
           <Button
             onClick={() => void handleSubmit()}
             className="w-full"
-            disabled={loading || hasEnoughWallet === false || totalSlots < 1}
+            disabled={loading || hasEnoughWallet === false || totalSlots < 1 || kycBlocked}
           >
             {loading ? "Launching..." : "Launch Campaign"}
           </Button>

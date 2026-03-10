@@ -43,11 +43,12 @@ export default async function UserLayout({
               { key: "user.wallet", href: "/dashboard/user/wallet", label: "Wallet", icon: "wallet" },
               { key: "user.withdrawals", href: "/dashboard/user/withdrawals", label: "Withdrawals", icon: "withdrawals" },
               { key: "user.notifications", href: "/dashboard/user/notifications", label: "Notifications", icon: "notifications" },
+              { key: "user.help", href: "/dashboard/user/help", label: "Help", icon: "help" },
             ]}
           />
         </aside>
 
-        <main className="flex-1 p-6 md:p-10">
+        <main className="min-w-0 flex-1 p-4 sm:p-6 md:p-10">
           <PageTransition>{children}</PageTransition>
         </main>
       </div>
