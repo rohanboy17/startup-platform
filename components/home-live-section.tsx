@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useLiveRefresh } from "@/lib/live-refresh";
+import HeroLiveMetrics from "@/components/hero-live-metrics";
 
 type LivePayload = {
   stats: {
@@ -42,84 +43,67 @@ export default function HomeLiveSection() {
 
   useLiveRefresh(load, 10000);
 
-  const historyTickerText = data ? data.events.map((event) => event.message).join("   |   ") : "";
-  const withdrawTickerText = data
-    ? data.events
-        .filter((event) => event.kind === "WITHDRAW")
-        .map((event) => event.message)
-        .join("   |   ")
-    : "";
+
+  const historyTickerText = useMemo(
+    () => (data ? data.events.map((event) => event.message).join("   |   ") : ""),
+    [data]
+  );
+  const withdrawTickerText = useMemo(
+    () =>
+      data
+        ? data.events
+            .filter((event) => event.kind === "WITHDRAW")
+            .map((event) => event.message)
+            .join("   |   ")
+        : "",
+    [data]
+  );
 
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6 sm:pb-20">
-      <div className="rounded-3xl border border-white/15 bg-white/5 p-4 backdrop-blur-xl sm:p-6 md:p-8">
-        <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h2 className="text-xl font-semibold sm:text-2xl">Live Platform Activity</h2>
-            <p className="text-sm text-white/60">Anonymized real-time feed. No personal data shown.</p>
-          </div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-300/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-300">
-            <span className="h-2 w-2 rounded-full bg-emerald-400" />
-            Live
-          </span>
+    <div className="mx-auto w-full rounded-2xl border border-foreground/15 bg-foreground/5 p-4 backdrop-blur-none sm:rounded-3xl sm:p-6 sm:backdrop-blur-xl">
+      <div className="mb-5 flex flex-col items-start justify-between gap-3 sm:mb-6 sm:flex-row">
+        <div className="min-w-0">
+          <h2 className="text-xl font-semibold sm:text-2xl">Live Platform Activity</h2>
+          <p className="text-sm text-foreground/60">Anonymized real-time feed. No personal data shown.</p>
         </div>
-
-        {!data && !error ? <p className="text-sm text-white/60">Loading live activity...</p> : null}
-        {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-
-        {data ? (
-          <>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-                <p className="text-xs text-white/60">Active Online Users</p>
-                <p className="mt-1 text-xl font-semibold">{data.stats.activeOnlineUsers}</p>
-              </div>
-              <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-                <p className="text-xs text-white/60">Active Online Businesses</p>
-                <p className="mt-1 text-xl font-semibold">{data.stats.activeOnlineBusinesses}</p>
-              </div>
-              <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-                <p className="text-xs text-white/60">Live Tasks</p>
-                <p className="mt-1 text-xl font-semibold">{data.stats.liveTasks}</p>
-              </div>
-              <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-                <p className="text-xs text-white/60">Live Withdraw Requests</p>
-                <p className="mt-1 text-xl font-semibold">{data.stats.liveWithdraws}</p>
-              </div>
-            </div>
-
-            <div className="mt-4 rounded-xl border border-sky-300/20 bg-sky-500/10 px-3 py-2">
-              <p className="mb-1 text-[11px] uppercase tracking-wide text-sky-300/80">
-                Live Withdraw Requests ({data.stats.liveWithdraws})
-              </p>
-              <div className="overflow-hidden whitespace-nowrap">
-                <div className="inline-block min-w-full pr-6 text-sm text-sky-200 [animation:marquee_20s_linear_infinite]">
-                  {withdrawTickerText || "No live withdraw requests right now."}
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-4 rounded-xl border border-emerald-300/20 bg-emerald-500/10 px-3 py-2">
-              <p className="mb-1 text-[11px] uppercase tracking-wide text-emerald-300/80">Activity History</p>
-              <div className="overflow-hidden whitespace-nowrap">
-                <div className="inline-block min-w-full pr-6 text-sm text-emerald-200 [animation:marquee_20s_linear_infinite]">
-                  {historyTickerText || "No recent activity yet. New events will appear here."}
-                </div>
-              </div>
-            </div>
-          </>
-        ) : null}
+        <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-400">
+          <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.7)]" />
+          Live
+        </span>
       </div>
-      <style jsx>{`
-        @keyframes marquee {
-          from {
-            transform: translateX(100%);
-          }
-          to {
-            transform: translateX(-100%);
-          }
-        }
-      `}</style>
-    </section>
+
+      {!data && !error ? <p className="text-sm text-foreground/60">Loading live activity...</p> : null}
+      {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+
+      {data ? (
+        <>
+          <div className="mt-4">
+            <HeroLiveMetrics className="gap-3 sm:grid-cols-4" />
+          </div>
+
+          <div className="mt-4 rounded-xl border border-sky-400/20 bg-sky-500/10 px-3 py-2">
+            <p className="mb-1 text-[11px] uppercase tracking-wide text-sky-600 dark:text-sky-300/80">
+              Live Withdraw Requests ({data.stats.liveWithdraws})
+            </p>
+            <div className="overflow-hidden whitespace-nowrap">
+              <div className="inline-block min-w-full pr-6 text-sm text-sky-700 dark:text-sky-200 [animation:marquee_18s_linear_infinite]">
+                {withdrawTickerText || "No live withdraw requests right now."}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-3 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-3 py-2">
+            <p className="mb-1 text-[11px] uppercase tracking-wide text-emerald-600 dark:text-emerald-300/80">
+              Activity History
+            </p>
+            <div className="overflow-hidden whitespace-nowrap">
+              <div className="inline-block min-w-full pr-6 text-sm text-emerald-700 dark:text-emerald-200 [animation:marquee_18s_linear_infinite]">
+                {historyTickerText || "No recent activity yet. New events will appear here."}
+              </div>
+            </div>
+          </div>
+        </>
+      ) : null}
+    </div>
   );
 }

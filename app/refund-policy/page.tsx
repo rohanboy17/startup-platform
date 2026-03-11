@@ -1,4 +1,5 @@
 import { getCmsValue } from "@/lib/cms";
+import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
 
 const FALLBACK = `Businesses may request refunds for unused campaign budget that has not been spent on approved submissions.
 
@@ -10,16 +11,30 @@ For disputes, contact support with relevant transaction IDs and account details 
 
 export default async function RefundPolicyPage() {
   const content = await getCmsValue<{ body: string }>("legal.refund", { body: "" });
-  const body = content.body?.trim() || FALLBACK;
+  const body = content.body?.trim();
 
   return (
-    <main className="mx-auto w-full max-w-4xl px-6 py-20 text-white">
-      <h1 className="mb-6 text-3xl font-bold">Refund Policy</h1>
-      <div className="space-y-4 text-white/80">
-        {body.split("\n\n").map((paragraph, idx) => (
-          <p key={idx}>{paragraph}</p>
-        ))}
+    <PublicPageShell
+      eyebrow="Legal"
+      title="Refund Policy"
+      description="Refund handling for campaign balances, settlement boundaries, and withdrawal processing timelines."
+      lastUpdated="March 11, 2026"
+    >
+      <div className="space-y-4">
+        {body ? (
+          <PolicySection title="Refund Rules">
+            {body.split("\n\n").map((paragraph, idx) => (
+              <p key={idx}>{paragraph}</p>
+            ))}
+          </PolicySection>
+        ) : (
+          FALLBACK.split("\n\n").map((paragraph, idx) => (
+            <PolicySection key={idx} title={`Refund Rule ${idx + 1}`}>
+              <p>{paragraph}</p>
+            </PolicySection>
+          ))
+        )}
       </div>
-    </main>
+    </PublicPageShell>
   );
 }

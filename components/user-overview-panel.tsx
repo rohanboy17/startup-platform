@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { Bell, CheckCircle2, CircleDollarSign, Clock3, Sparkles, Wallet } from "lucide-react";
+import { Sparkles, Wallet } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
 
@@ -117,76 +119,44 @@ export default function UserOverviewPanel() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Available balance</p>
-              <Wallet size={18} className="text-emerald-300" />
-            </div>
-            <p className="text-3xl font-semibold text-emerald-300">INR {formatMoney(data.metrics.availableBalance)}</p>
-            <p className="text-xs text-white/55">Ready for withdrawal once you meet the minimum payout rule.</p>
-          </CardContent>
-        </Card>
+        <KpiCard
+          label="Available balance"
+          value={`INR ${formatMoney(data.metrics.availableBalance)}`}
+          tone="success"
+        />
 
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Pending withdrawal</p>
-              <Clock3 size={18} className="text-amber-300" />
-            </div>
-            <p className="text-3xl font-semibold text-amber-200">INR {formatMoney(data.metrics.pendingWithdrawalAmount)}</p>
-            <p className="text-xs text-white/55">Amount currently waiting for admin review.</p>
-          </CardContent>
-        </Card>
+        <KpiCard
+          label="Pending withdrawal"
+          value={`INR ${formatMoney(data.metrics.pendingWithdrawalAmount)}`}
+          tone="warning"
+        />
 
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Total withdrawn</p>
-              <CircleDollarSign size={18} className="text-cyan-300" />
-            </div>
-            <p className="text-3xl font-semibold text-cyan-200">INR {formatMoney(data.metrics.totalWithdrawn)}</p>
-            <p className="text-xs text-white/55">All approved withdrawals processed so far.</p>
-          </CardContent>
-        </Card>
+        <KpiCard
+          label="Total withdrawn"
+          value={`INR ${formatMoney(data.metrics.totalWithdrawn)}`}
+          tone="info"
+        />
 
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Approved submissions</p>
-              <CheckCircle2 size={18} className="text-sky-300" />
-            </div>
-            <p className="text-3xl font-semibold text-white">{data.metrics.approvedSubmissions}</p>
-            <p className="text-xs text-white/55">Lifetime approved work across all campaigns.</p>
-          </CardContent>
-        </Card>
+        <KpiCard
+          label="Approved submissions"
+          value={data.metrics.approvedSubmissions}
+        />
 
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Current level</p>
-              <Sparkles size={18} className="text-violet-300" />
-            </div>
-            <p className="text-3xl font-semibold text-violet-200">{data.profile.level}</p>
-            <p className="text-xs text-white/55">Today approved: {data.metrics.todayApprovedCount}</p>
-          </CardContent>
-        </Card>
+        <KpiCard
+          label="Current level"
+          value={data.profile.level}
+          tone="info"
+        />
 
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Unread notifications</p>
-              <Bell size={18} className="text-rose-300" />
-            </div>
-            <p className="text-3xl font-semibold text-white">{data.metrics.unreadNotifications}</p>
-            <p className="text-xs text-white/55">Approval, withdrawal, and system updates waiting for review.</p>
-          </CardContent>
-        </Card>
+        <KpiCard
+          label="Unread notifications"
+          value={data.metrics.unreadNotifications}
+          tone="warning"
+        />
       </div>
 
       <div className="grid gap-6 min-[1600px]:grid-cols-[1.1fr_0.9fr]">
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-6 p-4 sm:p-6">
+        <SectionCard elevated className="space-y-6 p-4 sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm text-white/60">Level progress</p>
@@ -220,9 +190,9 @@ export default function UserOverviewPanel() {
                 </div>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/45">Today approved</p>
+                <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
+                  <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/45">Today approved</p>
                   <p className="mt-2 text-2xl font-semibold text-white">{data.metrics.todayApprovedCount}</p>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
@@ -250,8 +220,7 @@ export default function UserOverviewPanel() {
                 <p className="mt-1 text-sm text-white/55">Check approval, rejection, and payout updates.</p>
               </Link>
             </div>
-          </CardContent>
-        </Card>
+        </SectionCard>
 
         <div className="space-y-6">
           <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">

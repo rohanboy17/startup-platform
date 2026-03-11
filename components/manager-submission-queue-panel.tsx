@@ -3,6 +3,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { AlertTriangle, ExternalLink, ShieldAlert } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { formatMoney } from "@/lib/format-money";
 import { normalizeExternalUrl } from "@/lib/external-url";
 import { useLiveRefresh } from "@/lib/live-refresh";
@@ -136,28 +139,12 @@ export default function ManagerSubmissionQueuePanel() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Queue size</p>
-            <p className="text-3xl font-semibold text-white">{stats.total}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Suspicious in queue</p>
-            <p className="text-3xl font-semibold text-amber-200">{stats.suspicious}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">High-level users</p>
-            <p className="text-3xl font-semibold text-sky-300">{stats.highLevel}</p>
-          </CardContent>
-        </Card>
+        <KpiCard label="Queue Size" value={stats.total} />
+        <KpiCard label="Suspicious In Queue" value={stats.suspicious} tone="warning" />
+        <KpiCard label="High-Level Users" value={stats.highLevel} tone="info" />
       </div>
 
-      <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-        <CardContent className="space-y-4 p-4 sm:p-6">
+      <SectionCard elevated className="space-y-4 p-4 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm text-white/60">Queue filters</p>
@@ -192,8 +179,7 @@ export default function ManagerSubmissionQueuePanel() {
               })}
             </div>
           </div>
-        </CardContent>
-      </Card>
+      </SectionCard>
 
       {filtered.length === 0 ? (
         <Card className="rounded-2xl border-white/10 bg-white/5">
@@ -215,13 +201,11 @@ export default function ManagerSubmissionQueuePanel() {
                       {submission.campaign?.category || "Uncategorized"} | Reward INR {formatMoney(submission.campaign?.rewardPerTask)}
                     </p>
                   </div>
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
-                    <span>{waitLabel(submission.createdAt)}</span>
-                    <span className="rounded-full border border-white/10 px-2 py-1">{submission.user.level}</span>
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
+                      <span>{waitLabel(submission.createdAt)}</span>
+                    <StatusBadge label={submission.user.level} tone="neutral" />
                     {submission.user.isSuspicious ? (
-                      <span className="rounded-full border border-amber-400/20 bg-amber-500/10 px-2 py-1 text-amber-100">
-                        Suspicious
-                      </span>
+                      <StatusBadge label="Suspicious" tone="warning" />
                     ) : null}
                   </div>
                 </div>

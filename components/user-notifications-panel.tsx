@@ -3,6 +3,9 @@
 import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
 
 type NotificationFilter = "ALL" | "UNREAD" | "SUCCESS" | "WARNING" | "INFO";
@@ -127,34 +130,13 @@ export default function UserNotificationsPanel() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Total notifications</p>
-            <p className="text-3xl font-semibold text-white">{data.totalCount}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Unread</p>
-            <p className="text-3xl font-semibold text-emerald-300">{data.unreadCount}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Success updates</p>
-            <p className="text-3xl font-semibold text-cyan-200">{data.typeCounts.success}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Warnings</p>
-            <p className="text-3xl font-semibold text-amber-200">{data.typeCounts.warning}</p>
-          </CardContent>
-        </Card>
+        <KpiCard label="Total Notifications" value={data.totalCount} />
+        <KpiCard label="Unread" value={data.unreadCount} tone="success" />
+        <KpiCard label="Success Updates" value={data.typeCounts.success} tone="info" />
+        <KpiCard label="Warnings" value={data.typeCounts.warning} tone="warning" />
       </div>
 
-      <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-        <CardContent className="space-y-4 p-4 sm:p-6">
+      <SectionCard elevated className="space-y-4 p-4 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm text-white/60">Inbox filters</p>
@@ -171,9 +153,9 @@ export default function UserNotificationsPanel() {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {FILTERS.map((item) => {
-              const active = filter === item.value;
-              return (
+              {FILTERS.map((item) => {
+                const active = filter === item.value;
+                return (
                 <button
                   key={item.value}
                   type="button"
@@ -189,8 +171,7 @@ export default function UserNotificationsPanel() {
               );
             })}
           </div>
-        </CardContent>
-      </Card>
+      </SectionCard>
 
       {filtered.length === 0 ? (
         <Card className="rounded-2xl border-white/10 bg-white/5">
@@ -219,8 +200,8 @@ export default function UserNotificationsPanel() {
                 </div>
                 <div className="flex flex-wrap items-center gap-3 text-xs opacity-70">
                   <span>{new Date(item.createdAt).toLocaleString()}</span>
-                  <span className="uppercase tracking-[0.16em]">{item.type}</span>
-                  {!item.isRead ? <span className="uppercase tracking-[0.16em]">Unread</span> : null}
+                  <StatusBadge label={item.type} tone={item.type === "SUCCESS" ? "success" : item.type === "WARNING" ? "warning" : "info"} />
+                  {!item.isRead ? <StatusBadge label="Unread" tone="neutral" /> : null}
                 </div>
               </CardContent>
             </Card>

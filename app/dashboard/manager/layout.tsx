@@ -45,7 +45,7 @@ export default async function ManagerLayout({
           />
         </aside>
 
-        <main className="flex-1 p-6 md:p-10">{children}</main>
+        <main className="min-w-0 flex-1 p-4 sm:p-6 md:p-8 lg:p-10">{children}</main>
       </div>
     </div>
   );

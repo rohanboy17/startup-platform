@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { AlertTriangle, ArrowRight, CircleDollarSign, Layers3, Megaphone, Wallet } from "lucide-react";
+import { AlertTriangle, ArrowRight, CircleDollarSign, Megaphone, Wallet } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
 
@@ -102,17 +105,11 @@ export default function BusinessOverviewPanel() {
   if (!data) return <p className="text-sm text-white/60">Loading business overview...</p>;
 
   const deploymentRate = percentage(data.spentBudget, data.totalBudget);
-  const walletUsageRate = percentage(data.lockedBudget, data.wallet.balance + data.lockedBudget);
   const liveCampaignRate = percentage(data.liveCampaigns, data.totalCampaigns);
   const canManageBilling = data.accessRole === "OWNER";
   const canManageCampaigns = data.accessRole === "OWNER" || data.accessRole === "EDITOR";
   const kycStatus = data.kycStatus || "PENDING";
-  const kycTone =
-    kycStatus === "VERIFIED"
-      ? "text-emerald-300"
-      : kycStatus === "REJECTED"
-        ? "text-rose-300"
-        : "text-amber-300";
+  const kycTone = kycStatus === "VERIFIED" ? "success" : kycStatus === "REJECTED" ? "danger" : "warning";
 
   return (
     <div className="space-y-8">
@@ -149,8 +146,8 @@ export default function BusinessOverviewPanel() {
       </div>
 
       {data.lowBalance ? (
-        <Card className="rounded-3xl border-amber-400/20 bg-amber-500/10 shadow-xl shadow-amber-950/20 backdrop-blur-md">
-          <CardContent className="flex flex-col gap-4 p-6 md:flex-row md:items-center md:justify-between">
+        <SectionCard className="border-amber-400/20 bg-amber-500/10">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div className="flex items-start gap-3">
               <div className="rounded-2xl bg-amber-400/15 p-3 text-amber-200">
                 <AlertTriangle size={18} />
@@ -172,116 +169,43 @@ export default function BusinessOverviewPanel() {
                 <ArrowRight size={16} />
               </Link>
             ) : null}
-          </CardContent>
-        </Card>
+          </div>
+        </SectionCard>
       ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Available wallet</p>
-              <Wallet size={18} className="text-emerald-300" />
-            </div>
-            <p className="text-3xl font-semibold text-emerald-300">INR {formatMoney(data.wallet.balance)}</p>
-            <p className="text-xs text-white/55">
-              Total funded INR {formatMoney(data.wallet.totalFunded)} | Refunds INR{" "}
-              {formatMoney(data.wallet.totalRefund)}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Locked campaign budget</p>
-              <Layers3 size={18} className="text-sky-300" />
-            </div>
-            <p className="text-3xl font-semibold text-sky-300">INR {formatMoney(data.lockedBudget)}</p>
-            <p className="text-xs text-white/55">
-              {walletUsageRate}% of all available + locked capital is currently committed to campaigns.
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Campaign status</p>
-              <Megaphone size={18} className="text-violet-300" />
-            </div>
-            <p className="text-3xl font-semibold text-violet-200">{data.liveCampaigns} live</p>
-            <p className="text-xs text-white/55">
-              {data.pendingCampaigns} pending | {data.completedCampaigns} completed | {data.totalCampaigns} total
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">KYC status</p>
-              <CircleDollarSign size={18} className={kycTone} />
-            </div>
-            <p className={`text-3xl font-semibold ${kycTone}`}>{kycStatus}</p>
-            <p className="text-xs text-white/55">
-              {data.kycVerifiedAt
-                ? `Verified on ${new Date(data.kycVerifiedAt).toLocaleDateString()}`
-                : "Submit your KYC details to unlock campaign creation."}
-            </p>
-          </CardContent>
-        </Card>
+        <KpiCard
+          label="Available Wallet"
+          value={`INR ${formatMoney(data.wallet.balance)}`}
+          tone="success"
+          className="min-h-[132px]"
+        />
+        <KpiCard
+          label="Locked Budget"
+          value={`INR ${formatMoney(data.lockedBudget)}`}
+          tone="info"
+          className="min-h-[132px]"
+        />
+        <KpiCard label="Campaign Status" value={`${data.liveCampaigns} live`} className="min-h-[132px]" />
+        <div className="surface-card premium-ring-hover flex min-h-[132px] flex-col justify-between rounded-2xl p-4 sm:p-5">
+          <p className="text-xs font-medium uppercase tracking-wide text-foreground/60">KYC Status</p>
+          <div className="flex items-center justify-between gap-3">
+            <StatusBadge label={kycStatus} tone={kycTone} />
+            <CircleDollarSign size={18} className="text-foreground/60" />
+          </div>
+          <p className="text-xs text-foreground/55">
+            {data.kycVerifiedAt
+              ? `Verified on ${new Date(data.kycVerifiedAt).toLocaleDateString()}`
+              : "Submit KYC details to unlock campaign creation."}
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Approved results</p>
-              <CircleDollarSign size={18} className="text-amber-300" />
-            </div>
-            <p className="text-3xl font-semibold text-white">{data.approvedSubmissions}</p>
-            <p className="text-xs text-white/55">
-              Avg cost per approval INR {formatMoney(data.averageCostPerApproval)} | Pending review{" "}
-              {data.pendingReviews}
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Total budget</p>
-              <Layers3 size={18} className="text-sky-300" />
-            </div>
-            <p className="text-3xl font-semibold text-white">INR {formatMoney(data.totalBudget)}</p>
-            <p className="text-xs text-white/55">Remaining budget INR {formatMoney(data.remainingBudget)}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Today spend</p>
-              <CircleDollarSign size={18} className="text-emerald-300" />
-            </div>
-            <p className="text-3xl font-semibold text-white">INR {formatMoney(data.todaySpend)}</p>
-            <p className="text-xs text-white/55">Approved spend from today.</p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Funding fee</p>
-              <CircleDollarSign size={18} className="text-emerald-300" />
-            </div>
-            <p className="text-3xl font-semibold text-white">
-              {(data.fundingFeeRate * 100).toFixed(2)}%
-            </p>
-            <p className="text-xs text-white/55">Applies to deposits + refunds.</p>
-          </CardContent>
-        </Card>
+        <KpiCard label="Approved Results" value={data.approvedSubmissions} tone="warning" className="min-h-[132px]" />
+        <KpiCard label="Total Budget" value={`INR ${formatMoney(data.totalBudget)}`} className="min-h-[132px]" />
+        <KpiCard label="Today Spend" value={`INR ${formatMoney(data.todaySpend)}`} tone="success" className="min-h-[132px]" />
+        <KpiCard label="Funding Fee" value={`${(data.fundingFeeRate * 100).toFixed(2)}%`} className="min-h-[132px]" />
       </div>
 
       <div className="grid gap-6 2xl:grid-cols-[1.2fr_0.8fr]">

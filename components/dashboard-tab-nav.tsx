@@ -221,7 +221,7 @@ export default function DashboardTabNav({
             className="mb-3 flex items-center gap-3 text-sm text-white/70 transition hover:text-white"
           >
             <House size={18} />
-            Home
+            Main Home
           </Link>
           <LogoutButton />
         </div>
@@ -234,7 +234,7 @@ export function HomeNavLink() {
   return (
     <Link href="/" className="mb-3 flex items-center gap-3 text-sm text-white/70 transition hover:text-white">
       <House size={18} />
-      Home
+      Main Home
     </Link>
   );
 }

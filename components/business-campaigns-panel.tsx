@@ -6,6 +6,9 @@ import { ArrowRight, PauseCircle, PlayCircle, Search, XCircle } from "lucide-rea
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { getCampaignCategoryLabel } from "@/lib/campaign-options";
 import { formatMoney } from "@/lib/format-money";
 import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
@@ -155,34 +158,13 @@ export default function BusinessCampaignsPanel() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Total campaigns</p>
-            <p className="mt-2 text-3xl font-semibold text-white">{stats.total}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Live</p>
-            <p className="mt-2 text-3xl font-semibold text-emerald-300">{stats.live}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Pending approval</p>
-            <p className="mt-2 text-3xl font-semibold text-amber-100">{stats.pending}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Completed</p>
-            <p className="mt-2 text-3xl font-semibold text-sky-100">{stats.completed}</p>
-          </CardContent>
-        </Card>
+        <KpiCard label="Total Campaigns" value={stats.total} />
+        <KpiCard label="Live" value={stats.live} tone="success" />
+        <KpiCard label="Pending Approval" value={stats.pending} tone="warning" />
+        <KpiCard label="Completed" value={stats.completed} tone="info" />
       </div>
 
-      <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-        <CardContent className="space-y-4 p-5">
+      <SectionCard elevated className="space-y-4 p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm text-white/60">Campaign management</p>
@@ -236,8 +218,7 @@ export default function BusinessCampaignsPanel() {
           </div>
 
           {message ? <p className="text-sm text-white/70">{message}</p> : null}
-        </CardContent>
-      </Card>
+      </SectionCard>
 
       <div className="grid gap-6 2xl:grid-cols-2">
         {filteredCampaigns.length === 0 ? (
@@ -264,9 +245,11 @@ export default function BusinessCampaignsPanel() {
                     <div className="space-y-2">
                       <div className="flex flex-wrap items-center gap-2">
                         <h3 className="text-xl font-semibold text-white">{campaign.title}</h3>
-                        <span className={`rounded-full border px-2.5 py-1 text-xs ${statusTone(campaign.status)}`}>
-                          {campaign.status}
-                        </span>
+                        <StatusBadge
+                          label={campaign.status}
+                          tone={campaign.status === "LIVE" ? "success" : campaign.status === "PENDING" ? "warning" : campaign.status === "REJECTED" ? "danger" : "info"}
+                          className={statusTone(campaign.status)}
+                        />
                       </div>
                       <p className="break-words text-sm text-white/60">{campaign.description}</p>
                       <div className="flex flex-wrap gap-3 text-xs text-white/45">

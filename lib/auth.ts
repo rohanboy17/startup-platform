@@ -38,18 +38,25 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        identifier: { label: "Email or Mobile", type: "text" },
         password: { label: "Password", type: "password" },
         otp: { label: "OTP", type: "text" },
         challengeId: { label: "Challenge ID", type: "text" },
         recoveryCode: { label: "Recovery Code", type: "text" },
       },
       async authorize(credentials, req) {
-        if (!credentials?.email || !credentials?.password) {
+        const rawIdentifier =
+          credentials?.identifier ??
+          // Backward compatibility if old client still sends `email`.
+          (credentials as { email?: string } | undefined)?.email;
+        if (!rawIdentifier || !credentials?.password) {
           return null;
         }
 
-        const email = credentials.email.trim().toLowerCase();
+        const identifier = rawIdentifier.trim();
+        const normalizedEmail = identifier.toLowerCase();
+        const normalizedMobile = identifier.replace(/[\s()-]/g, "").replace(/^00/, "+");
+        const isEmailIdentifier = normalizedEmail.includes("@");
         const inputPassword = credentials.password;
         const ip = getAuthRequestIp(req);
         const userAgent = getAuthUserAgent(req);
@@ -60,14 +67,16 @@ export const authOptions: NextAuthOptions = {
             kind: "LOGIN_BLOCKED_IP",
             severity: "HIGH",
             ipAddress: ip,
-            message: `Blocked login attempt for ${email}`,
-            metadata: { email, reason: ipAccess.reason },
+            message: `Blocked login attempt for ${identifier}`,
+            metadata: { identifier, reason: ipAccess.reason },
           });
           return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email },
+        const user = await prisma.user.findFirst({
+          where: isEmailIdentifier
+            ? { email: normalizedEmail }
+            : { mobile: normalizedMobile },
         });
 
         if (!user) {
@@ -75,8 +84,8 @@ export const authOptions: NextAuthOptions = {
             kind: "LOGIN_FAILURE",
             severity: "LOW",
             ipAddress: ip,
-            message: `Failed login for unknown account ${email}`,
-            metadata: { email, userAgent },
+            message: `Failed login for unknown account ${identifier}`,
+            metadata: { identifier, userAgent },
           });
           return null;
         }
@@ -103,8 +112,8 @@ export const authOptions: NextAuthOptions = {
             severity: "LOW",
             userId: user.id,
             ipAddress: ip,
-            message: `Invalid password for ${email}`,
-            metadata: { email, userAgent },
+            message: `Invalid password for ${identifier}`,
+            metadata: { identifier, userAgent },
           });
 
           const recentFailures = await prisma.securityEvent.count({
@@ -122,7 +131,7 @@ export const authOptions: NextAuthOptions = {
               ipAddress: ip,
               userId: user.id,
               message: `High failed login volume from ${ip}`,
-              metadata: { recentFailures, email },
+              metadata: { recentFailures, identifier },
             });
           }
           return null;
@@ -134,7 +143,7 @@ export const authOptions: NextAuthOptions = {
             severity: "MEDIUM",
             userId: user.id,
             ipAddress: ip,
-            message: `Blocked login for inactive user ${email}`,
+            message: `Blocked login for inactive user ${identifier}`,
             metadata: { accountStatus: user.accountStatus },
           });
           return null;
@@ -148,7 +157,7 @@ export const authOptions: NextAuthOptions = {
               severity: "CRITICAL",
               userId: user.id,
               ipAddress: ip,
-              message: `Admin login blocked by allowlist restriction (${email})`,
+              message: `Admin login blocked by allowlist restriction (${identifier})`,
               metadata: { reason: adminAccess.reason },
             });
             return null;
@@ -168,7 +177,7 @@ export const authOptions: NextAuthOptions = {
                 severity: "MEDIUM",
                 userId: user.id,
                 ipAddress: ip,
-                message: `Admin login missing OTP for ${email}`,
+                message: `Admin login missing OTP for ${identifier}`,
               });
               throw new Error("OTP_REQUIRED");
             }
@@ -196,8 +205,8 @@ export const authOptions: NextAuthOptions = {
                 userId: user.id,
                 ipAddress: ip,
                 message: hasRecovery
-                  ? `Admin login failed recovery code validation for ${email}`
-                  : `Admin login failed OTP validation for ${email}`,
+                  ? `Admin login failed recovery code validation for ${identifier}`
+                  : `Admin login failed OTP validation for ${identifier}`,
                 metadata: { reason: verification.reason },
               });
               throw new Error(hasRecovery ? "RECOVERY_CODE_INVALID" : "OTP_INVALID");
@@ -211,7 +220,7 @@ export const authOptions: NextAuthOptions = {
             severity: "MEDIUM",
             userId: user.id,
             ipAddress: ip,
-            message: `User ${email} logged in from a new IP`,
+            message: `User ${identifier} logged in from a new IP`,
             metadata: { previousIp: user.ipAddress, userAgent },
           });
         }

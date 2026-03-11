@@ -3,6 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import AdminV2SubmissionActions from "@/components/admin-v2-submission-actions";
 import AdminV2SubmissionBulkActions from "@/components/admin-v2-submission-bulk-actions";
 import { formatMoney } from "@/lib/format-money";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 type SearchParams = {
   q?: string;
@@ -158,9 +161,13 @@ export default async function AdminReviewsPage({
   return (
     <div className="space-y-8">
       <h2 className="text-3xl font-semibold">Final Admin Verification</h2>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <KpiCard label="Pending Verification" value={sortedPending.length} tone="warning" />
+        <KpiCard label="Recently Reviewed" value={recentlyReviewed.length} tone="info" />
+        <KpiCard label="High Fraud Items" value={sortedPending.filter((item) => item.fraudScore >= 50).length} tone="danger" />
+      </div>
 
-      <Card className="rounded-2xl border-white/10 bg-white/5">
-        <CardContent className="p-4">
+      <SectionCard elevated className="p-4">
           <form className="grid gap-3 md:grid-cols-3">
             <input
               type="text"
@@ -184,8 +191,7 @@ export default async function AdminReviewsPage({
               Apply
             </button>
           </form>
-        </CardContent>
-      </Card>
+      </SectionCard>
 
       {sortedPending.length > 0 ? (
         <AdminV2SubmissionBulkActions
@@ -214,7 +220,13 @@ export default async function AdminReviewsPage({
                     Reward: INR {formatMoney(submission.campaign?.rewardPerTask)}
                   </p>
                 </div>
-                <p className="text-sm text-amber-200">Fraud Score: {submission.fraudScore}</p>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-white/70">Fraud Score:</span>
+                  <StatusBadge
+                    label={String(submission.fraudScore)}
+                    tone={submission.fraudScore >= 70 ? "danger" : submission.fraudScore >= 40 ? "warning" : "neutral"}
+                  />
+                </div>
                 <p className="break-all text-sm text-white/70">
                   User: {submission.user.name || "Unnamed"} ({submission.user.email}) | Level:{" "}
                   {submission.user.level}
@@ -227,19 +239,19 @@ export default async function AdminReviewsPage({
                 <div className="flex flex-wrap gap-2 text-xs">
                   {submission.ipAddress &&
                   (ipCountMap.get(submission.ipAddress) || 0) >= 5 ? (
-                    <span className="rounded-full border border-amber-300/30 bg-amber-500/20 px-2 py-1 text-amber-200">
-                      IP anomaly: {(ipCountMap.get(submission.ipAddress) || 0).toString()} submissions in 24h
-                    </span>
+                    <StatusBadge
+                      label={`IP anomaly: ${(ipCountMap.get(submission.ipAddress) || 0).toString()} in 24h`}
+                      tone="warning"
+                    />
                   ) : null}
                   {(rapidCountMap.get(submission.user.id) || 0) >= 3 ? (
-                    <span className="rounded-full border border-rose-300/30 bg-rose-500/20 px-2 py-1 text-rose-200">
-                      Time anomaly: {(rapidCountMap.get(submission.user.id) || 0).toString()} in 10m
-                    </span>
+                    <StatusBadge
+                      label={`Time anomaly: ${(rapidCountMap.get(submission.user.id) || 0).toString()} in 10m`}
+                      tone="danger"
+                    />
                   ) : null}
                   {!submission.proofLink && !submission.proofText ? (
-                    <span className="rounded-full border border-yellow-300/30 bg-yellow-500/20 px-2 py-1 text-yellow-100">
-                      Low-detail proof
-                    </span>
+                    <StatusBadge label="Low-detail proof" tone="warning" />
                   ) : null}
                 </div>
                 <p className="text-xs text-white/50">
@@ -267,7 +279,7 @@ export default async function AdminReviewsPage({
               <CardContent className="space-y-4 p-6">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-semibold">{submission.campaign?.title || "Campaign"}</p>
-                  <p className="text-sm text-white/70">Admin Status: {submission.adminStatus}</p>
+                  <StatusBadge label={`Admin: ${submission.adminStatus}`} tone={submission.adminStatus === "ADMIN_APPROVED" ? "success" : "danger"} />
                 </div>
                 <p className="break-all text-sm text-white/70">
                   User: {submission.user.name || "Unnamed"} ({submission.user.email})

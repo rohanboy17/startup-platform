@@ -7,6 +7,9 @@ import AdminUserWalletAdjustment from "@/components/admin-user-wallet-adjustment
 import AdminUserBulkActions from "@/components/admin-user-bulk-actions";
 import AdminUserLifecycleActions from "@/components/admin-user-lifecycle-actions";
 import { formatMoney } from "@/lib/format-money";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 type SearchParams = {
   q?: string;
@@ -160,41 +163,14 @@ export default async function AdminUsersPage({
 
       {!loadError ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="rounded-2xl border-white/10 bg-white/5">
-            <CardContent className="p-5">
-              <p className="text-sm text-white/60">Total Results</p>
-              <p className="mt-2 text-2xl font-bold">{users.length}</p>
-            </CardContent>
-          </Card>
-          <Card className="rounded-2xl border-white/10 bg-white/5">
-            <CardContent className="p-5">
-              <p className="text-sm text-white/60">Flagged Users</p>
-              <p className="mt-2 text-2xl font-bold text-amber-300">
-                {users.filter((user) => user.isSuspicious).length}
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="rounded-2xl border-white/10 bg-white/5">
-            <CardContent className="p-5">
-              <p className="text-sm text-white/60">Suspended</p>
-              <p className="mt-2 text-2xl font-bold text-amber-300">
-                {users.filter((user) => user.accountStatus === "SUSPENDED").length}
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="rounded-2xl border-white/10 bg-white/5">
-            <CardContent className="p-5">
-              <p className="text-sm text-white/60">Banned</p>
-              <p className="mt-2 text-2xl font-bold text-rose-300">
-                {users.filter((user) => user.accountStatus === "BANNED").length}
-              </p>
-            </CardContent>
-          </Card>
+          <KpiCard label="Total Results" value={users.length} />
+          <KpiCard label="Flagged Users" value={users.filter((user) => user.isSuspicious).length} tone="warning" />
+          <KpiCard label="Suspended" value={users.filter((user) => user.accountStatus === "SUSPENDED").length} tone="warning" />
+          <KpiCard label="Banned" value={users.filter((user) => user.accountStatus === "BANNED").length} tone="danger" />
         </div>
       ) : null}
 
-      <Card className="rounded-2xl border-white/10 bg-white/5">
-        <CardContent className="p-4">
+      <SectionCard elevated className="p-4">
           <form className="grid gap-3 md:grid-cols-4">
             <input
               type="text"
@@ -254,8 +230,7 @@ export default async function AdminUsersPage({
               </a>
             </div>
           </form>
-        </CardContent>
-      </Card>
+      </SectionCard>
 
       {!loadError && users.length > 0 ? (
         <AdminUserBulkActions
@@ -286,18 +261,13 @@ export default async function AdminUsersPage({
               <CardContent className="space-y-3 p-6">
                 <h3 className="text-lg font-semibold">{user.name || "Unnamed User"}</h3>
                 <p className="break-all text-sm text-white/70">{user.email}</p>
-                <p className="text-sm">Role: {user.role}</p>
-                <p
-                  className={`text-sm ${
-                    user.accountStatus === "ACTIVE"
-                      ? "text-emerald-300"
-                      : user.accountStatus === "SUSPENDED"
-                        ? "text-amber-300"
-                        : "text-rose-300"
-                  }`}
-                >
-                  Status: {user.accountStatus}
-                </p>
+                <div className="flex flex-wrap gap-2">
+                  <StatusBadge label={`Role: ${user.role}`} tone="info" />
+                  <StatusBadge
+                    label={`Status: ${user.accountStatus}`}
+                    tone={user.accountStatus === "ACTIVE" ? "success" : user.accountStatus === "SUSPENDED" ? "warning" : "danger"}
+                  />
+                </div>
                 {user.statusReason ? (
                   <p className="text-xs text-white/60">Status Reason: {user.statusReason}</p>
                 ) : null}
@@ -308,13 +278,10 @@ export default async function AdminUsersPage({
                 ) : null}
                 <p className="text-sm">Balance: INR {formatMoney(user.balance)}</p>
                 <p className="text-sm text-white/60">Last IP: {user.ipAddress || "unknown"}</p>
-                <p
-                  className={`text-sm ${
-                    user.isSuspicious ? "text-amber-300" : "text-emerald-300"
-                  }`}
-                >
-                  {user.isSuspicious ? "Suspicious: FLAGGED" : "Suspicious: Clear"}
-                </p>
+                <StatusBadge
+                  label={user.isSuspicious ? "Suspicious: Flagged" : "Suspicious: Clear"}
+                  tone={user.isSuspicious ? "warning" : "success"}
+                />
                 {user.suspiciousReason ? (
                   <p className="text-xs text-white/60">Reason: {user.suspiciousReason}</p>
                 ) : null}

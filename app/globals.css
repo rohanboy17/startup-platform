@@ -79,6 +79,16 @@
   --sidebar-accent-foreground: oklch(0.208 0.042 265.755);
   --sidebar-border: oklch(0.929 0.013 255.508);
   --sidebar-ring: oklch(0.704 0.04 256.788);
+  --surface-1: color-mix(in oklch, var(--background) 94%, #e5e7eb 6%);
+  --surface-2: color-mix(in oklch, var(--background) 90%, #d1d5db 10%);
+  --surface-3: color-mix(in oklch, var(--background) 86%, #9ca3af 14%);
+  --accent-emerald: #10b981;
+  --accent-cyan: #06b6d4;
+  --accent-violet: #8b5cf6;
+  --ring-strong: color-mix(in oklch, var(--ring) 64%, white 36%);
+  --elevation-1: 0 6px 16px rgba(2, 8, 23, 0.08);
+  --elevation-2: 0 14px 32px rgba(2, 8, 23, 0.12);
+  --elevation-3: 0 24px 48px rgba(2, 8, 23, 0.16);
 }
 
 .dark {
@@ -113,13 +123,157 @@
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
+  --surface-1: color-mix(in oklch, var(--background) 88%, #1f2937 12%);
+  --surface-2: color-mix(in oklch, var(--background) 82%, #111827 18%);
+  --surface-3: color-mix(in oklch, var(--background) 76%, #030712 24%);
+  --ring-strong: color-mix(in oklch, var(--ring) 70%, white 30%);
+  --elevation-1: 0 10px 24px rgba(2, 6, 23, 0.35);
+  --elevation-2: 0 18px 40px rgba(2, 6, 23, 0.5);
+  --elevation-3: 0 30px 60px rgba(2, 6, 23, 0.65);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     @apply bg-background text-foreground;
+    overflow-x: clip;
+  }
+}
+
+@keyframes floatSlow {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(-18px) translateX(10px);
+  }
+}
+
+@keyframes floatWide {
+  0%,
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  50% {
+    transform: translateY(22px) translateX(-12px);
+  }
+}
+
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(148, 163, 184, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.12) 1px, transparent 1px),
+    radial-gradient(circle at 20% 20%, rgba(16, 185, 129, 0.08), transparent 40%),
+    radial-gradient(circle at 80% 10%, rgba(59, 130, 246, 0.08), transparent 35%);
+  background-size: 80px 80px, 80px 80px, 100% 100%, 100% 100%;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent 65%);
+}
+
+.bg-grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(59, 130, 246, 0.18) 45%,
+    rgba(16, 185, 129, 0.22) 55%,
+    transparent 70%
+  );
+  background-size: 240% 240%;
+  animation: gridSweep 12s linear infinite;
+  mix-blend-mode: screen;
+  opacity: 0.8;
+}
+
+@keyframes gridSweep {
+  0% {
+    background-position: 0% 40%;
+  }
+  100% {
+    background-position: 200% 60%;
+  }
+}
+
+.home-orb {
+  will-change: transform;
+  transform: translateZ(0);
+  contain: paint;
+}
+
+.surface-card {
+  background: color-mix(in oklch, var(--surface-1) 86%, transparent 14%);
+  border: 1px solid color-mix(in oklch, var(--border) 72%, transparent 28%);
+  box-shadow: var(--elevation-1);
+  backdrop-filter: blur(10px);
+}
+
+.surface-card-elevated {
+  background: color-mix(in oklch, var(--surface-2) 84%, transparent 16%);
+  border: 1px solid color-mix(in oklch, var(--border) 68%, transparent 32%);
+  box-shadow: var(--elevation-2);
+  backdrop-filter: blur(14px);
+}
+
+.surface-card-focus {
+  background: color-mix(in oklch, var(--surface-3) 82%, transparent 18%);
+  border: 1px solid color-mix(in oklch, var(--ring-strong) 56%, transparent 44%);
+  box-shadow: var(--elevation-3);
+  backdrop-filter: blur(16px);
+}
+
+.kpi-value {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.premium-ring-hover {
+  transition: box-shadow 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.premium-ring-hover:hover {
+  border-color: color-mix(in oklch, var(--ring-strong) 56%, transparent 44%);
+  box-shadow: var(--elevation-2);
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-grid::after {
+    animation: none;
+  }
+
+  [class*="animate-[float"] {
+    animation: none !important;
+  }
+
+  [class*="animation:marquee"] {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .bg-grid::after {
+    animation: none;
+    opacity: 0.35;
+  }
+
+  .home-orb {
+    display: none;
   }
 }

@@ -1,22 +1,35 @@
+import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
+
 export default function CookiePolicyPage() {
   return (
-    <main className="mx-auto w-full max-w-4xl px-6 py-20 text-white">
-      <h1 className="mb-6 text-3xl font-bold">Cookie Policy</h1>
+    <PublicPageShell
+      eyebrow="Compliance"
+      title="Cookie Policy"
+      description="How cookies and similar technologies are used to run secure sessions and improve platform reliability."
+      lastUpdated="March 11, 2026"
+    >
+      <div className="space-y-4">
+        <PolicySection title="Essential Cookies">
+          <p>
+            Essential cookies are used for sign-in sessions, auth state, account security, and
+            protected routes. Disabling essential cookies may prevent access to core features.
+          </p>
+        </PolicySection>
 
-      <p className="mb-4 text-white/80">
-        We use cookies and similar technologies for authentication, session integrity, security,
-        and improving user experience.
-      </p>
+        <PolicySection title="Performance and Preference Cookies">
+          <p>
+            We may use limited analytics and preference storage to improve product stability,
+            interface quality, and workflow speed.
+          </p>
+        </PolicySection>
 
-      <p className="mb-4 text-white/80">
-        Essential cookies are required for sign-in and protected routes. Disabling these may
-        prevent parts of the platform from working.
-      </p>
-
-      <p className="text-white/80">
-        Analytics and preference cookies may be used to understand usage and improve product
-        performance. You can manage cookie preferences through your browser settings.
-      </p>
-    </main>
+        <PolicySection title="How to Control Cookies">
+          <p>
+            You can manage cookies through browser controls. Blocking all cookies may degrade user
+            experience and restrict key platform operations.
+          </p>
+        </PolicySection>
+      </div>
+    </PublicPageShell>
   );
 }

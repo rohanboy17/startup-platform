@@ -24,15 +24,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Too many OTP requests" }, { status: 429 });
     }
 
-    const body = (await req.json()) as { email?: string; password?: string };
-    const email = body.email?.trim().toLowerCase() || "";
+    const body = (await req.json()) as { identifier?: string; email?: string; password?: string };
+    const rawIdentifier = (body.identifier ?? body.email ?? "").trim();
+    const normalizedEmail = rawIdentifier.toLowerCase();
+    const normalizedMobile = rawIdentifier.replace(/[\s()-]/g, "").replace(/^00/, "+");
+    const isEmailIdentifier = normalizedEmail.includes("@");
     const password = body.password || "";
 
-    if (!email || !password) {
-      return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
+    if (!rawIdentifier || !password) {
+      return NextResponse.json({ error: "Identifier and password are required" }, { status: 400 });
     }
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findFirst({
+      where: isEmailIdentifier ? { email: normalizedEmail } : { mobile: normalizedMobile },
+    });
     if (!user || user.role !== "ADMIN" || !user.twoFactorEnabled || user.accountStatus !== "ACTIVE") {
       return NextResponse.json({ error: "Admin 2FA is not available for this account" }, { status: 400 });
     }
@@ -47,9 +52,9 @@ export async function POST(req: Request) {
         severity: "MEDIUM",
         userId: user.id,
         ipAddress: ip,
-        message: `Admin 2FA OTP request denied for ${email}`,
+        message: `Admin 2FA OTP request denied for ${rawIdentifier}`,
       });
-      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
+      return NextResponse.json({ error: "Invalid identifier or password" }, { status: 401 });
     }
 
     const { expiresAt, otp, delivery } = await issueAdminOtp({
@@ -63,7 +68,7 @@ export async function POST(req: Request) {
       severity: "LOW",
       userId: user.id,
       ipAddress: ip,
-      message: `Admin OTP issued for ${email}`,
+      message: `Admin OTP issued for ${rawIdentifier}`,
       metadata: { expiresAt: expiresAt.toISOString() },
     });
 

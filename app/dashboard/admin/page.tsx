@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/prisma";
-import { Card, CardContent } from "@/components/ui/card";
 import DashboardNavbar from "@/components/dashboard-navbar";
 import RevenueChart from "@/components/revenue-chart";
 import { formatMoney } from "@/lib/format-money";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 export default async function AdminDashboard() {
   const now = new Date();
@@ -143,108 +145,50 @@ export default async function AdminDashboard() {
       <DashboardNavbar />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5">
-        <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-5 sm:p-6">
-            <p className="text-muted-foreground">Total Users</p>
-            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">{users}</h2>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-5 sm:p-6">
-            <p className="text-muted-foreground">Businesses</p>
-            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">{businesses}</h2>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-5 sm:p-6">
-            <p className="text-muted-foreground">Revenue</p>
-            <h2 className="mt-2 text-2xl font-bold text-green-500 sm:text-3xl">
-              INR {formatMoney(revenue._sum.amount)}
-            </h2>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-5 sm:p-6">
-            <p className="text-muted-foreground">Live Campaigns</p>
-            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">{liveCampaigns}</h2>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-5 sm:p-6">
-            <p className="text-muted-foreground">Managers</p>
-            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">{managers}</h2>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-5 sm:p-6">
-            <p className="text-muted-foreground">Pending Campaigns</p>
-            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">{pendingCampaigns}</h2>
-            <p className="mt-2 text-xs text-white/60">Final Reviews: {pendingFinalReviews}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-5 sm:p-6">
-            <p className="text-muted-foreground">Pending Withdrawals</p>
-            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">{pendingWithdrawals}</h2>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-5 sm:p-6">
-            <p className="text-muted-foreground">Pending Business KYC</p>
-            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">{pendingBusinessKyc}</h2>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-2xl shadow-xl transition-all hover:shadow-2xl">
-          <CardContent className="p-5 sm:p-6">
-            <p className="text-muted-foreground">Total Submissions</p>
-            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">{totalSubmissions}</h2>
-          </CardContent>
-        </Card>
+        <KpiCard label="Total Users" value={users} />
+        <KpiCard label="Businesses" value={businesses} />
+        <KpiCard
+          label="Revenue"
+          value={`INR ${formatMoney(revenue._sum.amount)}`}
+          tone="success"
+        />
+        <KpiCard label="Live Campaigns" value={liveCampaigns} tone="info" />
+        <KpiCard label="Managers" value={managers} />
+        <KpiCard
+          label="Pending Campaigns"
+          value={pendingCampaigns}
+          tone="warning"
+        />
+        <KpiCard label="Pending Withdrawals" value={pendingWithdrawals} tone="warning" />
+        <KpiCard label="Pending Business KYC" value={pendingBusinessKyc} tone="warning" />
+        <KpiCard label="Total Submissions" value={totalSubmissions} />
+        <KpiCard label="Pending Final Reviews" value={pendingFinalReviews} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-        <Card className="rounded-2xl border-white/10 bg-white/5 lg:col-span-2">
-          <CardContent className="p-4 sm:p-6">
+        <SectionCard elevated className="lg:col-span-2">
             <p className="mb-4 text-sm text-white/60">System Health</p>
             <div className="space-y-3 text-sm">
               <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 <span>Database</span>
-                <span className={dbHealthy ? "text-emerald-300" : "text-rose-300"}>
-                  {dbHealthy ? "HEALTHY" : "ISSUE"}
-                </span>
+                <StatusBadge label={dbHealthy ? "HEALTHY" : "ISSUE"} tone={dbHealthy ? "success" : "danger"} />
               </div>
               <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 <span>Cron (Daily Reset)</span>
-                <span className={cronHealthy ? "text-emerald-300" : "text-amber-300"}>
-                  {cronHealthy ? "ON TIME" : "DELAYED"}
-                </span>
+                <StatusBadge label={cronHealthy ? "ON TIME" : "DELAYED"} tone={cronHealthy ? "success" : "warning"} />
               </div>
               <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 <span>Payouts</span>
-                <span className={payoutHealthy ? "text-emerald-300" : "text-amber-300"}>
-                  {payoutHealthy ? "NO FAILURES" : "CHECK NEEDED"}
-                </span>
+                <StatusBadge label={payoutHealthy ? "NO FAILURES" : "CHECK NEEDED"} tone={payoutHealthy ? "success" : "warning"} />
               </div>
               <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 <span>Moderation Queue</span>
-                <span className={queueHealthy ? "text-emerald-300" : "text-amber-300"}>
-                  {queueHealthy ? "HEALTHY" : "STALE ITEMS"}
-                </span>
+                <StatusBadge label={queueHealthy ? "HEALTHY" : "STALE ITEMS"} tone={queueHealthy ? "success" : "warning"} />
               </div>
             </div>
-          </CardContent>
-        </Card>
+        </SectionCard>
 
-        <Card className="rounded-2xl border-white/10 bg-white/5 lg:col-span-2">
-          <CardContent className="p-4 sm:p-6">
+        <SectionCard elevated className="lg:col-span-2">
             <p className="mb-4 text-sm text-white/60">Action Alerts</p>
             {alerts.length === 0 ? (
               <p className="text-sm text-emerald-300">No critical alert right now.</p>
@@ -257,8 +201,7 @@ export default async function AdminDashboard() {
                 ))}
               </ul>
             )}
-          </CardContent>
-        </Card>
+        </SectionCard>
       </div>
 
       <div className="space-y-3">

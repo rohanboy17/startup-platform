@@ -10,6 +10,9 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { getCampaignCategoryLabel } from "@/lib/campaign-options";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
@@ -115,44 +118,14 @@ export default function BusinessAnalyticsPanel() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Approved results</p>
-            <p className="mt-2 text-3xl font-semibold text-emerald-200">{data.approvedSubmissions}</p>
-            <p className="mt-1 text-xs text-white/45">{data.liveCampaigns} live campaigns currently driving results.</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Approval rate</p>
-            <p className="mt-2 text-3xl font-semibold text-sky-200">{data.approvalRate.toFixed(2)}%</p>
-            <p className="mt-1 text-xs text-white/45">
-              {data.rejectedSubmissions} rejected out of {data.totalSubmissions} total submissions.
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Spent budget</p>
-            <p className="mt-2 text-3xl font-semibold text-white">INR {formatMoney(data.spentBudget)}</p>
-            <p className="mt-1 text-xs text-white/45">
-              Remaining INR {formatMoney(data.remainingBudget)} from allocated INR {formatMoney(data.totalBudget)}.
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Cost per approved</p>
-            <p className="mt-2 text-3xl font-semibold text-violet-200">
-              INR {formatMoney(data.averageCostPerApproval)}
-            </p>
-            <p className="mt-1 text-xs text-white/45">{data.pendingCampaigns} campaigns are still waiting for review.</p>
-          </CardContent>
-        </Card>
+        <KpiCard label="Approved Results" value={data.approvedSubmissions} tone="success" />
+        <KpiCard label="Approval Rate" value={`${data.approvalRate.toFixed(2)}%`} tone="info" />
+        <KpiCard label="Spent Budget" value={`INR ${formatMoney(data.spentBudget)}`} />
+        <KpiCard label="Cost Per Approved" value={`INR ${formatMoney(data.averageCostPerApproval)}`} tone="warning" />
       </div>
 
       <div className="grid gap-6 2xl:grid-cols-[1.15fr_0.85fr]">
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
+        <SectionCard elevated>
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-sm text-white/60">14-day trend</p>
@@ -176,9 +149,9 @@ export default function BusinessAnalyticsPanel() {
               </LineChart>
             </ChartContainer>
           </CardContent>
-        </Card>
+        </SectionCard>
 
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
+        <SectionCard elevated>
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-sm text-white/60">Category performance</p>
@@ -195,7 +168,7 @@ export default function BusinessAnalyticsPanel() {
                   <div key={row.category} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <p className="font-medium text-white">{getCampaignCategoryLabel(row.category)}</p>
-                      <span className="text-sm text-emerald-200">{row.approvalRate.toFixed(2)}%</span>
+                      <StatusBadge label={`${row.approvalRate.toFixed(2)}%`} tone="success" />
                     </div>
                     <p className="mt-1 text-xs text-white/45">
                       {row.campaigns} campaigns | {row.approved} approved | {row.rejected} rejected
@@ -212,7 +185,7 @@ export default function BusinessAnalyticsPanel() {
               </div>
             )}
           </CardContent>
-        </Card>
+        </SectionCard>
       </div>
 
       <div className="grid gap-6 2xl:grid-cols-[0.9fr_1.1fr]">

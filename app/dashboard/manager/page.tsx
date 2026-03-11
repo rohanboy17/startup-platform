@@ -1,5 +1,8 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 function formatHours(value: number) {
   if (!Number.isFinite(value) || value <= 0) return "Not enough data";
@@ -127,35 +130,35 @@ export default async function ManagerDashboardPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-xl shadow-black/20 backdrop-blur-md sm:p-5">
-          <p className="text-sm text-white/60">Pending queue</p>
-          <p className="mt-2 text-3xl font-semibold text-white">{pendingCount}</p>
-          <p className="mt-2 text-xs text-white/45">Needs first-pass manager review.</p>
-        </div>
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-xl shadow-black/20 backdrop-blur-md sm:p-5">
-          <p className="text-sm text-white/60">Approved today</p>
-          <p className="mt-2 text-3xl font-semibold text-emerald-300">{approvedToday}</p>
-          <p className="mt-2 text-xs text-white/45">Moved forward to final admin review today.</p>
-        </div>
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-xl shadow-black/20 backdrop-blur-md sm:p-5">
-          <p className="text-sm text-white/60">Rejected today</p>
-          <p className="mt-2 text-3xl font-semibold text-rose-300">{rejectedToday}</p>
-          <p className="mt-2 text-xs text-white/45">Stopped at manager moderation today.</p>
-        </div>
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-xl shadow-black/20 backdrop-blur-md sm:p-5">
-          <p className="text-sm text-white/60">Waiting for admin</p>
-          <p className="mt-2 text-3xl font-semibold text-sky-300">{pendingAdmin}</p>
-          <p className="mt-2 text-xs text-white/45">Already approved by manager, pending final verification.</p>
-        </div>
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 shadow-xl shadow-black/20 backdrop-blur-md sm:p-5">
-          <p className="text-sm text-white/60">Suspicious in queue</p>
-          <p className="mt-2 text-3xl font-semibold text-amber-200">{suspiciousQueue}</p>
-          <p className="mt-2 text-xs text-white/45">Flagged users currently waiting in the queue.</p>
-        </div>
+        <KpiCard
+          label="Pending queue"
+          value={pendingCount}
+          tone="warning"
+        />
+        <KpiCard
+          label="Approved today"
+          value={approvedToday}
+          tone="success"
+        />
+        <KpiCard
+          label="Rejected today"
+          value={rejectedToday}
+          tone="warning"
+        />
+        <KpiCard
+          label="Waiting for admin"
+          value={pendingAdmin}
+          tone="info"
+        />
+        <KpiCard
+          label="Suspicious in queue"
+          value={suspiciousQueue}
+          tone="warning"
+        />
       </div>
 
       <div className="grid gap-6 min-[1500px]:grid-cols-[1.05fr_0.95fr]">
-        <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 shadow-xl shadow-black/20 backdrop-blur-md sm:p-6">
+        <SectionCard elevated className="space-y-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-white/60">Queue snapshot</p>
@@ -186,7 +189,9 @@ export default async function ManagerDashboardPage() {
                     <div className="sm:text-right">
                       <p className="text-sm text-white/75">{ageLabel(submission.createdAt)} waiting</p>
                       {submission.user.isSuspicious ? (
-                        <p className="mt-1 text-xs uppercase tracking-[0.16em] text-amber-200">Suspicious</p>
+                        <div className="mt-1">
+                          <StatusBadge label="Suspicious" tone="warning" />
+                        </div>
                       ) : null}
                     </div>
                   </div>
@@ -194,9 +199,9 @@ export default async function ManagerDashboardPage() {
               ))}
             </div>
           )}
-        </section>
+        </SectionCard>
 
-        <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 shadow-xl shadow-black/20 backdrop-blur-md sm:p-6">
+        <SectionCard elevated className="space-y-4">
           <div>
             <p className="text-sm text-white/60">Review pace</p>
             <h3 className="text-xl font-semibold text-white">How fast the queue is moving</h3>
@@ -219,7 +224,7 @@ export default async function ManagerDashboardPage() {
             <p>Manager scope is limited to first-pass moderation only.</p>
             <p className="mt-2">Financial approval, payout control, and user-role changes remain with admin.</p>
           </div>
-        </section>
+        </SectionCard>
       </div>
     </div>
   );

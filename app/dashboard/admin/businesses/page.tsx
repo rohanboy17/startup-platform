@@ -5,6 +5,9 @@ import AdminBusinessKycActions from "@/components/admin-business-kyc-actions";
 import AdminBusinessWalletActions from "@/components/admin-business-wallet-actions";
 import AdminUserStatusActions from "@/components/admin-user-status-actions";
 import AdminKycRequestsPanel from "@/components/admin-kyc-requests-panel";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 type SearchParams = {
   q?: string;
@@ -77,30 +80,10 @@ export default async function AdminBusinessesPage({
       <h2 className="text-3xl font-semibold">Business Management</h2>
 
       <div className="grid gap-4 md:grid-cols-4">
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">KYC Pending</p>
-            <p className="mt-1 text-2xl font-semibold text-amber-300">{pendingKyc}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">KYC Verified</p>
-            <p className="mt-1 text-2xl font-semibold text-emerald-300">{verifiedKyc}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">KYC Rejected</p>
-            <p className="mt-1 text-2xl font-semibold text-rose-300">{rejectedKyc}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Business Team Members</p>
-            <p className="mt-1 text-2xl font-semibold text-sky-300">{teamMembers}</p>
-          </CardContent>
-        </Card>
+        <KpiCard label="KYC Pending" value={pendingKyc} tone="warning" />
+        <KpiCard label="KYC Verified" value={verifiedKyc} tone="success" />
+        <KpiCard label="KYC Rejected" value={rejectedKyc} tone="danger" />
+        <KpiCard label="Business Team Members" value={teamMembers} tone="info" />
       </div>
 
       <div className="space-y-3">
@@ -108,8 +91,7 @@ export default async function AdminBusinessesPage({
         <AdminKycRequestsPanel />
       </div>
 
-      <Card className="rounded-2xl border-white/10 bg-white/5">
-        <CardContent className="p-4">
+      <SectionCard elevated className="p-4">
           <form className="grid gap-3 md:grid-cols-4">
             <input
               type="text"
@@ -145,8 +127,7 @@ export default async function AdminBusinessesPage({
               Apply Filters
             </button>
           </form>
-        </CardContent>
-      </Card>
+      </SectionCard>
 
       <div className="grid gap-6 md:grid-cols-2">
         {businesses.length === 0 ? (
@@ -161,26 +142,19 @@ export default async function AdminBusinessesPage({
             <CardContent className="space-y-3 p-6">
               <h3 className="text-lg font-semibold">{business.name || "Unnamed Business"}</h3>
               <p className="break-all text-sm text-white/70">{business.email}</p>
-              <p className="text-sm">
-                Account: <span className="text-white/90">{business.accountStatus}</span>
-              </p>
+              <div className="flex flex-wrap gap-2">
+                <StatusBadge
+                  label={`Account: ${business.accountStatus}`}
+                  tone={business.accountStatus === "ACTIVE" ? "success" : business.accountStatus === "SUSPENDED" ? "warning" : "danger"}
+                />
+                <StatusBadge
+                  label={`KYC: ${business.kycStatus}`}
+                  tone={business.kycStatus === "VERIFIED" ? "success" : business.kycStatus === "REJECTED" ? "danger" : "warning"}
+                />
+              </div>
               {business.statusReason ? (
                 <p className="text-xs text-white/60">Account reason: {business.statusReason}</p>
               ) : null}
-              <p className="text-sm">
-                KYC:{" "}
-                <span
-                  className={
-                    business.kycStatus === "VERIFIED"
-                      ? "text-emerald-300"
-                      : business.kycStatus === "REJECTED"
-                        ? "text-rose-300"
-                        : "text-amber-300"
-                  }
-                >
-                  {business.kycStatus}
-                </span>
-              </p>
               {business.kycNotes ? (
                 <p className="text-xs text-white/60">KYC notes: {business.kycNotes}</p>
               ) : null}

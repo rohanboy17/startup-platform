@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import AdminWithdrawalActions from "@/components/admin-withdrawal-actions";
 import { formatMoney } from "@/lib/format-money";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 export default async function AdminWithdrawalsPage() {
   const commissionRate = Number(process.env.WITHDRAWAL_COMMISSION_RATE ?? 0.02);
@@ -37,45 +39,15 @@ export default async function AdminWithdrawalsPage() {
       <h2 className="text-3xl font-semibold">Withdrawals</h2>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Pending</p>
-            <p className="mt-1 text-2xl font-semibold">{pendingCount}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Approved</p>
-            <p className="mt-1 text-2xl font-semibold">{approvedCount}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Rejected</p>
-            <p className="mt-1 text-2xl font-semibold">{rejectedCount}</p>
-          </CardContent>
-        </Card>
+        <KpiCard label="Pending" value={pendingCount} tone="warning" />
+        <KpiCard label="Approved" value={approvedCount} tone="success" />
+        <KpiCard label="Rejected" value={rejectedCount} tone="danger" />
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Pending Gross</p>
-            <p className="mt-1 text-2xl font-semibold">INR {formatMoney(pendingGross)}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Pending Commission</p>
-            <p className="mt-1 text-2xl font-semibold">INR {formatMoney(pendingFee)}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Pending Payout (Net)</p>
-            <p className="mt-1 text-2xl font-semibold">INR {formatMoney(pendingPayout)}</p>
-          </CardContent>
-        </Card>
+        <KpiCard label="Pending Gross" value={`INR ${formatMoney(pendingGross)}`} />
+        <KpiCard label="Pending Commission" value={`INR ${formatMoney(pendingFee)}`} tone="warning" />
+        <KpiCard label="Pending Payout (Net)" value={`INR ${formatMoney(pendingPayout)}`} tone="info" />
       </div>
 
       <div className="space-y-4">
@@ -106,7 +78,9 @@ export default async function AdminWithdrawalsPage() {
                     </div>
                     <div className="sm:text-right">
                       <p className="font-semibold">INR {formatMoney(w.amount)}</p>
-                      <p className="text-sm text-white/70">{w.status}</p>
+                      <div className="mt-1">
+                        <StatusBadge label={w.status} tone={w.status === "APPROVED" ? "success" : w.status === "REJECTED" ? "danger" : "warning"} />
+                      </div>
                     </div>
                   </div>
 

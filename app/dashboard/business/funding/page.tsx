@@ -3,8 +3,11 @@
 import { useCallback, useMemo, useState } from "react";
 import { AlertTriangle, ArrowDownCircle, ArrowUpCircle, ReceiptText, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { formatMoney } from "@/lib/format-money";
 import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
 
@@ -277,8 +280,8 @@ export default function BusinessFundingPage() {
       </div>
 
       {data.wallet.balance < minFundingThreshold ? (
-        <Card className="rounded-3xl border-amber-400/20 bg-amber-500/10 backdrop-blur-md">
-          <CardContent className="flex flex-col gap-3 p-5 md:flex-row md:items-center md:justify-between">
+        <SectionCard className="border-amber-400/20 bg-amber-500/10">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex items-start gap-3">
               <AlertTriangle size={18} className="mt-0.5 text-amber-200" />
               <div>
@@ -289,39 +292,23 @@ export default function BusinessFundingPage() {
               </div>
             </div>
             <p className="text-sm text-amber-100/80">Add funds to avoid campaign launch failures.</p>
-          </CardContent>
-        </Card>
+          </div>
+        </SectionCard>
       ) : null}
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Available wallet</p>
-            <p className="mt-2 text-3xl font-semibold text-emerald-200">INR {formatMoney(data.wallet.balance)}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Locked budget</p>
-            <p className="mt-2 text-3xl font-semibold text-sky-200">INR {formatMoney(data.wallet.lockedBudget)}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Total funded</p>
-            <p className="mt-2 text-3xl font-semibold text-white">INR {formatMoney(data.wallet.totalFunded)}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Last successful payment</p>
-            <p className="mt-2 text-sm font-medium text-white">{dateTimeLabel(data.stats.lastPaidAt)}</p>
-          </CardContent>
-        </Card>
+        <KpiCard label="Available Wallet" value={`INR ${formatMoney(data.wallet.balance)}`} tone="success" />
+        <KpiCard label="Locked Budget" value={`INR ${formatMoney(data.wallet.lockedBudget)}`} tone="info" />
+        <KpiCard label="Total Funded" value={`INR ${formatMoney(data.wallet.totalFunded)}`} />
+        <div className="surface-card premium-ring-hover flex min-h-[108px] flex-col justify-between rounded-2xl p-4 sm:p-5">
+          <p className="text-xs font-medium uppercase tracking-wide text-foreground/60">Last Successful Payment</p>
+          <p className="kpi-value text-lg font-semibold text-foreground">{dateTimeLabel(data.stats.lastPaidAt)}</p>
+          <StatusBadge label={data.stats.lastPaidAt ? "PAID" : "NO PAYMENT"} tone={data.stats.lastPaidAt ? "success" : "neutral"} />
+        </div>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
+        <SectionCard elevated>
           <CardContent className="space-y-5 p-4 sm:p-6">
             <div className="flex items-center gap-3">
               <ArrowUpCircle className="text-emerald-200" size={18} />
@@ -366,9 +353,9 @@ export default function BusinessFundingPage() {
               {loading ? "Initializing payment..." : "Pay and Fund Wallet"}
             </Button>
           </CardContent>
-        </Card>
+        </SectionCard>
 
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
+        <SectionCard elevated>
           <CardContent className="space-y-5 p-4 sm:p-6">
             <div className="flex items-center gap-3">
               <ArrowDownCircle className="text-sky-200" size={18} />
@@ -415,14 +402,14 @@ export default function BusinessFundingPage() {
               Refunds reduce available wallet immediately and apply the same configured fee logic as deposits.
             </p>
           </CardContent>
-        </Card>
+        </SectionCard>
       </div>
 
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
       {message ? <p className="text-sm text-emerald-300">{message}</p> : null}
 
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
+        <SectionCard elevated>
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div className="flex items-center gap-3">
               <ReceiptText size={18} className="text-white/75" />
@@ -457,9 +444,9 @@ export default function BusinessFundingPage() {
               </div>
             )}
           </CardContent>
-        </Card>
+        </SectionCard>
 
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
+        <SectionCard elevated>
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div className="flex items-center gap-3">
               <Wallet size={18} className="text-white/75" />
@@ -491,7 +478,7 @@ export default function BusinessFundingPage() {
               </div>
             )}
           </CardContent>
-        </Card>
+        </SectionCard>
       </div>
     </div>
   );

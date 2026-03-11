@@ -3,6 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import AdminCampaignActions from "@/components/admin-campaign-actions";
 import AdminCampaignEscalationControls from "@/components/admin-campaign-escalation-controls";
 import { formatMoney } from "@/lib/format-money";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 type SearchParams = {
   q?: string;
@@ -92,36 +95,15 @@ export default async function AdminCampaignsPage({
       <h2 className="text-3xl font-semibold">Campaign Management</h2>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="rounded-2xl border-emerald-300/20 bg-emerald-500/10">
-          <CardContent className="p-5">
-            <p className="text-sm text-emerald-200/80">Pending On Time (&lt; 4h)</p>
-            <p className="mt-2 text-2xl font-bold text-emerald-200">{pendingOnTime}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl border-amber-300/20 bg-amber-500/10">
-          <CardContent className="p-5">
-            <p className="text-sm text-amber-200/80">At Risk (4-24h)</p>
-            <p className="mt-2 text-2xl font-bold text-amber-200">{pendingAtRisk}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl border-rose-300/20 bg-rose-500/10">
-          <CardContent className="p-5">
-            <p className="text-sm text-rose-200/80">Breached (&gt; 24h)</p>
-            <p className="mt-2 text-2xl font-bold text-rose-200">{pendingBreached}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl border-violet-300/20 bg-violet-500/10">
-          <CardContent className="p-5">
-            <p className="text-sm text-violet-200/80">Escalated</p>
-            <p className="mt-2 text-2xl font-bold text-violet-200">{pendingEscalated}</p>
-          </CardContent>
-        </Card>
+        <KpiCard label="Pending On Time (<4h)" value={pendingOnTime} tone="success" />
+        <KpiCard label="At Risk (4-24h)" value={pendingAtRisk} tone="warning" />
+        <KpiCard label="Breached (>24h)" value={pendingBreached} tone="danger" />
+        <KpiCard label="Escalated" value={pendingEscalated} tone="info" />
       </div>
 
       <AdminCampaignEscalationControls />
 
-      <Card className="rounded-2xl border-white/10 bg-white/5">
-        <CardContent className="p-4">
+      <SectionCard elevated className="p-4">
           <form className="grid gap-3 md:grid-cols-4">
             <input
               type="text"
@@ -160,8 +142,7 @@ export default async function AdminCampaignsPage({
               Apply Filters
             </button>
           </form>
-        </CardContent>
-      </Card>
+      </SectionCard>
 
       <div className="space-y-4">
         {campaigns.length === 0 ? (
@@ -176,8 +157,9 @@ export default async function AdminCampaignsPage({
               <CardContent className="space-y-4 p-6">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-semibold">{campaign.title}</p>
-                  <p className="text-sm text-white/70">Category: {campaign.category}</p>
+                  <StatusBadge label={campaign.status} tone={campaign.status === "LIVE" ? "success" : campaign.status === "REJECTED" ? "danger" : campaign.status === "PENDING" ? "warning" : "neutral"} />
                 </div>
+                <p className="text-sm text-white/70">Category: {campaign.category}</p>
                 <p className="text-sm text-white/70">{campaign.description}</p>
                 <p className="break-all text-sm text-white/70">
                   Business: {campaign.business.name || "Unnamed"} ({campaign.business.email})
@@ -194,15 +176,27 @@ export default async function AdminCampaignsPage({
                 </p>
                 <p className="text-xs text-white/50">
                   SLA:{" "}
-                  {campaign.status !== "PENDING"
-                    ? "Not in queue"
-                    : campaign.escalatedAt
-                      ? "Escalated"
-                      : campaign.createdAt < twentyFourHoursAgo
-                        ? "Breached"
-                        : campaign.createdAt < fourHoursAgo
-                          ? "At Risk"
-                          : "On Time"}
+                  <StatusBadge
+                    label={campaign.status !== "PENDING"
+                      ? "Not in queue"
+                      : campaign.escalatedAt
+                        ? "Escalated"
+                        : campaign.createdAt < twentyFourHoursAgo
+                          ? "Breached"
+                          : campaign.createdAt < fourHoursAgo
+                            ? "At Risk"
+                            : "On Time"}
+                    tone={campaign.status !== "PENDING"
+                      ? "neutral"
+                      : campaign.escalatedAt
+                        ? "info"
+                        : campaign.createdAt < twentyFourHoursAgo
+                          ? "danger"
+                          : campaign.createdAt < fourHoursAgo
+                            ? "warning"
+                            : "success"}
+                    className="ml-2"
+                  />
                 </p>
                 <AdminCampaignActions
                   campaignId={campaign.id}

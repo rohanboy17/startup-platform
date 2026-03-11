@@ -1,4 +1,5 @@
 import { getCmsValue } from "@/lib/cms";
+import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
 
 const FALLBACK = `By using EarnHub, you agree to these terms. EarnHub is a micro-task marketplace for users and businesses.
 
@@ -25,16 +26,30 @@ EarnHub is provided on a best-effort basis. We are not liable for indirect losse
 
 export default async function TermsPage() {
   const content = await getCmsValue<{ body: string }>("legal.terms", { body: "" });
-  const body = content.body?.trim() || FALLBACK;
+  const body = content.body?.trim();
 
   return (
-    <main className="mx-auto w-full max-w-4xl px-6 py-20 text-white">
-      <h1 className="mb-6 text-3xl font-bold">Terms & Conditions</h1>
-      <div className="space-y-4 text-white/80">
-        {body.split("\n\n").map((paragraph, idx) => (
-          <p key={idx}>{paragraph}</p>
-        ))}
+    <PublicPageShell
+      eyebrow="Legal"
+      title="Terms & Conditions"
+      description="These terms govern platform access, task participation, campaign publishing, and payout operations on EarnHub."
+      lastUpdated="March 11, 2026"
+    >
+      <div className="space-y-4">
+        {body ? (
+          <PolicySection title="Terms">
+            {body.split("\n\n").map((paragraph, idx) => (
+              <p key={idx}>{paragraph}</p>
+            ))}
+          </PolicySection>
+        ) : (
+          FALLBACK.split("\n\n").map((paragraph, idx) => (
+            <PolicySection key={idx} title={`Section ${idx + 1}`}>
+              <p>{paragraph}</p>
+            </PolicySection>
+          ))
+        )}
       </div>
-    </main>
+    </PublicPageShell>
   );
 }

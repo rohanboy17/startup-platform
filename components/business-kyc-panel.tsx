@@ -41,6 +41,7 @@ const EMPTY_FORM = {
 export default function BusinessKycPanel() {
   const [data, setData] = useState<ResponseShape | null>(null);
   const [form, setForm] = useState(EMPTY_FORM);
+  const [isDirty, setIsDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -61,10 +62,11 @@ export default function BusinessKycPanel() {
     }
     setError("");
     setData(parsed);
-    if (!parsed.request) {
+    // Keep in-progress user input during auto-refresh polling.
+    if (!parsed.request && !isDirty && !saving) {
       setForm(EMPTY_FORM);
     }
-  }, []);
+  }, [isDirty, saving]);
 
   useLiveRefresh(load, 15000);
 
@@ -99,7 +101,13 @@ export default function BusinessKycPanel() {
     }
 
     setMessage(payload.message || "KYC request submitted");
+    setIsDirty(false);
     void load();
+  }
+
+  function updateFormField<Key extends keyof typeof EMPTY_FORM>(key: Key, value: string) {
+    setIsDirty(true);
+    setForm((prev) => ({ ...prev, [key]: value }));
   }
 
   if (error && !data) return <p className="text-sm text-rose-300">{error}</p>;
@@ -142,22 +150,22 @@ export default function BusinessKycPanel() {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <label className="text-sm text-white/70">Legal business name</label>
-                <Input value={form.legalName} onChange={(e) => setForm((prev) => ({ ...prev, legalName: e.target.value }))} />
+                <Input value={form.legalName} onChange={(e) => updateFormField("legalName", e.target.value)} />
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-white/70">Contact person name</label>
-                <Input value={form.contactName} onChange={(e) => setForm((prev) => ({ ...prev, contactName: e.target.value }))} />
+                <Input value={form.contactName} onChange={(e) => updateFormField("contactName", e.target.value)} />
               </div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <label className="text-sm text-white/70">Phone number</label>
-                <Input value={form.phone} onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))} />
+                <Input value={form.phone} onChange={(e) => updateFormField("phone", e.target.value)} />
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-white/70">Website (optional)</label>
-                <Input value={form.website} onChange={(e) => setForm((prev) => ({ ...prev, website: e.target.value }))} />
+                <Input value={form.website} onChange={(e) => updateFormField("website", e.target.value)} />
               </div>
             </div>
 
@@ -165,7 +173,7 @@ export default function BusinessKycPanel() {
               <label className="text-sm text-white/70">Business address</label>
               <textarea
                 value={form.address}
-                onChange={(e) => setForm((prev) => ({ ...prev, address: e.target.value }))}
+                onChange={(e) => updateFormField("address", e.target.value)}
                 className="min-h-24 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
               />
             </div>
@@ -173,13 +181,13 @@ export default function BusinessKycPanel() {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <label className="text-sm text-white/70">Tax ID (optional)</label>
-                <Input value={form.taxId} onChange={(e) => setForm((prev) => ({ ...prev, taxId: e.target.value }))} />
+                <Input value={form.taxId} onChange={(e) => updateFormField("taxId", e.target.value)} />
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-white/70">Document URL (optional)</label>
                 <Input
                   value={form.documentUrl}
-                  onChange={(e) => setForm((prev) => ({ ...prev, documentUrl: e.target.value }))}
+                  onChange={(e) => updateFormField("documentUrl", e.target.value)}
                 />
               </div>
             </div>

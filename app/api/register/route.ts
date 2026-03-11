@@ -33,25 +33,42 @@ export async function POST(req: Request) {
       );
     }
 
-    const { name, email, password, role } = await req.json();
+    const { name, email, mobile, password, role } = await req.json();
     const normalizedRole =
       typeof role === "string" && ["USER", "BUSINESS"].includes(role.toUpperCase())
         ? (role.toUpperCase() as "USER" | "BUSINESS")
         : "USER";
+    const normalizedEmail = typeof email === "string" ? email.trim().toLowerCase() : "";
+    const normalizedMobile =
+      typeof mobile === "string"
+        ? mobile.replace(/[\s()-]/g, "").replace(/^00/, "+")
+        : "";
 
-    if (!email || !password) {
+    if (!normalizedEmail || !normalizedMobile || !password) {
       return NextResponse.json(
-        { error: "Email and password required" },
+        { error: "Email, mobile number, and password are required" },
         { status: 400 }
       );
     }
 
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
+    if (!/^\+?[1-9]\d{7,14}$/.test(normalizedMobile)) {
+      return NextResponse.json(
+        { error: "Please enter a valid mobile number (example: +91987XXXX210)" },
+        { status: 400 }
+      );
+    }
 
-    if (existingUser) {
-      return NextResponse.json({ error: "User already exists" }, { status: 400 });
+    const [existingByEmail, existingByMobile] = await Promise.all([
+      prisma.user.findUnique({ where: { email: normalizedEmail } }),
+      prisma.user.findUnique({ where: { mobile: normalizedMobile } }),
+    ]);
+
+    if (existingByEmail) {
+      return NextResponse.json({ error: "Email already registered" }, { status: 400 });
+    }
+
+    if (existingByMobile) {
+      return NextResponse.json({ error: "Mobile number already registered" }, { status: 400 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -59,7 +76,8 @@ export async function POST(req: Request) {
     const user = await prisma.user.create({
       data: {
         name,
-        email,
+        email: normalizedEmail,
+        mobile: normalizedMobile,
         password: hashedPassword,
         role: normalizedRole,
       },

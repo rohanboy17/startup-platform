@@ -2,8 +2,10 @@
 
 import { useCallback, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Clock3, Wallet } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { ArrowUpRight } from "lucide-react";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
 
@@ -74,49 +76,19 @@ export default function UserWalletPanel() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Available balance</p>
-              <Wallet size={18} className="text-emerald-300" />
-            </div>
-            <p className="text-3xl font-semibold text-emerald-300">INR {formatMoney(data.balance)}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Total earned</p>
-            <p className="text-3xl font-semibold text-white">INR {formatMoney(data.totals.earned)}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Total debited</p>
-            <p className="text-3xl font-semibold text-white">INR {formatMoney(data.totals.withdrawn)}</p>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">Pending payout</p>
-              <Clock3 size={18} className="text-amber-300" />
-            </div>
-            <p className="text-3xl font-semibold text-amber-200">INR {formatMoney(data.totals.pendingWithdrawal)}</p>
-          </CardContent>
-        </Card>
+        <KpiCard label="Available Balance" value={`INR ${formatMoney(data.balance)}`} tone="success" />
+        <KpiCard label="Total Earned" value={`INR ${formatMoney(data.totals.earned)}`} />
+        <KpiCard label="Total Debited" value={`INR ${formatMoney(data.totals.withdrawn)}`} />
+        <KpiCard label="Pending Payout" value={`INR ${formatMoney(data.totals.pendingWithdrawal)}`} tone="warning" />
       </div>
 
-      <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-        <CardContent className="space-y-5 p-4 sm:p-6">
+      <SectionCard elevated className="space-y-5 p-4 sm:p-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-white/60">Transaction history</p>
               <h3 className="text-xl font-semibold text-white">Credits and debits</h3>
             </div>
-            <p className="text-sm text-white/50">Latest 20 wallet entries</p>
+            <StatusBadge label="Latest 20 entries" tone="neutral" />
           </div>
 
           {data.transactions.length === 0 ? (
@@ -131,15 +103,14 @@ export default function UserWalletPanel() {
                     <p className="font-medium text-white break-words">{tx.note || "Wallet transaction"}</p>
                     <p className="text-sm text-white/50">{new Date(tx.createdAt).toLocaleString()}</p>
                   </div>
-                  <span className={`shrink-0 ${tx.type === "CREDIT" ? "text-emerald-300" : "text-rose-300"} sm:text-right`}>
+                  <span className={`kpi-value shrink-0 ${tx.type === "CREDIT" ? "text-emerald-300" : "text-rose-300"} sm:text-right`}>
                     {tx.type === "CREDIT" ? "+" : "-"} INR {formatMoney(tx.amount)}
                   </span>
                 </div>
               ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+      </SectionCard>
     </div>
   );
 }

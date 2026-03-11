@@ -2,6 +2,9 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
 
@@ -131,34 +134,13 @@ export default function UserV2SubmissionsPanel() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Total submissions</p>
-            <p className="text-3xl font-semibold text-white">{stats.total}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Pending review</p>
-            <p className="text-3xl font-semibold text-amber-200">{stats.pending}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Approved</p>
-            <p className="text-3xl font-semibold text-emerald-300">{stats.approved}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Rejected</p>
-            <p className="text-3xl font-semibold text-rose-300">{stats.rejected}</p>
-          </CardContent>
-        </Card>
+        <KpiCard label="Total Submissions" value={stats.total} />
+        <KpiCard label="Pending Review" value={stats.pending} tone="warning" />
+        <KpiCard label="Approved" value={stats.approved} tone="success" />
+        <KpiCard label="Rejected" value={stats.rejected} tone="danger" />
       </div>
 
-      <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-        <CardContent className="space-y-4 p-4 sm:p-6">
+      <SectionCard elevated className="space-y-4 p-4 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm text-white/60">Submission pipeline</p>
@@ -191,8 +173,7 @@ export default function UserV2SubmissionsPanel() {
               );
             })}
           </div>
-        </CardContent>
-      </Card>
+      </SectionCard>
 
       {filtered.length === 0 ? (
         <Card className="rounded-2xl border-white/10 bg-white/5">
@@ -218,9 +199,11 @@ export default function UserV2SubmissionsPanel() {
                         {submission.campaign?.category || "Uncategorized"} | Reward INR {formatMoney(reward)}
                       </p>
                     </div>
-                    <span className={`inline-flex w-fit rounded-full border px-3 py-1 text-xs font-semibold ${stageTone(submission.stage)}`}>
-                      {stageLabel(submission.stage)}
-                    </span>
+                    <StatusBadge
+                      label={stageLabel(submission.stage)}
+                      tone={submission.stage === "APPROVED" ? "success" : submission.stage === "PENDING_ADMIN" ? "info" : submission.stage === "PENDING_MANAGER" ? "warning" : "danger"}
+                      className={stageTone(submission.stage)}
+                    />
                   </div>
 
                   <div className="grid gap-4 xl:grid-cols-[0.85fr_1.15fr]">

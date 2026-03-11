@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { SectionCard } from "@/components/ui/section-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 import WithdrawRequestCard from "@/components/withdraw-request-card";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
@@ -30,17 +32,6 @@ type WithdrawalsPayload = {
   withdrawals: WithdrawalItem[];
   error?: string;
 };
-
-function statusTone(status: string) {
-  switch (status) {
-    case "APPROVED":
-      return "border-emerald-400/20 bg-emerald-500/10 text-emerald-100";
-    case "REJECTED":
-      return "border-rose-400/20 bg-rose-500/10 text-rose-100";
-    default:
-      return "border-amber-400/20 bg-amber-500/10 text-amber-100";
-  }
-}
 
 export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }) {
   const [data, setData] = useState<WithdrawalsPayload | null>(null);
@@ -78,41 +69,15 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 min-[1500px]:grid-cols-5">
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Available balance</p>
-            <p className="text-3xl font-semibold text-emerald-300">INR {formatMoney(data?.balance)}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Pending amount</p>
-            <p className="text-3xl font-semibold text-amber-200">INR {formatMoney(data?.metrics.pendingAmount)}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Approved payouts</p>
-            <p className="text-3xl font-semibold text-cyan-200">INR {formatMoney(data?.metrics.approvedAmount)}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Rejected requests</p>
-            <p className="text-3xl font-semibold text-rose-300">{data?.metrics.rejectedCount ?? 0}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Emergency uses left</p>
-            <p className="text-3xl font-semibold text-violet-200">{data?.metrics.emergencyRemaining ?? 2}</p>
-          </CardContent>
-        </Card>
+        <KpiCard label="Available Balance" value={`INR ${formatMoney(data?.balance)}`} tone="success" />
+        <KpiCard label="Pending Amount" value={`INR ${formatMoney(data?.metrics.pendingAmount)}`} tone="warning" />
+        <KpiCard label="Approved Payouts" value={`INR ${formatMoney(data?.metrics.approvedAmount)}`} tone="info" />
+        <KpiCard label="Rejected Requests" value={data?.metrics.rejectedCount ?? 0} tone="danger" />
+        <KpiCard label="Emergency Uses Left" value={data?.metrics.emergencyRemaining ?? 2} tone="info" />
       </div>
 
       <div className="grid gap-6 min-[1500px]:grid-cols-[0.9fr_1.1fr]">
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-5 p-4 sm:p-6">
+        <SectionCard elevated className="space-y-5 p-4 sm:p-6">
             <div>
               <p className="text-sm text-white/60">Request payout</p>
               <h3 className="text-xl font-semibold text-white">Submit withdrawal details</h3>
@@ -132,17 +97,15 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
               availableBalance={data?.balance}
               emergencyRemaining={data?.metrics.emergencyRemaining}
             />
-          </CardContent>
-        </Card>
+        </SectionCard>
 
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-5 p-4 sm:p-6">
+        <SectionCard elevated className="space-y-5 p-4 sm:p-6">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm text-white/60">Withdrawal history</p>
                 <h3 className="text-xl font-semibold text-white">Request status timeline</h3>
               </div>
-              <p className="text-sm text-white/50">{data?.metrics.totalRequests ?? 0} total requests</p>
+              <StatusBadge label={`${data?.metrics.totalRequests ?? 0} total requests`} tone="neutral" />
             </div>
 
             {error ? <p className="text-sm text-rose-300">{error}</p> : null}
@@ -176,9 +139,12 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
                       </div>
                       <div className="lg:text-right">
                         <p className="text-lg font-semibold text-white">INR {formatMoney(w.amount)}</p>
-                        <span className={`mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${statusTone(w.status)}`}>
-                          {w.status}
-                        </span>
+                        <div className="mt-2">
+                          <StatusBadge
+                            label={w.status}
+                            tone={w.status === "APPROVED" ? "success" : w.status === "REJECTED" ? "danger" : "warning"}
+                          />
+                        </div>
                       </div>
                     </div>
                     {w.adminNote ? (
@@ -190,8 +156,7 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+        </SectionCard>
       </div>
     </div>
   );

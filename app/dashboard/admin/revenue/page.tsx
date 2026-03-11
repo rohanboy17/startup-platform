@@ -6,6 +6,8 @@ import PlatformPayoutActions from "@/components/platform-payout-actions";
 import AdminWalletAdjustmentReviewActions from "@/components/admin-wallet-adjustment-review-actions";
 import { reconcileTreasuryBalance } from "@/lib/treasury";
 import { formatMoney } from "@/lib/format-money";
+import { KpiCard } from "@/components/ui/kpi-card";
+import { StatusBadge } from "@/components/ui/status-badge";
 
 export default async function AdminRevenuePage() {
   const payoutDailyLimit = Number(process.env.PAYOUT_DAILY_LIMIT ?? 200000);
@@ -103,27 +105,15 @@ export default async function AdminRevenuePage() {
       <h2 className="text-3xl font-semibold">Platform Revenue</h2>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-6">
-            <p className="text-sm text-white/60">Total Commission Earned</p>
-            <p className="mt-1 text-2xl font-semibold">
-              INR {formatMoney(platformRevenue._sum.amount)}
-            </p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-6">
-            <p className="text-sm text-white/60">Treasury Available (Reconciled)</p>
-            <p className="mt-1 text-2xl font-semibold">INR {formatMoney(reconciledBalance)}</p>
-            <p className="mt-2 text-xs text-white/50">
-              Payout limits: per request INR {formatMoney(payoutPerRequestLimit)} | daily INR{" "}
-              {formatMoney(payoutDailyLimit)}
-            </p>
-            <p className="text-xs text-white/50">
-              Today requested: INR {formatMoney(todayRequestedAmount)}
-            </p>
-          </CardContent>
-        </Card>
+        <KpiCard label="Total Commission Earned" value={`INR ${formatMoney(platformRevenue._sum.amount)}`} tone="success" />
+        <div className="surface-card premium-ring-hover rounded-2xl p-6">
+          <p className="text-xs font-medium uppercase tracking-wide text-foreground/60">Treasury Available (Reconciled)</p>
+          <p className="kpi-value mt-2 text-2xl font-semibold text-foreground">INR {formatMoney(reconciledBalance)}</p>
+          <p className="mt-2 text-xs text-white/50">
+            Payout limits: per request INR {formatMoney(payoutPerRequestLimit)} | daily INR {formatMoney(payoutDailyLimit)}
+          </p>
+          <StatusBadge label={`Today requested: INR ${formatMoney(todayRequestedAmount)}`} tone="neutral" className="mt-2" />
+        </div>
       </div>
 
       {!delegates.platformTreasury || !delegates.platformPayout ? (
@@ -190,7 +180,7 @@ export default async function AdminRevenuePage() {
               <CardContent className="space-y-3 p-6">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <p className="font-medium">INR {formatMoney(payout.amount)}</p>
-                  <p className="text-sm text-white/70">{payout.status}</p>
+                  <StatusBadge label={payout.status} tone={payout.status === "APPROVED" ? "success" : payout.status === "REJECTED" ? "danger" : "warning"} />
                 </div>
                 {payout.note ? <p className="text-sm text-white/70">{payout.note}</p> : null}
                 <p className="text-xs text-white/50">
