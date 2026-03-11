@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useMemo, useState } from "react";
+import PwaInstallButton from "@/components/pwa-install-button";
 
 function isDashboardPath(pathname: string) {
   return pathname.startsWith("/dashboard");
@@ -76,6 +77,7 @@ export default function SiteHeader() {
         ) : null}
 
         <div className="hidden items-center gap-2 sm:flex">
+          <PwaInstallButton />
           <Link
             href={onDashboard ? "/dashboard" : "/login"}
             className="rounded-full border border-foreground/20 bg-foreground/[0.03] px-3 py-1.5 text-xs font-medium text-foreground/75 transition hover:bg-foreground/10 hover:text-foreground sm:text-sm"
@@ -150,6 +152,7 @@ export default function SiteHeader() {
                 Register
               </Link>
             </div>
+            <PwaInstallButton mobile />
           </div>
         </div>
       ) : null}

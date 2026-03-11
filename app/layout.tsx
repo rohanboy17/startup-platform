@@ -1,14 +1,32 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import Link from "next/link";
 import { ThemeProvider } from "@/components/theme-provider";
 import SiteHeader from "@/components/site-header";
+import PwaRegister from "@/components/pwa-register";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "EarnHub",
   description: "Micro-task marketplace for users and businesses",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "EarnHub",
+  },
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.svg", type: "image/svg+xml", sizes: "192x192" },
+      { url: "/icons/icon-512.svg", type: "image/svg+xml", sizes: "512x512" },
+    ],
+    apple: [{ url: "/icons/icon-192.svg", type: "image/svg+xml", sizes: "192x192" }],
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0f172a",
 };
 
 export default function RootLayout({
@@ -22,6 +40,7 @@ export default function RootLayout({
         className={`${GeistSans.variable} ${GeistMono.variable} antialiased selection:bg-emerald-300/30`}
       >
         <ThemeProvider>
+          <PwaRegister />
           <SiteHeader />
           <div className="pt-14 sm:pt-16">{children}</div>
           <footer className="relative border-t border-foreground/10 bg-background px-4 py-8 text-sm text-foreground/70 sm:px-6 sm:py-12">
