@@ -15,10 +15,17 @@ function isStandalone() {
   return Boolean(displayModeStandalone || navigatorStandalone);
 }
 
-export default function PwaInstallButton({ mobile = false }: { mobile?: boolean }) {
+export default function PwaInstallButton({
+  mobile = false,
+  compact = false,
+}: {
+  mobile?: boolean;
+  compact?: boolean;
+}) {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstalled, setIsInstalled] = useState(() => isStandalone());
   const [iosTipOpen, setIosTipOpen] = useState(false);
+  const [unsupportedTipOpen, setUnsupportedTipOpen] = useState(false);
 
   const isIOS = useMemo(() => {
     if (typeof navigator === "undefined") return false;
@@ -35,6 +42,7 @@ export default function PwaInstallButton({ mobile = false }: { mobile?: boolean 
       setIsInstalled(true);
       setDeferredPrompt(null);
       setIosTipOpen(false);
+      setUnsupportedTipOpen(false);
     };
 
     window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
@@ -57,10 +65,13 @@ export default function PwaInstallButton({ mobile = false }: { mobile?: boolean 
     }
     if (isIOS) {
       setIosTipOpen((prev) => !prev);
+      return;
     }
+
+    setUnsupportedTipOpen((prev) => !prev);
   }
 
-  const hidden = !deferredPrompt && !isIOS;
+  const hidden = !mobile && !deferredPrompt && !isIOS;
   if (hidden) return null;
 
   return (
@@ -68,18 +79,34 @@ export default function PwaInstallButton({ mobile = false }: { mobile?: boolean 
       <button
         type="button"
         onClick={() => void onInstallClick()}
-        className={`inline-flex items-center gap-1.5 rounded-full border border-foreground/20 bg-foreground/[0.03] px-3 py-1.5 text-xs font-medium text-foreground/75 transition hover:bg-foreground/10 hover:text-foreground sm:text-sm ${
-          mobile ? "w-full justify-center" : ""
-        }`}
+        aria-label="Install app"
+        className={`inline-flex items-center gap-1.5 rounded-full border border-foreground/20 bg-foreground/[0.03] font-medium text-foreground/75 transition hover:bg-foreground/10 hover:text-foreground ${
+          compact ? "h-9 w-9 justify-center px-0 py-0 text-xs" : "px-3 py-1.5 text-xs sm:text-sm"
+        } ${mobile ? "w-full justify-center" : ""}`}
       >
         <Download size={14} />
-        Install App
+        {compact ? null : "Install App"}
       </button>
       {iosTipOpen ? (
         <p
-          className={`text-xs text-foreground/70 ${mobile ? "text-center" : "absolute right-0 top-full mt-2 w-56 rounded-lg border border-foreground/15 bg-background/95 p-2.5 shadow-xl"}`}
+          className={`text-xs text-foreground/70 ${
+            mobile
+              ? "text-center"
+              : "absolute right-0 top-full mt-2 w-56 rounded-lg border border-foreground/15 bg-background/95 p-2.5 shadow-xl"
+          }`}
         >
-          On iPhone/iPad: tap Share, then “Add to Home Screen”.
+          On iPhone/iPad: tap Share, then &quot;Add to Home Screen&quot;.
+        </p>
+      ) : null}
+      {unsupportedTipOpen ? (
+        <p
+          className={`text-xs text-foreground/70 ${
+            mobile
+              ? "text-center"
+              : "absolute right-0 top-full mt-2 w-64 rounded-lg border border-foreground/15 bg-background/95 p-2.5 shadow-xl"
+          }`}
+        >
+          Install prompt not available. Open this site over HTTPS in Chrome/Safari and revisit.
         </p>
       ) : null}
     </div>

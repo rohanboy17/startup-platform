@@ -95,15 +95,18 @@ export default function SiteHeader() {
         </div>
 
         {!onDashboard ? (
-          <button
-            type="button"
-          onClick={() => setOpen((prev) => !prev)}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-foreground/15 bg-foreground/[0.04] text-foreground/70 transition hover:bg-foreground/10 sm:hidden"
-            aria-label="Toggle navigation"
-            aria-expanded={open}
-          >
-            {open ? <X size={16} /> : <Menu size={16} />}
-          </button>
+          <div className="flex items-center gap-2 sm:hidden">
+            <PwaInstallButton compact />
+            <button
+              type="button"
+              onClick={() => setOpen((prev) => !prev)}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-foreground/15 bg-foreground/[0.04] text-foreground/70 transition hover:bg-foreground/10"
+              aria-label="Toggle navigation"
+              aria-expanded={open}
+            >
+              {open ? <X size={16} /> : <Menu size={16} />}
+            </button>
+          </div>
         ) : null}
       </div>
 

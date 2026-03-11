@@ -2,16 +2,13 @@ import Link from "next/link";
 import { ArrowRight, ShieldCheck, Zap, TrendingUp, Users, Briefcase, Timer } from "lucide-react";
 import HomeLiveSection from "@/components/home-live-section";
 import MotionSection from "@/components/motion-section";
-import HomeHeroVisual from "@/components/home-hero-visual";
-import MetricCounter from "@/components/metric-counter";
 import HomeHeroText from "@/components/home-hero-text";
-import HomeHeroFloats from "@/components/home-hero-floats";
 import HomeParallaxOrbs from "@/components/home-parallax-orbs";
 import { MotionItem, MotionStagger } from "@/components/motion-stagger";
 import { getCmsValue, getFeatureFlag } from "@/lib/cms";
 import { prisma } from "@/lib/prisma";
-import { SectionCard } from "@/components/ui/section-card";
-import { KpiCard } from "@/components/ui/kpi-card";
+import HomeLiveFloatsAndStats from "@/components/home-live-floats-and-stats";
+import HomeLiveHeroVisual from "@/components/home-live-hero-visual";
 
 type LandingContent = {
   heroTitle: string;
@@ -119,6 +116,13 @@ export default async function Home() {
 
   const avgApprovalMinutes = approvalSamples ? approvalMinutesTotal / approvalSamples : 0;
   const avgApprovalTimeLabel = formatDurationFromMinutes(avgApprovalMinutes);
+  const heroMetrics = {
+    totalPayout: Math.round(totalPayout._sum.amount || 0),
+    totalUsers,
+    businessAccounts,
+    activeCampaigns,
+    tasksCompleted,
+  };
 
   return (
     <div className="relative min-h-screen overflow-x-clip bg-background text-foreground">
@@ -153,59 +157,11 @@ export default async function Home() {
             subtitle={landing.heroSubtitle}
             avgApprovalTimeLabel={avgApprovalTimeLabel}
           />
-          <div className="mt-6 sm:mt-8">
-            <HomeHeroFloats
-              totalPayout={totalPayout._sum.amount || 0}
-              totalUsers={totalUsers}
-              tasksCompleted={tasksCompleted}
-              businessAccounts={businessAccounts}
-            />
-          </div>
-          {showStats ? (
-            <MotionSection
-              className="mt-8 w-full sm:mt-10"
-              delay={0.1}
-            >
-              <SectionCard elevated>
-                <MotionStagger className="grid w-full grid-cols-2 gap-3 auto-rows-fr sm:grid-cols-3 lg:grid-cols-5">
-                  <MotionItem>
-                    <KpiCard
-                      label="Total Platform Payout"
-                      value={<MetricCounter value={Math.round(totalPayout._sum.amount || 0)} formatter="inr" />}
-                      tone="success"
-                    />
-                  </MotionItem>
-
-                  <MotionItem>
-                    <KpiCard label="Tasks Completed" value={<MetricCounter value={tasksCompleted} />} />
-                  </MotionItem>
-
-                  <MotionItem>
-                    <KpiCard label="Active Campaigns" value={<MetricCounter value={activeCampaigns} />} tone="info" />
-                  </MotionItem>
-
-                  <MotionItem>
-                    <KpiCard label="Business Accounts" value={<MetricCounter value={businessAccounts} />} />
-                  </MotionItem>
-
-                  <MotionItem>
-                    <KpiCard label="Total Users" value={<MetricCounter value={totalUsers} />} />
-                  </MotionItem>
-                </MotionStagger>
-              </SectionCard>
-            </MotionSection>
-          ) : null}
+          <HomeLiveFloatsAndStats initial={heroMetrics} showStats={showStats} />
         </MotionSection>
 
         <div className="mx-auto w-full max-w-full min-w-0 space-y-6">
-          <HomeHeroVisual
-            stats={{
-              totalUsers,
-              businessAccounts,
-              tasksCompleted,
-              totalPayout: totalPayout._sum.amount || 0,
-            }}
-          />
+          <HomeLiveHeroVisual initial={heroMetrics} />
           {showLiveActivity ? (
             <div id="live-activity">
               <HomeLiveSection />
