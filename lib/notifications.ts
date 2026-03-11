@@ -75,3 +75,33 @@ export async function sendAdminOtpEmail(params: {
   });
   return { delivered: true as const, channel: "smtp" as const };
 }
+
+export async function sendPasswordResetEmail(params: {
+  to: string;
+  resetUrl: string;
+  expiresInMinutes: number;
+}) {
+  const transporter = getTransporter();
+  const from = process.env.SMTP_FROM || "no-reply@earnhub.local";
+
+  if (!transporter) {
+    console.info(
+      `[PasswordReset] SMTP not configured. Intended recipient=${params.to}, resetUrl=${params.resetUrl}`
+    );
+    return { delivered: false as const, channel: "log" as const };
+  }
+
+  try {
+    await transporter.sendMail({
+      from,
+      to: params.to,
+      subject: "EarnHub Password Reset",
+      text: `Reset your password using this link: ${params.resetUrl}\n\nThis link expires in ${params.expiresInMinutes} minutes.`,
+    });
+  } catch (error) {
+    console.error("[PasswordReset] SMTP send failed:", error);
+    return { delivered: false as const, channel: "smtp_error" as const };
+  }
+
+  return { delivered: true as const, channel: "smtp" as const };
+}

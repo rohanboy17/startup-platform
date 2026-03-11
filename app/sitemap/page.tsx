@@ -28,6 +28,7 @@ const groups = [
     links: [
       ["/login", "Sign In"],
       ["/register", "Create Account"],
+      ["/forgot-password", "Forgot Password"],
       ["/dashboard", "Dashboard"],
     ],
   },
@@ -58,4 +59,3 @@ export default function SitemapPage() {
     </PublicPageShell>
   );
 }
-

@@ -249,6 +249,14 @@ export default function LoginForm({ registered }: { registered: boolean }) {
                   autoComplete="current-password"
                   className="h-11 border-white/15 bg-white/5 transition focus-visible:border-emerald-300/70 focus-visible:ring-emerald-300/20"
                 />
+                <div className="-mt-1 text-right">
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs text-white/70 underline underline-offset-4 transition hover:text-white"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
                 {needsAdmin2fa ? (
                   <div className="space-y-2 rounded-xl border border-white/10 bg-white/5 p-3.5">
                     <div className="flex items-center justify-between gap-3">

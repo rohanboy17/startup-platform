@@ -35,6 +35,7 @@ export default async function ManagerLayout({
             displayName={displayName}
             role="MANAGER"
             userId={session.user.id}
+            showForgotPasswordInNav
             items={[
               { key: "manager.overview", href: "/dashboard/manager", label: "Overview", icon: "overview" },
               { key: "manager.submissions", href: "/dashboard/manager/submissions", label: "Submission Queue", icon: "submissions" },

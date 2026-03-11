@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ComponentType } from "react";
 import {
+  KeyRound,
   Menu,
   X,
   BarChart3,
@@ -87,11 +88,13 @@ export default function DashboardTabNav({
   role,
   userId,
   items,
+  showForgotPasswordInNav = false,
 }: {
   displayName: string;
   role: DashboardRole;
   userId: string;
   items: Item[];
+  showForgotPasswordInNav?: boolean;
 }) {
   const pathname = usePathname();
   const [alerts, setAlerts] = useState<Record<string, string>>({});
@@ -223,6 +226,16 @@ export default function DashboardTabNav({
             <House size={18} />
             Main Home
           </Link>
+          {showForgotPasswordInNav ? (
+            <Link
+              href="/forgot-password"
+              onClick={() => setMobileOpen(false)}
+              className="mb-3 flex items-center gap-3 text-sm text-white/70 transition hover:text-white"
+            >
+              <KeyRound size={18} />
+              Forgot Password
+            </Link>
+          ) : null}
           <LogoutButton />
         </div>
       </div>

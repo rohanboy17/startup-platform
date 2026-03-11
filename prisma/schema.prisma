@@ -54,6 +54,7 @@ model User {
   reviewedWalletAdjustments WalletAdjustmentRequest[] @relation("WalletAdjustmentReviewer")
   adminTwoFactorChallenges AdminTwoFactorChallenge[]
   adminTwoFactorRecoveryCodes AdminTwoFactorRecoveryCode[]
+  passwordResetTokens PasswordResetToken[]
   deletedAt DateTime?
   deletedByUserId String?
   deletionReason String?
@@ -339,6 +340,17 @@ model AdminTwoFactorRecoveryCode {
   codeHash  String
   createdAt DateTime @default(now())
   usedAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
 }
