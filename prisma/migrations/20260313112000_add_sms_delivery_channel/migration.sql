@@ -1,0 +1,1 @@
+ALTER TYPE "DeliveryChannel" ADD VALUE IF NOT EXISTS 'SMS';

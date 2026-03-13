@@ -44,7 +44,7 @@ export default async function AdminNotificationsPage() {
   const [templates, logs] = await Promise.all([
     prisma.notificationTemplate.findMany({ orderBy: { updatedAt: "desc" } }),
     prisma.notificationDeliveryLog.findMany({
-      include: { user: { select: { email: true, role: true } } },
+      include: { user: { select: { email: true, role: true, mobile: true } } },
       orderBy: { createdAt: "desc" },
       take: 120,
     }),
@@ -61,8 +61,12 @@ export default async function AdminNotificationsPage() {
           channel: l.channel,
           templateKey: l.templateKey,
           error: l.error,
-          createdAt: l.createdAt.toISOString(),
-          user: { email: l.user.email, role: l.user.role },
+          createdAtLabel: new Intl.DateTimeFormat("en-IN", {
+            dateStyle: "medium",
+            timeStyle: "short",
+            timeZone: "Asia/Calcutta",
+          }).format(l.createdAt),
+          user: { email: l.user.email, role: l.user.role, mobile: l.user.mobile },
         }))}
       />
     </div>

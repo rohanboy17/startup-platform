@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { Bell, AlertTriangle, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import NotificationChannelPreferences from "@/components/notification-channel-preferences";
 import { useLiveRefresh } from "@/lib/live-refresh";
 
 type NotificationItem = {
@@ -75,6 +76,8 @@ export default function ManagerNotificationsPanel() {
 
   return (
     <div className="space-y-6">
+      <NotificationChannelPreferences />
+
       {grouped.warnings.length ? (
         <div className="space-y-3">
           <p className="text-xs uppercase tracking-[0.2em] text-white/40">Warnings</p>
@@ -124,4 +127,3 @@ export default function ManagerNotificationsPanel() {
     </div>
   );
 }
-

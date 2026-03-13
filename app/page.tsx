@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+import QRCode from "qrcode";
 import { ArrowRight, ShieldCheck, Zap, TrendingUp, Users, Briefcase, Timer } from "lucide-react";
 import HomeLiveSection from "@/components/home-live-section";
 import MotionSection from "@/components/motion-section";
@@ -33,6 +35,10 @@ function extractSubmissionId(details: string | null) {
 }
 
 export default async function Home() {
+  const siteUrl =
+    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
+    process.env.NEXTAUTH_URL?.replace(/\/$/, "") ||
+    "https://startup-platform-eight.vercel.app";
   const now = new Date();
   const [
     landing,
@@ -116,6 +122,14 @@ export default async function Home() {
 
   const avgApprovalMinutes = approvalSamples ? approvalMinutesTotal / approvalSamples : 0;
   const avgApprovalTimeLabel = formatDurationFromMinutes(avgApprovalMinutes);
+  const qrCodeDataUrl = await QRCode.toDataURL(siteUrl, {
+    width: 320,
+    margin: 1,
+    color: {
+      dark: "#020617",
+      light: "#ffffff",
+    },
+  });
   const heroMetrics = {
     totalPayout: Math.round(totalPayout._sum.amount || 0),
     totalUsers,
@@ -290,6 +304,59 @@ export default async function Home() {
             >
               Create Campaign
             </Link>
+          </div>
+        </MotionSection>
+      </section>
+
+      <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-24">
+        <MotionSection className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-5 text-white shadow-[0_20px_80px_-32px_rgba(15,23,42,0.5)] backdrop-blur-xl sm:p-8">
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
+            <div className="space-y-5 lg:pr-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.26em] text-emerald-300/70">
+                Offline Invite
+              </p>
+              <h2 className="max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">
+                Print this QR and let anyone join EarnHub in one scan.
+              </h2>
+              <p className="max-w-3xl text-sm leading-6 text-white/70 sm:text-base">
+                Designed for posters, flyers, business cards, and offline campaigns.
+                The code opens the main home page directly so new users can land on the
+                platform without typing the address.
+              </p>
+              <div className="flex w-full max-w-2xl flex-col gap-2 rounded-2xl border border-white/12 bg-white/[0.06] px-5 py-4 shadow-[0_12px_30px_-18px_rgba(0,0,0,0.45)]">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/55">
+                  Direct website link
+                </span>
+                <span className="overflow-hidden text-ellipsis break-words text-sm font-semibold leading-7 text-white sm:text-base">
+                  {siteUrl}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex justify-center lg:justify-end lg:pl-6">
+              <div className="w-full max-w-[320px] rounded-[2rem] border border-white/12 bg-white/[0.06] p-4 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.45)]">
+                <div className="rounded-[1.5rem] border border-white/10 bg-white p-4">
+                  <div className="mx-auto h-[240px] w-[240px] sm:h-[250px] sm:w-[250px]">
+                    <Image
+                      src={qrCodeDataUrl}
+                      alt="QR code linking to the EarnHub homepage"
+                      width={260}
+                      height={260}
+                      unoptimized
+                      className="block h-full w-full rounded-xl bg-white object-contain"
+                    />
+                  </div>
+                </div>
+                <div className="mt-4 rounded-2xl border border-white/10 bg-slate-950 px-4 py-4 text-center text-white">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-300/80">
+                    Scan To Join and Earn
+                  </p>
+                  <p className="mt-1 text-base font-semibold text-white sm:text-lg">
+                    EarnHub Marketplace
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </MotionSection>
       </section>

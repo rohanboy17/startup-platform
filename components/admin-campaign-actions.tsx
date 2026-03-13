@@ -17,6 +17,7 @@ export default function AdminCampaignActions({
   initialTaskLink,
   initialRewardPerTask,
   initialTotalBudget,
+  initialSubmissionMode,
 }: {
   campaignId: string;
   currentStatus: "PENDING" | "APPROVED" | "REJECTED" | "LIVE" | "COMPLETED";
@@ -29,6 +30,7 @@ export default function AdminCampaignActions({
   initialTaskLink: string | null;
   initialRewardPerTask: number;
   initialTotalBudget: number;
+  initialSubmissionMode: "ONE_PER_USER" | "MULTIPLE_PER_USER";
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
@@ -39,6 +41,7 @@ export default function AdminCampaignActions({
   const [taskLink, setTaskLink] = useState(initialTaskLink || "");
   const [rewardPerTask, setRewardPerTask] = useState(String(initialRewardPerTask));
   const [totalBudget, setTotalBudget] = useState(String(initialTotalBudget));
+  const [submissionMode, setSubmissionMode] = useState(initialSubmissionMode);
   const [escalationNote, setEscalationNote] = useState("");
   const [editOpen, setEditOpen] = useState(false);
   const canEscalate = currentStatus === "PENDING" && queueAgeHours >= 4;
@@ -112,6 +115,7 @@ export default function AdminCampaignActions({
         taskLink: taskLink || null,
         rewardPerTask: Number(rewardPerTask),
         totalBudget: Number(totalBudget),
+        submissionMode,
       }),
     });
 
@@ -280,6 +284,14 @@ export default function AdminCampaignActions({
             className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
             placeholder="Total budget"
           />
+          <select
+            value={submissionMode}
+            onChange={(e) => setSubmissionMode(e.target.value as "ONE_PER_USER" | "MULTIPLE_PER_USER")}
+            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
+          >
+            <option value="ONE_PER_USER">One submission per user</option>
+            <option value="MULTIPLE_PER_USER">Many submissions per user</option>
+          </select>
           <Button onClick={saveEdit} disabled={loading !== null} className="md:col-span-2">
             {loading === "EDIT" ? "Saving..." : "Save Campaign Changes"}
           </Button>

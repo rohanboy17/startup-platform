@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   const body = (await req.json()) as {
     key?: string;
     name?: string;
-    channel?: "IN_APP" | "EMAIL";
+    channel?: "IN_APP" | "EMAIL" | "SMS" | "PUSH" | "TELEGRAM";
     subject?: string;
     body?: string;
     enabled?: boolean;

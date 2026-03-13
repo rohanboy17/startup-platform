@@ -104,6 +104,7 @@ export async function POST(req: Request) {
         rewardPerTask: reward,
         totalBudget: budget,
         remainingBudget: budget,
+        submissionMode: "MULTIPLE_PER_USER",
         status: "PENDING",
       },
     });

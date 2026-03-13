@@ -7,6 +7,7 @@ import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
+import NotificationChannelPreferences from "@/components/notification-channel-preferences";
 
 type NotificationFilter = "ALL" | "UNREAD" | "SUCCESS" | "WARNING" | "INFO";
 
@@ -129,6 +130,8 @@ export default function UserNotificationsPanel() {
 
   return (
     <div className="space-y-6">
+      <NotificationChannelPreferences />
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard label="Total Notifications" value={data.totalCount} />
         <KpiCard label="Unread" value={data.unreadCount} tone="success" />

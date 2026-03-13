@@ -3,6 +3,7 @@
 import { useCallback, useState } from "react";
 import { AlertTriangle, BellRing } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import NotificationChannelPreferences from "@/components/notification-channel-preferences";
 import UserNotificationsList from "@/components/user-notifications-list";
 import { useLiveRefresh } from "@/lib/live-refresh";
 
@@ -69,6 +70,8 @@ export default function BusinessNotificationsPanel() {
 
   return (
     <div className="space-y-6">
+      <NotificationChannelPreferences />
+
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
           <CardContent className="p-5">

@@ -11,6 +11,8 @@ model User {
   name        String?
   email       String       @unique
   mobile      String?      @unique
+  telegramChatId String?   @unique
+  telegramLinkedAt DateTime?
   password    String
   role        Role         @default(USER)
   businessOwnerId String?
@@ -44,6 +46,7 @@ model User {
   withdrawRequests WithdrawRequest[]
   notifications Notification[]
   notificationDeliveryLogs NotificationDeliveryLog[]
+  devicePushTokens DevicePushToken[]
   paymentOrders PaymentOrder[]
   businessWallet BusinessWallet?
   kycRequests BusinessKycRequest[]
@@ -192,6 +195,7 @@ model Campaign {
   rewardPerTask   Float
   totalBudget     Float
   remainingBudget Float
+  submissionMode  CampaignSubmissionMode @default(MULTIPLE_PER_USER)
   status          CampaignStatus        @default(PENDING)
   escalatedAt     DateTime?
   escalationReason String?
@@ -355,6 +359,19 @@ model PasswordResetToken {
   user User @relation(fields: [userId], references: [id])
 }
 
+model DevicePushToken {
+  id          String   @id @default(uuid())
+  userId      String
+  token       String   @unique
+  deviceLabel String?
+  platform    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  lastSeenAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
 model NotificationTemplate {
   id        String          @id @default(uuid())
   key       String          @unique
@@ -441,6 +458,11 @@ enum CampaignStatus {
   COMPLETED
 }
 
+enum CampaignSubmissionMode {
+  ONE_PER_USER
+  MULTIPLE_PER_USER
+}
+
 enum SubmissionStatus {
   PENDING
   MANAGER_APPROVED
@@ -514,6 +536,9 @@ enum SecurityEventStatus {
 enum DeliveryChannel {
   IN_APP
   EMAIL
+  SMS
+  PUSH
+  TELEGRAM
 }
 
 enum DeliveryStatus {

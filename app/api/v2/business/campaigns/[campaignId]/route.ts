@@ -393,6 +393,7 @@ export async function POST(
         rewardPerTask: sourceCampaign.rewardPerTask,
         totalBudget: sourceCampaign.totalBudget,
         remainingBudget: sourceCampaign.totalBudget,
+        submissionMode: sourceCampaign.submissionMode,
         status: "PENDING",
       },
     });

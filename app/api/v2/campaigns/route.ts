@@ -22,28 +22,42 @@ export async function GET() {
       rewardPerTask: true,
       remainingBudget: true,
       totalBudget: true,
+      submissionMode: true,
     },
     orderBy: { createdAt: "desc" },
   });
 
   const campaignIds = campaigns.map((campaign) => campaign.id);
-  const occupiedCounts = campaignIds.length
-    ? await prisma.submission.groupBy({
-        by: ["campaignId"],
-        where: {
-          campaignId: { in: campaignIds },
-          NOT: [
-            { managerStatus: "MANAGER_REJECTED" },
-            { adminStatus: "ADMIN_REJECTED" },
-            { status: "REJECTED" },
-          ],
-        },
-        _count: { _all: true },
-      })
-    : [];
+  const [occupiedCounts, userSubmissionCounts] = campaignIds.length
+    ? await Promise.all([
+        prisma.submission.groupBy({
+          by: ["campaignId"],
+          where: {
+            campaignId: { in: campaignIds },
+            NOT: [
+              { managerStatus: "MANAGER_REJECTED" },
+              { adminStatus: "ADMIN_REJECTED" },
+              { status: "REJECTED" },
+            ],
+          },
+          _count: { _all: true },
+        }),
+        prisma.submission.groupBy({
+          by: ["campaignId"],
+          where: {
+            campaignId: { in: campaignIds },
+            userId: session.user.id,
+          },
+          _count: { _all: true },
+        }),
+      ])
+    : [[], []];
 
   const occupiedCountMap = new Map(
     occupiedCounts.map((item) => [item.campaignId, item._count._all])
+  );
+  const userSubmissionCountMap = new Map(
+    userSubmissionCounts.map((item) => [item.campaignId, item._count._all])
   );
 
   const campaignsWithLimits = campaigns.map((campaign) => {
@@ -53,12 +67,18 @@ export async function GET() {
     );
     const occupiedSubmissions = occupiedCountMap.get(campaign.id) ?? 0;
     const leftSubmissions = Math.max(0, allowedSubmissions - occupiedSubmissions);
+    const userSubmissionCount = userSubmissionCountMap.get(campaign.id) ?? 0;
+    const blockedBySubmissionMode =
+      campaign.submissionMode === "ONE_PER_USER" && userSubmissionCount > 0;
 
     return {
       ...campaign,
       allowedSubmissions,
       usedSubmissions: occupiedSubmissions,
       leftSubmissions,
+      userSubmissionCount,
+      blockedBySubmissionMode,
+      submissionMode: campaign.submissionMode,
     };
   });
 

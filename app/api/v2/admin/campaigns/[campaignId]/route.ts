@@ -180,6 +180,7 @@ export async function PUT(
     taskLink?: string | null;
     rewardPerTask?: number;
     totalBudget?: number;
+    submissionMode?: "ONE_PER_USER" | "MULTIPLE_PER_USER";
   };
 
   const campaign = await prisma.campaign.findUnique({
@@ -193,6 +194,7 @@ export async function PUT(
       rewardPerTask: true,
       totalBudget: true,
       remainingBudget: true,
+      submissionMode: true,
     },
   });
 
@@ -206,6 +208,7 @@ export async function PUT(
   const taskLink = body.taskLink === undefined ? campaign.taskLink : body.taskLink?.trim() || null;
   const rewardPerTask = Number(body.rewardPerTask ?? campaign.rewardPerTask);
   const totalBudget = Number(body.totalBudget ?? campaign.totalBudget);
+  const submissionMode = body.submissionMode ?? campaign.submissionMode;
 
   if (!title || !description || !category) {
     return NextResponse.json({ error: "Title, description and category are required" }, { status: 400 });
@@ -215,6 +218,9 @@ export async function PUT(
   }
   if (Number.isNaN(totalBudget) || totalBudget <= 0) {
     return NextResponse.json({ error: "Invalid total budget" }, { status: 400 });
+  }
+  if (!["ONE_PER_USER", "MULTIPLE_PER_USER"].includes(submissionMode)) {
+    return NextResponse.json({ error: "Invalid submission mode" }, { status: 400 });
   }
 
   const spent = campaign.totalBudget - campaign.remainingBudget;
@@ -236,6 +242,7 @@ export async function PUT(
         rewardPerTask,
         totalBudget,
         remainingBudget: totalBudget - spent,
+        submissionMode,
       },
     });
 

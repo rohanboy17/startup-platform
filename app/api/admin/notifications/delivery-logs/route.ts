@@ -14,7 +14,7 @@ export async function GET(req: Request) {
   const logs = await prisma.notificationDeliveryLog.findMany({
     where: status ? { status } : undefined,
     include: {
-      user: { select: { email: true, role: true } },
+      user: { select: { email: true, role: true, mobile: true } },
       notification: { select: { title: true } },
     },
     orderBy: { createdAt: "desc" },

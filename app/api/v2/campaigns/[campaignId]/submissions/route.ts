@@ -36,6 +36,7 @@ export async function GET(
       rewardPerTask: true,
       totalBudget: true,
       remainingBudget: true,
+      submissionMode: true,
       status: true,
       instructions: {
         orderBy: { sequence: "asc" },
@@ -73,10 +74,13 @@ export async function GET(
   ]);
 
   const leftSubmissions = Math.max(0, allowedSubmissions - occupiedSubmissions);
+  const blockedBySubmissionMode =
+    campaign.submissionMode === "ONE_PER_USER" && userSubmissionCount > 0;
   const isAvailable =
     campaign.status === "LIVE" &&
     campaign.remainingBudget >= campaign.rewardPerTask &&
-    leftSubmissions > 0;
+    leftSubmissions > 0 &&
+    !blockedBySubmissionMode;
   const remainingInstructions = campaign.instructions.slice(occupiedSubmissions);
   const instructionPool =
     remainingInstructions.length > 0 ? remainingInstructions : campaign.instructions;
@@ -97,6 +101,8 @@ export async function GET(
       usedSubmissions: occupiedSubmissions,
       leftSubmissions,
       userSubmissionCount,
+      submissionMode: campaign.submissionMode,
+      blockedBySubmissionMode,
       isAvailable,
       currentInstruction,
     },
@@ -143,6 +149,7 @@ export async function POST(
       rewardPerTask: true,
       totalBudget: true,
       remainingBudget: true,
+      submissionMode: true,
     },
   });
 
@@ -184,6 +191,19 @@ export async function POST(
           ],
         },
       });
+
+      if (campaign.submissionMode === "ONE_PER_USER") {
+        const existingUserSubmissionCount = await tx.submission.count({
+          where: {
+            campaignId,
+            userId: session.user.id,
+          },
+        });
+
+        if (existingUserSubmissionCount > 0) {
+          throw new Error("This campaign allows only one submission per user.");
+        }
+      }
 
       if (occupiedSubmissionCount >= maxCampaignSubmissions) {
         throw new Error("Campaign submission capacity is full. Try again later.");

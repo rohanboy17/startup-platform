@@ -169,6 +169,12 @@ export default async function AdminCampaignsPage({
                   {formatMoney(campaign.totalBudget)}
                 </p>
                 <p className="text-sm text-white/70">
+                  Submission mode:{" "}
+                  {campaign.submissionMode === "ONE_PER_USER"
+                    ? "One submission per user"
+                    : "Many submissions per user"}
+                </p>
+                <p className="text-sm text-white/70">
                   Existing submissions: {campaign._count.submissions}
                 </p>
                 <p className="text-xs text-white/50">
@@ -210,6 +216,7 @@ export default async function AdminCampaignsPage({
                   initialTaskLink={campaign.taskLink}
                   initialRewardPerTask={campaign.rewardPerTask}
                   initialTotalBudget={campaign.totalBudget}
+                  initialSubmissionMode={campaign.submissionMode}
                 />
               </CardContent>
             </Card>

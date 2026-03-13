@@ -49,8 +49,28 @@ export default function AdminCmsPanel({
   const [newAnnTitle, setNewAnnTitle] = useState("");
   const [newAnnMessage, setNewAnnMessage] = useState("");
   const [newAnnLink, setNewAnnLink] = useState("");
+  const [editingAnnouncementId, setEditingAnnouncementId] = useState<string | null>(null);
+  const [announcementSegment, setAnnouncementSegment] = useState("ALL");
+  const [announcementChannels, setAnnouncementChannels] = useState<Array<"IN_APP" | "EMAIL" | "SMS" | "PUSH" | "TELEGRAM">>(["IN_APP"]);
   const [loading, setLoading] = useState<string | null>(null);
   const [message, setMessage] = useState("");
+
+  function toggleAnnouncementChannel(channel: "IN_APP" | "EMAIL" | "SMS" | "PUSH" | "TELEGRAM") {
+    setAnnouncementChannels((current) =>
+      current.includes(channel)
+        ? current.filter((item) => item !== channel)
+        : [...current, channel]
+    );
+  }
+
+  function resetAnnouncementForm() {
+    setEditingAnnouncementId(null);
+    setNewAnnTitle("");
+    setNewAnnMessage("");
+    setNewAnnLink("");
+    setAnnouncementSegment("ALL");
+    setAnnouncementChannels(["IN_APP"]);
+  }
 
   async function saveContent(key: string, value: unknown) {
     setLoading(key);
@@ -112,6 +132,8 @@ export default function AdminCmsPanel({
         message: newAnnMessage,
         link: newAnnLink,
         isActive: true,
+        segment: announcementSegment,
+        channels: announcementChannels,
       }),
     });
     const raw = await res.text();
@@ -124,9 +146,39 @@ export default function AdminCmsPanel({
     setLoading(null);
     setMessage(data.message || data.error || "Updated");
     if (res.ok) {
-      setNewAnnTitle("");
-      setNewAnnMessage("");
-      setNewAnnLink("");
+      resetAnnouncementForm();
+      router.refresh();
+      emitDashboardLiveRefresh();
+    }
+  }
+
+  async function saveAnnouncementEdits() {
+    if (!editingAnnouncementId) return;
+
+    setLoading(`announcement:edit:${editingAnnouncementId}`);
+    setMessage("");
+    const res = await fetch("/api/admin/cms/announcements", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        id: editingAnnouncementId,
+        title: newAnnTitle,
+        message: newAnnMessage,
+        link: newAnnLink,
+      }),
+    });
+    const raw = await res.text();
+    let data: { message?: string; error?: string } = {};
+    try {
+      data = raw ? (JSON.parse(raw) as typeof data) : {};
+    } catch {
+      data = { error: "Unexpected server response" };
+    }
+    setLoading(null);
+    setMessage(data.message || data.error || "Updated");
+    if (res.ok) {
+      resetAnnouncementForm();
       router.refresh();
       emitDashboardLiveRefresh();
     }
@@ -151,6 +203,40 @@ export default function AdminCmsPanel({
     setLoading(null);
     setMessage(data.message || data.error || "Updated");
     if (res.ok) {
+      router.refresh();
+      emitDashboardLiveRefresh();
+    }
+  }
+
+  function startAnnouncementEdit(item: Announcement) {
+    setEditingAnnouncementId(item.id);
+    setNewAnnTitle(item.title);
+    setNewAnnMessage(item.message);
+    setNewAnnLink(item.link || "");
+  }
+
+  async function deleteAnnouncement(item: Announcement) {
+    setLoading(`announcement:delete:${item.id}`);
+    setMessage("");
+    const res = await fetch("/api/admin/cms/announcements", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ id: item.id }),
+    });
+    const raw = await res.text();
+    let data: { message?: string; error?: string } = {};
+    try {
+      data = raw ? (JSON.parse(raw) as typeof data) : {};
+    } catch {
+      data = { error: "Unexpected server response" };
+    }
+    setLoading(null);
+    setMessage(data.message || data.error || "Updated");
+    if (res.ok) {
+      if (editingAnnouncementId === item.id) {
+        resetAnnouncementForm();
+      }
       router.refresh();
       emitDashboardLiveRefresh();
     }
@@ -211,6 +297,11 @@ export default function AdminCmsPanel({
 
       <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Banners & Announcements</h3>
+        {editingAnnouncementId ? (
+          <p className="text-xs text-emerald-300/80">
+            Editing selected announcement. Save changes or cancel to return to create mode.
+          </p>
+        ) : null}
         <Input value={newAnnTitle} onChange={(e) => setNewAnnTitle(e.target.value)} placeholder="Announcement title" />
         <textarea
           value={newAnnMessage}
@@ -219,9 +310,66 @@ export default function AdminCmsPanel({
           placeholder="Announcement message"
         />
         <Input value={newAnnLink} onChange={(e) => setNewAnnLink(e.target.value)} placeholder="Optional link" />
-        <Button onClick={createAnnouncement} disabled={loading !== null} className="w-full sm:w-auto">
-          {loading === "announcement:create" ? "Saving..." : "Create Announcement"}
-        </Button>
+        <select
+          value={announcementSegment}
+          onChange={(e) => setAnnouncementSegment(e.target.value)}
+          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+        >
+          <option value="ALL">Broadcast to all users</option>
+          <option value="USER">Users only</option>
+          <option value="BUSINESS">Businesses only</option>
+          <option value="MANAGER">Managers only</option>
+          <option value="ADMIN">Admins only</option>
+        </select>
+        <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-5">
+          {([
+            ["IN_APP", "In-app platform notice"],
+            ["EMAIL", "Send to Gmail/email inbox"],
+            ["SMS", "Send to mobile numbers"],
+            ["PUSH", "Send to device push tokens"],
+            ["TELEGRAM", "Send to linked Telegram chats"],
+          ] as const).map(([channel, label]) => (
+            <label
+              key={channel}
+              className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 px-3 py-3 text-sm text-white/80"
+            >
+              <input
+                type="checkbox"
+                checked={announcementChannels.includes(channel)}
+                onChange={() => toggleAnnouncementChannel(channel)}
+                className="h-4 w-4"
+              />
+              <span>{label}</span>
+            </label>
+          ))}
+        </div>
+        <p className="text-xs text-white/55">
+          Email uses SMTP. Mobile delivery uses the SMS webhook. Push uses Firebase. Telegram uses the bot link flow.
+        </p>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Button
+            onClick={editingAnnouncementId ? saveAnnouncementEdits : createAnnouncement}
+            disabled={loading !== null}
+            className="w-full sm:w-auto"
+          >
+            {loading === "announcement:create" || loading === `announcement:edit:${editingAnnouncementId}`
+              ? "Saving..."
+              : editingAnnouncementId
+                ? "Save Changes"
+                : "Create Announcement"}
+          </Button>
+          {editingAnnouncementId ? (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={resetAnnouncementForm}
+              disabled={loading !== null}
+              className="w-full sm:w-auto"
+            >
+              Cancel Edit
+            </Button>
+          ) : null}
+        </div>
 
         <div className="space-y-2">
           {announcements.map((item) => (
@@ -229,7 +377,15 @@ export default function AdminCmsPanel({
               <p className="font-medium">{item.title}</p>
               <p className="text-sm text-white/70">{item.message}</p>
               {item.link ? <p className="break-all text-xs text-white/50">{item.link}</p> : null}
-              <div className="mt-2">
+              <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+                <Button
+                  variant="outline"
+                  onClick={() => startAnnouncementEdit(item)}
+                  disabled={loading !== null}
+                  className="w-full sm:w-auto"
+                >
+                  Edit
+                </Button>
                 <Button
                   variant="outline"
                   onClick={() => toggleAnnouncement(item)}
@@ -237,6 +393,14 @@ export default function AdminCmsPanel({
                   className="w-full sm:w-auto"
                 >
                   {item.isActive ? "Deactivate" : "Activate"}
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => deleteAnnouncement(item)}
+                  disabled={loading !== null}
+                  className="w-full sm:w-auto"
+                >
+                  Delete
                 </Button>
               </div>
             </div>

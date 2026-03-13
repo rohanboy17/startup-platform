@@ -25,6 +25,8 @@ type CampaignResponse = {
     usedSubmissions: number;
     leftSubmissions: number;
     userSubmissionCount: number;
+    submissionMode: "ONE_PER_USER" | "MULTIPLE_PER_USER";
+    blockedBySubmissionMode: boolean;
     isAvailable: boolean;
     instructions: Array<{
       id: string;
@@ -186,6 +188,11 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
           <CardContent className="space-y-3 p-4 sm:p-6">
             <p className="text-sm text-white/60">Your submissions here</p>
             <p className="text-3xl font-semibold text-violet-200">{campaign.userSubmissionCount}</p>
+            <p className="text-xs text-white/50">
+              {campaign.submissionMode === "ONE_PER_USER"
+                ? "This campaign allows only one submission per user."
+                : "This campaign allows multiple submissions per user while slots remain open."}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -282,6 +289,11 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
               {submitting ? "Submitting..." : campaign.isAvailable ? "Submit for review" : "Submission unavailable"}
             </Button>
 
+            {campaign.blockedBySubmissionMode ? (
+              <p className="text-sm text-amber-200">
+                You have already submitted once for this campaign. Further submissions are disabled by admin.
+              </p>
+            ) : null}
             {submitMessage ? <p className="text-sm text-white/65">{submitMessage}</p> : null}
           </CardContent>
         </Card>
