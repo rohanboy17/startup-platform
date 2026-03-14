@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import PwaInstallButton from "@/components/pwa-install-button";
+import ThemeToggle from "@/components/theme-toggle";
 
 function isDashboardPath(pathname: string) {
   return pathname.startsWith("/dashboard");
@@ -77,6 +78,7 @@ export default function SiteHeader() {
         ) : null}
 
         <div className="hidden items-center gap-2 sm:flex">
+          <ThemeToggle />
           <PwaInstallButton />
           <Link
             href={onDashboard ? "/dashboard" : "/login"}
@@ -96,6 +98,7 @@ export default function SiteHeader() {
 
         {!onDashboard ? (
           <div className="flex items-center gap-2 sm:hidden">
+            <ThemeToggle compact />
             <PwaInstallButton compact />
             <button
               type="button"
@@ -140,6 +143,9 @@ export default function SiteHeader() {
                 ))
               : null}
             <div className="mt-2 grid grid-cols-2 gap-2">
+              <div className="col-span-2 flex justify-center">
+                <ThemeToggle />
+              </div>
               <Link
                 href="/login"
                 onClick={() => setOpen(false)}

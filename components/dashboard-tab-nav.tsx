@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { useLiveRefresh } from "@/lib/live-refresh";
 import LogoutButton from "@/components/logout-button";
+import ThemeToggle from "@/components/theme-toggle";
 
 type DashboardRole = "USER" | "BUSINESS" | "MANAGER" | "ADMIN";
 type IconName =
@@ -177,24 +178,28 @@ export default function DashboardTabNav({
       <div className="flex items-center justify-between md:block">
         <div>
           <h1 className="text-lg font-semibold tracking-tight md:text-xl">{greeting}</h1>
-          <p className="text-xs text-white/60 md:text-sm">Welcome back!</p>
+          <p className="text-xs text-foreground/60 md:text-sm">Welcome back!</p>
         </div>
-        <button
-          type="button"
-          onClick={() => setMobileOpen((prev) => !prev)}
-          className="inline-flex items-center justify-center rounded-lg border border-white/15 bg-white/5 p-2 text-white/90 md:hidden"
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
-        >
-          {mobileOpen ? <X size={18} /> : <Menu size={18} />}
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle compact className="md:hidden" />
+          <ThemeToggle className="hidden md:inline-flex" />
+          <button
+            type="button"
+            onClick={() => setMobileOpen((prev) => !prev)}
+            className="inline-flex items-center justify-center rounded-lg border border-foreground/15 bg-foreground/[0.04] p-2 text-foreground/90 md:hidden"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          >
+            {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
+        </div>
       </div>
 
       <div
-        className={`${mobileOpen ? "block" : "hidden"} space-y-6 rounded-lg border border-white/10 bg-white/5 p-4 md:block md:rounded-none md:border-0 md:bg-transparent md:p-0`}
+        className={`${mobileOpen ? "block" : "hidden"} space-y-6 rounded-lg border border-foreground/10 bg-foreground/[0.04] p-4 md:block md:rounded-none md:border-0 md:bg-transparent md:p-0`}
       >
-        <div className="rounded-lg border border-white/10 bg-white/5 p-3 md:border md:bg-white/5">
-          <p className="text-xs text-white/50">Signed in as</p>
-          <p className="text-sm font-medium text-white/90">{displayName}</p>
+        <div className="rounded-lg border border-foreground/10 bg-foreground/[0.04] p-3 md:border md:bg-foreground/[0.04]">
+          <p className="text-xs text-foreground/50">Signed in as</p>
+          <p className="text-sm font-medium text-foreground/90">{displayName}</p>
         </div>
 
         <nav className="max-h-[45vh] space-y-3 overflow-y-auto pr-1 text-sm md:max-h-none md:space-y-4 md:overflow-visible md:pr-0">
@@ -203,7 +208,7 @@ export default function DashboardTabNav({
               key={item.key}
               href={item.href}
               onClick={() => setMobileOpen(false)}
-              className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-white/70 transition hover:bg-black/30 hover:text-white md:rounded-none md:border-0 md:bg-transparent md:px-0 md:py-0"
+              className="flex items-center justify-between rounded-xl border border-foreground/10 bg-background/60 px-3 py-2 text-foreground/75 transition hover:bg-foreground/[0.06] hover:text-foreground md:rounded-none md:border-0 md:bg-transparent md:px-0 md:py-0"
             >
               <span className="flex items-center gap-3">
                 <item.Icon size={18} />
@@ -221,10 +226,13 @@ export default function DashboardTabNav({
         </nav>
 
         <div className="pt-2">
+          <div className="mb-3 md:hidden">
+            <ThemeToggle className="w-full justify-center rounded-xl py-2 text-sm" />
+          </div>
           <Link
             href="/"
             onClick={() => setMobileOpen(false)}
-            className="mb-3 flex items-center gap-3 text-sm text-white/70 transition hover:text-white"
+            className="mb-3 flex items-center gap-3 text-sm text-foreground/70 transition hover:text-foreground"
           >
             <House size={18} />
             Main Home
@@ -233,7 +241,7 @@ export default function DashboardTabNav({
             <Link
               href="/forgot-password"
               onClick={() => setMobileOpen(false)}
-              className="mb-3 flex items-center gap-3 text-sm text-white/70 transition hover:text-white"
+              className="mb-3 flex items-center gap-3 text-sm text-foreground/70 transition hover:text-foreground"
             >
               <KeyRound size={18} />
               Forgot Password
@@ -248,7 +256,7 @@ export default function DashboardTabNav({
 
 export function HomeNavLink() {
   return (
-    <Link href="/" className="mb-3 flex items-center gap-3 text-sm text-white/70 transition hover:text-white">
+    <Link href="/" className="mb-3 flex items-center gap-3 text-sm text-foreground/70 transition hover:text-foreground">
       <House size={18} />
       Main Home
     </Link>

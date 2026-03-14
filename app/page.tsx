@@ -309,33 +309,33 @@ export default async function Home() {
       </section>
 
       <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-24">
-        <MotionSection className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-5 text-white shadow-[0_20px_80px_-32px_rgba(15,23,42,0.5)] backdrop-blur-xl sm:p-8">
+        <MotionSection className="surface-card-elevated rounded-[2rem] p-5 text-foreground shadow-[0_20px_80px_-32px_rgba(15,23,42,0.35)] sm:p-8">
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
             <div className="space-y-5 lg:pr-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.26em] text-emerald-300/70">
+              <p className="text-xs font-semibold uppercase tracking-[0.26em] text-emerald-500/80 dark:text-emerald-300/70">
                 Offline Invite
               </p>
               <h2 className="max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">
                 Print this QR and let anyone join EarnHub in one scan.
               </h2>
-              <p className="max-w-3xl text-sm leading-6 text-white/70 sm:text-base">
+              <p className="max-w-3xl text-sm leading-6 text-foreground/70 sm:text-base">
                 Designed for posters, flyers, business cards, and offline campaigns.
                 The code opens the main home page directly so new users can land on the
                 platform without typing the address.
               </p>
-              <div className="flex w-full max-w-2xl flex-col gap-2 rounded-2xl border border-white/12 bg-white/[0.06] px-5 py-4 shadow-[0_12px_30px_-18px_rgba(0,0,0,0.45)]">
-                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-white/55">
+              <div className="flex w-full max-w-2xl flex-col gap-2 rounded-2xl border border-foreground/10 bg-foreground/[0.04] px-5 py-4 shadow-[0_12px_30px_-18px_rgba(0,0,0,0.2)]">
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/55">
                   Direct website link
                 </span>
-                <span className="overflow-hidden text-ellipsis break-words text-sm font-semibold leading-7 text-white sm:text-base">
+                <span className="overflow-hidden text-ellipsis break-words text-sm font-semibold leading-7 text-foreground sm:text-base">
                   {siteUrl}
                 </span>
               </div>
             </div>
 
             <div className="flex justify-center lg:justify-end lg:pl-6">
-              <div className="w-full max-w-[320px] rounded-[2rem] border border-white/12 bg-white/[0.06] p-4 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.45)]">
-                <div className="rounded-[1.5rem] border border-white/10 bg-white p-4">
+              <div className="w-full max-w-[320px] rounded-[2rem] border border-foreground/10 bg-foreground/[0.04] p-4 shadow-[0_24px_60px_-30px_rgba(0,0,0,0.24)]">
+                <div className="rounded-[1.5rem] border border-foreground/10 bg-white p-4 dark:border-white/10">
                   <div className="mx-auto h-[240px] w-[240px] sm:h-[250px] sm:w-[250px]">
                     <Image
                       src={qrCodeDataUrl}
@@ -347,11 +347,11 @@ export default async function Home() {
                     />
                   </div>
                 </div>
-                <div className="mt-4 rounded-2xl border border-white/10 bg-slate-950 px-4 py-4 text-center text-white">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-300/80">
+                <div className="mt-4 rounded-2xl border border-foreground/10 bg-foreground px-4 py-4 text-center text-background">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-300/80 dark:text-emerald-300/80">
                     Scan To Join and Earn
                   </p>
-                  <p className="mt-1 text-base font-semibold text-white sm:text-lg">
+                  <p className="mt-1 text-base font-semibold text-background sm:text-lg">
                     EarnHub Marketplace
                   </p>
                 </div>
