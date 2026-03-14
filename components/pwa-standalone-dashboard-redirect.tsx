@@ -10,27 +10,33 @@ function isStandalone() {
   return Boolean(displayModeStandalone || navigatorStandalone);
 }
 
-function hasAuthCookie() {
-  if (typeof document === "undefined") return false;
-  const cookie = document.cookie || "";
-  // NextAuth v4 commonly uses these cookie names depending on HTTPS and config.
-  return (
-    cookie.includes("next-auth.session-token=") ||
-    cookie.includes("__Secure-next-auth.session-token=") ||
-    cookie.includes("__Host-next-auth.session-token=")
-  );
-}
-
 export default function PwaStandaloneDashboardRedirect() {
   const router = useRouter();
 
   useEffect(() => {
     if (!isStandalone()) return;
-    // Only redirect users who likely have an active session; otherwise keep landing.
-    if (!hasAuthCookie()) return;
-    router.replace("/dashboard");
+
+    // NextAuth session cookies are HttpOnly, so we cannot rely on `document.cookie`.
+    // Instead, ask the NextAuth session endpoint and redirect if authenticated.
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/session", { cache: "no-store", credentials: "include" });
+        if (!res.ok) return;
+        const session = (await res.json().catch(() => null)) as { user?: unknown } | null;
+        if (!cancelled && session?.user) {
+          router.replace("/dashboard");
+        }
+      } catch {
+        // ignore
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [router]);
 
   return null;
 }
-
