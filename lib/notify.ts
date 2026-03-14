@@ -328,6 +328,18 @@ export async function sendPushDelivery(input: {
         : undefined,
     });
 
+    const failureDetails = result.responses
+      .map((response, index) => {
+        if (response.success) return null;
+        return {
+          code: response.error?.code || "unknown",
+          message: response.error?.message || "unknown error",
+          // Never log full tokens; just a short prefix for correlation.
+          tokenPrefix: tokens[index]?.token?.slice(0, 16) || "",
+        };
+      })
+      .filter((item): item is NonNullable<typeof item> => Boolean(item));
+
     const invalidTokens = result.responses
       .map((response, index) => ({ response, token: tokens[index]?.token }))
       .filter(({ response }) => {
@@ -352,16 +364,39 @@ export async function sendPushDelivery(input: {
     const success = result.successCount;
     const status = success > 0 ? "SENT" : "FAILED";
 
+    const codes = Array.from(new Set(failureDetails.map((item) => item.code)));
+    const errorSummary =
+      failed > 0
+        ? `${failed} device notification(s) failed${codes.length ? ` (${codes.join(", ")})` : ""}`
+        : null;
+
+    const deliveryPayload: Prisma.InputJsonValue = (() => {
+      const base =
+        input.payload && typeof input.payload === "object" && !Array.isArray(input.payload)
+          ? (input.payload as Record<string, unknown>)
+          : { payload: input.payload ?? null };
+
+      return {
+        ...base,
+        push: {
+          successCount: success,
+          failureCount: failed,
+          codes,
+          sampleErrors: failureDetails.slice(0, 3),
+        },
+      };
+    })();
+
     await logNotificationDelivery({
       userId: input.userId,
       channel: "PUSH",
       status,
       templateKey: input.templateKey,
-      error: failed > 0 ? `${failed} device notification(s) failed` : null,
-      payload: input.payload,
+      error: errorSummary,
+      payload: deliveryPayload,
     });
 
-    return { ok: success > 0 as boolean, status };
+    return { ok: success > 0 as boolean, status, details: { successCount: success, failureCount: failed, codes } };
   } catch (error) {
     await logNotificationDelivery({
       userId: input.userId,

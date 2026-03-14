@@ -115,6 +115,27 @@ export default function NotificationChannelPreferences() {
     setActionLoading(null);
   }
 
+  async function sendTestPush() {
+    setActionLoading("push:test");
+    setMessage("");
+
+    try {
+      const res = await fetch("/api/notifications/push/test", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      const raw = await res.text();
+      const parsed = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
+      setMessage(parsed.message || parsed.error || "Test sent");
+      if (res.ok) await load();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Unable to send test push");
+    }
+
+    setActionLoading(null);
+  }
+
   async function disconnectTelegram() {
     setActionLoading("telegram");
     setMessage("");
@@ -203,17 +224,33 @@ export default function NotificationChannelPreferences() {
                   ))}
                 </div>
               ) : null}
-              <Button
-                onClick={() => void enablePush()}
-                disabled={actionLoading !== null || !data?.pushConfigured || !pushReadyInBrowser}
-                className="w-full sm:w-auto"
-              >
-                {actionLoading === "push"
-                  ? "Enabling..."
-                  : data?.push.enabled
-                    ? "Register another device"
-                    : "Enable on this device"}
-              </Button>
+              <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+                <Button
+                  onClick={() => void enablePush()}
+                  disabled={actionLoading !== null || !data?.pushConfigured || !pushReadyInBrowser}
+                  className="w-full sm:w-auto"
+                >
+                  {actionLoading === "push"
+                    ? "Enabling..."
+                    : data?.push.enabled
+                      ? "Register another device"
+                      : "Enable on this device"}
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => void sendTestPush()}
+                  disabled={
+                    actionLoading !== null ||
+                    !data?.pushConfigured ||
+                    !pushReadyInBrowser ||
+                    !data?.push.enabled
+                  }
+                  className="w-full border-white/15 bg-transparent text-white hover:bg-white/10 sm:w-auto"
+                >
+                  {actionLoading === "push:test" ? "Sending..." : "Send test push"}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
