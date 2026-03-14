@@ -11,6 +11,7 @@ import { getCmsValue, getFeatureFlag } from "@/lib/cms";
 import { prisma } from "@/lib/prisma";
 import HomeLiveFloatsAndStats from "@/components/home-live-floats-and-stats";
 import HomeLiveHeroVisual from "@/components/home-live-hero-visual";
+import PwaInstallNudge from "@/components/pwa-install-nudge";
 
 type LandingContent = {
   heroTitle: string;
@@ -153,6 +154,7 @@ export default async function Home() {
 
   return (
     <div className="home-shell relative min-h-screen overflow-x-clip bg-background text-foreground">
+      <PwaInstallNudge />
       <div className="pointer-events-none absolute left-0 right-0 top-0 h-[560px] bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.24),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(59,130,246,0.22),transparent_40%)]" />
       <div className="pointer-events-none absolute inset-0 opacity-40">
         <div className="bg-grid" />

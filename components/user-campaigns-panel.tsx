@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { formatMoney } from "@/lib/format-money";
 import { normalizeExternalUrl } from "@/lib/external-url";
 import { useLiveRefresh } from "@/lib/live-refresh";
+import EmptyCampaignsPushNudge from "@/components/empty-campaigns-push-nudge";
 
 type Campaign = {
   id: string;
@@ -60,7 +61,10 @@ export default function UserCampaignsPanel() {
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       {campaigns.length === 0 ? (
-        <div className="py-20 text-center text-white/50 md:col-span-2">No live campaigns right now.</div>
+        <div className="py-20 text-center text-white/50 md:col-span-2">
+          <p>No live campaigns right now.</p>
+          <EmptyCampaignsPushNudge />
+        </div>
       ) : (
         campaigns.map((campaign) => {
           return (
