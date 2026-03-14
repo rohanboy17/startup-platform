@@ -25,6 +25,7 @@ model User {
   kycVerifiedAt DateTime?
   level       UserLevel    @default(L1)
   balance     Float        @default(0)
+  coinBalance Int          @default(0)
   dailySubmits Int         @default(0)
   totalApproved Int        @default(0)
   totalRejected Int        @default(0)
@@ -58,6 +59,11 @@ model User {
   adminTwoFactorChallenges AdminTwoFactorChallenge[]
   adminTwoFactorRecoveryCodes AdminTwoFactorRecoveryCode[]
   passwordResetTokens PasswordResetToken[]
+  referralCode ReferralCode?
+  referralsSent ReferralInvite[] @relation("ReferralInvitesSent")
+  referralInviteReceived ReferralInvite? @relation("ReferralInviteReceived")
+  coinTransactions CoinTransaction[]
+  coinRedemptions CoinRedemption[]
   deletedAt DateTime?
   deletedByUserId String?
   deletionReason String?
@@ -406,6 +412,54 @@ model SystemSetting {
   createdAt DateTime @default(now())
 }
 
+model ReferralCode {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  code      String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model ReferralInvite {
+  id             String               @id @default(uuid())
+  referrerUserId String
+  referredUserId String               @unique
+  codeUsed       String
+  status         ReferralInviteStatus @default(PENDING)
+  qualifiedAt    DateTime?
+  rewardedAt     DateTime?
+  createdAt      DateTime             @default(now())
+
+  referrer User @relation("ReferralInvitesSent", fields: [referrerUserId], references: [id])
+  referred User @relation("ReferralInviteReceived", fields: [referredUserId], references: [id])
+}
+
+model CoinTransaction {
+  id        String          @id @default(uuid())
+  userId    String
+  amount    Int
+  type      TransactionType
+  source    String
+  note      String?
+  createdAt DateTime        @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model CoinRedemption {
+  id           String               @id @default(uuid())
+  userId       String
+  coinsUsed    Int
+  walletAmount Float
+  status       CoinRedemptionStatus @default(APPROVED)
+  createdAt    DateTime             @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
 model LegalEvidence {
   id               String   @id @default(uuid())
   entityType       String
@@ -545,4 +599,17 @@ enum DeliveryStatus {
   SENT
   FAILED
   SKIPPED
+}
+
+enum ReferralInviteStatus {
+  PENDING
+  QUALIFIED
+  REWARDED
+  REJECTED
+}
+
+enum CoinRedemptionStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

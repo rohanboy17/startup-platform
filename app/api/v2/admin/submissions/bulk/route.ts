@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getSubmissionCommissionRate } from "@/lib/commission";
 import { getLevelFromApprovedCount } from "@/lib/level";
+import { applyReferralRewardsOnFirstApproval } from "@/lib/referrals";
 import { getAppSettings } from "@/lib/system-settings";
 
 type BulkAction = "APPROVE" | "REJECT";
@@ -158,6 +159,13 @@ export async function PATCH(req: Request) {
             where: { id: submissionId },
             data: { adminStatus: "ADMIN_APPROVED", status: "APPROVED", rewardAmount: netReward },
           });
+
+          if (submission.user.totalApproved === 0) {
+            await applyReferralRewardsOnFirstApproval(tx, {
+              referredUserId: submission.user.id,
+              campaignTitle: submission.campaign!.title,
+            });
+          }
 
           const notification = await tx.notification.create({
             data: {

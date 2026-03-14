@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { consumeRateLimit } from "@/lib/rate-limit";
 import { getClientIp } from "@/lib/ip";
 import { checkIpAccess, createSecurityEvent } from "@/lib/security";
+import { ensureReferralCodeForUser } from "@/lib/referrals";
 
 export async function POST(req: Request) {
   try {
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { name, email, mobile, password, role } = await req.json();
+    const { name, email, mobile, password, role, referralCode } = await req.json();
     const normalizedRole =
       typeof role === "string" && ["USER", "BUSINESS"].includes(role.toUpperCase())
         ? (role.toUpperCase() as "USER" | "BUSINESS")
@@ -71,16 +72,72 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Mobile number already registered" }, { status: 400 });
     }
 
+    const normalizedReferralCode =
+      normalizedRole === "USER" && typeof referralCode === "string"
+        ? referralCode.trim().toUpperCase()
+        : "";
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email: normalizedEmail,
-        mobile: normalizedMobile,
-        password: hashedPassword,
-        role: normalizedRole,
-      },
+    const user = await prisma.$transaction(async (tx) => {
+      let referralOwner: { userId: string; code: string } | null = null;
+
+      if (normalizedReferralCode) {
+        const code = await tx.referralCode.findFirst({
+          where: {
+            code: normalizedReferralCode,
+            isActive: true,
+            user: {
+              role: "USER",
+              accountStatus: "ACTIVE",
+              deletedAt: null,
+            },
+          },
+          select: { userId: true, code: true },
+        });
+
+        if (!code) {
+          throw new Error("Invalid referral code");
+        }
+
+        referralOwner = code;
+      }
+
+      const createdUser = await tx.user.create({
+        data: {
+          name,
+          email: normalizedEmail,
+          mobile: normalizedMobile,
+          password: hashedPassword,
+          role: normalizedRole,
+          ipAddress: ip,
+        },
+      });
+
+      if (normalizedRole === "USER") {
+        await ensureReferralCodeForUser(tx, {
+          userId: createdUser.id,
+          name: createdUser.name,
+          email: createdUser.email,
+        });
+
+        if (referralOwner && referralOwner.userId !== createdUser.id) {
+          await tx.referralInvite.create({
+            data: {
+              referrerUserId: referralOwner.userId,
+              referredUserId: createdUser.id,
+              codeUsed: referralOwner.code,
+            },
+          });
+        }
+      }
+
+      return createdUser;
+    }).catch((error) => {
+      if (error instanceof Error && error.message === "Invalid referral code") {
+        throw error;
+      }
+      throw error;
     });
 
     return NextResponse.json(
@@ -88,6 +145,9 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (error) {
+    if (error instanceof Error && error.message === "Invalid referral code") {
+      return NextResponse.json({ error: "Invalid referral code" }, { status: 400 });
+    }
     console.error("Register route failed:", error);
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }

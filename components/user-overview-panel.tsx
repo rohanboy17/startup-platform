@@ -14,11 +14,13 @@ type OverviewResponse = {
     displayName: string;
     level: "L1" | "L2" | "L3" | "L4" | "L5";
     balance: number;
+    coinBalance: number;
     totalApproved: number;
     dailySubmits: number;
   };
   metrics: {
     availableBalance: number;
+    coinBalance: number;
     pendingWithdrawalAmount: number;
     totalWithdrawn: number;
     approvedSubmissions: number;
@@ -126,6 +128,12 @@ export default function UserOverviewPanel() {
         />
 
         <KpiCard
+          label="EarnHub Coins"
+          value={data.metrics.coinBalance}
+          tone="info"
+        />
+
+        <KpiCard
           label="Pending withdrawal"
           value={`INR ${formatMoney(data.metrics.pendingWithdrawalAmount)}`}
           tone="warning"
@@ -206,7 +214,7 @@ export default function UserOverviewPanel() {
               </div>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               <Link href="/dashboard/user/tasks" className="rounded-2xl border border-white/10 bg-black/20 p-4 transition hover:border-emerald-300/30 hover:bg-black/30">
                 <p className="text-sm font-medium text-white">Open tasks</p>
                 <p className="mt-1 text-sm text-white/55">Find available campaigns with open slots.</p>
@@ -218,6 +226,10 @@ export default function UserOverviewPanel() {
               <Link href="/dashboard/user/notifications" className="rounded-2xl border border-white/10 bg-black/20 p-4 transition hover:border-emerald-300/30 hover:bg-black/30">
                 <p className="text-sm font-medium text-white">Open notifications</p>
                 <p className="mt-1 text-sm text-white/55">Check approval, rejection, and payout updates.</p>
+              </Link>
+              <Link href="/dashboard/user/referrals" className="rounded-2xl border border-white/10 bg-black/20 p-4 transition hover:border-emerald-300/30 hover:bg-black/30">
+                <p className="text-sm font-medium text-white">Open referrals</p>
+                <p className="mt-1 text-sm text-white/55">Share your code, earn coins, and redeem them to wallet.</p>
               </Link>
             </div>
         </SectionCard>

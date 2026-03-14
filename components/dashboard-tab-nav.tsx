@@ -24,6 +24,7 @@ import {
   ArrowUpCircle,
   AlertTriangle,
   Settings2,
+  Gift,
 } from "lucide-react";
 import { useLiveRefresh } from "@/lib/live-refresh";
 import LogoutButton from "@/components/logout-button";
@@ -47,7 +48,8 @@ type IconName =
   | "help"
   | "risk"
   | "cms"
-  | "trust";
+  | "trust"
+  | "referrals";
 
 type Item = {
   key: string;
@@ -76,6 +78,7 @@ const iconMap: Record<IconName, ComponentType<{ size?: number }>> = {
   risk: AlertTriangle,
   cms: Settings2,
   trust: ScrollText,
+  referrals: Gift,
 };
 
 type NavAlertsResponse = {

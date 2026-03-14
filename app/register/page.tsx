@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Building2, CheckCircle2, UserRound } from "lucide-react";
@@ -11,10 +11,13 @@ import { Button } from "@/components/ui/button";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const searchReferralCode = searchParams.get("ref")?.trim().toUpperCase() || "";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
+  const [referralCode, setReferralCode] = useState(searchReferralCode);
   const [role, setRole] = useState<"USER" | "BUSINESS">("USER");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -35,6 +38,7 @@ export default function RegisterPage() {
         mobile,
         password,
         role,
+        referralCode: role === "USER" ? referralCode : undefined,
       }),
     });
 
@@ -163,6 +167,16 @@ export default function RegisterPage() {
                   autoComplete="new-password"
                   className="h-11 border-white/15 bg-white/5 transition focus-visible:border-sky-300/70 focus-visible:ring-sky-300/20"
                 />
+                <Input
+                  placeholder="Referral code (optional)"
+                  value={referralCode}
+                  onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
+                  className="h-11 border-white/15 bg-white/5 transition focus-visible:border-sky-300/70 focus-visible:ring-sky-300/20"
+                  disabled={role !== "USER"}
+                />
+                <p className="-mt-2 text-xs text-white/55">
+                  User referrals only. Enter a code to unlock EarnHub Coins after your first approved submission.
+                </p>
 
                 <div className="grid grid-cols-2 gap-3">
                   <motion.button

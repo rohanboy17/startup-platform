@@ -43,6 +43,7 @@ export default async function UserLayout({
               { key: "user.submissions", href: "/dashboard/user/submissions", label: "Submissions", icon: "submissions" },
               { key: "user.wallet", href: "/dashboard/user/wallet", label: "Wallet", icon: "wallet" },
               { key: "user.withdrawals", href: "/dashboard/user/withdrawals", label: "Withdrawals", icon: "withdrawals" },
+              { key: "user.referrals", href: "/dashboard/user/referrals", label: "Referrals", icon: "referrals" },
               { key: "user.notifications", href: "/dashboard/user/notifications", label: "Notifications", icon: "notifications" },
               { key: "user.help", href: "/dashboard/user/help", label: "Help", icon: "help" },
             ]}
