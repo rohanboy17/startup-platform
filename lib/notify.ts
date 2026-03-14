@@ -312,20 +312,41 @@ export async function sendPushDelivery(input: {
     return { ok: false as const, status: "SKIPPED" as const };
   }
 
+  const retryableCodes = new Set<string>([
+    "messaging/internal-error",
+    "messaging/server-unavailable",
+    "messaging/unknown-error",
+  ]);
+
+  const normalizedData = input.data
+    ? Object.fromEntries(
+        Object.entries(input.data)
+          .filter(([, value]) => value !== undefined && value !== null)
+          .map(([key, value]) => [key, String(value)])
+      )
+    : undefined;
+
+  const link = normalizedData?.link;
+  const webpush =
+    typeof link === "string" && link.trim().length > 0
+      ? {
+          fcmOptions: { link },
+        }
+      : undefined;
+
   try {
-    const result = await messaging.sendEachForMulticast({
-      tokens: tokens.map((item) => item.token),
+    const basePayload = {
       notification: {
         title: input.title,
         body: input.message,
       },
-      data: input.data
-        ? Object.fromEntries(
-            Object.entries(input.data)
-              .filter(([, value]) => value !== undefined && value !== null)
-              .map(([key, value]) => [key, String(value)])
-          )
-        : undefined,
+      data: normalizedData,
+      webpush,
+    } as const;
+
+    const result = await messaging.sendEachForMulticast({
+      tokens: tokens.map((item) => item.token),
+      ...basePayload,
     });
 
     const failureDetails = result.responses
@@ -335,6 +356,36 @@ export async function sendPushDelivery(input: {
           code: response.error?.code || "unknown",
           message: response.error?.message || "unknown error",
           // Never log full tokens; just a short prefix for correlation.
+          tokenPrefix: tokens[index]?.token?.slice(0, 16) || "",
+        };
+      })
+      .filter((item): item is NonNullable<typeof item> => Boolean(item));
+
+    // Retry once when FCM returns only retryable server-side errors (common with web push).
+    const uniqueFailureCodes = new Set(failureDetails.map((item) => item.code));
+    const shouldRetry =
+      result.successCount === 0 &&
+      failureDetails.length > 0 &&
+      Array.from(uniqueFailureCodes).every((code) => retryableCodes.has(code));
+
+    const retryResult = shouldRetry
+      ? await (async () => {
+          await new Promise((r) => setTimeout(r, 600));
+          return messaging.sendEachForMulticast({
+            tokens: tokens.map((item) => item.token),
+            ...basePayload,
+          });
+        })()
+      : null;
+
+    const finalResult = retryResult ?? result;
+
+    const finalFailureDetails = finalResult.responses
+      .map((response, index) => {
+        if (response.success) return null;
+        return {
+          code: response.error?.code || "unknown",
+          message: response.error?.message || "unknown error",
           tokenPrefix: tokens[index]?.token?.slice(0, 16) || "",
         };
       })
@@ -360,11 +411,11 @@ export async function sendPushDelivery(input: {
       });
     }
 
-    const failed = result.failureCount;
-    const success = result.successCount;
+    const failed = finalResult.failureCount;
+    const success = finalResult.successCount;
     const status = success > 0 ? "SENT" : "FAILED";
 
-    const codes = Array.from(new Set(failureDetails.map((item) => item.code)));
+    const codes = Array.from(new Set(finalFailureDetails.map((item) => item.code)));
     const errorSummary =
       failed > 0
         ? `${failed} device notification(s) failed${codes.length ? ` (${codes.join(", ")})` : ""}`
@@ -382,7 +433,8 @@ export async function sendPushDelivery(input: {
           successCount: success,
           failureCount: failed,
           codes,
-          sampleErrors: failureDetails.slice(0, 3),
+          retried: Boolean(retryResult),
+          sampleErrors: finalFailureDetails.slice(0, 3),
         },
       };
     })();
@@ -396,7 +448,7 @@ export async function sendPushDelivery(input: {
       payload: deliveryPayload,
     });
 
-    return { ok: success > 0 as boolean, status, details: { successCount: success, failureCount: failed, codes } };
+    return { ok: success > 0 as boolean, status, details: { successCount: success, failureCount: failed, codes, retried: Boolean(retryResult) } };
   } catch (error) {
     await logNotificationDelivery({
       userId: input.userId,
