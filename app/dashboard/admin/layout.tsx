@@ -38,6 +38,7 @@ export default async function AdminLayout({
               { key: "admin.businesses", href: "/dashboard/admin/businesses", label: "Businesses", icon: "users" },
               { key: "admin.withdrawals", href: "/dashboard/admin/withdrawals", label: "Withdrawals", icon: "wallet" },
               { key: "admin.revenue", href: "/dashboard/admin/revenue", label: "Revenue", icon: "revenue" },
+              { key: "admin.referrals", href: "/dashboard/admin/referrals", label: "Referrals", icon: "referrals" },
               { key: "admin.notifications", href: "/dashboard/admin/notifications", label: "Notifications", icon: "notifications" },
               { key: "admin.settings", href: "/dashboard/admin/settings", label: "System Settings", icon: "cms" },
               { key: "admin.compliance", href: "/dashboard/admin/compliance", label: "Compliance", icon: "audit" },
