@@ -13,8 +13,8 @@ export async function GET() {
   };
 
   const body = `
-importScripts("https://www.gstatic.com/firebasejs/12.2.1/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/12.2.1/firebase-messaging-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/12.10.0/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/12.10.0/firebase-messaging-compat.js");
 
 firebase.initializeApp(${JSON.stringify(config)});
 const messaging = firebase.messaging();

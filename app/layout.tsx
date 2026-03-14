@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ThemeProvider } from "@/components/theme-provider";
 import SiteHeader from "@/components/site-header";
 import PwaRegister from "@/components/pwa-register";
+import PushForegroundListener from "@/components/push-foreground-listener";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -43,6 +44,7 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <PwaRegister />
+          <PushForegroundListener />
           <SiteHeader />
           <div className="pt-14 sm:pt-16">{children}</div>
           <footer className="relative border-t border-foreground/10 bg-background px-4 py-8 text-sm text-foreground/70 sm:px-6 sm:py-12">

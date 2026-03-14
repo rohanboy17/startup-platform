@@ -90,6 +90,19 @@ export default async function Home() {
     }),
   ]);
 
+  // Avoid rendering duplicate active announcements (common during admin testing).
+  const uniqueAnnouncements = (() => {
+    const seen = new Set<string>();
+    const out: typeof announcements = [];
+    for (const item of announcements) {
+      const signature = `${item.title}||${item.message}||${item.link || ""}`;
+      if (seen.has(signature)) continue;
+      seen.add(signature);
+      out.push(item);
+    }
+    return out;
+  })();
+
   const approvalLogIds = approvalLogs
     .map((log: ApprovalLog) => extractSubmissionId(log.details))
     .filter((id): id is string => Boolean(id));
@@ -146,20 +159,31 @@ export default async function Home() {
       </div>
       <HomeParallaxOrbs />
 
-      {showAnnouncements && announcements.length > 0 ? (
+      {showAnnouncements && uniqueAnnouncements.length > 0 ? (
         <section className="relative mx-auto w-full max-w-screen-2xl px-4 sm:px-6">
-          <div className="rounded-xl border border-amber-300/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-100">
-            {announcements.map((item) => (
-              <p key={item.id}>
-                <span className="font-semibold">{item.title}: </span>
-                {item.message}
-                {item.link ? (
-                  <Link href={item.link} className="ml-2 underline hover:text-foreground">
-                    Learn more
-                  </Link>
-                ) : null}
-              </p>
-            ))}
+          <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] px-4 py-3 text-sm text-foreground/80 shadow-[0_18px_50px_-35px_rgba(0,0,0,0.6)]">
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-2">
+              {uniqueAnnouncements.map((item) => (
+                <div key={item.id} className="flex min-w-0 items-start gap-2 sm:items-center">
+                  <span className="mt-0.5 inline-flex h-2 w-2 shrink-0 rounded-full bg-emerald-400/90 sm:mt-0" />
+                  <p className="min-w-0 break-words">
+                    <span className="font-semibold text-foreground">{item.title}</span>
+                    <span className="text-foreground/60">: </span>
+                    <span className="text-foreground/80">{item.message}</span>
+                    {item.link ? (
+                      <Link
+                        href={item.link}
+                        className="ml-2 inline-flex items-center rounded-md border border-foreground/10 bg-background/40 px-2 py-0.5 text-xs font-semibold text-foreground/80 transition hover:bg-foreground/10 hover:text-foreground"
+                        target={item.link.startsWith("http") ? "_blank" : undefined}
+                        rel={item.link.startsWith("http") ? "noreferrer noopener" : undefined}
+                      >
+                        Learn more
+                      </Link>
+                    ) : null}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       ) : null}
