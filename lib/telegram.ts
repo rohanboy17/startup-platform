@@ -13,7 +13,9 @@ function getTelegramLinkSecret() {
 }
 
 function signTelegramPayload(payload: string) {
-  return crypto.createHmac("sha256", getTelegramLinkSecret()).update(payload).digest("base64url");
+  // Telegram deep links have a strict `start` payload length limit (64 chars).
+  // Use a compact token format: `${userId}.${exp36}.${sigHex}` where sig is a short hex HMAC.
+  return crypto.createHmac("sha256", getTelegramLinkSecret()).update(payload).digest("hex").slice(0, 24);
 }
 
 export function isTelegramConfigured() {
@@ -21,32 +23,27 @@ export function isTelegramConfigured() {
 }
 
 export function createTelegramLinkToken(userId: string) {
-  const expiresAt = Date.now() + 1000 * 60 * 60 * 24 * 7;
-  const payload = `${userId}:${expiresAt}`;
-  const signature = signTelegramPayload(payload);
-  return `${Buffer.from(payload).toString("base64url")}.${signature}`;
+  const expiresAtMs = Date.now() + 1000 * 60 * 60 * 24 * 7;
+  const exp36 = expiresAtMs.toString(36);
+  const payload = `${userId}.${exp36}`;
+  const sig = signTelegramPayload(payload);
+  return `${payload}.${sig}`;
 }
 
 export function verifyTelegramLinkToken(token: string) {
-  const [encodedPayload, signature] = token.split(".");
-  if (!encodedPayload || !signature) {
+  const [userId, exp36, sig] = token.split(".");
+  if (!userId || !exp36 || !sig) {
     return null;
   }
 
-  let payload = "";
-  try {
-    payload = Buffer.from(encodedPayload, "base64url").toString("utf8");
-  } catch {
+  const payload = `${userId}.${exp36}`;
+  const expected = signTelegramPayload(payload);
+  if (expected !== sig) {
     return null;
   }
 
-  if (signTelegramPayload(payload) !== signature) {
-    return null;
-  }
-
-  const [userId, expiresAtRaw] = payload.split(":");
-  const expiresAt = Number(expiresAtRaw);
-  if (!userId || !Number.isFinite(expiresAt) || expiresAt < Date.now()) {
+  const expiresAt = Number.parseInt(exp36, 36);
+  if (!Number.isFinite(expiresAt) || expiresAt < Date.now()) {
     return null;
   }
 
