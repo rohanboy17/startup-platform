@@ -78,7 +78,10 @@ export default function NotificationChannelPreferences() {
         return;
       }
 
-      const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+      // Reuse the already-registered root service worker when possible.
+      const registration =
+        (await navigator.serviceWorker.getRegistration()) ??
+        (await navigator.serviceWorker.register("/firebase-messaging-sw.js", { scope: "/" }));
       const token = await getToken(messaging, {
         vapidKey,
         serviceWorkerRegistration: registration,
