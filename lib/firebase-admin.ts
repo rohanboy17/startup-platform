@@ -10,6 +10,15 @@ function getFirebaseConfig() {
     return null;
   }
 
+  // Prevent runtime crashes when env vars are present but not a real service-account credential.
+  if (!clientEmail.includes("gserviceaccount.com")) {
+    return null;
+  }
+
+  if (!privateKey.includes("BEGIN PRIVATE KEY")) {
+    return null;
+  }
+
   return { projectId, clientEmail, privateKey };
 }
 
@@ -23,12 +32,16 @@ export function getFirebaseMessaging() {
     return null;
   }
 
-  const app =
-    getApps()[0] ??
-    initializeApp({
-      credential: cert(config),
-      projectId: config.projectId,
-    });
+  try {
+    const app =
+      getApps()[0] ??
+      initializeApp({
+        credential: cert(config),
+        projectId: config.projectId,
+      });
 
-  return getMessaging(app);
+    return getMessaging(app);
+  } catch {
+    return null;
+  }
 }
