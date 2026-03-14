@@ -39,7 +39,8 @@ function decodeUserId(encoded: string) {
 
 function signTelegramPayload(payload: string) {
   // Keep signature short to fit Telegram's 64-char `start` payload limit.
-  return crypto.createHmac("sha256", getTelegramLinkSecret()).update(payload).digest("base64url").slice(0, 16);
+  // Telegram deep-link payloads are best kept to [A-Za-z0-9_-]. Avoid dots.
+  return crypto.createHmac("sha256", getTelegramLinkSecret()).update(payload).digest("base64url").slice(0, 12);
 }
 
 export function isTelegramConfigured() {
@@ -50,21 +51,20 @@ export function createTelegramLinkToken(userId: string) {
   const expiresAtMs = Date.now() + 1000 * 60 * 60 * 24 * 7;
   const exp36 = expiresAtMs.toString(36);
   const userIdEncoded = encodeUserId(userId);
-  const payload = `${userIdEncoded}.${exp36}`;
+  const payload = `${userIdEncoded}_${exp36}`;
   const sig = signTelegramPayload(payload);
-  const token = `${payload}.${sig}`;
-  // Ensure we never exceed Telegram's 64-character `start` limit.
-  // With UUID compression, this stays well under 64 chars.
-  return token.slice(0, 64);
+  const token = `${payload}_${sig}`;
+  // With UUID compression this stays well under Telegram's 64-char limit.
+  return token;
 }
 
 export function verifyTelegramLinkToken(token: string) {
-  const [userIdEncoded, exp36, sig] = token.split(".");
+  const [userIdEncoded, exp36, sig] = token.split("_");
   if (!userIdEncoded || !exp36 || !sig) {
     return null;
   }
 
-  const payload = `${userIdEncoded}.${exp36}`;
+  const payload = `${userIdEncoded}_${exp36}`;
   const expected = signTelegramPayload(payload);
   if (expected !== sig) {
     return null;
@@ -85,7 +85,7 @@ export function getTelegramDeepLink(userId: string) {
 
   const username = getTelegramBotUsername();
   const token = createTelegramLinkToken(userId);
-  return `https://t.me/${username}?start=${token}`;
+  return `https://t.me/${username}?start=${encodeURIComponent(token)}`;
 }
 
 export async function sendTelegramMessage(chatId: string, text: string) {
