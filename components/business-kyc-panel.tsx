@@ -110,81 +110,81 @@ export default function BusinessKycPanel() {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  if (error && !data) return <p className="text-sm text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-white/60">Loading KYC...</p>;
+  if (error && !data) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
+  if (!data) return <p className="text-sm text-foreground/60">Loading KYC...</p>;
 
   return (
     <div className="space-y-6">
-      <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
+      <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md">
         <CardContent className="space-y-3 p-4 sm:p-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-white/60">KYC status</p>
-              <p className="text-2xl font-semibold text-white">{statusLabel}</p>
+              <p className="text-sm text-foreground/60">KYC status</p>
+              <p className="text-2xl font-semibold text-foreground">{statusLabel}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 px-4 py-2 text-sm text-white/70">
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 px-4 py-2 text-sm text-foreground/70">
               Account: {data.profile.email}
             </div>
           </div>
           {data.request?.notes ? (
-            <p className="text-sm text-amber-100/80">Reviewer notes: {data.request.notes}</p>
+            <p className="text-sm text-amber-800 dark:text-amber-200">Reviewer notes: {data.request.notes}</p>
           ) : null}
         </CardContent>
       </Card>
 
       {hasPending ? (
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="space-y-3 p-4 sm:p-6 text-sm text-white/70">
+        <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md">
+          <CardContent className="space-y-3 p-4 sm:p-6 text-sm text-foreground/70">
             <p>Your KYC request is currently under review.</p>
             <p>We will notify you once it is approved or rejected.</p>
           </CardContent>
         </Card>
       ) : (
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
+        <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md">
           <CardContent className="space-y-5 p-4 sm:p-6">
             <div>
-              <p className="text-sm text-white/60">Submit KYC details</p>
-              <h3 className="mt-1 text-xl font-semibold text-white">Business verification form</h3>
+              <p className="text-sm text-foreground/60">Submit KYC details</p>
+              <h3 className="mt-1 text-xl font-semibold text-foreground">Business verification form</h3>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm text-white/70">Legal business name</label>
+                <label className="text-sm text-foreground/70">Legal business name</label>
                 <Input value={form.legalName} onChange={(e) => updateFormField("legalName", e.target.value)} />
               </div>
               <div className="space-y-2">
-                <label className="text-sm text-white/70">Contact person name</label>
+                <label className="text-sm text-foreground/70">Contact person name</label>
                 <Input value={form.contactName} onChange={(e) => updateFormField("contactName", e.target.value)} />
               </div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm text-white/70">Phone number</label>
+                <label className="text-sm text-foreground/70">Phone number</label>
                 <Input value={form.phone} onChange={(e) => updateFormField("phone", e.target.value)} />
               </div>
               <div className="space-y-2">
-                <label className="text-sm text-white/70">Website (optional)</label>
+                <label className="text-sm text-foreground/70">Website (optional)</label>
                 <Input value={form.website} onChange={(e) => updateFormField("website", e.target.value)} />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm text-white/70">Business address</label>
+              <label className="text-sm text-foreground/70">Business address</label>
               <textarea
                 value={form.address}
                 onChange={(e) => updateFormField("address", e.target.value)}
-                className="min-h-24 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
+                className="min-h-24 w-full rounded-xl border border-foreground/20 bg-background/60 px-4 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20"
               />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm text-white/70">Tax ID (optional)</label>
+                <label className="text-sm text-foreground/70">Tax ID (optional)</label>
                 <Input value={form.taxId} onChange={(e) => updateFormField("taxId", e.target.value)} />
               </div>
               <div className="space-y-2">
-                <label className="text-sm text-white/70">Document URL (optional)</label>
+                <label className="text-sm text-foreground/70">Document URL (optional)</label>
                 <Input
                   value={form.documentUrl}
                   onChange={(e) => updateFormField("documentUrl", e.target.value)}
@@ -195,8 +195,8 @@ export default function BusinessKycPanel() {
             <Button onClick={() => void submit()} disabled={saving || isVerified} className="w-full sm:w-auto">
               {saving ? "Submitting..." : "Request KYC Review"}
             </Button>
-            {message ? <p className="text-sm text-emerald-300">{message}</p> : null}
-            {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+            {message ? <p className="text-sm text-emerald-700 dark:text-emerald-300">{message}</p> : null}
+            {error ? <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p> : null}
           </CardContent>
         </Card>
       )}

@@ -139,7 +139,7 @@ export default async function Home() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-x-clip bg-background text-foreground">
+    <div className="home-shell relative min-h-screen overflow-x-clip bg-background text-foreground">
       <div className="pointer-events-none absolute left-0 right-0 top-0 h-[560px] bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.24),transparent_45%),radial-gradient(circle_at_80%_20%,rgba(59,130,246,0.22),transparent_40%)]" />
       <div className="pointer-events-none absolute inset-0 opacity-40">
         <div className="bg-grid" />

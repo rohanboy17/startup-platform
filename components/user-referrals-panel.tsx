@@ -8,6 +8,7 @@ import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
+import { useHydrated } from "@/lib/use-hydrated";
 
 type ReferralsResponse = {
   settings: {
@@ -52,10 +53,10 @@ type ReferralsResponse = {
 };
 
 function statusTone(status: ReferralsResponse["invites"][number]["status"]) {
-  if (status === "REWARDED") return "text-emerald-300";
-  if (status === "PENDING") return "text-amber-200";
-  if (status === "REJECTED") return "text-rose-300";
-  return "text-sky-200";
+  if (status === "REWARDED") return "text-emerald-700 dark:text-emerald-300";
+  if (status === "PENDING") return "text-amber-800 dark:text-amber-200";
+  if (status === "REJECTED") return "text-rose-600 dark:text-rose-300";
+  return "text-sky-700 dark:text-sky-200";
 }
 
 export default function UserReferralsPanel() {
@@ -64,6 +65,7 @@ export default function UserReferralsPanel() {
   const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState<string | null>(null);
   const [redeemCoins, setRedeemCoins] = useState("");
+  const hydrated = useHydrated();
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/users/me/referrals", { credentials: "include" });
@@ -125,16 +127,16 @@ export default function UserReferralsPanel() {
     await load();
   }
 
-  if (error) return <p className="text-sm text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-white/60">Loading referrals...</p>;
+  if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
+  if (!data) return <p className="text-sm text-foreground/60">Loading referrals...</p>;
 
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">Referral rewards</p>
+          <p className="text-sm uppercase tracking-[0.24em] text-emerald-600/80 dark:text-emerald-300/70">Referral rewards</p>
           <h2 className="mt-2 text-3xl font-semibold md:text-4xl">Coins and referrals</h2>
-          <p className="mt-2 max-w-2xl text-sm text-white/65 md:text-base">
+          <p className="mt-2 max-w-2xl text-sm text-foreground/65 md:text-base">
             Invite new users, unlock EarnHub Coins after their first approved submission, and redeem coins into wallet value.
           </p>
         </div>
@@ -193,16 +195,16 @@ export default function UserReferralsPanel() {
 
         <SectionCard elevated className="space-y-5 p-4 sm:p-6">
           <div>
-            <p className="text-sm text-white/60">Redeem coins</p>
-            <h3 className="text-xl font-semibold text-white">Convert coins into wallet balance</h3>
+            <p className="text-sm text-foreground/60">Redeem coins</p>
+            <h3 className="text-xl font-semibold text-foreground">Convert coins into wallet balance</h3>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-            <div className="flex items-center gap-2 text-white">
-              <Coins size={16} className="text-amber-200" />
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+            <div className="flex items-center gap-2 text-foreground">
+              <Coins size={16} className="text-amber-700 dark:text-amber-200" />
               <p className="font-medium">Current rules</p>
             </div>
-            <ul className="mt-3 space-y-2 text-sm text-white/70">
+            <ul className="mt-3 space-y-2 text-sm text-foreground/70">
               <li>Minimum redeem: {data.settings.redeemMinCoins} coins</li>
               <li>Monthly limit: {data.settings.redeemMonthlyLimit} coins</li>
               <li>Conversion rate: 1 coin = INR {data.settings.coinToInrRate.toFixed(2)}</li>
@@ -215,7 +217,7 @@ export default function UserReferralsPanel() {
               value={redeemCoins}
               onChange={(e) => setRedeemCoins(e.target.value.replace(/[^\d]/g, ""))}
               placeholder={`Enter coins (min ${data.settings.redeemMinCoins})`}
-              className="h-11 w-full rounded-xl border border-white/15 bg-white/5 px-3 text-sm text-white outline-none transition focus:border-emerald-300/40"
+              className="h-11 w-full rounded-xl border border-foreground/20 bg-background/60 px-3 text-sm text-foreground placeholder:text-foreground/50 outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20"
             />
             <Button onClick={redeem} disabled={loading !== null} className="w-full sm:w-auto">
               <Wallet size={16} />
@@ -226,29 +228,29 @@ export default function UserReferralsPanel() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+        <Card className="rounded-3xl border-foreground/10 bg-background/50 shadow-xl shadow-black/10 dark:shadow-black/20 backdrop-blur-md">
           <CardContent className="space-y-5 p-4 sm:p-6">
             <div>
-              <p className="text-sm text-white/60">Referral history</p>
-              <h3 className="text-xl font-semibold text-white">Users you invited</h3>
+              <p className="text-sm text-foreground/60">Referral history</p>
+              <h3 className="text-xl font-semibold text-foreground">Users you invited</h3>
             </div>
 
             {data.invites.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-6 text-sm text-white/55">
+              <div className="rounded-2xl border border-dashed border-foreground/15 bg-foreground/[0.03] p-6 text-sm text-foreground/70">
                 No referrals yet. Share your code to start earning coins.
               </div>
             ) : (
               <div className="space-y-3">
                 {data.invites.map((item) => (
-                  <div key={item.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                  <div key={item.id} className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      <p className="font-medium text-white">{item.referredUser.name}</p>
+                      <p className="font-medium text-foreground">{item.referredUser.name}</p>
                       <span className={`text-xs font-medium uppercase tracking-[0.18em] ${statusTone(item.status)}`}>
                         {item.status}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm text-white/60">
-                      Joined {new Date(item.createdAt).toLocaleDateString()}
+                    <p className="mt-2 text-sm text-foreground/60" suppressHydrationWarning>
+                      Joined {hydrated ? new Date(item.createdAt).toLocaleDateString() : ""}
                     </p>
                   </div>
                 ))}
@@ -257,29 +259,31 @@ export default function UserReferralsPanel() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+        <Card className="rounded-3xl border-foreground/10 bg-background/50 shadow-xl shadow-black/10 dark:shadow-black/20 backdrop-blur-md">
           <CardContent className="space-y-5 p-4 sm:p-6">
             <div>
-              <p className="text-sm text-white/60">Coin activity</p>
-              <h3 className="text-xl font-semibold text-white">Credits and redemptions</h3>
+              <p className="text-sm text-foreground/60">Coin activity</p>
+              <h3 className="text-xl font-semibold text-foreground">Credits and redemptions</h3>
             </div>
 
             {data.transactions.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-6 text-sm text-white/55">
+              <div className="rounded-2xl border border-dashed border-foreground/15 bg-foreground/[0.03] p-6 text-sm text-foreground/70">
                 No coin transactions yet.
               </div>
             ) : (
               <div className="space-y-3">
                 {data.transactions.map((item) => (
-                  <div key={item.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                  <div key={item.id} className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      <p className="font-medium text-white">{item.note || item.source}</p>
-                      <span className={item.type === "CREDIT" ? "text-emerald-300" : "text-amber-200"}>
+                      <p className="font-medium text-foreground">{item.note || item.source}</p>
+                      <span className={item.type === "CREDIT" ? "text-emerald-700 dark:text-emerald-300" : "text-amber-800 dark:text-amber-200"}>
                         {item.type === "CREDIT" ? "+" : "-"}
                         {item.amount} coins
                       </span>
                     </div>
-                    <p className="mt-2 text-sm text-white/60">{new Date(item.createdAt).toLocaleString()}</p>
+                    <p className="mt-2 text-sm text-foreground/60" suppressHydrationWarning>
+                      {hydrated ? new Date(item.createdAt).toLocaleString() : ""}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -288,7 +292,7 @@ export default function UserReferralsPanel() {
         </Card>
       </div>
 
-      {feedback ? <p className="text-sm text-white/70">{feedback}</p> : null}
+      {feedback ? <p className="text-sm text-foreground/70">{feedback}</p> : null}
     </div>
   );
 }

@@ -49,7 +49,7 @@ export default function AdminReferralCodeToggle({
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[11px] uppercase tracking-[0.18em] text-white/60">
+        <span className="rounded-full border border-foreground/10 bg-foreground/[0.03] px-2.5 py-1 text-[11px] uppercase tracking-[0.18em] text-foreground/70">
           {code}
         </span>
         <Button
@@ -62,7 +62,7 @@ export default function AdminReferralCodeToggle({
           {loading ? "Saving..." : isActive ? "Disable code" : "Enable code"}
         </Button>
       </div>
-      {message ? <p className="text-xs text-white/55">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }

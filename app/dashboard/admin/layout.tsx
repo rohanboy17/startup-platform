@@ -4,6 +4,9 @@ import { redirect } from "next/navigation";
 import DashboardTabNav from "@/components/dashboard-tab-nav";
 import PresenceHeartbeat from "@/components/presence-heartbeat";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function AdminLayout({
   children,
 }: {

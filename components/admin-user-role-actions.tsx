@@ -55,7 +55,7 @@ export default function AdminUserRoleActions({
         <select
           value={role}
           onChange={(e) => setRole(e.target.value as Role)}
-          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white sm:w-auto"
+          className="w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 sm:w-auto"
           disabled={loading}
         >
           <option value="USER">USER</option>
@@ -67,7 +67,7 @@ export default function AdminUserRoleActions({
           {loading ? "Saving..." : "Update Role"}
         </Button>
       </div>
-      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }

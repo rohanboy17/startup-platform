@@ -14,13 +14,13 @@ export function KpiCard({
 }) {
   const toneClass =
     tone === "success"
-      ? "text-emerald-400"
+      ? "text-emerald-600 dark:text-emerald-400"
       : tone === "info"
-        ? "text-cyan-400"
+        ? "text-cyan-600 dark:text-cyan-400"
         : tone === "danger"
-          ? "text-rose-400"
+          ? "text-rose-600 dark:text-rose-400"
         : tone === "warning"
-          ? "text-amber-400"
+          ? "text-amber-600 dark:text-amber-400"
           : "text-foreground";
 
   return (

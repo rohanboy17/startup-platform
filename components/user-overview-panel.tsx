@@ -8,6 +8,7 @@ import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
+import { useHydrated } from "@/lib/use-hydrated";
 
 type OverviewResponse = {
   profile: {
@@ -64,6 +65,7 @@ function relativeTimeLabel(value: string) {
 export default function UserOverviewPanel() {
   const [data, setData] = useState<OverviewResponse | null>(null);
   const [error, setError] = useState("");
+  const hydrated = useHydrated();
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/users/me/overview", { credentials: "include" });
@@ -88,16 +90,16 @@ export default function UserOverviewPanel() {
 
   useLiveRefresh(load, 10000);
 
-  if (error) return <p className="text-sm text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-white/60">Loading user overview...</p>;
+  if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
+  if (!data) return <p className="text-sm text-foreground/60">Loading user overview...</p>;
 
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">Daily earning center</p>
+          <p className="text-sm uppercase tracking-[0.24em] text-emerald-600/80 dark:text-emerald-300/70">Daily earning center</p>
           <h2 className="mt-2 text-3xl font-semibold md:text-4xl">User Overview</h2>
-          <p className="mt-2 max-w-2xl text-sm text-white/65 md:text-base">
+          <p className="mt-2 max-w-2xl text-sm text-foreground/65 md:text-base">
             Track your balance, approvals, withdrawal status, and current level without switching between tabs.
           </p>
         </div>
@@ -105,14 +107,14 @@ export default function UserOverviewPanel() {
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Link
             href="/dashboard/user/tasks"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-100 transition hover:bg-emerald-400/20 sm:w-auto"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-400/20 dark:text-emerald-100 sm:w-auto"
           >
             <Sparkles size={16} />
             Find Tasks
           </Link>
           <Link
             href="/dashboard/user/withdrawals"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white/85 transition hover:bg-white/10 sm:w-auto"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-foreground/15 bg-foreground/[0.04] px-4 py-2 text-sm font-medium text-foreground/85 transition hover:bg-foreground/10 sm:w-auto"
           >
             <Wallet size={16} />
             Withdraw
@@ -167,20 +169,20 @@ export default function UserOverviewPanel() {
         <SectionCard elevated className="space-y-6 p-4 sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm text-white/60">Level progress</p>
-                <h3 className="text-xl font-semibold text-white">Keep approvals moving</h3>
+                <p className="text-sm text-foreground/60">Level progress</p>
+                <h3 className="text-xl font-semibold text-foreground">Keep approvals moving</h3>
               </div>
-              <Link href="/dashboard/user/submissions" className="text-sm text-emerald-200 transition hover:text-emerald-100">
+              <Link href="/dashboard/user/submissions" className="text-sm text-emerald-700 transition hover:text-emerald-800 dark:text-emerald-200 dark:hover:text-emerald-100">
                 View submissions
               </Link>
             </div>
 
             <div className="grid gap-4 min-[1400px]:grid-cols-[1fr_auto] min-[1400px]:items-center">
               <div className="space-y-4">
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/45">Level now</p>
-                  <p className="mt-2 text-2xl font-semibold text-white">{data.profile.level}</p>
-                  <p className="mt-1 text-sm text-white/60">
+                <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">Level now</p>
+                  <p className="mt-2 text-2xl font-semibold text-foreground">{data.profile.level}</p>
+                  <p className="mt-1 text-sm text-foreground/65">
                     {data.progress.target === null
                       ? `Top tier unlocked with ${data.progress.current} approved submissions.`
                       : `${data.progress.current} approved so far. Reach ${data.progress.target} to move up.`}
@@ -188,79 +190,81 @@ export default function UserOverviewPanel() {
                 </div>
 
                 <div>
-                  <div className="mb-2 flex items-center justify-between text-sm text-white/70">
+                  <div className="mb-2 flex items-center justify-between text-sm text-foreground/70">
                     <span>Progress to next level</span>
                     <span>{data.progress.percent}%</span>
                   </div>
-                  <div className="h-2 rounded-full bg-white/10">
+                  <div className="h-2 rounded-full bg-foreground/10">
                     <div className="h-2 rounded-full bg-emerald-400" style={{ width: `${data.progress.percent}%` }} />
                   </div>
                 </div>
               </div>
 
                 <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
-                  <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/45">Today approved</p>
-                  <p className="mt-2 text-2xl font-semibold text-white">{data.metrics.todayApprovedCount}</p>
+                  <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                    <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">Today approved</p>
+                  <p className="mt-2 text-2xl font-semibold text-foreground">{data.metrics.todayApprovedCount}</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/45">Total approved</p>
-                  <p className="mt-2 text-2xl font-semibold text-white">{data.profile.totalApproved}</p>
+                <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">Total approved</p>
+                  <p className="mt-2 text-2xl font-semibold text-foreground">{data.profile.totalApproved}</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/45">Submitted today</p>
-                  <p className="mt-2 text-2xl font-semibold text-white">{data.profile.dailySubmits}</p>
+                <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">Submitted today</p>
+                  <p className="mt-2 text-2xl font-semibold text-foreground">{data.profile.dailySubmits}</p>
                 </div>
               </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <Link href="/dashboard/user/tasks" className="rounded-2xl border border-white/10 bg-black/20 p-4 transition hover:border-emerald-300/30 hover:bg-black/30">
-                <p className="text-sm font-medium text-white">Open tasks</p>
-                <p className="mt-1 text-sm text-white/55">Find available campaigns with open slots.</p>
+              <Link href="/dashboard/user/tasks" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
+                <p className="text-sm font-medium text-foreground">Open tasks</p>
+                <p className="mt-1 text-sm text-foreground/70">Find available campaigns with open slots.</p>
               </Link>
-              <Link href="/dashboard/user/wallet" className="rounded-2xl border border-white/10 bg-black/20 p-4 transition hover:border-emerald-300/30 hover:bg-black/30">
-                <p className="text-sm font-medium text-white">Open wallet</p>
-                <p className="mt-1 text-sm text-white/55">Review credits, debits, and payout history.</p>
+              <Link href="/dashboard/user/wallet" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
+                <p className="text-sm font-medium text-foreground">Open wallet</p>
+                <p className="mt-1 text-sm text-foreground/70">Review credits, debits, and payout history.</p>
               </Link>
-              <Link href="/dashboard/user/notifications" className="rounded-2xl border border-white/10 bg-black/20 p-4 transition hover:border-emerald-300/30 hover:bg-black/30">
-                <p className="text-sm font-medium text-white">Open notifications</p>
-                <p className="mt-1 text-sm text-white/55">Check approval, rejection, and payout updates.</p>
+              <Link href="/dashboard/user/notifications" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
+                <p className="text-sm font-medium text-foreground">Open notifications</p>
+                <p className="mt-1 text-sm text-foreground/70">Check approval, rejection, and payout updates.</p>
               </Link>
-              <Link href="/dashboard/user/referrals" className="rounded-2xl border border-white/10 bg-black/20 p-4 transition hover:border-emerald-300/30 hover:bg-black/30">
-                <p className="text-sm font-medium text-white">Open referrals</p>
-                <p className="mt-1 text-sm text-white/55">Share your code, earn coins, and redeem them to wallet.</p>
+              <Link href="/dashboard/user/referrals" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
+                <p className="text-sm font-medium text-foreground">Open referrals</p>
+                <p className="mt-1 text-sm text-foreground/70">Share your code, earn coins, and redeem them to wallet.</p>
               </Link>
             </div>
         </SectionCard>
 
         <div className="space-y-6">
-          <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <Card className="rounded-3xl border-foreground/10 bg-background/50 shadow-xl shadow-black/10 dark:shadow-black/20 backdrop-blur-md">
             <CardContent className="space-y-5 p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-white/60">Recent notifications</p>
-                  <h3 className="text-xl font-semibold text-white">What needs your attention</h3>
+                  <p className="text-sm text-foreground/60">Recent notifications</p>
+                  <h3 className="text-xl font-semibold text-foreground">What needs your attention</h3>
                 </div>
-                <Link href="/dashboard/user/notifications" className="text-sm text-emerald-200 transition hover:text-emerald-100">
+                <Link href="/dashboard/user/notifications" className="text-sm text-emerald-700 transition hover:text-emerald-800 dark:text-emerald-200 dark:hover:text-emerald-100">
                   Open inbox
                 </Link>
               </div>
 
               {data.recentNotifications.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-6 text-sm text-white/55">
+                <div className="rounded-2xl border border-dashed border-foreground/15 bg-foreground/[0.03] p-6 text-sm text-foreground/70">
                   No notifications yet. Approval and withdrawal updates will appear here.
                 </div>
               ) : (
                 <div className="space-y-3">
                   {data.recentNotifications.map((item) => (
-                    <div key={item.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div key={item.id} className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="font-medium text-white break-words">{item.title}</p>
-                        <span className="shrink-0 text-xs text-white/45">{relativeTimeLabel(item.createdAt)}</span>
+                        <p className="font-medium text-foreground break-words">{item.title}</p>
+                        <span className="shrink-0 text-xs text-foreground/60" suppressHydrationWarning>
+                          {hydrated ? relativeTimeLabel(item.createdAt) : ""}
+                        </span>
                       </div>
-                      <p className="mt-2 text-sm text-white/65 break-words">{item.message}</p>
-                      {!item.isRead ? <p className="mt-2 text-xs uppercase tracking-[0.16em] text-emerald-300">Unread</p> : null}
+                      <p className="mt-2 text-sm text-foreground/75 break-words">{item.message}</p>
+                      {!item.isRead ? <p className="mt-2 text-xs uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-300">Unread</p> : null}
                     </div>
                   ))}
                 </div>
@@ -268,31 +272,33 @@ export default function UserOverviewPanel() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+          <Card className="rounded-3xl border-foreground/10 bg-background/50 shadow-xl shadow-black/10 dark:shadow-black/20 backdrop-blur-md">
             <CardContent className="space-y-5 p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-white/60">Recent activity</p>
-                  <h3 className="text-xl font-semibold text-white">Latest balance and submission changes</h3>
+                  <p className="text-sm text-foreground/60">Recent activity</p>
+                  <h3 className="text-xl font-semibold text-foreground">Latest balance and submission changes</h3>
                 </div>
-                <Link href="/dashboard/user/wallet" className="text-sm text-emerald-200 transition hover:text-emerald-100">
+                <Link href="/dashboard/user/wallet" className="text-sm text-emerald-700 transition hover:text-emerald-800 dark:text-emerald-200 dark:hover:text-emerald-100">
                   Wallet details
                 </Link>
               </div>
 
               {data.recentActivity.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-6 text-sm text-white/55">
+                <div className="rounded-2xl border border-dashed border-foreground/15 bg-foreground/[0.03] p-6 text-sm text-foreground/70">
                   No activity yet. Complete a task or request a withdrawal to populate the timeline.
                 </div>
               ) : (
                 <div className="space-y-3">
                   {data.recentActivity.map((item) => (
-                    <div key={item.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div key={item.id} className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-                        <p className="text-sm font-medium text-white/90 break-words">{item.message}</p>
-                        <span className="shrink-0 text-xs text-white/45">{relativeTimeLabel(item.createdAt)}</span>
+                        <p className="text-sm font-medium text-foreground/90 break-words">{item.message}</p>
+                        <span className="shrink-0 text-xs text-foreground/60" suppressHydrationWarning>
+                          {hydrated ? relativeTimeLabel(item.createdAt) : ""}
+                        </span>
                       </div>
-                      <p className="mt-2 text-xs uppercase tracking-[0.16em] text-white/35">{item.kind}</p>
+                      <p className="mt-2 text-xs uppercase tracking-[0.16em] text-foreground/60">{item.kind}</p>
                     </div>
                   ))}
                 </div>

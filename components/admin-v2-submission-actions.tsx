@@ -93,7 +93,7 @@ export default function AdminV2SubmissionActions({
         <input
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          className="w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground placeholder:text-foreground/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
           placeholder={allowReopen ? "Reason (required for reopen)" : "Escalation reason (optional)"}
         />
       ) : null}
@@ -115,7 +115,7 @@ export default function AdminV2SubmissionActions({
           </Button>
         ) : null}
       </div>
-      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }

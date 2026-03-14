@@ -18,22 +18,24 @@ export default function ThemeToggle({
     () => true,
     () => false
   );
+  const isDark = mounted ? resolvedTheme === "dark" : true;
+  const nextThemeLabel = isDark ? "light" : "dark";
 
   return (
     <button
       type="button"
-      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+      onClick={() => setTheme(isDark ? "light" : "dark")}
       className={cn(
         "inline-flex items-center justify-center gap-2 rounded-full border border-foreground/15 bg-foreground/[0.04] text-foreground/80 transition hover:bg-foreground/10 hover:text-foreground",
         compact ? "h-9 w-9" : "px-3 py-1.5 text-xs font-medium sm:text-sm",
         className
       )}
       aria-label="Toggle theme"
-      title={resolvedTheme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+      title={mounted ? `Switch to ${nextThemeLabel} mode` : "Toggle theme"}
     >
       {!mounted ? (
         <span className={compact ? "block size-4" : "block h-4 w-4"} />
-      ) : resolvedTheme === "dark" ? (
+      ) : isDark ? (
         <>
           <Sun size={16} />
           {!compact ? <span>Light</span> : null}

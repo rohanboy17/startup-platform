@@ -101,8 +101,8 @@ export default function BusinessOverviewPanel() {
 
   useLiveRefresh(load, 10000);
 
-  if (error) return <p className="text-sm text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-white/60">Loading business overview...</p>;
+  if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
+  if (!data) return <p className="text-sm text-foreground/60">Loading business overview...</p>;
 
   const deploymentRate = percentage(data.spentBudget, data.totalBudget);
   const liveCampaignRate = percentage(data.liveCampaigns, data.totalCampaigns);
@@ -115,9 +115,9 @@ export default function BusinessOverviewPanel() {
     <div className="space-y-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">Business control center</p>
+          <p className="text-sm uppercase tracking-[0.24em] text-emerald-600/80 dark:text-emerald-300/70">Business control center</p>
           <h2 className="mt-2 text-3xl font-semibold md:text-4xl">Business Overview</h2>
-          <p className="mt-2 max-w-2xl text-sm text-white/65 md:text-base">
+          <p className="mt-2 max-w-2xl text-sm text-foreground/65 md:text-base">
             Track available cash, locked campaign budget, campaign health, and the next action required
             without opening five separate screens.
           </p>
@@ -127,7 +127,7 @@ export default function BusinessOverviewPanel() {
           {canManageBilling ? (
             <Link
               href="/dashboard/business/funding"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-100 transition hover:bg-emerald-400/20 sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-400/20 dark:text-emerald-100 sm:w-auto"
             >
               <Wallet size={16} />
               Add Funds
@@ -136,7 +136,7 @@ export default function BusinessOverviewPanel() {
           {canManageCampaigns ? (
             <Link
               href="/dashboard/business/create"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white/85 transition hover:bg-white/10 sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-foreground/15 bg-foreground/[0.04] px-4 py-2 text-sm font-medium text-foreground/85 transition hover:bg-foreground/10 sm:w-auto"
             >
               <Megaphone size={16} />
               Create Campaign

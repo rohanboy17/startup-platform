@@ -11,6 +11,9 @@ import {
   getBusinessContext,
 } from "@/lib/business-context";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function BusinessLayout({
   children,
 }: {

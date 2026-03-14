@@ -102,10 +102,10 @@ export default function AdminNotificationCenter({
 
   return (
     <div className="space-y-6">
-      <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+      <div className="space-y-3 rounded-2xl border border-foreground/10 bg-background/50 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Broadcast</h3>
         <select
-          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
           value={segment}
           onChange={(e) => setSegment(e.target.value)}
         >
@@ -119,7 +119,7 @@ export default function AdminNotificationCenter({
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm"
+          className="min-h-[90px] w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground placeholder:text-foreground/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
           placeholder="Message"
         />
         <Input value={templateKey} onChange={(e) => setTemplateKey(e.target.value)} placeholder="Template key (optional)" />
@@ -133,7 +133,7 @@ export default function AdminNotificationCenter({
           ] as const).map(([channel, label]) => (
             <label
               key={channel}
-              className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 px-3 py-3 text-sm text-white/80"
+              className="flex items-center gap-3 rounded-xl border border-foreground/10 bg-background/60 px-3 py-3 text-sm text-foreground/80"
             >
               <input
                 type="checkbox"
@@ -150,12 +150,12 @@ export default function AdminNotificationCenter({
         </Button>
       </div>
 
-      <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+      <div className="space-y-3 rounded-2xl border border-foreground/10 bg-background/50 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Template Manager</h3>
         <Input value={newKey} onChange={(e) => setNewKey(e.target.value)} placeholder="template.key" />
         <Input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="Template name" />
         <select
-          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
           value={newChannel}
           onChange={(e) => setNewChannel(e.target.value as typeof newChannel)}
         >
@@ -168,17 +168,17 @@ export default function AdminNotificationCenter({
         <textarea
           value={newBody}
           onChange={(e) => setNewBody(e.target.value)}
-          className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm"
+          className="min-h-[90px] w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground placeholder:text-foreground/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
           placeholder="Body (supports {{var}} tokens)"
         />
         <Button onClick={saveTemplate} disabled={loading !== null} className="w-full sm:w-auto">Save Template</Button>
 
         <div className="space-y-2">
           {templates.map((t) => (
-            <div key={t.id} className="flex flex-col gap-3 rounded-md border border-white/10 bg-black/20 p-3 sm:flex-row sm:items-center sm:justify-between">
+            <div key={t.id} className="flex flex-col gap-3 rounded-md border border-foreground/10 bg-background/60 p-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="break-all font-medium">{t.key}</p>
-                <p className="text-xs text-white/60">{t.name} | {t.channel} | {t.enabled ? "enabled" : "disabled"}</p>
+                <p className="text-xs text-foreground/60">{t.name} | {t.channel} | {t.enabled ? "enabled" : "disabled"}</p>
               </div>
               <Button variant="outline" onClick={() => toggleTemplate(t.id, t.enabled)} disabled={loading !== null} className="w-full sm:w-auto">
                 {t.enabled ? "Disable" : "Enable"}
@@ -188,22 +188,22 @@ export default function AdminNotificationCenter({
         </div>
       </div>
 
-      <div className="space-y-2 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+      <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/50 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Delivery Logs</h3>
         {logs.length === 0 ? (
-          <p className="text-sm text-white/60">No logs yet.</p>
+          <p className="text-sm text-foreground/60">No logs yet.</p>
         ) : (
           logs.map((log) => (
-            <div key={log.id} className="rounded-md border border-white/10 bg-black/20 p-3 text-sm">
+            <div key={log.id} className="rounded-md border border-foreground/10 bg-background/60 p-3 text-sm">
               <p className="break-all font-medium">{log.status} | {log.channel} | {log.user.email}</p>
-              <p className="text-xs text-white/60">template={log.templateKey || "-"} | {log.createdAtLabel}</p>
-              {log.error ? <p className="text-xs text-rose-300">{log.error}</p> : null}
+              <p className="text-xs text-foreground/60">template={log.templateKey || "-"} | {log.createdAtLabel}</p>
+              {log.error ? <p className="text-xs text-rose-600 dark:text-rose-300">{log.error}</p> : null}
             </div>
           ))
         )}
       </div>
 
-      {feedback ? <p className="text-sm text-white/70">{feedback}</p> : null}
+      {feedback ? <p className="text-sm text-foreground/70">{feedback}</p> : null}
     </div>
   );
 }

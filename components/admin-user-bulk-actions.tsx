@@ -97,10 +97,10 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
   }
 
   return (
-    <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+    <div className="space-y-3 rounded-2xl border border-foreground/10 bg-background/50 p-4">
       <div className="flex flex-wrap items-center gap-2">
-        <p className="text-sm text-white/70">Bulk moderation</p>
-        <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/70">
+        <p className="text-sm text-foreground/70">Bulk moderation</p>
+        <span className="rounded-full bg-foreground/10 px-2 py-0.5 text-xs text-foreground/70">
           Selected: {selected.length}
         </span>
       </div>
@@ -118,7 +118,7 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
         <select
           value={action}
           onChange={(e) => setAction(e.target.value as BulkAction)}
-          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          className="w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
           disabled={loading}
         >
           <option value="SET_STATUS">Set Status</option>
@@ -131,7 +131,7 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value as AccountStatus)}
-            className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            className="w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
             disabled={loading}
           >
             <option value="ACTIVE">ACTIVE</option>
@@ -142,7 +142,7 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
           <select
             value={role}
             onChange={(e) => setRole(e.target.value as Role)}
-            className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            className="w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
             disabled={loading}
           >
             <option value="USER">USER</option>
@@ -158,14 +158,14 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder="Reason (optional)"
-          className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
+          className="rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground placeholder:text-foreground/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 md:col-span-2"
           disabled={loading}
         />
       </div>
 
-      <div className="max-h-40 space-y-1 overflow-auto rounded-md border border-white/10 bg-black/20 p-2">
+      <div className="max-h-40 space-y-1 overflow-auto rounded-md border border-foreground/10 bg-background/40 p-2">
         {users.map((user) => (
-          <label key={user.id} className="flex items-center gap-2 text-xs text-white/80">
+          <label key={user.id} className="flex items-center gap-2 text-xs text-foreground/80">
             <input
               type="checkbox"
               checked={selected.includes(user.id)}
@@ -182,7 +182,7 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
       <Button type="button" onClick={runBulk} disabled={loading} className="w-full sm:w-auto">
         {loading ? "Applying..." : "Apply Bulk Action"}
       </Button>
-      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }

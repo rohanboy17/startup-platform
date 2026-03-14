@@ -148,7 +148,8 @@ export default function LoginForm({ registered }: { registered: boolean }) {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_0%_0%,rgba(16,185,129,0.22),transparent_35%),radial-gradient(circle_at_100%_10%,rgba(56,189,248,0.2),transparent_40%),linear-gradient(to_bottom,#020617,#020617)] px-4 py-12 text-white sm:px-6 lg:px-8">
+    <div className="auth-shell relative min-h-screen overflow-hidden bg-background px-4 py-12 text-foreground sm:px-6 lg:px-8">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,rgba(16,185,129,0.16),transparent_35%),radial-gradient(circle_at_100%_10%,rgba(56,189,248,0.14),transparent_40%)] dark:bg-[radial-gradient(circle_at_0%_0%,rgba(16,185,129,0.22),transparent_35%),radial-gradient(circle_at_100%_10%,rgba(56,189,248,0.2),transparent_40%),linear-gradient(to_bottom,#020617,#020617)]" />
       <motion.div
         aria-hidden
         className="pointer-events-none absolute left-[-60px] top-20 h-44 w-44 rounded-full bg-emerald-400/20 blur-3xl"
@@ -167,11 +168,11 @@ export default function LoginForm({ registered }: { registered: boolean }) {
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.45, ease: "easeOut" }}
-          className="hidden rounded-3xl border border-white/10 bg-white/[0.03] p-8 backdrop-blur-xl lg:block"
+          className="hidden rounded-3xl border border-foreground/10 bg-foreground/[0.04] p-8 backdrop-blur-xl lg:block"
         >
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-emerald-300/80">Secure Login</p>
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-emerald-500 dark:text-emerald-300/80">Secure Login</p>
           <h2 className="mt-3 text-4xl font-semibold leading-tight">Welcome back to your control center.</h2>
-          <p className="mt-4 text-sm text-white/70">
+          <p className="mt-4 text-sm text-foreground/70">
             Access campaigns, payouts, and moderation with account protection and admin-grade 2FA.
           </p>
 
@@ -181,8 +182,8 @@ export default function LoginForm({ registered }: { registered: boolean }) {
               "Admin 2FA with OTP or recovery codes",
               "IP and security event monitoring",
             ].map((item) => (
-              <div key={item} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 px-3 py-2.5 text-sm text-white/80">
-                <CheckCircle2 size={16} className="text-emerald-300" />
+              <div key={item} className="flex items-center gap-3 rounded-xl border border-foreground/10 bg-background/60 px-3 py-2.5 text-sm text-foreground/80">
+                <CheckCircle2 size={16} className="text-emerald-500 dark:text-emerald-300" />
                 <span>{item}</span>
               </div>
             ))}
@@ -194,7 +195,7 @@ export default function LoginForm({ registered }: { registered: boolean }) {
           animate={error ? { opacity: 1, y: 0, scale: 1, x: [0, -7, 7, -5, 5, 0] } : { opacity: 1, y: 0, scale: 1, x: 0 }}
           transition={{ duration: 0.45, ease: "easeOut" }}
         >
-          <Card className="overflow-hidden rounded-3xl border-white/15 bg-white/[0.04] shadow-[0_20px_80px_-30px_rgba(16,185,129,0.55)] backdrop-blur-2xl transition-transform duration-300 hover:-translate-y-0.5">
+          <Card className="overflow-hidden rounded-3xl border-foreground/15 bg-foreground/[0.04] shadow-[0_20px_80px_-30px_rgba(16,185,129,0.28)] backdrop-blur-2xl transition-transform duration-300 hover:-translate-y-0.5">
             <CardContent className="space-y-6 p-6 sm:p-8">
               <motion.div
                 className="space-y-2"
@@ -202,9 +203,9 @@ export default function LoginForm({ registered }: { registered: boolean }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.05 }}
               >
-                <p className="text-xs font-medium uppercase tracking-[0.2em] text-emerald-300/80">Welcome Back</p>
+                <p className="text-xs font-medium uppercase tracking-[0.2em] text-emerald-500 dark:text-emerald-300/80">Welcome Back</p>
                 <h1 className="text-2xl font-semibold tracking-tight">Sign In</h1>
-                <p className="text-sm text-white/65">Use your email or mobile number with password to continue.</p>
+                <p className="text-sm text-foreground/65">Use your email or mobile number with password to continue.</p>
               </motion.div>
 
               {registered ? (
@@ -230,12 +231,12 @@ export default function LoginForm({ registered }: { registered: boolean }) {
                   }}
                   required
                   autoComplete="username"
-                  className="h-11 border-white/15 bg-white/5 transition focus-visible:border-emerald-300/70 focus-visible:ring-emerald-300/20"
+                  className="h-11 border-foreground/15 bg-foreground/[0.04] transition focus-visible:border-emerald-300/70 focus-visible:ring-emerald-300/20"
                 />
-                <p className="-mt-2 text-xs text-white/55">
-                  Mobile login format examples: India <span className="text-white/80">+91987XXXX210</span>, US{" "}
-                  <span className="text-white/80">+1415XXXX671</span>, UK{" "}
-                  <span className="text-white/80">+4479XXXXX456</span>.
+                <p className="-mt-2 text-xs text-foreground/55">
+                  Mobile login format examples: India <span className="text-foreground/80">+91987XXXX210</span>, US{" "}
+                  <span className="text-foreground/80">+1415XXXX671</span>, UK{" "}
+                  <span className="text-foreground/80">+4479XXXXX456</span>.
                 </p>
                 <Input
                   type="password"
@@ -247,20 +248,20 @@ export default function LoginForm({ registered }: { registered: boolean }) {
                   }}
                   required
                   autoComplete="current-password"
-                  className="h-11 border-white/15 bg-white/5 transition focus-visible:border-emerald-300/70 focus-visible:ring-emerald-300/20"
+                  className="h-11 border-foreground/15 bg-foreground/[0.04] transition focus-visible:border-emerald-300/70 focus-visible:ring-emerald-300/20"
                 />
                 <div className="-mt-1 text-right">
                   <Link
                     href="/forgot-password"
-                    className="text-xs text-white/70 underline underline-offset-4 transition hover:text-white"
+                    className="text-xs text-foreground/70 underline underline-offset-4 transition hover:text-foreground"
                   >
                     Forgot password?
                   </Link>
                 </div>
                 {needsAdmin2fa ? (
-                  <div className="space-y-2 rounded-xl border border-white/10 bg-white/5 p-3.5">
+                  <div className="space-y-2 rounded-xl border border-foreground/10 bg-foreground/[0.04] p-3.5">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-xs text-white/65">Admin 2FA required</p>
+                      <p className="text-xs text-foreground/65">Admin 2FA required</p>
                       <Button
                         type="button"
                         variant="outline"
@@ -276,19 +277,19 @@ export default function LoginForm({ registered }: { registered: boolean }) {
                       placeholder="6-digit OTP"
                       value={otp}
                       onChange={(e) => setOtp(e.target.value)}
-                      className="h-10 border-white/15 bg-white/5"
+                      className="h-10 border-foreground/15 bg-foreground/[0.04]"
                     />
                     <Input
                       type="text"
                       placeholder="Or recovery code (e.g., ABC12-34DEF)"
                       value={recoveryCode}
                       onChange={(e) => setRecoveryCode(e.target.value.toUpperCase())}
-                      className="h-10 border-white/15 bg-white/5"
+                      className="h-10 border-foreground/15 bg-foreground/[0.04]"
                     />
                     {otpSent ? <p className="text-xs text-emerald-300">OTP requested and ready.</p> : null}
                   </div>
                 ) : null}
-                <Button type="submit" className="h-11 w-full rounded-xl bg-white text-black hover:bg-white/90" disabled={loading}>
+                <Button type="submit" className="h-11 w-full rounded-xl bg-foreground text-background hover:opacity-90" disabled={loading}>
                   {loading ? "Signing in..." : "Sign In"}
                 </Button>
               </motion.form>
@@ -296,14 +297,14 @@ export default function LoginForm({ registered }: { registered: boolean }) {
               {error ? <p className="text-sm text-red-400">{error}</p> : null}
               {info ? <p className="text-sm text-emerald-300">{info}</p> : null}
 
-              <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/20 px-3 py-2.5 text-xs text-white/70">
-                <span className="inline-flex items-center gap-1.5"><ShieldCheck size={14} className="text-emerald-300" /> Protected Auth</span>
-                <span className="inline-flex items-center gap-1.5"><Sparkles size={14} className="text-sky-300" /> Live Security</span>
+              <div className="flex items-center justify-between gap-3 rounded-xl border border-foreground/10 bg-background/60 px-3 py-2.5 text-xs text-foreground/70">
+                <span className="inline-flex items-center gap-1.5"><ShieldCheck size={14} className="text-emerald-500 dark:text-emerald-300" /> Protected Auth</span>
+                <span className="inline-flex items-center gap-1.5"><Sparkles size={14} className="text-sky-500 dark:text-sky-300" /> Live Security</span>
               </div>
 
-              <p className="text-sm text-white/60">
+              <p className="text-sm text-foreground/60">
                 New here?{" "}
-                <Link href="/register" className="font-medium text-white underline underline-offset-4">
+                <Link href="/register" className="font-medium text-foreground underline underline-offset-4">
                   Create an account
                 </Link>
               </p>

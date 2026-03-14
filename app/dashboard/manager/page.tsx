@@ -122,9 +122,9 @@ export default async function ManagerDashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">Moderation control</p>
+        <p className="text-sm uppercase tracking-[0.24em] text-emerald-600/80 dark:text-emerald-300/70">Moderation control</p>
         <h2 className="mt-2 text-3xl font-semibold md:text-4xl">Manager Overview</h2>
-        <p className="mt-2 max-w-3xl text-sm text-white/65 md:text-base">
+        <p className="mt-2 max-w-3xl text-sm text-foreground/65 md:text-base">
           Monitor review workload, see what is waiting for admin, and surface suspicious submissions before they move deeper into the system.
         </p>
       </div>
@@ -161,8 +161,8 @@ export default async function ManagerDashboardPage() {
         <SectionCard elevated className="space-y-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-white/60">Queue snapshot</p>
-              <h3 className="text-xl font-semibold text-white">Oldest items first</h3>
+              <p className="text-sm text-foreground/60">Queue snapshot</p>
+              <h3 className="text-xl font-semibold text-foreground">Oldest items first</h3>
             </div>
             <a href="/dashboard/manager/submissions" className="text-sm text-emerald-200 transition hover:text-emerald-100">
               Open queue

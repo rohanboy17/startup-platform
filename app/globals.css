@@ -370,3 +370,198 @@
 .light .dashboard-shell .hover\:text-white:hover {
   color: color-mix(in oklch, var(--foreground) 100%, transparent) !important;
 }
+
+.light .dashboard-shell .text-amber-100,
+.light .dashboard-shell .text-amber-100\/80,
+.light .dashboard-shell .text-amber-100\/70,
+.light .dashboard-shell .text-amber-100\/85,
+.light .dashboard-shell .text-amber-200,
+.light .dashboard-shell .text-amber-300 {
+  color: oklch(0.45 0.13 75) !important;
+}
+
+.light .dashboard-shell .text-rose-100,
+.light .dashboard-shell .text-rose-100\/80,
+.light .dashboard-shell .text-rose-100\/70,
+.light .dashboard-shell .text-rose-100\/85,
+.light .dashboard-shell .text-rose-200,
+.light .dashboard-shell .text-rose-300 {
+  color: oklch(0.47 0.16 15) !important;
+}
+
+.light .dashboard-shell .text-violet-100,
+.light .dashboard-shell .text-violet-100\/80,
+.light .dashboard-shell .text-violet-100\/70,
+.light .dashboard-shell .text-violet-100\/85,
+.light .dashboard-shell .text-violet-200,
+.light .dashboard-shell .text-violet-300 {
+  color: oklch(0.49 0.16 300) !important;
+}
+
+.light .dashboard-shell .text-cyan-100,
+.light .dashboard-shell .text-cyan-100\/80,
+.light .dashboard-shell .text-cyan-100\/70,
+.light .dashboard-shell .text-cyan-100\/85,
+.light .dashboard-shell .text-cyan-200,
+.light .dashboard-shell .text-cyan-300 {
+  color: oklch(0.5 0.11 220) !important;
+}
+
+.light .dashboard-shell .text-emerald-100,
+.light .dashboard-shell .text-emerald-100\/80,
+.light .dashboard-shell .text-emerald-100\/70,
+.light .dashboard-shell .text-emerald-100\/85,
+.light .dashboard-shell .text-emerald-200,
+.light .dashboard-shell .text-emerald-300 {
+  color: oklch(0.48 0.11 160) !important;
+}
+
+.light .dashboard-shell .text-emerald-200:hover,
+.light .dashboard-shell .text-emerald-100:hover {
+  color: oklch(0.42 0.11 160) !important;
+}
+
+.light .dashboard-shell .text-rose-300,
+.light .dashboard-shell .text-rose-600,
+.light .dashboard-shell .text-rose-700 {
+  color: oklch(0.47 0.16 15) !important;
+}
+
+.light .dashboard-shell .bg-amber-500\/10 {
+  background-color: color-mix(in oklch, white 86%, oklch(0.8 0.12 85) 14%) !important;
+}
+
+.light .dashboard-shell .bg-rose-500\/10 {
+  background-color: color-mix(in oklch, white 86%, oklch(0.8 0.11 15) 14%) !important;
+}
+
+.light .dashboard-shell .bg-violet-500\/10 {
+  background-color: color-mix(in oklch, white 86%, oklch(0.78 0.12 300) 14%) !important;
+}
+
+.light .dashboard-shell .bg-cyan-500\/10 {
+  background-color: color-mix(in oklch, white 86%, oklch(0.8 0.09 220) 14%) !important;
+}
+
+.light .dashboard-shell .bg-emerald-500\/10 {
+  background-color: color-mix(in oklch, white 86%, oklch(0.8 0.09 160) 14%) !important;
+}
+
+.light .dashboard-shell .border-amber-300\/20,
+.light .dashboard-shell .border-amber-400\/20 {
+  border-color: color-mix(in oklch, oklch(0.55 0.14 75) 28%, transparent) !important;
+}
+
+.light .dashboard-shell .border-rose-300\/20 {
+  border-color: color-mix(in oklch, oklch(0.52 0.16 15) 28%, transparent) !important;
+}
+
+.light .dashboard-shell .border-violet-300\/20 {
+  border-color: color-mix(in oklch, oklch(0.54 0.15 300) 28%, transparent) !important;
+}
+
+.light .dashboard-shell .border-cyan-300\/20 {
+  border-color: color-mix(in oklch, oklch(0.54 0.1 220) 28%, transparent) !important;
+}
+
+.light .dashboard-shell .border-emerald-400\/20 {
+  border-color: color-mix(in oklch, oklch(0.54 0.11 160) 28%, transparent) !important;
+}
+
+.light .auth-shell .text-white {
+  color: color-mix(in oklch, var(--foreground) 100%, transparent) !important;
+}
+
+.light .auth-shell .text-white\/85 {
+  color: color-mix(in oklch, var(--foreground) 85%, transparent) !important;
+}
+
+.light .auth-shell .text-white\/80 {
+  color: color-mix(in oklch, var(--foreground) 80%, transparent) !important;
+}
+
+.light .auth-shell .text-white\/70 {
+  color: color-mix(in oklch, var(--foreground) 70%, transparent) !important;
+}
+
+.light .auth-shell .text-white\/65 {
+  color: color-mix(in oklch, var(--foreground) 65%, transparent) !important;
+}
+
+.light .auth-shell .text-white\/60 {
+  color: color-mix(in oklch, var(--foreground) 60%, transparent) !important;
+}
+
+.light .auth-shell .text-white\/55 {
+  color: color-mix(in oklch, var(--foreground) 55%, transparent) !important;
+}
+
+.light .auth-shell .border-white\/10,
+.light .auth-shell .border-white\/15,
+.light .auth-shell .border-white\/20 {
+  border-color: color-mix(in oklch, var(--foreground) 16%, transparent) !important;
+}
+
+.light .auth-shell .bg-white\/5,
+.light .auth-shell .bg-white\/10,
+.light .auth-shell .bg-white\/\[0\.03\],
+.light .auth-shell .bg-white\/\[0\.04\] {
+  background-color: color-mix(in oklch, var(--foreground) 5%, var(--background)) !important;
+}
+
+.light .auth-shell .bg-black\/20,
+.light .auth-shell .bg-black\/30 {
+  background-color: color-mix(in oklch, var(--foreground) 4%, var(--background)) !important;
+}
+
+.light .home-shell .text-white {
+  color: color-mix(in oklch, var(--foreground) 100%, transparent) !important;
+}
+
+.light .home-shell .text-white\/80 {
+  color: color-mix(in oklch, var(--foreground) 80%, transparent) !important;
+}
+
+.light .home-shell .text-white\/70 {
+  color: color-mix(in oklch, var(--foreground) 70%, transparent) !important;
+}
+
+.light .home-shell .text-white\/65 {
+  color: color-mix(in oklch, var(--foreground) 65%, transparent) !important;
+}
+
+.light .home-shell .text-white\/60 {
+  color: color-mix(in oklch, var(--foreground) 60%, transparent) !important;
+}
+
+.light .home-shell .text-white\/55 {
+  color: color-mix(in oklch, var(--foreground) 55%, transparent) !important;
+}
+
+.light .home-shell .text-white\/50 {
+  color: color-mix(in oklch, var(--foreground) 50%, transparent) !important;
+}
+
+.light .home-shell .text-white\/45 {
+  color: color-mix(in oklch, var(--foreground) 45%, transparent) !important;
+}
+
+.light .home-shell .border-white\/10,
+.light .home-shell .border-white\/12,
+.light .home-shell .border-white\/15,
+.light .home-shell .border-white\/20 {
+  border-color: color-mix(in oklch, var(--foreground) 14%, transparent) !important;
+}
+
+.light .home-shell .bg-white\/5,
+.light .home-shell .bg-white\/10,
+.light .home-shell .bg-white\/\[0\.03\],
+.light .home-shell .bg-white\/\[0\.04\],
+.light .home-shell .bg-white\/\[0\.06\] {
+  background-color: color-mix(in oklch, var(--foreground) 5%, var(--background)) !important;
+}
+
+.light .home-shell .bg-black\/20,
+.light .home-shell .bg-black\/30 {
+  background-color: color-mix(in oklch, var(--foreground) 4%, var(--background)) !important;
+}

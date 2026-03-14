@@ -5,6 +5,9 @@ import DashboardTabNav from "@/components/dashboard-tab-nav";
 import PresenceHeartbeat from "@/components/presence-heartbeat";
 import { getAppSettings } from "@/lib/system-settings";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function ManagerLayout({
   children,
 }: {

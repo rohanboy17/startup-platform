@@ -8,6 +8,7 @@ import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
 import NotificationChannelPreferences from "@/components/notification-channel-preferences";
+import { useHydrated } from "@/lib/use-hydrated";
 
 type NotificationFilter = "ALL" | "UNREAD" | "SUCCESS" | "WARNING" | "INFO";
 
@@ -41,10 +42,10 @@ const FILTERS: Array<{ value: NotificationFilter; label: string }> = [
 ];
 
 function typeTone(type: string, isRead: boolean) {
-  if (isRead) return "border-white/10 bg-white/5 text-white";
-  if (type === "SUCCESS") return "border-emerald-400/20 bg-emerald-500/10 text-emerald-100";
-  if (type === "WARNING") return "border-amber-400/20 bg-amber-500/10 text-amber-100";
-  return "border-sky-400/20 bg-sky-500/10 text-sky-100";
+  if (isRead) return "border-foreground/10 bg-background/50 text-foreground";
+  if (type === "SUCCESS") return "border-emerald-400/25 bg-emerald-500/10 text-foreground";
+  if (type === "WARNING") return "border-amber-400/25 bg-amber-500/10 text-foreground";
+  return "border-sky-400/25 bg-sky-500/10 text-foreground";
 }
 
 export default function UserNotificationsPanel() {
@@ -54,6 +55,7 @@ export default function UserNotificationsPanel() {
   const [actionLoading, setActionLoading] = useState<string | "all" | null>(null);
   const [message, setMessage] = useState("");
   const [filter, setFilter] = useState<NotificationFilter>("ALL");
+  const hydrated = useHydrated();
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/users/me/notifications", { credentials: "include" });
@@ -124,9 +126,9 @@ export default function UserNotificationsPanel() {
     await load();
   }
 
-  if (loading) return <p className="text-sm text-white/60">Loading notifications...</p>;
-  if (error) return <p className="text-sm text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-white/60">Loading notifications...</p>;
+  if (loading) return <p className="text-sm text-foreground/60">Loading notifications...</p>;
+  if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
+  if (!data) return <p className="text-sm text-foreground/60">Loading notifications...</p>;
 
   return (
     <div className="space-y-6">
@@ -142,14 +144,14 @@ export default function UserNotificationsPanel() {
       <SectionCard elevated className="space-y-4 p-4 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm text-white/60">Inbox filters</p>
-              <h3 className="text-xl font-semibold text-white">Sort by unread or notification type</h3>
+              <p className="text-sm text-foreground/60">Inbox filters</p>
+              <h3 className="text-xl font-semibold text-foreground">Sort by unread or notification type</h3>
             </div>
             <Button
               variant="outline"
               onClick={() => void markRead()}
               disabled={actionLoading !== null || data.notifications.every((item) => item.isRead)}
-              className="border-white/15 bg-transparent text-white hover:bg-white/10"
+              className="border-foreground/20 bg-transparent text-foreground hover:bg-foreground/[0.04]"
             >
               {actionLoading === "all" ? "Updating..." : "Mark all as read"}
             </Button>
@@ -165,8 +167,8 @@ export default function UserNotificationsPanel() {
                   onClick={() => setFilter(item.value)}
                   className={`rounded-full border px-3 py-2 text-sm transition ${
                     active
-                      ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-100"
-                      : "border-white/10 bg-black/20 text-white/65 hover:bg-black/30 hover:text-white"
+                      ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-800 dark:text-emerald-100"
+                      : "border-foreground/10 bg-background/50 text-foreground/70 hover:bg-background/70 hover:text-foreground"
                   }`}
                 >
                   {item.label}
@@ -177,13 +179,16 @@ export default function UserNotificationsPanel() {
       </SectionCard>
 
       {filtered.length === 0 ? (
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-6 text-sm text-white/60">No notifications match the current filter.</CardContent>
+        <Card className="rounded-2xl border-foreground/10 bg-background/50">
+          <CardContent className="p-6 text-sm text-foreground/60">No notifications match the current filter.</CardContent>
         </Card>
       ) : (
         <div className="space-y-4">
           {filtered.map((item) => (
-            <Card key={item.id} className={`rounded-3xl border shadow-xl shadow-black/20 backdrop-blur-md ${typeTone(item.type, item.isRead)}`}>
+            <Card
+              key={item.id}
+              className={`rounded-3xl border shadow-xl shadow-black/10 dark:shadow-black/20 backdrop-blur-md ${typeTone(item.type, item.isRead)}`}
+            >
               <CardContent className="space-y-3 p-4 sm:p-6">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                   <div>
@@ -202,7 +207,7 @@ export default function UserNotificationsPanel() {
                   ) : null}
                 </div>
                 <div className="flex flex-wrap items-center gap-3 text-xs opacity-70">
-                  <span>{new Date(item.createdAt).toLocaleString()}</span>
+                  <span suppressHydrationWarning>{hydrated ? new Date(item.createdAt).toLocaleString() : ""}</span>
                   <StatusBadge label={item.type} tone={item.type === "SUCCESS" ? "success" : item.type === "WARNING" ? "warning" : "info"} />
                   {!item.isRead ? <StatusBadge label="Unread" tone="neutral" /> : null}
                 </div>
@@ -212,7 +217,7 @@ export default function UserNotificationsPanel() {
         </div>
       )}
 
-      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }

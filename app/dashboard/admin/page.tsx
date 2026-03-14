@@ -167,21 +167,21 @@ export default async function AdminDashboard() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
         <SectionCard elevated className="lg:col-span-2">
-            <p className="mb-4 text-sm text-white/60">System Health</p>
+            <p className="mb-4 text-sm text-foreground/60">System Health</p>
             <div className="space-y-3 text-sm">
-              <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-1 rounded-lg border border-foreground/10 bg-background/60 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 <span>Database</span>
                 <StatusBadge label={dbHealthy ? "HEALTHY" : "ISSUE"} tone={dbHealthy ? "success" : "danger"} />
               </div>
-              <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-1 rounded-lg border border-foreground/10 bg-background/60 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 <span>Cron (Daily Reset)</span>
                 <StatusBadge label={cronHealthy ? "ON TIME" : "DELAYED"} tone={cronHealthy ? "success" : "warning"} />
               </div>
-              <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-1 rounded-lg border border-foreground/10 bg-background/60 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 <span>Payouts</span>
                 <StatusBadge label={payoutHealthy ? "NO FAILURES" : "CHECK NEEDED"} tone={payoutHealthy ? "success" : "warning"} />
               </div>
-              <div className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-1 rounded-lg border border-foreground/10 bg-background/60 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 <span>Moderation Queue</span>
                 <StatusBadge label={queueHealthy ? "HEALTHY" : "STALE ITEMS"} tone={queueHealthy ? "success" : "warning"} />
               </div>
@@ -189,13 +189,16 @@ export default async function AdminDashboard() {
         </SectionCard>
 
         <SectionCard elevated className="lg:col-span-2">
-            <p className="mb-4 text-sm text-white/60">Action Alerts</p>
+            <p className="mb-4 text-sm text-foreground/60">Action Alerts</p>
             {alerts.length === 0 ? (
-              <p className="text-sm text-emerald-300">No critical alert right now.</p>
+              <p className="text-sm text-emerald-700 dark:text-emerald-300">No critical alert right now.</p>
             ) : (
-              <ul className="space-y-2 text-sm text-amber-200">
+              <ul className="space-y-2 text-sm text-amber-800 dark:text-amber-200">
                 {alerts.map((alert) => (
-                  <li key={alert} className="rounded-lg border border-amber-300/20 bg-amber-500/10 px-3 py-2">
+                  <li
+                    key={alert}
+                    className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-amber-900 dark:border-amber-300/30 dark:bg-amber-500/10 dark:text-amber-100"
+                  >
                     {alert}
                   </li>
                 ))}
@@ -206,8 +209,8 @@ export default async function AdminDashboard() {
 
       <div className="space-y-3">
         <div>
-          <p className="text-sm text-white/60">Platform trend</p>
-          <h3 className="text-xl font-semibold text-white">Revenue vs payout</h3>
+          <p className="text-sm text-foreground/60">Platform trend</p>
+          <h3 className="text-xl font-semibold text-foreground">Revenue vs payout</h3>
         </div>
         <RevenueChart data={revenueChartData} />
       </div>

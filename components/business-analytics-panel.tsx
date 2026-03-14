@@ -112,8 +112,8 @@ export default function BusinessAnalyticsPanel() {
 
   useLiveRefresh(load, 10000);
 
-  if (error) return <p className="text-sm text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-white/60">Loading analytics...</p>;
+  if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
+  if (!data) return <p className="text-sm text-foreground/60">Loading analytics...</p>;
 
   return (
     <div className="space-y-6">
@@ -128,8 +128,8 @@ export default function BusinessAnalyticsPanel() {
         <SectionCard elevated>
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
-              <p className="text-sm text-white/60">14-day trend</p>
-              <h3 className="text-xl font-semibold text-white">Spend vs approved output</h3>
+              <p className="text-sm text-foreground/60">14-day trend</p>
+              <h3 className="text-xl font-semibold text-foreground">Spend vs approved output</h3>
             </div>
             <ChartContainer config={trendChartConfig} className="aspect-auto h-[220px] w-full overflow-hidden sm:h-[320px]">
               <LineChart data={data.trend}>
@@ -154,32 +154,32 @@ export default function BusinessAnalyticsPanel() {
         <SectionCard elevated>
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
-              <p className="text-sm text-white/60">Category performance</p>
-              <h3 className="text-xl font-semibold text-white">Which task type is working</h3>
+              <p className="text-sm text-foreground/60">Category performance</p>
+              <h3 className="text-xl font-semibold text-foreground">Which task type is working</h3>
             </div>
 
             {data.categoryPerformance.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/50">
+              <div className="rounded-2xl border border-dashed border-foreground/15 bg-foreground/[0.03] p-4 text-sm text-foreground/60">
                 No category analytics yet.
               </div>
             ) : (
               <div className="space-y-3">
                 {data.categoryPerformance.map((row) => (
-                  <div key={row.category} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                  <div key={row.category} className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      <p className="font-medium text-white">{getCampaignCategoryLabel(row.category)}</p>
+                      <p className="font-medium text-foreground">{getCampaignCategoryLabel(row.category)}</p>
                       <StatusBadge label={`${row.approvalRate.toFixed(2)}%`} tone="success" />
                     </div>
-                    <p className="mt-1 text-xs text-white/45">
+                    <p className="mt-1 text-xs text-foreground/60">
                       {row.campaigns} campaigns | {row.approved} approved | {row.rejected} rejected
                     </p>
-                    <div className="mt-3 h-2 rounded-full bg-white/10">
+                    <div className="mt-3 h-2 rounded-full bg-foreground/10">
                       <div
                         className="h-2 rounded-full bg-emerald-400"
                         style={{ width: `${Math.max(0, Math.min(100, row.approvalRate))}%` }}
                       />
                     </div>
-                    <p className="mt-2 text-xs text-white/45">Spend INR {formatMoney(row.spend)}</p>
+                    <p className="mt-2 text-xs text-foreground/60">Spend INR {formatMoney(row.spend)}</p>
                   </div>
                 ))}
               </div>
@@ -189,11 +189,11 @@ export default function BusinessAnalyticsPanel() {
       </div>
 
       <div className="grid gap-6 2xl:grid-cols-[0.9fr_1.1fr]">
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
+        <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md">
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
-              <p className="text-sm text-white/60">Moderation flow</p>
-              <h3 className="text-xl font-semibold text-white">Approved vs rejected volume</h3>
+              <p className="text-sm text-foreground/60">Moderation flow</p>
+              <h3 className="text-xl font-semibold text-foreground">Approved vs rejected volume</h3>
             </div>
             <ChartContainer config={moderationChartConfig} className="aspect-auto h-[210px] w-full overflow-hidden sm:h-[280px]">
               <BarChart data={data.trend}>
@@ -208,30 +208,30 @@ export default function BusinessAnalyticsPanel() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
+        <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md">
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
-              <p className="text-sm text-white/60">Top campaigns</p>
-              <h3 className="text-xl font-semibold text-white">Ranking by approved output</h3>
+              <p className="text-sm text-foreground/60">Top campaigns</p>
+              <h3 className="text-xl font-semibold text-foreground">Ranking by approved output</h3>
             </div>
             {data.topCampaigns.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/50">
+              <div className="rounded-2xl border border-dashed border-foreground/15 bg-foreground/[0.03] p-4 text-sm text-foreground/60">
                 No campaign ranking available yet.
               </div>
             ) : (
               <div className="space-y-3">
                 {data.topCampaigns.map((campaign) => (
-                  <div key={campaign.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                  <div key={campaign.id} className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div>
-                        <p className="break-words font-medium text-white">{campaign.title}</p>
-                        <p className="mt-1 text-xs text-white/45">
+                        <p className="break-words font-medium text-foreground">{campaign.title}</p>
+                        <p className="mt-1 text-xs text-foreground/60">
                           {getCampaignCategoryLabel(campaign.category)} | {campaign.status}
                         </p>
                       </div>
-                      <span className="text-sm text-emerald-200">{campaign.approved} approved</span>
+                      <span className="text-sm text-emerald-700 dark:text-emerald-200">{campaign.approved} approved</span>
                     </div>
-                    <div className="mt-3 grid gap-2 text-xs text-white/55 sm:grid-cols-2">
+                    <div className="mt-3 grid gap-2 text-xs text-foreground/70 sm:grid-cols-2">
                       <p>Approval rate: {campaign.approvalRate.toFixed(2)}%</p>
                       <p>Cost per approved: INR {formatMoney(campaign.costPerApproved)}</p>
                       <p>Spent: INR {formatMoney(campaign.spent)}</p>

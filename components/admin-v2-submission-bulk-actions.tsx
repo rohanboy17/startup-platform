@@ -65,10 +65,10 @@ export default function AdminV2SubmissionBulkActions({ items }: { items: BulkIte
   }
 
   return (
-    <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+    <div className="space-y-3 rounded-2xl border border-foreground/10 bg-background/50 p-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-white/70">Bulk Moderation</p>
-        <span className="text-xs text-white/60">Selected: {selected.length}</span>
+        <p className="text-sm text-foreground/70">Bulk Moderation</p>
+        <span className="text-xs text-foreground/60">Selected: {selected.length}</span>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -84,7 +84,7 @@ export default function AdminV2SubmissionBulkActions({ items }: { items: BulkIte
         <select
           value={action}
           onChange={(e) => setAction(e.target.value as "APPROVE" | "REJECT")}
-          className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          className="rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
           disabled={loading}
         >
           <option value="APPROVE">APPROVE</option>
@@ -94,14 +94,14 @@ export default function AdminV2SubmissionBulkActions({ items }: { items: BulkIte
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder="Optional note"
-          className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
+          className="rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground placeholder:text-foreground/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 md:col-span-2"
           disabled={loading}
         />
       </div>
 
-      <div className="max-h-44 space-y-1 overflow-auto rounded-md border border-white/10 bg-black/20 p-2">
+      <div className="max-h-44 space-y-1 overflow-auto rounded-md border border-foreground/10 bg-background/40 p-2">
         {items.map((item) => (
-          <label key={item.id} className="flex items-center gap-2 text-xs text-white/80">
+          <label key={item.id} className="flex items-center gap-2 text-xs text-foreground/80">
             <input
               type="checkbox"
               checked={selected.includes(item.id)}
@@ -118,8 +118,7 @@ export default function AdminV2SubmissionBulkActions({ items }: { items: BulkIte
       <Button type="button" onClick={submit} disabled={loading}>
         {loading ? "Processing..." : "Apply Bulk Action"}
       </Button>
-      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }
-
