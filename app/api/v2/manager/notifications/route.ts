@@ -49,6 +49,7 @@ export async function GET(req: Request) {
       where: { createdAt: { gte: since }, ipAddress: { not: null } },
       select: { ipAddress: true, userId: true, createdAt: true },
       take: 6000,
+      orderBy: { createdAt: "desc" },
     }),
     prisma.activityLog.findMany({
       where: {
