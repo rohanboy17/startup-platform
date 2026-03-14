@@ -32,6 +32,17 @@ export default function PwaInstallButton({
     return /iphone|ipad|ipod/i.test(navigator.userAgent);
   }, []);
 
+  const isAndroid = useMemo(() => {
+    if (typeof navigator === "undefined") return false;
+    return /android/i.test(navigator.userAgent);
+  }, []);
+
+  const isEdge = useMemo(() => {
+    if (typeof navigator === "undefined") return false;
+    // Edge Chromium uses Edg/ token (incl. Android).
+    return /Edg\//.test(navigator.userAgent);
+  }, []);
+
   useEffect(() => {
     const onBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
@@ -71,7 +82,10 @@ export default function PwaInstallButton({
     setUnsupportedTipOpen((prev) => !prev);
   }
 
-  const hidden = !mobile && !deferredPrompt && !isIOS;
+  // On mobile, the browser might not expose `beforeinstallprompt` (OEM browsers, some Edge/Chrome states),
+  // but users can still install via the browser menu. Keep the entry point visible.
+  const alwaysShow = mobile || compact;
+  const hidden = !alwaysShow && !deferredPrompt && !isIOS;
   if (hidden) return null;
 
   return (
@@ -106,7 +120,16 @@ export default function PwaInstallButton({
               : "absolute right-0 top-full mt-2 w-64 rounded-lg border border-foreground/15 bg-background/95 p-2.5 shadow-xl"
           }`}
         >
-          Install prompt not available. Open this site over HTTPS in Chrome/Safari and revisit.
+          {isAndroid ? (
+            <>
+              Install prompt not available. In{" "}
+              {isEdge ? "Edge" : "your browser"}, open the menu and choose{" "}
+              <span className="font-semibold text-foreground">Install app</span> or{" "}
+              <span className="font-semibold text-foreground">Add to Home screen</span>.
+            </>
+          ) : (
+            <>Install prompt not available. Open this site over HTTPS and revisit.</>
+          )}
         </p>
       ) : null}
     </div>
