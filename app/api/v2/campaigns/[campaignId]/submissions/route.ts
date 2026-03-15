@@ -132,13 +132,26 @@ export async function POST(
   }
 
   const { campaignId } = await params;
-  const { proofLink, proofText } = (await req.json()) as {
+  const { proofLink, proofText, proofImage } = (await req.json()) as {
     proofLink?: string;
     proofText?: string;
+    proofImage?: string;
   };
 
-  if (!proofLink && !proofText) {
-    return NextResponse.json({ error: "Proof link or text is required" }, { status: 400 });
+  const normalizedProofLink = typeof proofLink === "string" ? proofLink.trim() : "";
+  const normalizedProofText = typeof proofText === "string" ? proofText.trim() : "";
+  const normalizedProofImage = typeof proofImage === "string" ? proofImage.trim() : "";
+
+  if (!normalizedProofLink && !normalizedProofText && !normalizedProofImage) {
+    return NextResponse.json(
+      { error: "Proof link, text, or screenshot is required" },
+      { status: 400 }
+    );
+  }
+
+  // Very basic sanity check: only accept https urls for stored proof images.
+  if (normalizedProofImage && !/^https:\/\/.+/i.test(normalizedProofImage)) {
+    return NextResponse.json({ error: "Invalid proof image URL" }, { status: 400 });
   }
 
   const campaign = await prisma.campaign.findUnique({
@@ -221,9 +234,10 @@ export async function POST(
         data: {
           userId: session.user.id,
           campaignId,
-          proof: proofText || proofLink || "",
-          proofLink,
-          proofText,
+          proof: normalizedProofText || normalizedProofLink || normalizedProofImage || "",
+          proofLink: normalizedProofLink || null,
+          proofText: normalizedProofText || null,
+          proofImage: normalizedProofImage || null,
           ipAddress: ip !== "unknown" ? ip : null,
           managerStatus: "PENDING",
           adminStatus: "PENDING",

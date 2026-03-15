@@ -4,6 +4,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { getToken } from "firebase/messaging";
 import { BellRing } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { getBrowserMessaging, isFirebaseWebConfigured } from "@/lib/firebase-client";
 import { useLiveRefresh } from "@/lib/live-refresh";
@@ -38,6 +39,7 @@ function markAutoPromptAttempt() {
 }
 
 export default function EmptyCampaignsPushNudge() {
+  const t = useTranslations("user.tasks");
   const router = useRouter();
   const [channels, setChannels] = useState<ChannelState | null>(null);
   const [loading, setLoading] = useState(false);
@@ -64,20 +66,20 @@ export default function EmptyCampaignsPushNudge() {
 
     try {
       if (!("Notification" in window) || !("serviceWorker" in navigator)) {
-        setMessage("This browser does not support push notifications.");
+        setMessage(t("pushUnsupported"));
         setLoading(false);
         return;
       }
 
       if (!pushReadyInBrowser) {
-        setMessage("Push is not configured for this environment yet.");
+        setMessage(t("pushNotConfigured"));
         setLoading(false);
         return;
       }
 
       const permission = await Notification.requestPermission();
       if (permission !== "granted") {
-        setMessage("Permission not granted. You can enable it in browser settings anytime.");
+        setMessage(t("pushPermissionDenied"));
         setLoading(false);
         return;
       }
@@ -85,7 +87,7 @@ export default function EmptyCampaignsPushNudge() {
       const messaging = await getBrowserMessaging();
       const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
       if (!messaging || !vapidKey) {
-        setMessage("Push is not configured for this environment yet.");
+        setMessage(t("pushNotConfigured"));
         setLoading(false);
         return;
       }
@@ -96,7 +98,7 @@ export default function EmptyCampaignsPushNudge() {
 
       const token = await getToken(messaging, { vapidKey, serviceWorkerRegistration: registration });
       if (!token) {
-        setMessage("Could not register this device for push.");
+        setMessage(t("pushRegisterFailed"));
         setLoading(false);
         return;
       }
@@ -112,20 +114,20 @@ export default function EmptyCampaignsPushNudge() {
       const raw = await res.text();
       const parsed = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
       if (!res.ok) {
-        setMessage(parsed.error || "Unable to enable push right now.");
+        setMessage(parsed.error || t("pushEnableFailed"));
         setLoading(false);
         return;
       }
 
-      setMessage("Notifications enabled. We will alert you when new campaigns go live.");
+      setMessage(t("pushEnabled"));
       await loadChannels();
       router.refresh();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to enable push notifications");
+      setMessage(error instanceof Error ? error.message : t("pushEnableFailed"));
     }
 
     setLoading(false);
-  }, [loadChannels, pushReadyInBrowser, router]);
+  }, [loadChannels, pushReadyInBrowser, router, t]);
 
   // Keep channel state fresh without calling setState directly from an effect in this component.
   useLiveRefresh(loadChannels, 30000);
@@ -156,9 +158,9 @@ export default function EmptyCampaignsPushNudge() {
             <BellRing size={18} className="text-emerald-400" />
           </div>
           <div className="space-y-1">
-            <p className="text-sm font-semibold text-foreground">No campaigns right now</p>
+            <p className="text-sm font-semibold text-foreground">{t("pushNudgeTitle")}</p>
             <p className="text-sm text-foreground/70">
-              Enable notifications and we will alert you when new campaigns go live.
+              {t("pushNudgeBody")}
             </p>
             {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
           </div>
@@ -169,7 +171,7 @@ export default function EmptyCampaignsPushNudge() {
           disabled={loading || !channels?.pushConfigured || !pushReadyInBrowser}
           className="w-full sm:w-auto"
         >
-          {loading ? "Enabling..." : "Enable notifications"}
+          {loading ? t("pushEnabling") : t("pushEnableButton")}
         </Button>
       </div>
     </div>

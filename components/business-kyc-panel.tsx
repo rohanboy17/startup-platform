@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -39,6 +40,7 @@ const EMPTY_FORM = {
 };
 
 export default function BusinessKycPanel() {
+  const t = useTranslations("business.kycPanel");
   const [data, setData] = useState<ResponseShape | null>(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [isDirty, setIsDirty] = useState(false);
@@ -53,11 +55,11 @@ export default function BusinessKycPanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as ResponseShape) : null;
     } catch {
-      setError("Unexpected server response");
+      setError(t("errors.unexpectedServerResponse"));
       return;
     }
     if (!res.ok || !parsed) {
-      setError(parsed?.error || "Failed to load KYC status");
+      setError(parsed?.error || t("errors.failedToLoadStatus"));
       return;
     }
     setError("");
@@ -66,7 +68,7 @@ export default function BusinessKycPanel() {
     if (!parsed.request && !isDirty && !saving) {
       setForm(EMPTY_FORM);
     }
-  }, [isDirty, saving]);
+  }, [isDirty, saving, t]);
 
   useLiveRefresh(load, 15000);
 
@@ -74,10 +76,10 @@ export default function BusinessKycPanel() {
   const isVerified = data?.profile.kycStatus === "VERIFIED";
 
   const statusLabel = useMemo(() => {
-    if (isVerified) return "Verified";
-    if (data?.profile.kycStatus === "REJECTED") return "Rejected";
-    return "Pending";
-  }, [data, isVerified]);
+    if (isVerified) return t("status.verified");
+    if (data?.profile.kycStatus === "REJECTED") return t("status.rejected");
+    return t("status.pending");
+  }, [data, isVerified, t]);
 
   async function submit() {
     setSaving(true);
@@ -96,11 +98,11 @@ export default function BusinessKycPanel() {
     setSaving(false);
 
     if (!res.ok) {
-      setError(payload.error || "Failed to submit KYC request");
+      setError(payload.error || t("errors.failedToSubmit"));
       return;
     }
 
-    setMessage(payload.message || "KYC request submitted");
+    setMessage(payload.message || t("messages.submitted"));
     setIsDirty(false);
     void load();
   }
@@ -111,7 +113,7 @@ export default function BusinessKycPanel() {
   }
 
   if (error && !data) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-foreground/60">Loading KYC...</p>;
+  if (!data) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
 
   return (
     <div className="space-y-6">
@@ -119,15 +121,15 @@ export default function BusinessKycPanel() {
         <CardContent className="space-y-3 p-4 sm:p-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-foreground/60">KYC status</p>
+              <p className="text-sm text-foreground/60">{t("statusCard.eyebrow")}</p>
               <p className="text-2xl font-semibold text-foreground">{statusLabel}</p>
             </div>
             <div className="rounded-2xl border border-foreground/10 bg-background/60 px-4 py-2 text-sm text-foreground/70">
-              Account: {data.profile.email}
+              {t("accountLabel")}: {data.profile.email}
             </div>
           </div>
           {data.request?.notes ? (
-            <p className="text-sm text-amber-800 dark:text-amber-200">Reviewer notes: {data.request.notes}</p>
+            <p className="text-sm text-amber-800 dark:text-amber-200">{t("reviewerNotes", { notes: data.request.notes })}</p>
           ) : null}
         </CardContent>
       </Card>
@@ -135,42 +137,42 @@ export default function BusinessKycPanel() {
       {hasPending ? (
         <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md">
           <CardContent className="space-y-3 p-4 sm:p-6 text-sm text-foreground/70">
-            <p>Your KYC request is currently under review.</p>
-            <p>We will notify you once it is approved or rejected.</p>
+            <p>{t("pending.bodyLine1")}</p>
+            <p>{t("pending.bodyLine2")}</p>
           </CardContent>
         </Card>
       ) : (
         <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md">
           <CardContent className="space-y-5 p-4 sm:p-6">
             <div>
-              <p className="text-sm text-foreground/60">Submit KYC details</p>
-              <h3 className="mt-1 text-xl font-semibold text-foreground">Business verification form</h3>
+              <p className="text-sm text-foreground/60">{t("form.eyebrow")}</p>
+              <h3 className="mt-1 text-xl font-semibold text-foreground">{t("form.title")}</h3>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm text-foreground/70">Legal business name</label>
+                <label className="text-sm text-foreground/70">{t("form.legalName")}</label>
                 <Input value={form.legalName} onChange={(e) => updateFormField("legalName", e.target.value)} />
               </div>
               <div className="space-y-2">
-                <label className="text-sm text-foreground/70">Contact person name</label>
+                <label className="text-sm text-foreground/70">{t("form.contactName")}</label>
                 <Input value={form.contactName} onChange={(e) => updateFormField("contactName", e.target.value)} />
               </div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm text-foreground/70">Phone number</label>
+                <label className="text-sm text-foreground/70">{t("form.phone")}</label>
                 <Input value={form.phone} onChange={(e) => updateFormField("phone", e.target.value)} />
               </div>
               <div className="space-y-2">
-                <label className="text-sm text-foreground/70">Website (optional)</label>
+                <label className="text-sm text-foreground/70">{t("form.websiteOptional")}</label>
                 <Input value={form.website} onChange={(e) => updateFormField("website", e.target.value)} />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm text-foreground/70">Business address</label>
+              <label className="text-sm text-foreground/70">{t("form.address")}</label>
               <textarea
                 value={form.address}
                 onChange={(e) => updateFormField("address", e.target.value)}
@@ -180,11 +182,11 @@ export default function BusinessKycPanel() {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm text-foreground/70">Tax ID (optional)</label>
+                <label className="text-sm text-foreground/70">{t("form.taxIdOptional")}</label>
                 <Input value={form.taxId} onChange={(e) => updateFormField("taxId", e.target.value)} />
               </div>
               <div className="space-y-2">
-                <label className="text-sm text-foreground/70">Document URL (optional)</label>
+                <label className="text-sm text-foreground/70">{t("form.documentUrlOptional")}</label>
                 <Input
                   value={form.documentUrl}
                   onChange={(e) => updateFormField("documentUrl", e.target.value)}
@@ -193,7 +195,7 @@ export default function BusinessKycPanel() {
             </div>
 
             <Button onClick={() => void submit()} disabled={saving || isVerified} className="w-full sm:w-auto">
-              {saving ? "Submitting..." : "Request KYC Review"}
+              {saving ? t("form.submitting") : t("form.requestReview")}
             </Button>
             {message ? <p className="text-sm text-emerald-700 dark:text-emerald-300">{message}</p> : null}
             {error ? <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p> : null}

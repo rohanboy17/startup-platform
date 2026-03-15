@@ -70,6 +70,7 @@ export async function GET(req: Request) {
             createdAt: submission.createdAt.toISOString(),
             proofLink: submission.proofLink,
             proofText: submission.proofText,
+            proofImage: submission.proofImage,
             proof: submission.proof,
             user: submission.user,
             campaign: submission.campaign,

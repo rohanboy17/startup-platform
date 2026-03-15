@@ -2,12 +2,14 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { AlertTriangle, ArrowDownCircle, ArrowUpCircle, ReceiptText, Wallet } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { toDateLocale } from "@/lib/date-locale";
 import { formatMoney } from "@/lib/format-money";
 import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
 
@@ -58,18 +60,11 @@ function orderTone(status: string) {
   return "text-amber-100";
 }
 
-function dateTimeLabel(value: string | null) {
-  if (!value) return "Not yet";
-  return new Date(value).toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
 export default function BusinessFundingPage() {
+  const tBusiness = useTranslations("business");
+  const t = useTranslations("business.funding");
+  const locale = useLocale();
+  const dateLocale = toDateLocale(locale);
   const [data, setData] = useState<FundingData | null>(null);
   const [fundAmount, setFundAmount] = useState("");
   const [refundAmount, setRefundAmount] = useState("");
@@ -77,6 +72,17 @@ export default function BusinessFundingPage() {
   const [refundLoading, setRefundLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
+  function dateTimeLabel(value: string | null) {
+    if (!value) return t("labels.notYet");
+    return new Date(value).toLocaleString(dateLocale, {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/business/funding", { credentials: "include" });
@@ -91,16 +97,16 @@ export default function BusinessFundingPage() {
     try {
       parsed = raw ? (JSON.parse(raw) as FundingData) : parsed;
     } catch {
-      setError("Unexpected server response");
+      setError(t("errors.unexpectedServerResponse"));
       return;
     }
     if (!res.ok) {
-      setError(parsed.error || "Failed to load funding data");
+      setError(parsed.error || t("errors.failedToLoad"));
       return;
     }
     setError("");
     setData(parsed);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 10000);
 
@@ -143,7 +149,7 @@ export default function BusinessFundingPage() {
     const sdkReady = await ensureRazorpayScriptLoaded();
     if (!sdkReady) {
       setLoading(false);
-      setError("Failed to load payment gateway. Try again.");
+      setError(t("errors.gatewayLoadFailed"));
       return;
     }
 
@@ -164,13 +170,13 @@ export default function BusinessFundingPage() {
     try {
       payload = raw ? (JSON.parse(raw) as typeof payload) : {};
     } catch {
-      payload = { error: "Unexpected server response" };
+      payload = { error: t("errors.unexpectedServerResponse") };
     }
 
     setLoading(false);
 
     if (!res.ok) {
-      setError(payload.error || "Funding failed");
+      setError(payload.error || t("errors.fundingFailed"));
       return;
     }
 
@@ -192,7 +198,7 @@ export default function BusinessFundingPage() {
     }).Razorpay;
 
     if (!RazorpayCtor || !payload.keyId || !payload.razorpayOrderId || !payload.amountInPaise) {
-      setError("Payment initialization failed. Missing gateway details.");
+      setError(t("errors.paymentInitFailed"));
       return;
     }
 
@@ -201,7 +207,7 @@ export default function BusinessFundingPage() {
       amount: payload.amountInPaise,
       currency: payload.currency || "INR",
       name: "EarnHub",
-      description: "Business wallet top-up",
+      description: t("labels.topUpDescription"),
       order_id: payload.razorpayOrderId,
       handler: async (response) => {
         const verifyRes = await fetch("/api/business/fund/verify", {
@@ -215,15 +221,15 @@ export default function BusinessFundingPage() {
         try {
           verifyData = verifyRaw ? (JSON.parse(verifyRaw) as { message?: string; error?: string }) : {};
         } catch {
-          verifyData = { error: "Unexpected verification response" };
+          verifyData = { error: t("errors.unexpectedServerResponse") };
         }
 
         if (!verifyRes.ok) {
-          setError(verifyData.error || "Payment verification failed");
+          setError(verifyData.error || t("errors.verifyFailed"));
           return;
         }
 
-        setMessage(verifyData.message || "Wallet funded successfully");
+        setMessage(verifyData.message || t("messages.walletFunded"));
         setFundAmount("");
         emitDashboardLiveRefresh();
         void load();
@@ -250,32 +256,32 @@ export default function BusinessFundingPage() {
     try {
       payload = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      payload = { error: "Unexpected server response" };
+      payload = { error: t("errors.unexpectedServerResponse") };
     }
 
     setRefundLoading(false);
 
     if (!res.ok) {
-      setError(payload.error || "Refund failed");
+      setError(payload.error || t("errors.refundFailed"));
       return;
     }
 
-    setMessage(payload.message || "Refund initiated");
+    setMessage(payload.message || t("messages.refundInitiated"));
     setRefundAmount("");
     emitDashboardLiveRefresh();
     void load();
   }
 
   if (error && !data) return <p className="text-sm text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-white/60">Loading funding center...</p>;
+  if (!data) return <p className="text-sm text-white/60">{t("loading")}</p>;
 
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">Funding and billing</p>
-        <h2 className="mt-2 text-3xl font-semibold md:text-4xl">Wallet Funding</h2>
+        <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">{t("header.eyebrow")}</p>
+        <h2 className="mt-2 text-3xl font-semibold md:text-4xl">{tBusiness("fundingPageTitle")}</h2>
         <p className="mt-2 max-w-2xl text-sm text-white/65 md:text-base">
-          Manage deposits, refunds, payment status, and wallet ledger activity from one screen.
+          {t("header.subtitle")}
         </p>
       </div>
 
@@ -283,27 +289,30 @@ export default function BusinessFundingPage() {
         <SectionCard className="border-amber-400/20 bg-amber-500/10">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex items-start gap-3">
-              <AlertTriangle size={18} className="mt-0.5 text-amber-200" />
-              <div>
-                <p className="font-medium text-amber-100">Low balance warning</p>
-                <p className="text-sm text-amber-100/75">
-                  Wallet is below the recommended threshold of INR {formatMoney(minFundingThreshold)}.
-                </p>
+                <AlertTriangle size={18} className="mt-0.5 text-amber-200" />
+                <div>
+                  <p className="font-medium text-amber-100">{t("lowBalance.title")}</p>
+                  <p className="text-sm text-amber-100/75">
+                    {t("lowBalance.body", { threshold: formatMoney(minFundingThreshold) })}
+                  </p>
+                </div>
               </div>
+              <p className="text-sm text-amber-100/80">{t("lowBalance.hint")}</p>
             </div>
-            <p className="text-sm text-amber-100/80">Add funds to avoid campaign launch failures.</p>
-          </div>
-        </SectionCard>
-      ) : null}
+          </SectionCard>
+        ) : null}
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="Available Wallet" value={`INR ${formatMoney(data.wallet.balance)}`} tone="success" />
-        <KpiCard label="Locked Budget" value={`INR ${formatMoney(data.wallet.lockedBudget)}`} tone="info" />
-        <KpiCard label="Total Funded" value={`INR ${formatMoney(data.wallet.totalFunded)}`} />
+        <KpiCard label={t("kpis.availableWallet")} value={`INR ${formatMoney(data.wallet.balance)}`} tone="success" />
+        <KpiCard label={t("kpis.lockedBudget")} value={`INR ${formatMoney(data.wallet.lockedBudget)}`} tone="info" />
+        <KpiCard label={t("kpis.totalFunded")} value={`INR ${formatMoney(data.wallet.totalFunded)}`} />
         <div className="surface-card premium-ring-hover flex min-h-[108px] flex-col justify-between rounded-2xl p-4 sm:p-5">
-          <p className="text-xs font-medium uppercase tracking-wide text-foreground/60">Last Successful Payment</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-foreground/60">{t("kpis.lastSuccessfulPayment")}</p>
           <p className="kpi-value text-lg font-semibold text-foreground">{dateTimeLabel(data.stats.lastPaidAt)}</p>
-          <StatusBadge label={data.stats.lastPaidAt ? "PAID" : "NO PAYMENT"} tone={data.stats.lastPaidAt ? "success" : "neutral"} />
+          <StatusBadge
+            label={data.stats.lastPaidAt ? t("kpis.paid") : t("kpis.noPayment")}
+            tone={data.stats.lastPaidAt ? "success" : "neutral"}
+          />
         </div>
       </div>
 
@@ -311,12 +320,12 @@ export default function BusinessFundingPage() {
         <SectionCard elevated>
           <CardContent className="space-y-5 p-4 sm:p-6">
             <div className="flex items-center gap-3">
-              <ArrowUpCircle className="text-emerald-200" size={18} />
-              <div>
-                <p className="text-sm text-white/60">Add funds</p>
-                <h3 className="text-xl font-semibold text-white">Business wallet top-up</h3>
+                <ArrowUpCircle className="text-emerald-200" size={18} />
+                <div>
+                  <p className="text-sm text-white/60">{t("topUp.eyebrow")}</p>
+                  <h3 className="text-xl font-semibold text-white">{t("topUp.title")}</h3>
+                </div>
               </div>
-            </div>
 
             <div className="flex flex-wrap gap-2">
               {presets.map((value) => (
@@ -329,28 +338,28 @@ export default function BusinessFundingPage() {
             <Input
               type="number"
               min={minFundingThreshold}
-              placeholder={`Enter amount (min INR ${formatMoney(minFundingThreshold)})`}
+              placeholder={t("topUp.amountPlaceholder", { min: formatMoney(minFundingThreshold) })}
               value={fundAmount}
               onChange={(e) => setFundAmount(e.target.value)}
             />
 
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/70">
               <div className="flex items-center justify-between gap-3">
-                <span>Gross amount</span>
+                <span>{t("topUp.breakdown.gross")}</span>
                 <span className="text-right">INR {formatMoney(fundNumber)}</span>
               </div>
               <div className="mt-2 flex items-center justify-between gap-3">
-                <span>Platform funding fee ({(feeRate * 100).toFixed(2)}%)</span>
+                <span>{t("topUp.breakdown.fee", { rate: (feeRate * 100).toFixed(2) })}</span>
                 <span className="text-right">INR {formatMoney(fundFee)}</span>
               </div>
               <div className="mt-2 flex items-center justify-between gap-3 font-medium text-emerald-200">
-                <span>Net wallet credit</span>
+                <span>{t("topUp.breakdown.net")}</span>
                 <span className="text-right">INR {formatMoney(fundNet)}</span>
               </div>
             </div>
 
             <Button onClick={() => void submitFunding()} disabled={loading || fundNumber < minFundingThreshold} className="w-full">
-              {loading ? "Initializing payment..." : "Pay and Fund Wallet"}
+              {loading ? t("topUp.initializing") : t("topUp.payAndFund")}
             </Button>
           </CardContent>
         </SectionCard>
@@ -358,33 +367,33 @@ export default function BusinessFundingPage() {
         <SectionCard elevated>
           <CardContent className="space-y-5 p-4 sm:p-6">
             <div className="flex items-center gap-3">
-              <ArrowDownCircle className="text-sky-200" size={18} />
-              <div>
-                <p className="text-sm text-white/60">Request refund</p>
-                <h3 className="text-xl font-semibold text-white">Move unused wallet out</h3>
+                <ArrowDownCircle className="text-sky-200" size={18} />
+                <div>
+                  <p className="text-sm text-white/60">{t("refund.eyebrow")}</p>
+                  <h3 className="text-xl font-semibold text-white">{t("refund.title")}</h3>
+                </div>
               </div>
-            </div>
 
             <Input
               type="number"
               min="1"
               max={Math.floor(data.wallet.balance)}
-              placeholder="Enter refund amount"
+              placeholder={t("refund.amountPlaceholder")}
               value={refundAmount}
               onChange={(e) => setRefundAmount(e.target.value)}
             />
 
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/70">
               <div className="flex items-center justify-between gap-3">
-                <span>Requested amount</span>
+                <span>{t("refund.breakdown.requested")}</span>
                 <span className="text-right">INR {formatMoney(refundNumber)}</span>
               </div>
               <div className="mt-2 flex items-center justify-between gap-3">
-                <span>Refund processing fee ({(feeRate * 100).toFixed(2)}%)</span>
+                <span>{t("refund.breakdown.fee", { rate: (feeRate * 100).toFixed(2) })}</span>
                 <span className="text-right">INR {formatMoney(refundFee)}</span>
               </div>
               <div className="mt-2 flex items-center justify-between gap-3 font-medium text-sky-200">
-                <span>Net refund</span>
+                <span>{t("refund.breakdown.net")}</span>
                 <span className="text-right">INR {formatMoney(refundNet)}</span>
               </div>
             </div>
@@ -395,11 +404,11 @@ export default function BusinessFundingPage() {
               variant="outline"
               className="w-full"
             >
-              {refundLoading ? "Processing..." : "Request Refund"}
+              {refundLoading ? t("refund.processing") : t("refund.request")}
             </Button>
 
             <p className="text-xs text-white/45">
-              Refunds reduce available wallet immediately and apply the same configured fee logic as deposits.
+              {t("refund.help")}
             </p>
           </CardContent>
         </SectionCard>
@@ -412,32 +421,32 @@ export default function BusinessFundingPage() {
         <SectionCard elevated>
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div className="flex items-center gap-3">
-              <ReceiptText size={18} className="text-white/75" />
-              <div>
-                <p className="text-sm text-white/60">Payment orders</p>
-                <h3 className="text-xl font-semibold text-white">Checkout and settlement history</h3>
+                <ReceiptText size={18} className="text-white/75" />
+                <div>
+                  <p className="text-sm text-white/60">{t("orders.eyebrow")}</p>
+                  <h3 className="text-xl font-semibold text-white">{t("orders.title")}</h3>
+                </div>
               </div>
-            </div>
 
             {data.paymentOrders.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/50">
-                No payment orders yet.
+                {t("orders.empty")}
               </div>
             ) : (
               <div className="space-y-3">
                 {data.paymentOrders.map((order) => (
                   <div key={order.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                      <div>
-                        <p className="font-medium text-white">INR {formatMoney(order.amount)}</p>
-                        <p className="mt-1 break-all text-xs text-white/45">Receipt: {order.receipt}</p>
-                      </div>
+                          <div>
+                            <p className="font-medium text-white">INR {formatMoney(order.amount)}</p>
+                            <p className="mt-1 break-all text-xs text-white/45">{t("orders.receipt", { receipt: order.receipt })}</p>
+                          </div>
                       <span className={`text-sm font-medium ${orderTone(order.status)}`}>{order.status}</span>
                     </div>
                     <div className="mt-3 grid gap-2 text-xs text-white/50">
-                      <p>Created: {dateTimeLabel(order.createdAt)}</p>
-                      <p>Paid: {dateTimeLabel(order.paidAt)}</p>
-                      <p>Provider order: {order.providerOrderId || "-"}</p>
+                      <p>{t("orders.created", { date: dateTimeLabel(order.createdAt) })}</p>
+                      <p>{t("orders.paid", { date: dateTimeLabel(order.paidAt) })}</p>
+                      <p>{t("orders.providerOrder", { id: order.providerOrderId || "-" })}</p>
                     </div>
                   </div>
                 ))}
@@ -449,16 +458,16 @@ export default function BusinessFundingPage() {
         <SectionCard elevated>
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div className="flex items-center gap-3">
-              <Wallet size={18} className="text-white/75" />
-              <div>
-                <p className="text-sm text-white/60">Wallet ledger</p>
-                <h3 className="text-xl font-semibold text-white">Recent funding and spend activity</h3>
+                <Wallet size={18} className="text-white/75" />
+                <div>
+                  <p className="text-sm text-white/60">{t("ledger.eyebrow")}</p>
+                  <h3 className="text-xl font-semibold text-white">{t("ledger.title")}</h3>
+                </div>
               </div>
-            </div>
 
             {data.transactions.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/50">
-                No wallet activity yet.
+                {t("ledger.empty")}
               </div>
             ) : (
               <div className="space-y-3">
@@ -466,7 +475,7 @@ export default function BusinessFundingPage() {
                   <div key={transaction.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div>
-                        <p className="font-medium text-white break-words">{transaction.note || "Wallet transaction"}</p>
+                        <p className="font-medium text-white break-words">{transaction.note || t("ledger.fallbackNote")}</p>
                         <p className="mt-1 text-xs text-white/45">{dateTimeLabel(transaction.createdAt)}</p>
                       </div>
                       <span className={transaction.type === "CREDIT" ? "text-emerald-200 sm:text-right" : "text-rose-200 sm:text-right"}>

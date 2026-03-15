@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,6 +15,9 @@ import { formatMoney } from "@/lib/format-money";
 const DEFAULT_CATEGORY = "marketing";
 
 export default function CreateCampaign() {
+  const tBusiness = useTranslations("business");
+  const t = useTranslations("business.create");
+  const tCategories = useTranslations("business.categories");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState(DEFAULT_CATEGORY);
@@ -24,6 +28,9 @@ export default function CreateCampaign() {
   const [budget, setBudget] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [errorCode, setErrorCode] = useState<
+    "" | "KYC_NOT_VERIFIED" | "MIN_ONE_SLOT" | "INSUFFICIENT_WALLET" | "CREATE_FAILED"
+  >("");
   const [loading, setLoading] = useState(false);
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [kycStatus, setKycStatus] = useState<string | null>(null);
@@ -77,23 +84,27 @@ export default function CreateCampaign() {
 
   async function handleSubmit() {
     if (kycStatus && kycStatus !== "VERIFIED") {
-      setError("Business KYC must be verified before creating campaigns.");
+      setError(t("errors.kycNotVerified"));
+      setErrorCode("KYC_NOT_VERIFIED");
       return;
     }
 
     if (totalSlots < 1) {
-      setError("Budget must be enough to fund at least one slot.");
+      setError(t("errors.minOneSlot"));
+      setErrorCode("MIN_ONE_SLOT");
       return;
     }
 
     if (hasEnoughWallet === false) {
-      setError("Insufficient wallet balance for this campaign budget.");
+      setError(t("errors.insufficientWallet"));
+      setErrorCode("INSUFFICIENT_WALLET");
       return;
     }
 
     setLoading(true);
     setMessage("");
     setError("");
+    setErrorCode("");
 
     const detailsLines = taskDetails
       .split("\n")
@@ -121,17 +132,18 @@ export default function CreateCampaign() {
     try {
       data = raw ? (JSON.parse(raw) as { error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("errors.unexpectedServerResponse") };
     }
 
     setLoading(false);
 
     if (!res.ok) {
-      setError(data.error || "Failed to create campaign");
+      setError(data.error || t("errors.failedToCreate"));
+      setErrorCode("CREATE_FAILED");
       return;
     }
 
-    setMessage("Campaign created successfully!");
+    setMessage(t("messages.created"));
     setTitle("");
     setDescription("");
     setCategory(DEFAULT_CATEGORY);
@@ -141,6 +153,7 @@ export default function CreateCampaign() {
     setReward("");
     setBudget("");
     setWalletBalance((current) => (current === null ? current : Math.max(0, current - budgetValue)));
+    setErrorCode("");
   }
 
   const kycBlocked = Boolean(kycStatus && kycStatus !== "VERIFIED");
@@ -148,32 +161,31 @@ export default function CreateCampaign() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">Campaign setup</p>
-        <h2 className="mt-2 text-3xl font-semibold md:text-4xl">Create Campaign</h2>
+        <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">{t("header.eyebrow")}</p>
+        <h2 className="mt-2 text-3xl font-semibold md:text-4xl">{tBusiness("createPageTitle")}</h2>
         <p className="mt-2 max-w-2xl text-sm text-white/65 md:text-base">
-          Launch a structured campaign with clear task type, instructions, reward, and total budget.
+          {t("header.subtitle")}
         </p>
       </div>
 
       {kycBlocked ? (
         <div className="rounded-3xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm text-amber-100">
-          <p className="font-semibold">KYC verification required</p>
+          <p className="font-semibold">{t("kycBlocked.title")}</p>
           <p className="mt-2 text-amber-100/80">
-            Your business KYC status is <span className="font-semibold">{kycStatus}</span>. Admin approval is required
-            before you can create campaigns.
+            {t("kycBlocked.body", { status: kycStatus || "PENDING" })}
           </p>
           <div className="mt-3 flex flex-wrap gap-3">
             <Link
               href="/dashboard/business/settings"
               className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 px-4 py-1 text-xs text-amber-100 hover:bg-amber-500/20"
             >
-              Review business settings
+              {t("kycBlocked.reviewSettings")}
             </Link>
             <Link
               href="/contact"
               className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 px-4 py-1 text-xs text-amber-100 hover:bg-amber-500/20"
             >
-              Contact support
+              {t("kycBlocked.contactSupport")}
             </Link>
           </div>
         </div>
@@ -182,23 +194,23 @@ export default function CreateCampaign() {
       <div className="grid gap-6 xl:grid-cols-[1fr_0.9fr]">
         <div className="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">Task Title</label>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter task title" />
+            <label className="text-sm font-medium text-white/80">{t("form.title")}</label>
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("placeholders.title")} />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">Description</label>
+            <label className="text-sm font-medium text-white/80">{t("form.description")}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Summarize what the participant needs to do"
+              placeholder={t("placeholders.description")}
               className="min-h-28 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35"
             />
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Category</label>
+              <label className="text-sm font-medium text-white/80">{t("form.category")}</label>
               <select
                 value={category}
                 onChange={(e) => {
@@ -210,14 +222,14 @@ export default function CreateCampaign() {
               >
                 {CAMPAIGN_CATEGORY_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {getCampaignCategoryLabel(option.value, tCategories)}
                   </option>
                 ))}
               </select>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Task Type</label>
+              <label className="text-sm font-medium text-white/80">{t("form.taskType")}</label>
               <select
                 value={taskType}
                 onChange={(e) => setTaskType(e.target.value)}
@@ -233,45 +245,45 @@ export default function CreateCampaign() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">Task Link</label>
+            <label className="text-sm font-medium text-white/80">{t("form.taskLink")}</label>
             <Input
               value={taskLink}
               onChange={(e) => setTaskLink(e.target.value)}
-              placeholder="Optional destination link"
+              placeholder={t("placeholders.taskLink")}
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">Task Details</label>
+            <label className="text-sm font-medium text-white/80">{t("form.taskDetails")}</label>
             <textarea
               value={taskDetails}
               onChange={(e) => setTaskDetails(e.target.value)}
-              placeholder={"Add one instruction per line\nExample:\nOpen the app store\nInstall the app\nShare screenshot proof"}
+              placeholder={t("placeholders.taskDetails")}
               className="min-h-36 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35"
             />
-            <p className="text-xs text-white/45">Each new line becomes a separate instruction step.</p>
+            <p className="text-xs text-white/45">{t("form.taskDetailsHelp")}</p>
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Per Task Reward</label>
+              <label className="text-sm font-medium text-white/80">{t("form.rewardPerTask")}</label>
               <Input
                 type="number"
                 min="1"
                 value={reward}
                 onChange={(e) => setReward(e.target.value)}
-                placeholder="Reward per approved task"
+                placeholder={t("placeholders.rewardPerTask")}
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Total Budget</label>
+              <label className="text-sm font-medium text-white/80">{t("form.totalBudget")}</label>
               <Input
                 type="number"
                 min="1"
                 value={budget}
                 onChange={(e) => setBudget(e.target.value)}
-                placeholder="Total budget"
+                placeholder={t("placeholders.totalBudget")}
               />
             </div>
           </div>
@@ -281,39 +293,39 @@ export default function CreateCampaign() {
             className="w-full"
             disabled={loading || hasEnoughWallet === false || totalSlots < 1 || kycBlocked}
           >
-            {loading ? "Launching..." : "Launch Campaign"}
+            {loading ? t("actions.launching") : t("actions.launch")}
           </Button>
 
           {error ? <p className="text-sm text-red-400">{error}</p> : null}
           {message ? <p className="text-sm text-emerald-300">{message}</p> : null}
 
-          {error.includes("Insufficient wallet balance") ? (
+          {errorCode === "INSUFFICIENT_WALLET" ? (
             <Link
               href="/dashboard/business/funding"
               className="inline-block text-sm text-white underline underline-offset-4"
             >
-              Add funds to wallet
+              {t("actions.addFundsLink")}
             </Link>
           ) : null}
         </div>
 
-        <div className="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
-          <div>
-            <p className="text-sm text-white/60">Campaign preview</p>
-            <h3 className="mt-1 text-xl font-semibold text-white">{title || "Untitled campaign"}</h3>
-            <p className="mt-2 text-sm text-white/60">
-              {description || "Your task summary will appear here for business review."}
-            </p>
-          </div>
+          <div className="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
+            <div>
+              <p className="text-sm text-white/60">{t("preview.eyebrow")}</p>
+              <h3 className="mt-1 text-xl font-semibold text-white">{title || t("preview.untitled")}</h3>
+              <p className="mt-2 text-sm text-white/60">
+              {description || t("preview.descriptionFallback")}
+              </p>
+            </div>
 
           <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-white/40">Category</p>
-            <p className="mt-2 text-sm text-white">{getCampaignCategoryLabel(category)}</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("preview.categoryLabel")}</p>
+            <p className="mt-2 text-sm text-white">{getCampaignCategoryLabel(category, tCategories)}</p>
             <p className="mt-1 text-sm text-white/60">{taskType}</p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-white/40">Task details</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("preview.taskDetailsLabel")}</p>
             {taskDetails.trim() ? (
               <ol className="mt-3 space-y-2 text-sm text-white/75">
                 {taskDetails
@@ -325,30 +337,30 @@ export default function CreateCampaign() {
                   ))}
               </ol>
             ) : (
-              <p className="mt-3 text-sm text-white/45">No instruction lines added yet.</p>
+              <p className="mt-3 text-sm text-white/45">{t("preview.noInstructions")}</p>
             )}
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Per task reward</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("preview.rewardPerTask")}</p>
               <p className="mt-2 text-lg font-semibold text-emerald-200">
                 INR {formatMoney(rewardValue)}
               </p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Total budget</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("preview.totalBudget")}</p>
               <p className="mt-2 text-lg font-semibold text-white">INR {formatMoney(budgetValue)}</p>
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Calculated total slots</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("preview.totalSlots")}</p>
               <p className="mt-2 text-lg font-semibold text-white">{totalSlots}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Available wallet</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("preview.availableWallet")}</p>
               <p className="mt-2 text-lg font-semibold text-white">
                 INR {formatMoney(walletBalance ?? 0)}
               </p>
@@ -356,17 +368,16 @@ export default function CreateCampaign() {
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/65">
-            <p>Estimated platform fee: INR 0.00</p>
-            <p className="mt-2">Final payable amount: INR {formatMoney(finalPayableAmount)}</p>
+            <p>{t("preview.estimatedFee")}</p>
+            <p className="mt-2">{t("preview.finalPayable", { amount: formatMoney(finalPayableAmount) })}</p>
             <p className="mt-2">
-              Wallet sufficiency:{" "}
-              {hasEnoughWallet === null ? "Checking..." : hasEnoughWallet ? "Sufficient" : "Insufficient"}
+              {t("preview.walletSufficiency")}:{" "}
+              {hasEnoughWallet === null ? t("preview.checking") : hasEnoughWallet ? t("preview.sufficient") : t("preview.insufficient")}
             </p>
           </div>
 
           <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/55">
-            Marketing campaigns use the marketing commission rules. Work-based campaigns use the default
-            non-marketing commission rules already configured in the platform.
+            {t("preview.commissionHint")}
           </div>
         </div>
       </div>

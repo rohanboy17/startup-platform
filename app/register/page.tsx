@@ -5,11 +5,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Building2, CheckCircle2, UserRound } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default function RegisterPage() {
+  const t = useTranslations("auth.register");
   const router = useRouter();
   const searchParams = useSearchParams();
   const searchReferralCode = searchParams.get("ref")?.trim().toUpperCase() || "";
@@ -46,11 +48,11 @@ export default function RegisterPage() {
     setLoading(false);
 
     if (!res.ok) {
-      setError(data.error || "Registration failed");
+      setError(data.error || t("errors.failed"));
       return;
     }
 
-    setMessage("Account created successfully. Redirecting to sign in...");
+    setMessage(t("messages.createdRedirecting"));
     setTimeout(() => {
       router.push("/login?registered=1");
     }, 800);
@@ -79,17 +81,17 @@ export default function RegisterPage() {
           transition={{ duration: 0.45, ease: "easeOut" }}
           className="hidden rounded-3xl border border-foreground/10 bg-foreground/[0.04] p-8 backdrop-blur-xl lg:block"
         >
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-sky-500 dark:text-sky-300/80">Get Started</p>
-          <h2 className="mt-3 text-4xl font-semibold leading-tight">Create your marketplace account in minutes.</h2>
-          <p className="mt-4 text-sm text-foreground/70">
-            Join as a user to earn from verified tasks, or as a business to launch measurable campaigns.
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-sky-500 dark:text-sky-300/80">
+            {t("side.eyebrow")}
           </p>
+          <h2 className="mt-3 text-4xl font-semibold leading-tight">{t("side.title")}</h2>
+          <p className="mt-4 text-sm text-foreground/70">{t("side.subtitle")}</p>
 
           <div className="mt-8 space-y-3">
             {[
-              "Unified account for user and business roles",
-              "Mobile-number based identity support",
-              "Secure payout-ready wallet architecture",
+              t("side.bullets.unified"),
+              t("side.bullets.mobileIdentity"),
+              t("side.bullets.wallet"),
             ].map((item) => (
               <div key={item} className="flex items-center gap-3 rounded-xl border border-foreground/10 bg-background/60 px-3 py-2.5 text-sm text-foreground/80">
                 <CheckCircle2 size={16} className="text-emerald-500 dark:text-emerald-300" />
@@ -112,9 +114,11 @@ export default function RegisterPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.05 }}
               >
-                <p className="text-xs font-medium uppercase tracking-[0.2em] text-sky-500 dark:text-sky-300/80">Create New Account</p>
-                <h1 className="text-2xl font-semibold tracking-tight">Join EarnHub</h1>
-                <p className="text-sm text-foreground/65">Register with your mobile number and start as a user or business.</p>
+                <p className="text-xs font-medium uppercase tracking-[0.2em] text-sky-500 dark:text-sky-300/80">
+                  {t("card.eyebrow")}
+                </p>
+                <h1 className="text-2xl font-semibold tracking-tight">{t("card.title")}</h1>
+                <p className="text-sm text-foreground/65">{t("card.subtitle")}</p>
               </motion.div>
 
               <div className="grid grid-cols-2 gap-2 rounded-xl border border-foreground/10 bg-background/60 p-2 text-xs">
@@ -130,14 +134,14 @@ export default function RegisterPage() {
                 transition={{ duration: 0.35, delay: 0.1 }}
               >
                 <Input
-                  placeholder="Full name"
+                  placeholder={t("form.fullName")}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="h-11 border-foreground/15 bg-foreground/[0.04] transition focus-visible:border-sky-300/70 focus-visible:ring-sky-300/20"
                 />
                 <Input
                   type="email"
-                  placeholder="Email"
+                  placeholder={t("form.email")}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -146,7 +150,7 @@ export default function RegisterPage() {
                 />
                 <Input
                   type="tel"
-                  placeholder="Mobile number (e.g., +91987XXXX210)"
+                  placeholder={t("form.mobile")}
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)}
                   required
@@ -154,13 +158,16 @@ export default function RegisterPage() {
                   className="h-11 border-foreground/15 bg-foreground/[0.04] transition focus-visible:border-sky-300/70 focus-visible:ring-sky-300/20"
                 />
                 <p className="-mt-2 text-xs text-foreground/55">
-                  Include country code. Examples: India <span className="text-foreground/80">+91987XXXX210</span>, US{" "}
-                  <span className="text-foreground/80">+1415XXXX671</span>, UK{" "}
-                  <span className="text-foreground/80">+4479XXXXX456</span>.
+                  {t.rich("form.mobileHelp", {
+                    india: "+91987XXXX210",
+                    us: "+1415XXXX671",
+                    uk: "+4479XXXXX456",
+                    highlight: (chunks) => <span className="text-foreground/80">{chunks}</span>,
+                  })}
                 </p>
                 <Input
                   type="password"
-                  placeholder="Password"
+                  placeholder={t("form.password")}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -169,14 +176,14 @@ export default function RegisterPage() {
                   className="h-11 border-foreground/15 bg-foreground/[0.04] transition focus-visible:border-sky-300/70 focus-visible:ring-sky-300/20"
                 />
                 <Input
-                  placeholder="Referral code (optional)"
+                  placeholder={t("form.referral")}
                   value={referralCode}
                   onChange={(e) => setReferralCode(e.target.value.toUpperCase())}
                   className="h-11 border-foreground/15 bg-foreground/[0.04] transition focus-visible:border-sky-300/70 focus-visible:ring-sky-300/20"
                   disabled={role !== "USER"}
                 />
                 <p className="-mt-2 text-xs text-foreground/55">
-                  User referrals only. Enter a code to unlock EarnHub Coins after your first approved submission.
+                  {t("form.referralHelp")}
                 </p>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -190,7 +197,7 @@ export default function RegisterPage() {
                         : "border-foreground/20 bg-foreground/[0.04] text-foreground/85 hover:bg-foreground/10"
                     }`}
                   >
-                    <UserRound size={16} /> User
+                    <UserRound size={16} /> {t("roles.user")}
                   </motion.button>
                   <motion.button
                     type="button"
@@ -202,12 +209,12 @@ export default function RegisterPage() {
                         : "border-foreground/20 bg-foreground/[0.04] text-foreground/85 hover:bg-foreground/10"
                     }`}
                   >
-                    <Building2 size={16} /> Business
+                    <Building2 size={16} /> {t("roles.business")}
                   </motion.button>
                 </div>
 
                 <Button type="submit" className="h-11 w-full rounded-xl bg-foreground text-background hover:opacity-90" disabled={loading}>
-                  {loading ? "Creating..." : "Create Account"}
+                  {loading ? t("actions.creating") : t("actions.createAccount")}
                 </Button>
               </motion.form>
 
@@ -215,9 +222,9 @@ export default function RegisterPage() {
               {error ? <p className="text-sm text-red-400">{error}</p> : null}
 
               <p className="text-sm text-foreground/60">
-                Already have an account?{" "}
+                {t("footer.alreadyHave")}{" "}
                 <Link href="/login" className="font-medium text-foreground underline underline-offset-4">
-                  Sign in
+                  {t("footer.signIn")}
                 </Link>
               </p>
             </CardContent>

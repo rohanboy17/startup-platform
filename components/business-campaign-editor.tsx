@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Copy, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,6 +39,8 @@ export default function BusinessCampaignEditor({
   campaign,
   walletBalance,
 }: BusinessCampaignEditorProps) {
+  const t = useTranslations("business.campaignEditor");
+  const tCategories = useTranslations("business.categories");
   const router = useRouter();
   const [title, setTitle] = useState(campaign.title);
   const [description, setDescription] = useState(campaign.description);
@@ -109,17 +112,17 @@ export default function BusinessCampaignEditor({
     try {
       data = raw ? (JSON.parse(raw) as { error?: string; message?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("errors.unexpectedServerResponse") };
     }
 
     setLoading(false);
 
     if (!res.ok) {
-      setError(data.error || "Failed to update campaign");
+      setError(data.error || t("errors.failedToUpdate"));
       return;
     }
 
-    setMessage(data.message || "Campaign updated");
+    setMessage(data.message || t("messages.updated"));
     emitDashboardLiveRefresh();
     router.refresh();
   }
@@ -138,17 +141,17 @@ export default function BusinessCampaignEditor({
     try {
       data = raw ? (JSON.parse(raw) as { error?: string; message?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("errors.unexpectedServerResponse") };
     }
 
     setDupLoading(false);
 
     if (!res.ok) {
-      setError(data.error || "Failed to duplicate campaign");
+      setError(data.error || t("errors.failedToDuplicate"));
       return;
     }
 
-    setMessage(data.message || "Campaign duplicated");
+    setMessage(data.message || t("messages.duplicated"));
     emitDashboardLiveRefresh();
     router.refresh();
   }
@@ -157,39 +160,39 @@ export default function BusinessCampaignEditor({
     <div className="space-y-6 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
-          <p className="text-sm text-white/60">Campaign management</p>
-          <h3 className="text-2xl font-semibold text-white">Edit campaign, budget, and instructions</h3>
+          <p className="text-sm text-white/60">{t("header.eyebrow")}</p>
+          <h3 className="text-2xl font-semibold text-white">{t("header.title")}</h3>
           <p className="mt-2 max-w-3xl text-sm text-white/55">
-            Changes are validated against current spend and used slots before they are applied.
+            {t("header.subtitle")}
           </p>
         </div>
 
         <Button type="button" variant="outline" onClick={() => void duplicateCampaign()} disabled={dupLoading} className="w-full sm:w-auto">
           <Copy size={16} />
-          {dupLoading ? "Duplicating..." : "Duplicate campaign"}
+          {dupLoading ? t("actions.duplicating") : t("actions.duplicate")}
         </Button>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_0.95fr]">
         <div className="space-y-5">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">Task Title</label>
-            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Campaign title" />
+            <label className="text-sm font-medium text-white/80">{t("fields.title")}</label>
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("placeholders.title")} />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">Description</label>
+            <label className="text-sm font-medium text-white/80">{t("fields.description")}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="min-h-28 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35"
-              placeholder="Describe the campaign"
+              placeholder={t("placeholders.description")}
             />
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Category</label>
+              <label className="text-sm font-medium text-white/80">{t("fields.category")}</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -197,51 +200,51 @@ export default function BusinessCampaignEditor({
               >
                 {CAMPAIGN_CATEGORY_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {getCampaignCategoryLabel(option.value, tCategories)}
                   </option>
                 ))}
               </select>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Task Link</label>
+              <label className="text-sm font-medium text-white/80">{t("fields.taskLink")}</label>
               <Input
                 value={taskLink}
                 onChange={(e) => setTaskLink(e.target.value)}
-                placeholder="Optional destination link"
+                placeholder={t("placeholders.taskLink")}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">Task Details</label>
+            <label className="text-sm font-medium text-white/80">{t("fields.instructions")}</label>
             <textarea
               value={instructionsText}
               onChange={(e) => setInstructionsText(e.target.value)}
               className="min-h-36 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35"
-              placeholder={"Add one instruction per line\nExample:\nOpen the page\nComplete the required action\nSubmit proof"}
+              placeholder={t("placeholders.instructions")}
             />
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Per Task Reward</label>
+              <label className="text-sm font-medium text-white/80">{t("fields.rewardPerTask")}</label>
               <Input
                 type="number"
                 min="1"
                 value={rewardPerTask}
                 onChange={(e) => setRewardPerTask(e.target.value)}
-                placeholder="Reward per approved slot"
+                placeholder={t("placeholders.rewardPerTask")}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">Total Budget</label>
+              <label className="text-sm font-medium text-white/80">{t("fields.totalBudget")}</label>
               <Input
                 type="number"
                 min={spentBudget > 0 ? spentBudget.toFixed(2) : "1"}
                 value={totalBudget}
                 onChange={(e) => setTotalBudget(e.target.value)}
-                placeholder="Campaign budget"
+                placeholder={t("placeholders.totalBudget")}
               />
             </div>
           </div>
@@ -253,7 +256,7 @@ export default function BusinessCampaignEditor({
             disabled={loading || stats.insufficient || stats.invalidUsedSlots}
           >
             <Save size={16} />
-            {loading ? "Saving..." : "Save changes"}
+            {loading ? t("actions.saving") : t("actions.save")}
           </Button>
 
           {error ? <p className="text-sm text-rose-300">{error}</p> : null}
@@ -262,29 +265,29 @@ export default function BusinessCampaignEditor({
 
         <div className="space-y-4">
           <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-white/40">Current category</p>
-            <p className="mt-2 text-sm text-white">{getCampaignCategoryLabel(category)}</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("side.currentCategory")}</p>
+            <p className="mt-2 text-sm text-white">{getCampaignCategoryLabel(category, tCategories)}</p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Available wallet</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("side.availableWallet")}</p>
               <p className="mt-2 text-lg font-semibold text-white">INR {formatMoney(walletBalance)}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Already used budget</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("side.usedBudget")}</p>
               <p className="mt-2 text-lg font-semibold text-white">INR {formatMoney(spentBudget)}</p>
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Projected slots</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("side.projectedSlots")}</p>
               <p className="mt-2 text-lg font-semibold text-white">{stats.projectedSlots}</p>
-              <p className="mt-1 text-xs text-white/45">Used submissions already locked: {campaign.submissionCount}</p>
+              <p className="mt-1 text-xs text-white/45">{t("side.usedSubmissionsLocked", { count: campaign.submissionCount })}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Projected remaining budget</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("side.projectedRemainingBudget")}</p>
               <p className="mt-2 text-lg font-semibold text-white">
                 INR {formatMoney(stats.projectedRemaining)}
               </p>
@@ -292,38 +295,38 @@ export default function BusinessCampaignEditor({
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-white/40">Wallet impact</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("side.walletImpact")}</p>
             {stats.topUpAmount > 0 ? (
             <p className="mt-2 break-words text-sm text-amber-100">
-                This update needs an additional INR {formatMoney(stats.topUpAmount)} from the business wallet.
+                {t("side.walletImpactTopUp", { amount: formatMoney(stats.topUpAmount) })}
               </p>
             ) : stats.releaseAmount > 0 ? (
               <p className="mt-2 break-words text-sm text-emerald-200">
-                This update releases INR {formatMoney(stats.releaseAmount)} back to the business wallet.
+                {t("side.walletImpactRelease", { amount: formatMoney(stats.releaseAmount) })}
               </p>
             ) : (
-              <p className="mt-2 text-sm text-white/65">No wallet change for this update.</p>
+              <p className="mt-2 text-sm text-white/65">{t("side.walletImpactNone")}</p>
             )}
             <p className="mt-2 text-xs text-white/45">
-              Projected wallet after save: INR {formatMoney(stats.projectedWallet)}
+              {t("side.projectedWalletAfterSave", { amount: formatMoney(stats.projectedWallet) })}
             </p>
           </div>
 
           <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/60">
-            <p>Projected total slots: {stats.projectedSlots}</p>
-            <p className="mt-1">Final payable amount after this edit: INR {formatMoney(Math.max(0, stats.topUpAmount))}</p>
-            <p className="mt-1">Platform fee on campaign edit: INR 0.00</p>
+            <p>{t("side.summary.projectedTotalSlots", { count: stats.projectedSlots })}</p>
+            <p className="mt-1">{t("side.summary.finalPayable", { amount: formatMoney(Math.max(0, stats.topUpAmount)) })}</p>
+            <p className="mt-1">{t("side.summary.platformFee")}</p>
           </div>
 
           {stats.insufficient ? (
             <div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 p-4 text-sm text-rose-100">
-              The wallet does not have enough balance to apply this budget increase.
+              {t("warnings.insufficientWallet")}
             </div>
           ) : null}
 
           {stats.invalidUsedSlots ? (
             <div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 p-4 text-sm text-rose-100">
-              This update would reduce total slots below the number of submissions already recorded.
+              {t("warnings.invalidUsedSlots")}
             </div>
           ) : null}
         </div>

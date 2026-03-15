@@ -10,12 +10,14 @@ import { formatMoney } from "@/lib/format-money";
 import { normalizeExternalUrl } from "@/lib/external-url";
 import { useLiveRefresh } from "@/lib/live-refresh";
 import ManagerSubmissionActions from "@/components/manager-submission-actions";
+import ProofImageDialog from "@/components/proof-image-dialog";
 
 type QueueItem = {
   id: string;
   proof: string;
   proofLink: string | null;
   proofText: string | null;
+  proofImage: string | null;
   createdAt: string;
   user: {
     id: string;
@@ -62,7 +64,7 @@ function waitLabel(value: string) {
 }
 
 function proofPreview(item: QueueItem) {
-  return item.proofText || item.proofLink || item.proof || "No proof content";
+  return item.proofText || item.proofLink || item.proofImage || item.proof || "No proof content";
 }
 
 export default function ManagerSubmissionQueuePanel() {
@@ -275,24 +277,29 @@ export default function ManagerSubmissionQueuePanel() {
 
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <p className="text-xs uppercase tracking-[0.16em] text-white/35">Proof preview</p>
-                      {submission.proofLink ? (
-                        <a
-                          href={normalizeExternalUrl(submission.proofLink) ?? "#"}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-sm text-emerald-200 underline underline-offset-4"
-                        >
-                          <ExternalLink size={14} />
-                          Open proof link
-                        </a>
-                      ) : null}
+                      <div className="flex flex-wrap gap-3">
+                        {submission.proofLink ? (
+                          <a
+                            href={normalizeExternalUrl(submission.proofLink) ?? "#"}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1 text-sm text-emerald-200 underline underline-offset-4"
+                          >
+                            <ExternalLink size={14} />
+                            Open proof link
+                          </a>
+                        ) : null}
+                        {submission.proofImage ? (
+                          <ProofImageDialog url={submission.proofImage} label="Preview screenshot" />
+                        ) : null}
+                      </div>
                     </div>
                     <div className="max-h-56 overflow-auto rounded-2xl border border-white/10 bg-white/5 p-3">
                       <p className="whitespace-pre-wrap text-sm leading-relaxed text-white/80 break-words">
                         {proofPreview(submission)}
                       </p>
                     </div>
-                    {!submission.proofLink && !submission.proofText ? (
+                    {!submission.proofLink && !submission.proofText && !submission.proofImage ? (
                       <div className="rounded-xl border border-amber-400/20 bg-amber-500/10 p-3 text-sm text-amber-100/85">
                         <div className="flex items-start gap-2">
                           <AlertTriangle size={16} className="mt-0.5 shrink-0" />

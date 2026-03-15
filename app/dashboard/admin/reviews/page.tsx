@@ -6,6 +6,7 @@ import { formatMoney } from "@/lib/format-money";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
+import ProofImageDialog from "@/components/proof-image-dialog";
 
 type SearchParams = {
   q?: string;
@@ -120,7 +121,7 @@ export default async function AdminReviewsPage({
   const pendingWithFraud = submissions.map((submission) => {
     const ipCount = submission.ipAddress ? (ipCountMap.get(submission.ipAddress) || 0) : 0;
     const rapidCount = rapidCountMap.get(submission.user.id) || 0;
-    const lowDetail = !submission.proofLink && !submission.proofText;
+    const lowDetail = !submission.proofLink && !submission.proofText && !submission.proofImage;
     return {
       ...submission,
       fraudScore: getFraudScore({
@@ -235,7 +236,30 @@ export default async function AdminReviewsPage({
                 <p className="text-sm text-white/70">
                   Budget left: INR {formatMoney(submission.campaign?.remainingBudget)}
                 </p>
-                <p className="break-words text-sm text-white/70">Proof: {submission.proofText || submission.proofLink || submission.proof}</p>
+                <div className="space-y-2">
+                  <p className="break-words text-sm text-white/70">
+                    Proof:{" "}
+                    {submission.proofText ||
+                      submission.proofLink ||
+                      submission.proofImage ||
+                      submission.proof}
+                  </p>
+                  <div className="flex flex-wrap gap-3 text-sm">
+                    {submission.proofLink ? (
+                      <a
+                        href={submission.proofLink}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-emerald-200 underline underline-offset-4"
+                      >
+                        View link
+                      </a>
+                    ) : null}
+                    {submission.proofImage ? (
+                      <ProofImageDialog url={submission.proofImage} label="Preview screenshot" />
+                    ) : null}
+                  </div>
+                </div>
                 <div className="flex flex-wrap gap-2 text-xs">
                   {submission.ipAddress &&
                   (ipCountMap.get(submission.ipAddress) || 0) >= 5 ? (
@@ -250,7 +274,7 @@ export default async function AdminReviewsPage({
                       tone="danger"
                     />
                   ) : null}
-                  {!submission.proofLink && !submission.proofText ? (
+                  {!submission.proofLink && !submission.proofText && !submission.proofImage ? (
                     <StatusBadge label="Low-detail proof" tone="warning" />
                   ) : null}
                 </div>
@@ -285,7 +309,11 @@ export default async function AdminReviewsPage({
                   User: {submission.user.name || "Unnamed"} ({submission.user.email})
                 </p>
                 <p className="break-words text-sm text-white/70">
-                  Proof: {submission.proofText || submission.proofLink || submission.proof}
+                  Proof:{" "}
+                  {submission.proofText ||
+                    submission.proofLink ||
+                    submission.proofImage ||
+                    submission.proof}
                 </p>
                 <p className="text-xs text-white/50">
                   Submitted: {new Date(submission.createdAt).toLocaleString()}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import { AlertTriangle, BellRing } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import NotificationChannelPreferences from "@/components/notification-channel-preferences";
@@ -35,6 +36,7 @@ type NotificationsResponse = {
 };
 
 export default function BusinessNotificationsPanel() {
+  const t = useTranslations("business.notificationsPanel");
   const [data, setData] = useState<NotificationsResponse | null>(null);
   const [error, setError] = useState("");
 
@@ -52,21 +54,21 @@ export default function BusinessNotificationsPanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as NotificationsResponse) : parsed;
     } catch {
-      setError("Unexpected server response");
+      setError(t("errors.unexpectedServerResponse"));
       return;
     }
     if (!res.ok) {
-      setError(parsed.error || "Failed to load notifications");
+      setError(parsed.error || t("errors.failedToLoad"));
       return;
     }
     setError("");
     setData(parsed);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 10000);
 
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-white/60">Loading business notifications...</p>;
+  if (!data) return <p className="text-sm text-white/60">{t("loading")}</p>;
 
   return (
     <div className="space-y-6">
@@ -75,13 +77,13 @@ export default function BusinessNotificationsPanel() {
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
           <CardContent className="p-5">
-            <p className="text-sm text-white/60">Active alerts</p>
+            <p className="text-sm text-white/60">{t("kpis.activeAlerts")}</p>
             <p className="mt-2 text-3xl font-semibold text-amber-100">{data.counts.activeAlerts}</p>
           </CardContent>
         </Card>
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
           <CardContent className="p-5">
-            <p className="text-sm text-white/60">Unread inbox</p>
+            <p className="text-sm text-white/60">{t("kpis.unreadInbox")}</p>
             <p className="mt-2 text-3xl font-semibold text-emerald-200">{data.counts.unreadInbox}</p>
           </CardContent>
         </Card>
@@ -91,15 +93,15 @@ export default function BusinessNotificationsPanel() {
         <div className="flex items-center gap-3">
           <AlertTriangle size={18} className="text-amber-200" />
           <div>
-            <p className="text-sm text-white/60">Operational alerts</p>
-            <h3 className="text-xl font-semibold text-white">Live issues that need attention</h3>
+            <p className="text-sm text-white/60">{t("alerts.eyebrow")}</p>
+            <h3 className="text-xl font-semibold text-white">{t("alerts.title")}</h3>
           </div>
         </div>
 
         {data.activeAlerts.length === 0 ? (
           <Card className="rounded-3xl border border-dashed border-white/10 bg-white/5 backdrop-blur-md">
             <CardContent className="p-6 text-sm text-white/55">
-              No active business alerts right now.
+              {t("alerts.empty")}
             </CardContent>
           </Card>
         ) : (
@@ -136,8 +138,8 @@ export default function BusinessNotificationsPanel() {
         <div className="flex items-center gap-3">
           <BellRing size={18} className="text-emerald-200" />
           <div>
-            <p className="text-sm text-white/60">In-app inbox</p>
-            <h3 className="text-xl font-semibold text-white">Campaign and payment notifications</h3>
+            <p className="text-sm text-white/60">{t("inbox.eyebrow")}</p>
+            <h3 className="text-xl font-semibold text-white">{t("inbox.title")}</h3>
           </div>
         </div>
         <UserNotificationsList notifications={data.inbox} />

@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useLiveRefresh } from "@/lib/live-refresh";
 import { normalizeExternalUrl } from "@/lib/external-url";
 import { useHydrated } from "@/lib/use-hydrated";
+import ProofImageDialog from "@/components/proof-image-dialog";
 
 type HistoryRow = {
   id: string;
@@ -22,6 +23,7 @@ type HistoryRow = {
     createdAt: string;
     proofLink: string | null;
     proofText: string | null;
+    proofImage: string | null;
     proof: string;
     user: { id: string; name: string | null; level: string; isSuspicious: boolean };
     campaign: { id: string; title: string; category: string; rewardPerTask: number } | null;
@@ -195,17 +197,22 @@ export default function ManagerHistoryPanel() {
                     <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
                       <div className="flex items-center justify-between gap-3">
                         <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">Reason / Proof</p>
-                        {row.submission?.proofLink ? (
-                          <a
-                            href={normalizeExternalUrl(row.submission.proofLink) ?? "#"}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 text-sm text-emerald-700 underline underline-offset-4 dark:text-emerald-200"
-                          >
-                            <ExternalLink size={14} />
-                            Open proof
-                          </a>
-                        ) : null}
+                        <div className="flex flex-wrap gap-3">
+                          {row.submission?.proofLink ? (
+                            <a
+                              href={normalizeExternalUrl(row.submission.proofLink) ?? "#"}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1 text-sm text-emerald-700 underline underline-offset-4 dark:text-emerald-200"
+                            >
+                              <ExternalLink size={14} />
+                              Open link
+                            </a>
+                          ) : null}
+                          {row.submission?.proofImage ? (
+                            <ProofImageDialog url={row.submission.proofImage} label="Preview screenshot" />
+                          ) : null}
+                        </div>
                       </div>
                       {row.reason || row.submission?.managerEscalationReason ? (
                         <div className="rounded-xl border border-foreground/10 bg-background/50 p-3 text-sm text-foreground/80">
@@ -216,7 +223,11 @@ export default function ManagerHistoryPanel() {
                         </div>
                       ) : (
                         <p className="text-sm text-foreground/70 break-words">
-                          {row.submission?.proofText || row.submission?.proofLink || row.submission?.proof || "No proof stored"}
+                          {row.submission?.proofText ||
+                            row.submission?.proofLink ||
+                            row.submission?.proofImage ||
+                            row.submission?.proof ||
+                            "No proof stored"}
                         </p>
                       )}
                     </div>

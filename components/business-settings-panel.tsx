@@ -1,9 +1,11 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { toDateLocale } from "@/lib/date-locale";
 import { useLiveRefresh } from "@/lib/live-refresh";
 import { useHydrated } from "@/lib/use-hydrated";
 
@@ -34,6 +36,9 @@ type ResponseShape = {
 };
 
 export default function BusinessSettingsPanel() {
+  const t = useTranslations("business.settingsPanel");
+  const locale = useLocale();
+  const dateLocale = toDateLocale(locale);
   const [data, setData] = useState<ResponseShape | null>(null);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -47,16 +52,16 @@ export default function BusinessSettingsPanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as ResponseShape) : null;
     } catch {
-      setError("Unexpected server response");
+      setError(t("errors.unexpectedServerResponse"));
       return;
     }
     if (!res.ok || !parsed) {
-      setError(parsed?.error || "Failed to load settings");
+      setError(parsed?.error || t("errors.failedToLoad"));
       return;
     }
     setError("");
     setData(parsed);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 15000);
 
@@ -81,16 +86,16 @@ export default function BusinessSettingsPanel() {
     setSaving(false);
 
     if (!res.ok) {
-      setError(payload.error || "Failed to save settings");
+      setError(payload.error || t("errors.failedToSave"));
       return;
     }
 
-    setMessage(payload.message || "Settings updated");
+    setMessage(payload.message || t("messages.updated"));
     void load();
   }
 
   if (error && !data) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-foreground/60">Loading business settings...</p>;
+  if (!data) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
 
   return (
     <div className="space-y-6">
@@ -98,18 +103,18 @@ export default function BusinessSettingsPanel() {
         <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md">
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
-              <p className="text-sm text-foreground/60">Business profile</p>
-              <h3 className="text-xl font-semibold text-foreground">Brand and contact identity</h3>
+              <p className="text-sm text-foreground/60">{t("profile.eyebrow")}</p>
+              <h3 className="text-xl font-semibold text-foreground">{t("profile.title")}</h3>
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-foreground/70">Display name</label>
+              <label className="text-sm text-foreground/70">{t("profile.displayName")}</label>
               <Input
                 value={data.profile.name}
                 onChange={(e) => setData((prev) => (prev ? { ...prev, profile: { ...prev.profile, name: e.target.value } } : prev))}
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-foreground/70">Brand name</label>
+              <label className="text-sm text-foreground/70">{t("profile.brandName")}</label>
               <Input
                 value={data.settings.brandName}
                 onChange={(e) =>
@@ -120,7 +125,7 @@ export default function BusinessSettingsPanel() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-foreground/70">Company name</label>
+              <label className="text-sm text-foreground/70">{t("profile.companyName")}</label>
               <Input
                 value={data.settings.companyName}
                 onChange={(e) =>
@@ -132,7 +137,7 @@ export default function BusinessSettingsPanel() {
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm text-foreground/70">Contact email</label>
+                <label className="text-sm text-foreground/70">{t("profile.contactEmail")}</label>
                 <Input
                   value={data.settings.contactEmail}
                   onChange={(e) =>
@@ -143,7 +148,7 @@ export default function BusinessSettingsPanel() {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-sm text-foreground/70">Support contact</label>
+                <label className="text-sm text-foreground/70">{t("profile.supportContact")}</label>
                 <Input
                   value={data.settings.supportContact}
                   onChange={(e) =>
@@ -155,11 +160,11 @@ export default function BusinessSettingsPanel() {
               </div>
             </div>
             <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4 text-sm text-foreground/60">
-              <p className="break-all">Account email: {data.profile.email}</p>
-              <p>KYC status: {data.profile.kycStatus}</p>
+              <p className="break-all">{t("profile.accountEmail", { email: data.profile.email })}</p>
+              <p>{t("profile.kycStatus", { status: data.profile.kycStatus })}</p>
               <p suppressHydrationWarning>
-                Joined:{" "}
-                {hydrated ? new Date(data.profile.createdAt).toLocaleDateString("en-IN", {
+                {t("profile.joined")}{" "}
+                {hydrated ? new Date(data.profile.createdAt).toLocaleDateString(dateLocale, {
                   day: "2-digit",
                   month: "short",
                   year: "numeric",
@@ -172,11 +177,11 @@ export default function BusinessSettingsPanel() {
         <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md">
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
-              <p className="text-sm text-foreground/60">Billing and policies</p>
-              <h3 className="text-xl font-semibold text-foreground">Refund and billing preferences</h3>
+              <p className="text-sm text-foreground/60">{t("billing.eyebrow")}</p>
+              <h3 className="text-xl font-semibold text-foreground">{t("billing.title")}</h3>
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-foreground/70">Billing details</label>
+              <label className="text-sm text-foreground/70">{t("billing.billingDetails")}</label>
               <textarea
                 value={data.settings.billingDetails}
                 onChange={(e) =>
@@ -188,7 +193,7 @@ export default function BusinessSettingsPanel() {
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm text-foreground/70">Refund preference</label>
+              <label className="text-sm text-foreground/70">{t("billing.refundPreference")}</label>
               <textarea
                 value={data.settings.refundPreference}
                 onChange={(e) =>
@@ -206,15 +211,15 @@ export default function BusinessSettingsPanel() {
       <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md">
         <CardContent className="space-y-4 p-4 sm:p-6">
           <div>
-            <p className="text-sm text-foreground/60">Notification preferences</p>
-            <h3 className="text-xl font-semibold text-foreground">Choose which business alerts matter</h3>
+            <p className="text-sm text-foreground/60">{t("notifications.eyebrow")}</p>
+            <h3 className="text-xl font-semibold text-foreground">{t("notifications.title")}</h3>
           </div>
           <div className="grid gap-3 md:grid-cols-2">
             {[
-              ["campaignStatus", "Campaign approved/rejected/completed"],
-              ["budgetAlerts", "Wallet low and budget exhausted alerts"],
-              ["paymentAlerts", "Payment and funding status alerts"],
-              ["rejectionSpike", "Unusual rejection spike alerts"],
+              ["campaignStatus", t("notifications.campaignStatus")],
+              ["budgetAlerts", t("notifications.budgetAlerts")],
+              ["paymentAlerts", t("notifications.paymentAlerts")],
+              ["rejectionSpike", t("notifications.rejectionSpike")],
             ].map(([key, label]) => (
               <label key={key} className="flex items-center gap-3 rounded-2xl border border-foreground/10 bg-background/60 p-4 text-sm text-foreground/80">
                 <input
@@ -243,7 +248,7 @@ export default function BusinessSettingsPanel() {
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <Button onClick={save} disabled={saving} className="w-full sm:w-auto">
-              {saving ? "Saving..." : "Save Settings"}
+              {saving ? t("actions.saving") : t("actions.save")}
             </Button>
             {message ? <p className="text-sm text-emerald-700 dark:text-emerald-300">{message}</p> : null}
             {error ? <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p> : null}

@@ -32,6 +32,7 @@ export async function GET(req: Request) {
     where.OR = [
       { name: { contains: q, mode: "insensitive" } },
       { email: { contains: q, mode: "insensitive" } },
+      { mobile: { contains: q, mode: "insensitive" } },
     ];
   }
 
@@ -60,6 +61,7 @@ export async function GET(req: Request) {
       id: true,
       name: true,
       email: true,
+      mobile: true,
       role: true,
       accountStatus: true,
       balance: true,
@@ -75,6 +77,7 @@ export async function GET(req: Request) {
       "id",
       "name",
       "email",
+      "mobile",
       "role",
       "accountStatus",
       "balance",
@@ -88,6 +91,7 @@ export async function GET(req: Request) {
         escapeCsv(user.id),
         escapeCsv(user.name),
         escapeCsv(user.email),
+        escapeCsv(user.mobile),
         escapeCsv(user.role),
         escapeCsv(user.accountStatus),
         escapeCsv(user.balance),
@@ -112,4 +116,3 @@ export async function GET(req: Request) {
     },
   });
 }
-

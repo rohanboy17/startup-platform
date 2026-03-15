@@ -1,11 +1,14 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { Download, Search } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { Download, ExternalLink, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import ProofImageDialog from "@/components/proof-image-dialog";
 import { getCampaignCategoryLabel } from "@/lib/campaign-options";
+import { toDateLocale } from "@/lib/date-locale";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
 
@@ -21,6 +24,7 @@ type SubmissionRow = {
   proof: string;
   proofLink: string | null;
   proofText: string | null;
+  proofImage: string | null;
   managerStatus: string;
   adminStatus: string;
   rewardAmount: number;
@@ -50,15 +54,6 @@ type BusinessSubmissionsResponse = {
   error?: string;
 };
 
-const FILTERS: Array<{ value: "ALL" | SubmissionStage; label: string }> = [
-  { value: "ALL", label: "All" },
-  { value: "PENDING_MANAGER", label: "Pending Manager" },
-  { value: "PENDING_ADMIN", label: "Pending Admin" },
-  { value: "APPROVED", label: "Approved" },
-  { value: "MANAGER_REJECTED", label: "Manager Rejected" },
-  { value: "ADMIN_REJECTED", label: "Admin Rejected" },
-];
-
 function stageTone(stage: SubmissionStage) {
   if (stage === "APPROVED") return "bg-emerald-400/15 text-emerald-200 border-emerald-400/20";
   if (stage === "PENDING_MANAGER" || stage === "PENDING_ADMIN") {
@@ -67,26 +62,39 @@ function stageTone(stage: SubmissionStage) {
   return "bg-rose-400/15 text-rose-100 border-rose-400/20";
 }
 
-function stageLabel(stage: SubmissionStage) {
-  switch (stage) {
-    case "PENDING_MANAGER":
-      return "Pending Manager";
-    case "PENDING_ADMIN":
-      return "Pending Admin";
-    case "APPROVED":
-      return "Approved";
-    case "MANAGER_REJECTED":
-      return "Manager Rejected";
-    default:
-      return "Admin Rejected";
-  }
-}
-
 export default function BusinessSubmissionsPanel() {
+  const t = useTranslations("business.submissionsPanel");
+  const tCategories = useTranslations("business.categories");
+  const locale = useLocale();
+  const dateLocale = toDateLocale(locale);
   const [data, setData] = useState<BusinessSubmissionsResponse | null>(null);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"ALL" | SubmissionStage>("ALL");
+
+  const FILTERS: Array<{ value: "ALL" | SubmissionStage; label: string }> = [
+    { value: "ALL", label: t("filters.all") },
+    { value: "PENDING_MANAGER", label: t("filters.pendingManager") },
+    { value: "PENDING_ADMIN", label: t("filters.pendingAdmin") },
+    { value: "APPROVED", label: t("filters.approved") },
+    { value: "MANAGER_REJECTED", label: t("filters.managerRejected") },
+    { value: "ADMIN_REJECTED", label: t("filters.adminRejected") },
+  ];
+
+  function stageLabel(stage: SubmissionStage) {
+    switch (stage) {
+      case "PENDING_MANAGER":
+        return t("stages.pendingManager");
+      case "PENDING_ADMIN":
+        return t("stages.pendingAdmin");
+      case "APPROVED":
+        return t("stages.approved");
+      case "MANAGER_REJECTED":
+        return t("stages.managerRejected");
+      default:
+        return t("stages.adminRejected");
+    }
+  }
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/business/submissions", { credentials: "include" });
@@ -98,16 +106,16 @@ export default function BusinessSubmissionsPanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as BusinessSubmissionsResponse) : parsed;
     } catch {
-      setError("Unexpected server response");
+      setError(t("errors.unexpectedServerResponse"));
       return;
     }
     if (!res.ok) {
-      setError(parsed.error || "Failed to load submission pipeline");
+      setError(parsed.error || t("errors.failedToLoad"));
       return;
     }
     setError("");
     setData(parsed);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 10000);
 
@@ -139,6 +147,7 @@ export default function BusinessSubmissionsPanel() {
       "Submitted At",
       "Reason",
       "Proof",
+      "Proof Image",
     ];
 
     const rows = filtered.map((item) => [
@@ -150,6 +159,7 @@ export default function BusinessSubmissionsPanel() {
       item.createdAt,
       item.reason || "",
       item.proofText || item.proofLink || item.proof || "",
+      item.proofImage || "",
     ]);
 
     const csv = [header, ...rows]
@@ -166,28 +176,28 @@ export default function BusinessSubmissionsPanel() {
   }
 
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-white/60">Loading submission pipeline...</p>;
+  if (!data) return <p className="text-sm text-white/60">{t("loading")}</p>;
 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">Total</p><p className="mt-2 text-3xl font-semibold text-white">{data.counts.total}</p></CardContent></Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">Pending Manager</p><p className="mt-2 text-3xl font-semibold text-amber-100">{data.counts.pendingManager}</p></CardContent></Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">Pending Admin</p><p className="mt-2 text-3xl font-semibold text-amber-100">{data.counts.pendingAdmin}</p></CardContent></Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">Approved</p><p className="mt-2 text-3xl font-semibold text-emerald-200">{data.counts.approved}</p></CardContent></Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">Rejected</p><p className="mt-2 text-3xl font-semibold text-rose-200">{data.counts.rejected}</p></CardContent></Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">{t("kpis.total")}</p><p className="mt-2 text-3xl font-semibold text-white">{data.counts.total}</p></CardContent></Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">{t("kpis.pendingManager")}</p><p className="mt-2 text-3xl font-semibold text-amber-100">{data.counts.pendingManager}</p></CardContent></Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">{t("kpis.pendingAdmin")}</p><p className="mt-2 text-3xl font-semibold text-amber-100">{data.counts.pendingAdmin}</p></CardContent></Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">{t("kpis.approved")}</p><p className="mt-2 text-3xl font-semibold text-emerald-200">{data.counts.approved}</p></CardContent></Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">{t("kpis.rejected")}</p><p className="mt-2 text-3xl font-semibold text-rose-200">{data.counts.rejected}</p></CardContent></Card>
       </div>
 
       <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
         <CardContent className="space-y-4 p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm text-white/60">Submission review</p>
-              <h3 className="text-xl font-semibold text-white">Read-only moderation pipeline</h3>
+              <p className="text-sm text-white/60">{t("header.eyebrow")}</p>
+              <h3 className="text-xl font-semibold text-white">{t("header.title")}</h3>
             </div>
             <Button type="button" variant="outline" onClick={exportCsv} className="w-full sm:w-auto">
               <Download size={16} />
-              Export CSV
+              {t("header.exportCsv")}
             </Button>
           </div>
 
@@ -197,7 +207,7 @@ export default function BusinessSubmissionsPanel() {
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search campaign, user, proof, or reason"
+                placeholder={t("search.placeholder")}
                 className="border-white/10 bg-black/20 pl-10 text-white placeholder:text-white/35"
               />
             </div>
@@ -224,7 +234,7 @@ export default function BusinessSubmissionsPanel() {
       <div className="space-y-4">
         {filtered.length === 0 ? (
           <Card className="rounded-3xl border border-dashed border-white/10 bg-white/5 backdrop-blur-md">
-            <CardContent className="p-6 text-sm text-white/55">No submissions found for the current filter.</CardContent>
+            <CardContent className="p-6 text-sm text-white/55">{t("empty")}</CardContent>
           </Card>
         ) : (
           filtered.map((submission) => (
@@ -233,18 +243,17 @@ export default function BusinessSubmissionsPanel() {
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-lg font-semibold text-white">{submission.campaign?.title || "Campaign"}</p>
+                      <p className="text-lg font-semibold text-white">{submission.campaign?.title || t("fallback.campaign")}</p>
                       <span className={`rounded-full border px-2.5 py-1 text-xs ${stageTone(submission.stage)}`}>
                         {stageLabel(submission.stage)}
                       </span>
                     </div>
                     <p className="mt-1 text-sm text-white/60">
-                      {getCampaignCategoryLabel(submission.campaign?.category || "")} | Reward INR{" "}
-                      {formatMoney(submission.rewardAmount || submission.campaign?.rewardPerTask || 0)}
+                      {getCampaignCategoryLabel(submission.campaign?.category || "", tCategories)} | {t("row.reward", { amount: formatMoney(submission.rewardAmount || submission.campaign?.rewardPerTask || 0) })}
                     </p>
                   </div>
                   <p className="text-xs text-white/45">
-                    {new Date(submission.createdAt).toLocaleString("en-IN", {
+                    {new Date(submission.createdAt).toLocaleString(dateLocale, {
                       day: "2-digit",
                       month: "short",
                       year: "numeric",
@@ -256,21 +265,37 @@ export default function BusinessSubmissionsPanel() {
 
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/40">Participant</p>
-                    <p className="mt-2 text-sm text-white">{submission.user.name || "Unnamed User"}</p>
-                    <p className="text-xs text-white/45">Participant identity is hidden for privacy.</p>
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("row.participant")}</p>
+                    <p className="mt-2 text-sm text-white">{submission.user.name || t("fallback.unnamedUser")}</p>
+                    <p className="text-xs text-white/45">{t("row.participantPrivacy")}</p>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/40">Proof</p>
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("row.proof")}</p>
                     <p className="mt-2 break-words text-sm text-white/75">
                       {submission.proofText || submission.proofLink || submission.proof}
                     </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {submission.proofImage ? (
+                        <ProofImageDialog url={submission.proofImage} label={t("row.openScreenshot")} />
+                      ) : null}
+                      {submission.proofLink ? (
+                        <a
+                          href={submission.proofLink}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 text-sm text-emerald-200 underline underline-offset-4"
+                        >
+                          <ExternalLink size={14} />
+                          Open proof link
+                        </a>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
 
                 {submission.reason ? (
                   <div className="rounded-2xl border border-rose-400/15 bg-rose-500/10 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-rose-100/70">Review reason</p>
+                    <p className="text-xs uppercase tracking-[0.2em] text-rose-100/70">{t("row.reviewReason")}</p>
                     <p className="mt-2 text-sm text-rose-50">{submission.reason}</p>
                   </div>
                 ) : null}

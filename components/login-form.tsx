@@ -6,11 +6,13 @@ import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, ShieldCheck, Sparkles } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default function LoginForm({ registered }: { registered: boolean }) {
+  const t = useTranslations("auth.login");
   const router = useRouter();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
@@ -62,7 +64,7 @@ export default function LoginForm({ registered }: { registered: boolean }) {
 
     if (!res.ok) {
       if (needsAdmin2fa) {
-        setError(data.error || "Unable to send OTP");
+        setError(data.error || t("errors.otpSendFailed"));
       }
       return false;
     }
@@ -72,8 +74,8 @@ export default function LoginForm({ registered }: { registered: boolean }) {
     setOtpSent(true);
     setInfo(
       data.devOtp
-        ? `Local dev OTP: ${data.devOtp} (SMTP not configured)`
-        : "OTP sent to admin email. It expires shortly."
+        ? t("info.devOtp", { otp: data.devOtp })
+        : t("info.otpSent")
     );
     return true;
   }
@@ -102,11 +104,11 @@ export default function LoginForm({ registered }: { registered: boolean }) {
       const otpTriggered = await requestAdminOtp();
       setLoading(false);
       if (otpTriggered) {
-        setInfo("Admin 2FA required. Enter OTP or recovery code to continue.");
+        setInfo(t("admin2fa.requiredHelp"));
         return;
       }
 
-      setError("Invalid email/mobile or password");
+      setError(t("errors.invalidCredentials"));
       return;
     }
 
@@ -123,22 +125,22 @@ export default function LoginForm({ registered }: { registered: boolean }) {
     if (result && result.error) {
       setLoading(false);
       if (result.error.includes("OTP_INVALID")) {
-        setError("Invalid or expired OTP. Request a new code.");
+        setError(t("errors.otpInvalid"));
         return;
       }
       if (result.error.includes("RECOVERY_CODE_INVALID")) {
-        setError("Invalid or used recovery code.");
+        setError(t("errors.recoveryInvalid"));
         return;
       }
       if (result.error.includes("CredentialsSignin")) {
         if (otp.trim() || recoveryCode.trim()) {
-          setError("2FA verification failed. Request a new OTP or use a valid recovery code.");
+          setError(t("errors.twoFaFailed"));
           return;
         }
-        setError("Invalid email/mobile or password");
+        setError(t("errors.invalidCredentials"));
         return;
       }
-      setError("Invalid email/mobile or password");
+      setError(t("errors.invalidCredentials"));
       return;
     }
 
@@ -170,17 +172,17 @@ export default function LoginForm({ registered }: { registered: boolean }) {
           transition={{ duration: 0.45, ease: "easeOut" }}
           className="hidden rounded-3xl border border-foreground/10 bg-foreground/[0.04] p-8 backdrop-blur-xl lg:block"
         >
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-emerald-500 dark:text-emerald-300/80">Secure Login</p>
-          <h2 className="mt-3 text-4xl font-semibold leading-tight">Welcome back to your control center.</h2>
-          <p className="mt-4 text-sm text-foreground/70">
-            Access campaigns, payouts, and moderation with account protection and admin-grade 2FA.
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-emerald-500 dark:text-emerald-300/80">
+            {t("side.eyebrow")}
           </p>
+          <h2 className="mt-3 text-4xl font-semibold leading-tight">{t("side.title")}</h2>
+          <p className="mt-4 text-sm text-foreground/70">{t("side.subtitle")}</p>
 
           <div className="mt-8 space-y-3">
             {[
-              "Role-based access with protected routes",
-              "Admin 2FA with OTP or recovery codes",
-              "IP and security event monitoring",
+              t("side.bullets.roleBased"),
+              t("side.bullets.admin2fa"),
+              t("side.bullets.securityMonitoring"),
             ].map((item) => (
               <div key={item} className="flex items-center gap-3 rounded-xl border border-foreground/10 bg-background/60 px-3 py-2.5 text-sm text-foreground/80">
                 <CheckCircle2 size={16} className="text-emerald-500 dark:text-emerald-300" />
@@ -203,14 +205,16 @@ export default function LoginForm({ registered }: { registered: boolean }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.05 }}
               >
-                <p className="text-xs font-medium uppercase tracking-[0.2em] text-emerald-500 dark:text-emerald-300/80">Welcome Back</p>
-                <h1 className="text-2xl font-semibold tracking-tight">Sign In</h1>
-                <p className="text-sm text-foreground/65">Use your email or mobile number with password to continue.</p>
+                <p className="text-xs font-medium uppercase tracking-[0.2em] text-emerald-500 dark:text-emerald-300/80">
+                  {t("card.eyebrow")}
+                </p>
+                <h1 className="text-2xl font-semibold tracking-tight">{t("card.title")}</h1>
+                <p className="text-sm text-foreground/65">{t("card.subtitle")}</p>
               </motion.div>
 
               {registered ? (
                 <p className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-3 text-sm text-emerald-300">
-                  Account created. You can sign in now.
+                  {t("card.registered")}
                 </p>
               ) : null}
 
@@ -223,7 +227,7 @@ export default function LoginForm({ registered }: { registered: boolean }) {
               >
                 <Input
                   type="text"
-                  placeholder="Email or mobile number"
+                  placeholder={t("form.identifierPlaceholder")}
                   value={identifier}
                   onChange={(e) => {
                     setIdentifier(e.target.value);
@@ -234,13 +238,16 @@ export default function LoginForm({ registered }: { registered: boolean }) {
                   className="h-11 border-foreground/15 bg-foreground/[0.04] transition focus-visible:border-emerald-300/70 focus-visible:ring-emerald-300/20"
                 />
                 <p className="-mt-2 text-xs text-foreground/55">
-                  Mobile login format examples: India <span className="text-foreground/80">+91987XXXX210</span>, US{" "}
-                  <span className="text-foreground/80">+1415XXXX671</span>, UK{" "}
-                  <span className="text-foreground/80">+4479XXXXX456</span>.
+                  {t.rich("form.mobileExamples", {
+                    india: "+91987XXXX210",
+                    us: "+1415XXXX671",
+                    uk: "+4479XXXXX456",
+                    highlight: (chunks) => <span className="text-foreground/80">{chunks}</span>,
+                  })}
                 </p>
                 <Input
                   type="password"
-                  placeholder="Password"
+                  placeholder={t("form.passwordPlaceholder")}
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
@@ -254,43 +261,43 @@ export default function LoginForm({ registered }: { registered: boolean }) {
                   <Link
                     href="/forgot-password"
                     className="text-xs text-foreground/70 underline underline-offset-4 transition hover:text-foreground"
-                  >
-                    Forgot password?
+                >
+                    {t("form.forgotPassword")}
                   </Link>
                 </div>
                 {needsAdmin2fa ? (
                   <div className="space-y-2 rounded-xl border border-foreground/10 bg-foreground/[0.04] p-3.5">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-xs text-foreground/65">Admin 2FA required</p>
+                      <p className="text-xs text-foreground/65">{t("admin2fa.title")}</p>
                       <Button
                         type="button"
                         variant="outline"
                         onClick={requestAdminOtp}
                         disabled={otpLoading || !identifier || !password}
                       >
-                        {otpLoading ? "Sending..." : "Resend OTP"}
+                        {otpLoading ? t("admin2fa.sending") : t("admin2fa.resend")}
                       </Button>
                     </div>
                     <Input
                       type="text"
                       inputMode="numeric"
-                      placeholder="6-digit OTP"
+                      placeholder={t("admin2fa.otpPlaceholder")}
                       value={otp}
                       onChange={(e) => setOtp(e.target.value)}
                       className="h-10 border-foreground/15 bg-foreground/[0.04]"
                     />
                     <Input
                       type="text"
-                      placeholder="Or recovery code (e.g., ABC12-34DEF)"
+                      placeholder={t("admin2fa.recoveryPlaceholder")}
                       value={recoveryCode}
                       onChange={(e) => setRecoveryCode(e.target.value.toUpperCase())}
                       className="h-10 border-foreground/15 bg-foreground/[0.04]"
                     />
-                    {otpSent ? <p className="text-xs text-emerald-300">OTP requested and ready.</p> : null}
+                    {otpSent ? <p className="text-xs text-emerald-300">{t("admin2fa.otpReady")}</p> : null}
                   </div>
                 ) : null}
                 <Button type="submit" className="h-11 w-full rounded-xl bg-foreground text-background hover:opacity-90" disabled={loading}>
-                  {loading ? "Signing in..." : "Sign In"}
+                  {loading ? t("form.signingIn") : t("form.signIn")}
                 </Button>
               </motion.form>
 
@@ -298,14 +305,18 @@ export default function LoginForm({ registered }: { registered: boolean }) {
               {info ? <p className="text-sm text-emerald-300">{info}</p> : null}
 
               <div className="flex items-center justify-between gap-3 rounded-xl border border-foreground/10 bg-background/60 px-3 py-2.5 text-xs text-foreground/70">
-                <span className="inline-flex items-center gap-1.5"><ShieldCheck size={14} className="text-emerald-500 dark:text-emerald-300" /> Protected Auth</span>
-                <span className="inline-flex items-center gap-1.5"><Sparkles size={14} className="text-sky-500 dark:text-sky-300" /> Live Security</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <ShieldCheck size={14} className="text-emerald-500 dark:text-emerald-300" /> {t("badges.protectedAuth")}
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Sparkles size={14} className="text-sky-500 dark:text-sky-300" /> {t("badges.liveSecurity")}
+                </span>
               </div>
 
               <p className="text-sm text-foreground/60">
-                New here?{" "}
+                {t("footer.newHere")}{" "}
                 <Link href="/register" className="font-medium text-foreground underline underline-offset-4">
-                  Create an account
+                  {t("footer.createAccount")}
                 </Link>
               </p>
             </CardContent>

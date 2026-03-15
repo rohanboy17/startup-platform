@@ -13,6 +13,14 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    rules: {
+      // These are React Compiler-focused rules that currently generate noisy false positives
+      // (and are not required for correctness in this codebase).
+      "react-hooks/preserve-manual-memoization": "off",
+      "react-hooks/purity": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatMoney } from "@/lib/format-money";
@@ -26,6 +27,7 @@ type Campaign = {
 };
 
 export default function UserCampaignsPanel() {
+  const t = useTranslations("user.tasks");
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -37,21 +39,21 @@ export default function UserCampaignsPanel() {
     try {
       data = raw ? (JSON.parse(raw) as { campaigns?: Campaign[]; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpected") };
     }
     if (!res.ok) {
-      setError(data.error || "Failed to load campaigns");
+      setError(data.error || t("failed"));
     } else {
       setError("");
       setCampaigns(data.campaigns || []);
     }
     setLoading(false);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 10000);
 
   if (loading) {
-    return <p className="text-sm text-white/60">Loading campaigns...</p>;
+    return <p className="text-sm text-white/60">{t("loading")}</p>;
   }
 
   if (error) {
@@ -62,7 +64,7 @@ export default function UserCampaignsPanel() {
     <div className="grid gap-4 lg:grid-cols-2">
       {campaigns.length === 0 ? (
         <div className="py-20 text-center text-white/50 md:col-span-2">
-          <p>No live campaigns right now.</p>
+          <p>{t("empty")}</p>
           <EmptyCampaignsPushNudge />
         </div>
       ) : (
@@ -85,7 +87,7 @@ export default function UserCampaignsPanel() {
                     rel="noreferrer"
                     className="text-xs text-blue-300 underline"
                   >
-                    Open task link
+                    {t("openTaskLink")}
                   </a>
                 ) : null}
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -93,24 +95,24 @@ export default function UserCampaignsPanel() {
                     INR {formatMoney(campaign.rewardPerTask)}
                   </span>
                   <span className="text-xs text-white/60 sm:text-right">
-                    Budget left: INR {formatMoney(campaign.remainingBudget)}
+                    {t("budgetLeft", { amount: formatMoney(campaign.remainingBudget) })}
                   </span>
                 </div>
                 <p className="text-xs text-white/60">
-                  Allowed: {campaign.allowedSubmissions}
+                  {t("allowed")}: {campaign.allowedSubmissions}
                   <span className="mx-1 hidden sm:inline">|</span>
-                  <span className="block sm:inline">Used: {campaign.usedSubmissions}</span>
+                  <span className="block sm:inline">{t("used")}: {campaign.usedSubmissions}</span>
                   <span className="mx-1 hidden sm:inline">|</span>
-                  <span className="block sm:inline">Slots Left: {campaign.leftSubmissions}</span>
+                  <span className="block sm:inline">{t("slotsLeft")}: {campaign.leftSubmissions}</span>
                 </p>
                 <p className="text-xs text-white/60">
                   {campaign.submissionMode === "ONE_PER_USER"
-                    ? "One submission per user"
-                    : "Many submissions per user"}
+                    ? t("onePerUser")
+                    : t("manyPerUser")}
                 </p>
                 {campaign.blockedBySubmissionMode ? (
                   <p className="text-xs text-amber-200">
-                    You already used your one allowed submission for this campaign.
+                    {t("blocked")}
                   </p>
                 ) : null}
                 <div className="grid gap-3 sm:grid-cols-2">
@@ -118,7 +120,7 @@ export default function UserCampaignsPanel() {
                     href={`/dashboard/user/tasks/${campaign.id}`}
                     className="inline-flex w-full items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white/90 transition hover:bg-white/10"
                   >
-                    View Task
+                    {t("viewTask")}
                   </Link>
                   <Link
                     href={`/dashboard/user/tasks/${campaign.id}`}
@@ -128,7 +130,7 @@ export default function UserCampaignsPanel() {
                         : "border border-emerald-400/30 bg-emerald-400/10 text-emerald-100 hover:bg-emerald-400/20"
                     }`}
                   >
-                    {campaign.blockedBySubmissionMode ? "Already Submitted" : "Start Task"}
+                    {campaign.blockedBySubmissionMode ? t("alreadySubmitted") : t("startTask")}
                   </Link>
                 </div>
               </CardContent>

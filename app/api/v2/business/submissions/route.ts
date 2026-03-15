@@ -32,6 +32,7 @@ export async function GET() {
       proof: true,
       proofLink: true,
       proofText: true,
+      proofImage: true,
       managerStatus: true,
       adminStatus: true,
       rewardAmount: true,

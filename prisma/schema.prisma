@@ -101,6 +101,7 @@ model Submission {
   proof     String
   proofLink String?
   proofText String?
+  proofImage String?
   ipAddress String?
   status    SubmissionStatus @default(PENDING)
   managerStatus SubmissionStatus @default(PENDING)

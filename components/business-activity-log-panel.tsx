@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLiveRefresh } from "@/lib/live-refresh";
 
@@ -14,6 +15,7 @@ type TimelineItem = {
 };
 
 export default function BusinessActivityLogPanel() {
+  const t = useTranslations("business.activityPanel");
   const [items, setItems] = useState<TimelineItem[]>([]);
   const [error, setError] = useState("");
 
@@ -24,16 +26,16 @@ export default function BusinessActivityLogPanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as { timeline?: TimelineItem[]; error?: string }) : {};
     } catch {
-      setError("Unexpected server response");
+      setError(t("errors.unexpectedServerResponse"));
       return;
     }
     if (!res.ok) {
-      setError(parsed.error || "Failed to load activity log");
+      setError(parsed.error || t("errors.failedToLoad"));
       return;
     }
     setError("");
     setItems(parsed.timeline || []);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 10000);
 
@@ -43,7 +45,7 @@ export default function BusinessActivityLogPanel() {
     <div className="space-y-4">
       {items.length === 0 ? (
         <Card className="rounded-3xl border border-dashed border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-6 text-sm text-white/55">No business activity recorded yet.</CardContent>
+          <CardContent className="p-6 text-sm text-white/55">{t("empty")}</CardContent>
         </Card>
       ) : (
         items.map((item) => (

@@ -47,6 +47,106 @@
     "hi": "Hindi",
     "bn": "Bengali"
   },
+  "auth": {
+    "login": {
+      "side": {
+        "eyebrow": "Secure Login",
+        "title": "Welcome back to your control center.",
+        "subtitle": "Access campaigns, payouts, and moderation with account protection and admin-grade 2FA.",
+        "bullets": {
+          "roleBased": "Role-based access with protected routes",
+          "admin2fa": "Admin 2FA with OTP or recovery codes",
+          "securityMonitoring": "Security event monitoring"
+        }
+      },
+      "card": {
+        "eyebrow": "Welcome Back",
+        "title": "Sign In",
+        "subtitle": "Use your email or mobile number with password to continue.",
+        "registered": "Account created. You can sign in now."
+      },
+      "form": {
+        "identifierPlaceholder": "Email or mobile number",
+        "mobileExamples": "Mobile login format examples: India <highlight>{india}</highlight>, US <highlight>{us}</highlight>, UK <highlight>{uk}</highlight>.",
+        "passwordPlaceholder": "Password",
+        "forgotPassword": "Forgot password?",
+        "signingIn": "Signing in...",
+        "signIn": "Sign In"
+      },
+      "admin2fa": {
+        "title": "Admin 2FA required",
+        "requiredHelp": "Admin 2FA required. Enter OTP or recovery code to continue.",
+        "sending": "Sending...",
+        "resend": "Resend OTP",
+        "otpPlaceholder": "6-digit OTP",
+        "recoveryPlaceholder": "Or recovery code (e.g., ABC12-34DEF)",
+        "otpReady": "OTP requested and ready."
+      },
+      "badges": {
+        "protectedAuth": "Protected Auth",
+        "liveSecurity": "Live Security"
+      },
+      "footer": {
+        "newHere": "New here?",
+        "createAccount": "Create an account"
+      },
+      "errors": {
+        "otpSendFailed": "Unable to send OTP",
+        "invalidCredentials": "Invalid email/mobile or password",
+        "otpInvalid": "Invalid or expired OTP. Request a new code.",
+        "recoveryInvalid": "Invalid or used recovery code.",
+        "twoFaFailed": "2FA verification failed. Request a new OTP or use a valid recovery code."
+      },
+      "info": {
+        "devOtp": "Local dev OTP: {otp} (SMTP not configured)",
+        "otpSent": "OTP sent to admin email. It expires shortly."
+      }
+    },
+    "register": {
+      "side": {
+        "eyebrow": "Get Started",
+        "title": "Create your marketplace account in minutes.",
+        "subtitle": "Join as a user to earn from verified tasks, or as a business to launch measurable campaigns.",
+        "bullets": {
+          "unified": "Unified account for user and business roles",
+          "mobileIdentity": "Mobile-number based identity support",
+          "wallet": "Secure payout-ready wallet architecture"
+        }
+      },
+      "card": {
+        "eyebrow": "Create New Account",
+        "title": "Join EarnHub",
+        "subtitle": "Register with your mobile number and start as a user or business."
+      },
+      "form": {
+        "fullName": "Full name",
+        "email": "Email",
+        "mobile": "Mobile number (e.g., +91987XXXX210)",
+        "mobileHelp": "Include country code. Examples: India <highlight>{india}</highlight>, US <highlight>{us}</highlight>, UK <highlight>{uk}</highlight>.",
+        "password": "Password",
+        "referral": "Referral code (optional)",
+        "referralHelp": "User referrals only. Enter a code to unlock EarnHub Coins after your first approved submission."
+      },
+      "roles": {
+        "user": "User",
+        "business": "Business"
+      },
+      "actions": {
+        "creating": "Creating...",
+        "createAccount": "Create Account"
+      },
+      "messages": {
+        "createdRedirecting": "Account created successfully. Redirecting to sign in..."
+      },
+      "errors": {
+        "failed": "Registration failed"
+      },
+      "footer": {
+        "alreadyHave": "Already have an account?",
+        "signIn": "Sign in"
+      }
+    }
+  },
   "home": {
     "landing": {
       "heroTitle": "Earn by completing verified tasks.",
@@ -223,6 +323,21 @@
       "openSubmissions": "Open submissions",
       "openNotifications": "Open notifications",
       "openReferrals": "Open referrals",
+      "levelEyebrow": "Level progress",
+      "levelTitle": "Keep approvals moving",
+      "viewSubmissions": "View submissions",
+      "levelNow": "Level now",
+      "topTierUnlocked": "Top tier unlocked with {count} approved submissions.",
+      "progressSoFar": "{current} approved so far. Reach {target} to move up.",
+      "progressToNext": "Progress to next level",
+      "todayApproved": "Today approved",
+      "totalApproved": "Total approved",
+      "submittedToday": "Submitted today",
+      "openTasks": "Open tasks",
+      "openTasksDesc": "Find available campaigns with open slots.",
+      "openWalletDesc": "Review credits, debits, and payout history.",
+      "openNotificationsDesc": "Check approval, rejection, and payout updates.",
+      "openReferralsDesc": "Share your code, earn coins, and redeem them to wallet.",
       "recentNotifications": "Recent notifications",
       "attentionTitle": "What needs your attention",
       "openInbox": "Open inbox",
@@ -308,6 +423,11 @@
       "filterApproved": "Approved",
       "filterManagerRejected": "Manager rejected",
       "filterAdminRejected": "Admin rejected",
+      "stagePendingManager": "Pending manager review",
+      "stagePendingAdmin": "Pending admin review",
+      "stageApproved": "Approved",
+      "stageRejectedManager": "Rejected by manager",
+      "stageRejectedAdmin": "Rejected by admin",
       "empty": "No submissions match the current filters.",
       "campaignFallback": "Campaign submission",
       "uncategorized": "Uncategorized",
@@ -317,7 +437,9 @@
       "admin": "Admin: {status}",
       "submitted": "Submitted {date}",
       "proofPreview": "Proof preview",
+      "noProof": "No proof text stored",
       "openProof": "Open proof link",
+      "openScreenshot": "Open screenshot",
       "noReason": "No structured rejection reason is stored yet for this submission. Only rejection status is available.",
       "failed": "Failed to load submissions",
       "unexpected": "Unexpected server response"
@@ -337,6 +459,16 @@
       "viewTask": "View Task",
       "startTask": "Start Task",
       "alreadySubmitted": "Already Submitted",
+      "pushNudgeTitle": "No campaigns right now",
+      "pushNudgeBody": "Enable notifications and we will alert you when new campaigns go live.",
+      "pushEnabling": "Enabling...",
+      "pushEnableButton": "Enable notifications",
+      "pushUnsupported": "This browser does not support push notifications.",
+      "pushNotConfigured": "Push is not configured for this environment yet.",
+      "pushPermissionDenied": "Permission not granted. You can enable it in browser settings anytime.",
+      "pushRegisterFailed": "Could not register this device for push.",
+      "pushEnableFailed": "Unable to enable push notifications",
+      "pushEnabled": "Notifications enabled. We will alert you when new campaigns go live.",
       "failed": "Failed to load campaigns",
       "unexpected": "Unexpected server response"
     },
@@ -344,6 +476,10 @@
       "loading": "Loading campaign details...",
       "back": "Back to tasks",
       "eyebrow": "Task detail",
+      "kpiReward": "Per task reward",
+      "kpiSlotsLeft": "Slots left",
+      "kpiUsedAllowed": "Used / allowed",
+      "kpiYourSubmissions": "Your submissions here",
       "detailsEyebrow": "Task details",
       "detailsTitle": "Current slot instruction",
       "currentDetail": "Current detail #{sequence}",
@@ -354,6 +490,8 @@
       "statusAllOccupied": "All campaign slots are currently occupied.",
       "statusNotAccepting": "This campaign is not accepting submissions right now.",
       "statusSlotsLeft": "{count} slot{plural} left right now.",
+      "onePerUser": "This campaign allows only one submission per user.",
+      "manyPerUser": "This campaign allows multiple submissions per user while slots remain open.",
       "submitEyebrow": "Submit proof",
       "submitTitle": "Send this task for review",
       "proofWarning": "Submit genuine proof only. Invalid or copied proof can be rejected and may trigger fraud review.",
@@ -361,6 +499,13 @@
       "proofLinkPlaceholder": "Paste the proof URL if this task needs a link",
       "proofDetailsLabel": "Proof details",
       "proofDetailsPlaceholder": "Add submission details, notes, or text proof",
+      "proofImageLabel": "Proof screenshot",
+      "proofImageHelp": "Upload a screenshot (jpg/png/webp). Max 500KB. Image will be compressed before upload.",
+      "proofImageUploading": "Uploading screenshot...",
+      "proofImageReady": "Screenshot uploaded",
+      "proofImageRemove": "Remove screenshot",
+      "proofImageTooLarge": "Screenshot must be under 500KB after compression.",
+      "proofImageUploadFailed": "Screenshot upload failed.",
       "submitForReview": "Submit for review",
       "submissionUnavailable": "Submission unavailable",
       "submitting": "Submitting...",
@@ -376,18 +521,38 @@
       "loading": "Loading referrals...",
       "eyebrow": "Referral rewards",
       "title": "Coins and referrals",
+      "subtitle": "Invite new users, unlock EarnHub Coins after their first approved submission, and redeem coins into wallet value.",
       "kpiCoin": "Coin balance",
       "kpiEstimated": "Estimated wallet value",
       "kpiTotalInvites": "Total invites",
       "kpiRewardedInvites": "Rewarded invites",
       "kpiPendingInvites": "Pending invites",
       "kpiMonthlyRedeemed": "Redeemed this month",
+      "shareEyebrow": "Your referral code",
+      "shareTitle": "Share this with new users",
+      "codeLabel": "Referral code",
+      "copyCode": "Copy code",
+      "linkLabel": "Referral link",
+      "copyLink": "Copy link",
+      "referrerReward": "Referrer reward",
+      "newUserBonus": "New user bonus",
+      "rewardTrigger": "Reward trigger",
+      "rewardTriggerValue": "First admin-approved submission",
+      "coinsUnit": "coins",
+      "redeemEyebrow": "Redeem coins",
+      "redeemTitle": "Convert coins into wallet balance",
       "copy": "Copied to clipboard",
       "copyFail": "Unable to copy automatically",
       "redeem": "Redeem Coins",
       "redeeming": "Redeeming...",
       "redeemed": "Coins redeemed",
       "redeemFailed": "Redemption failed",
+      "status": {
+        "PENDING": "Pending",
+        "QUALIFIED": "Qualified",
+        "REWARDED": "Rewarded",
+        "REJECTED": "Rejected"
+      },
       "rules": "Current rules",
       "minRedeem": "Minimum redeem: {count} coins",
       "monthlyLimit": "Monthly limit: {count} coins",
@@ -400,7 +565,49 @@
       "joined": "Joined {date}",
       "coinActivityEyebrow": "Coin activity",
       "coinActivityTitle": "Credits and redemptions",
-      "noCoinTx": "No coin transactions yet."
+      "noCoinTx": "No coin transactions yet.",
+      "failed": "Failed to load referrals",
+      "unexpected": "Unexpected server response"
+    },
+    "settings": {
+      "eyebrow": "User settings",
+      "title": "Settings",
+      "subtitle": "Manage your profile, withdrawal defaults, and account security.",
+      "securityTitle": "Account Security",
+      "securityBody": "Forgot your password? Reset it securely.",
+      "forgotPassword": "Forgot password"
+    },
+    "help": {
+      "eyebrow": "Trust and support",
+      "title": "Help",
+      "subtitle": "Understand how approvals, levels, fraud checks, and withdrawals work before you submit more tasks.",
+      "approvalEyebrow": "Approval workflow",
+      "approvalTitle": "How your submission gets approved",
+      "approvalStep1": "1. You submit proof from the task detail page.",
+      "approvalStep2": "2. Manager reviews first and can approve or reject.",
+      "approvalStep3": "3. Admin verifies the final decision.",
+      "approvalStep4": "4. Approved submissions credit your wallet automatically.",
+      "levelsEyebrow": "Level system",
+      "levelsTitle": "How levels move",
+      "levelsBullet1": "Level upgrades are based on admin-approved submissions.",
+      "levelsBullet2": "L1 starts immediately and higher levels unlock as approvals increase.",
+      "levelsBullet3": "The daily activity counter resets on the configured reset schedule.",
+      "levelsBullet4": "Your overview page shows current progress toward the next level.",
+      "fraudEyebrow": "Fraud policy",
+      "fraudTitle": "What can get a submission rejected",
+      "fraudBullet1": "Copied or fake proof.",
+      "fraudBullet2": "Submitting for a task without completing the required action.",
+      "fraudBullet3": "Repeated abuse from the same device or IP.",
+      "fraudBullet4": "Trying to bypass campaign slot or review controls.",
+      "withdrawalsEyebrow": "Withdrawals",
+      "withdrawalsTitle": "Payout rules",
+      "withdrawalsBullet1": "Normal minimum withdrawal is INR {amount}.",
+      "withdrawalsBullet2": "Emergency withdrawal is allowed below the minimum, up to 2 times per month.",
+      "withdrawalsBullet3": "Only one pending withdrawal request is allowed at a time.",
+      "withdrawalsBullet4": "Admin review determines approval or rejection.",
+      "supportEyebrow": "Support",
+      "supportTitle": "Need help?",
+      "supportBody": "If something looks wrong in your submissions, wallet, or withdrawals, use the public contact page or the official support channel listed there."
     }
   },
   "business": {
@@ -411,7 +618,737 @@
     "activityPageTitle": "Activity Log",
     "reviewsPageTitle": "Business Reviews",
     "teamPageTitle": "Team Members",
-    "settingsPageTitle": "Settings"
+    "settingsPageTitle": "Settings",
+    "fundingPageTitle": "Wallet Funding",
+    "createPageTitle": "Create Campaign",
+    "trustPageTitle": "Trust & Transparency",
+    "kycEyebrow": "Verification",
+    "kycSubtitle": "Submit your business verification details for review before launching campaigns.",
+    "categories": {
+      "marketing": "Type A - Marketing Task",
+      "work": "Type B - Work-Based Task"
+    },
+    "loading": {
+      "dashboard": "Loading dashboard..."
+    },
+    "funding": {
+      "labels": {
+        "notYet": "Not yet",
+        "topUpDescription": "Wallet top-up"
+      },
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoad": "Failed to load funding data",
+        "gatewayLoadFailed": "Failed to load payment gateway",
+        "fundingFailed": "Funding failed",
+        "paymentInitFailed": "Unable to initialize payment",
+        "verifyFailed": "Payment verification failed",
+        "refundFailed": "Refund request failed"
+      },
+      "messages": {
+        "walletFunded": "Wallet funded successfully!",
+        "refundInitiated": "Refund request submitted."
+      },
+      "loading": "Loading...",
+      "header": {
+        "eyebrow": "Funding",
+        "subtitle": "Top up your wallet, review payment orders, and request refunds with a clear fee breakdown."
+      },
+      "lowBalance": {
+        "title": "Low wallet balance",
+        "body": "Your available wallet balance is below INR {threshold}. New campaign launches and top-ups may fail until you add funds.",
+        "hint": "Add funds to keep campaigns running smoothly."
+      },
+      "kpis": {
+        "availableWallet": "Available Wallet",
+        "lockedBudget": "Locked Budget",
+        "totalFunded": "Total Funded",
+        "lastSuccessfulPayment": "Last successful payment",
+        "paid": "Paid",
+        "noPayment": "No payments yet"
+      },
+      "topUp": {
+        "eyebrow": "Wallet top-up",
+        "title": "Add funds",
+        "amountPlaceholder": "Enter amount (min {min})",
+        "breakdown": {
+          "gross": "Gross amount",
+          "fee": "Funding fee ({rate}%)",
+          "net": "Net credit"
+        },
+        "initializing": "Initializing payment...",
+        "payAndFund": "Pay and fund wallet"
+      },
+      "refund": {
+        "eyebrow": "Refund",
+        "title": "Request wallet refund",
+        "amountPlaceholder": "Enter refund amount",
+        "breakdown": {
+          "requested": "Requested amount",
+          "fee": "Fee ({rate}%)",
+          "net": "Net refund"
+        },
+        "processing": "Processing...",
+        "request": "Request refund",
+        "help": "Refunds are processed from your available wallet balance. A funding fee applies to refunds."
+      },
+      "orders": {
+        "eyebrow": "Payment orders",
+        "title": "Top-up history",
+        "empty": "No payment orders yet.",
+        "receipt": "Receipt: {receipt}",
+        "created": "Created: {date}",
+        "paid": "Paid: {date}",
+        "providerOrder": "Provider order: {id}"
+      },
+      "ledger": {
+        "eyebrow": "Wallet ledger",
+        "title": "Wallet transactions",
+        "empty": "No wallet transactions yet.",
+        "fallbackNote": "Wallet update"
+      }
+    },
+    "create": {
+      "errors": {
+        "kycNotVerified": "Your KYC must be verified before you can create a campaign.",
+        "minOneSlot": "At least 1 slot is required. Check your reward and total budget.",
+        "insufficientWallet": "Insufficient wallet balance. Add funds before launching.",
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToCreate": "Failed to create campaign"
+      },
+      "messages": {
+        "created": "Campaign created successfully!"
+      },
+      "header": {
+        "eyebrow": "Campaign builder",
+        "subtitle": "Create a campaign like a modern growth dashboard: clear budget, reward per task, and instructions."
+      },
+      "kycBlocked": {
+        "title": "Complete KYC to launch",
+        "body": "Your KYC status is {status}. Once verified, you can create and launch campaigns.",
+        "reviewSettings": "Go to settings",
+        "contactSupport": "Contact support"
+      },
+      "form": {
+        "title": "Task title",
+        "description": "Description",
+        "category": "Category",
+        "taskType": "Task type",
+        "taskLink": "Task link",
+        "taskDetails": "Task details",
+        "taskDetailsHelp": "One instruction per line. Instructions will be rotated if fewer than available slots.",
+        "rewardPerTask": "Per task reward",
+        "totalBudget": "Total budget"
+      },
+      "placeholders": {
+        "title": "Example: Leave a 5-star review",
+        "description": "What should users do and what proof should they submit?",
+        "taskLink": "https://example.com",
+        "taskDetails": "Step 1...\nStep 2...\nStep 3...",
+        "rewardPerTask": "e.g. 10",
+        "totalBudget": "e.g. 1000"
+      },
+      "actions": {
+        "launching": "Launching...",
+        "launch": "Launch campaign",
+        "addFundsLink": "Add funds to your wallet"
+      },
+      "preview": {
+        "eyebrow": "Live preview",
+        "untitled": "Untitled campaign",
+        "descriptionFallback": "Add a short description for this campaign.",
+        "categoryLabel": "Category",
+        "taskDetailsLabel": "Instructions",
+        "noInstructions": "No instructions provided yet.",
+        "rewardPerTask": "Reward per task",
+        "totalBudget": "Total budget",
+        "totalSlots": "Total slots",
+        "availableWallet": "Available wallet",
+        "estimatedFee": "Funding fee is applied when you deposit or refund wallet balance.",
+        "finalPayable": "Final payable: INR {amount}",
+        "walletSufficiency": "Wallet sufficiency",
+        "checking": "Checking...",
+        "sufficient": "Sufficient",
+        "insufficient": "Insufficient",
+        "commissionHint": "Commission is automatically calculated on approved submissions. Spend is deducted only after approvals."
+      }
+    },
+    "overviewPanel": {
+      "loading": "Loading business overview...",
+      "eyebrow": "Business control center",
+      "title": "Business Overview",
+      "subtitle": "Track available cash, locked campaign budget, campaign health, and the next action required without opening five separate screens.",
+      "time": {
+        "minutesAgo": "{count}m ago",
+        "hoursAgo": "{count}h ago",
+        "daysAgo": "{count}d ago"
+      },
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoadOverview": "Failed to load overview"
+      },
+      "actions": {
+        "addFunds": "Add Funds",
+        "createCampaign": "Create Campaign"
+      },
+      "lowBalance": {
+        "title": "Low wallet balance",
+        "body": "Available balance is below INR {threshold}. New campaigns or budget top-ups may fail until you add funds.",
+        "cta": "Top up wallet"
+      },
+      "kpis": {
+        "availableWallet": "Available Wallet",
+        "lockedBudget": "Locked Budget",
+        "campaignStatus": "Campaign Status",
+        "campaignStatusValue": "{count} live",
+        "kycStatus": "KYC Status",
+        "kycVerifiedOn": "Verified on {date}",
+        "kycNotVerified": "Submit KYC details to unlock campaign creation.",
+        "approvedResults": "Approved Results",
+        "totalBudget": "Total Budget",
+        "todaySpend": "Today Spend",
+        "fundingFee": "Funding Fee"
+      },
+      "snapshot": {
+        "eyebrow": "Performance snapshot",
+        "title": "Spend and campaign health",
+        "openAnalytics": "Open analytics",
+        "todaySpend": {
+          "label": "Today spend",
+          "help": "Based on admin-approved results posted today."
+        },
+        "spentSoFar": {
+          "label": "Spent so far",
+          "help": "Actual approved spend against campaign budgets."
+        },
+        "fundingFee": {
+          "label": "Funding fee",
+          "help": "Applied on business wallet deposits and refunds."
+        },
+        "budgetDeployment": {
+          "label": "Budget deployment",
+          "help": "INR {spent} spent from INR {total} allocated."
+        },
+        "liveCampaignShare": {
+          "label": "Live campaign share",
+          "help": "{live} of {total} campaigns are currently live."
+        }
+      },
+      "activity": {
+        "eyebrow": "Recent activity",
+        "title": "What changed most recently",
+        "viewCampaigns": "View campaigns",
+        "empty": "No business activity yet. Fund the wallet or launch your first campaign to start the timeline."
+      }
+    },
+    "analyticsPanel": {
+      "loading": "Loading analytics...",
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoadAnalytics": "Failed to load analytics"
+      },
+      "charts": {
+        "trend": {
+          "spend": "Spend",
+          "approved": "Approved",
+          "submissions": "Submissions"
+        },
+        "moderation": {
+          "approved": "Approved",
+          "rejected": "Rejected"
+        }
+      },
+      "kpis": {
+        "approvedResults": "Approved Results",
+        "approvalRate": "Approval Rate",
+        "spentBudget": "Spent Budget",
+        "costPerApproved": "Cost Per Approved"
+      },
+      "trend": {
+        "eyebrow": "14-day trend",
+        "title": "Spend vs approved output"
+      },
+      "categories": {
+        "eyebrow": "Category performance",
+        "title": "Which task type is working",
+        "empty": "No category analytics yet.",
+        "rowSummary": "{campaigns} campaigns | {approved} approved | {rejected} rejected",
+        "spend": "Spend INR {amount}"
+      },
+      "moderation": {
+        "eyebrow": "Moderation flow",
+        "title": "Approved vs rejected volume"
+      },
+      "topCampaigns": {
+        "eyebrow": "Top campaigns",
+        "title": "Ranking by approved output",
+        "empty": "No campaign ranking available yet.",
+        "approvedCount": "{count} approved",
+        "approvalRate": "Approval rate: {value}%",
+        "costPerApproved": "Cost per approved: INR {amount}",
+        "spent": "Spent: INR {amount}",
+        "pending": "Pending: {count}"
+      }
+    },
+    "campaignsPanel": {
+      "loading": "Loading campaigns...",
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoadCampaigns": "Failed to load campaigns",
+        "actionFailed": "Action failed"
+      },
+      "messages": {
+        "campaignUpdated": "Campaign updated"
+      },
+      "filters": {
+        "all": "All",
+        "live": "Live",
+        "pending": "Pending",
+        "paused": "Paused",
+        "completed": "Completed",
+        "rejected": "Rejected"
+      },
+      "kpis": {
+        "totalCampaigns": "Total Campaigns",
+        "live": "Live",
+        "pendingApproval": "Pending Approval",
+        "completed": "Completed"
+      },
+      "header": {
+        "eyebrow": "Campaign management",
+        "title": "Track status, budget, and moderation flow",
+        "createCampaign": "Create campaign",
+        "openAnalytics": "Open analytics"
+      },
+      "search": {
+        "placeholder": "Search title, description, or category"
+      },
+      "empty": "No campaigns found for the selected filters.",
+      "card": {
+        "created": "Created {date}",
+        "taskLinkAttached": "Task link attached",
+        "budgetLeft": "Budget left",
+        "rewardPerSlot": "Reward / slot",
+        "slotsLeft": "Slots left",
+        "pendingReview": "Pending review",
+        "budgetDeployment": "Budget deployment",
+        "budgetDeploymentHelp": "Spent INR {spent} of INR {total}",
+        "approvalQuality": "Approval quality",
+        "approvalQualityHelp": "Approved {approved} | Rejected {rejected} | Total submissions {total}"
+      },
+      "actions": {
+        "pause": "Pause",
+        "pausing": "Pausing...",
+        "resume": "Resume",
+        "resuming": "Resuming...",
+        "close": "Close",
+        "closing": "Closing...",
+        "view": "View",
+        "viewEdit": "View / Edit"
+      }
+    },
+    "kycPanel": {
+      "loading": "Loading KYC...",
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoadStatus": "Failed to load KYC status",
+        "failedToSubmit": "Failed to submit KYC request"
+      },
+      "messages": {
+        "submitted": "KYC request submitted"
+      },
+      "status": {
+        "verified": "Verified",
+        "rejected": "Rejected",
+        "pending": "Pending"
+      },
+      "statusCard": {
+        "eyebrow": "KYC status"
+      },
+      "accountLabel": "Account",
+      "reviewerNotes": "Reviewer notes: {notes}",
+      "pending": {
+        "bodyLine1": "Your KYC request is currently under review.",
+        "bodyLine2": "We will notify you once it is approved or rejected."
+      },
+      "form": {
+        "eyebrow": "Submit KYC details",
+        "title": "Business verification form",
+        "legalName": "Legal business name",
+        "contactName": "Contact person name",
+        "phone": "Phone number",
+        "websiteOptional": "Website (optional)",
+        "address": "Business address",
+        "taxIdOptional": "Tax ID (optional)",
+        "documentUrlOptional": "Document URL (optional)",
+        "submitting": "Submitting...",
+        "requestReview": "Request KYC Review"
+      }
+    },
+    "notificationsPanel": {
+      "loading": "Loading business notifications...",
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoad": "Failed to load notifications"
+      },
+      "kpis": {
+        "activeAlerts": "Active alerts",
+        "unreadInbox": "Unread inbox"
+      },
+      "alerts": {
+        "eyebrow": "Operational alerts",
+        "title": "Live issues that need attention",
+        "empty": "No active business alerts right now."
+      },
+      "inbox": {
+        "eyebrow": "In-app inbox",
+        "title": "Campaign and payment notifications"
+      }
+    },
+    "activityPanel": {
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoad": "Failed to load activity log"
+      },
+      "empty": "No business activity recorded yet."
+    },
+    "teamPanel": {
+      "loading": "Loading team...",
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoad": "Failed to load business team",
+        "failedToAdd": "Failed to add team member",
+        "failedToUpdateRole": "Failed to update role",
+        "failedToRemove": "Failed to remove member"
+      },
+      "messages": {
+        "memberAdded": "Team member added",
+        "roleUpdated": "Role updated",
+        "memberRemoved": "Member removed"
+      },
+      "kpis": {
+        "owner": "Owner",
+        "teamMembers": "Team members",
+        "yourAccess": "Your access"
+      },
+      "roles": {
+        "editor": "Editor",
+        "viewer": "Viewer"
+      },
+      "add": {
+        "eyebrow": "Add team member",
+        "title": "Attach an existing business account",
+        "emailPlaceholder": "Business account email",
+        "adding": "Adding...",
+        "addButton": "Add member",
+        "help": "Team members must already exist as business accounts. Owners keep funding, settings, and team control."
+      },
+      "notOwner": "Team membership is managed only by the business owner.",
+      "members": {
+        "eyebrow": "Workspace members",
+        "title": "Owner, editors, and viewers",
+        "empty": "No team members added yet.",
+        "removing": "Removing...",
+        "remove": "Remove"
+      }
+    },
+    "settingsPanel": {
+      "loading": "Loading business settings...",
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoad": "Failed to load settings",
+        "failedToSave": "Failed to save settings"
+      },
+      "messages": {
+        "updated": "Settings updated"
+      },
+      "profile": {
+        "eyebrow": "Business profile",
+        "title": "Brand and contact identity",
+        "displayName": "Display name",
+        "brandName": "Brand name",
+        "companyName": "Company name",
+        "contactEmail": "Contact email",
+        "supportContact": "Support contact",
+        "accountEmail": "Account email: {email}",
+        "kycStatus": "KYC status: {status}",
+        "joined": "Joined:"
+      },
+      "billing": {
+        "eyebrow": "Billing and policies",
+        "title": "Refund and billing preferences",
+        "billingDetails": "Billing details",
+        "refundPreference": "Refund preference"
+      },
+      "notifications": {
+        "eyebrow": "Notification preferences",
+        "title": "Choose which business alerts matter",
+        "campaignStatus": "Campaign approved/rejected/completed",
+        "budgetAlerts": "Wallet low and budget exhausted alerts",
+        "paymentAlerts": "Payment and funding status alerts",
+        "rejectionSpike": "Unusual rejection spike alerts"
+      },
+      "actions": {
+        "saving": "Saving...",
+        "save": "Save Settings"
+      }
+    },
+    "submissionsPanel": {
+      "loading": "Loading submission pipeline...",
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoad": "Failed to load submission pipeline"
+      },
+      "filters": {
+        "all": "All",
+        "pendingManager": "Pending Manager",
+        "pendingAdmin": "Pending Admin",
+        "approved": "Approved",
+        "managerRejected": "Manager Rejected",
+        "adminRejected": "Admin Rejected"
+      },
+      "stages": {
+        "pendingManager": "Pending Manager",
+        "pendingAdmin": "Pending Admin",
+        "approved": "Approved",
+        "managerRejected": "Manager Rejected",
+        "adminRejected": "Admin Rejected"
+      },
+      "kpis": {
+        "total": "Total",
+        "pendingManager": "Pending Manager",
+        "pendingAdmin": "Pending Admin",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "header": {
+        "eyebrow": "Submission review",
+        "title": "Read-only moderation pipeline",
+        "exportCsv": "Export CSV"
+      },
+      "search": {
+        "placeholder": "Search campaign, user, proof, or reason"
+      },
+      "empty": "No submissions found for the current filter.",
+      "fallback": {
+        "campaign": "Campaign",
+        "unnamedUser": "Unnamed User"
+      },
+      "row": {
+        "reward": "Reward INR {amount}",
+        "participant": "Participant",
+        "participantPrivacy": "Participant identity is hidden for privacy.",
+        "proof": "Proof",
+        "openScreenshot": "Open screenshot",
+        "reviewReason": "Review reason"
+      }
+    },
+    "campaignEditor": {
+      "header": {
+        "eyebrow": "Campaign management",
+        "title": "Edit campaign, budget, and instructions",
+        "subtitle": "Changes are validated against current spend and used slots before they are applied."
+      },
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToUpdate": "Failed to update campaign",
+        "failedToDuplicate": "Failed to duplicate campaign"
+      },
+      "messages": {
+        "updated": "Campaign updated",
+        "duplicated": "Campaign duplicated"
+      },
+      "actions": {
+        "duplicate": "Duplicate campaign",
+        "duplicating": "Duplicating...",
+        "save": "Save changes",
+        "saving": "Saving..."
+      },
+      "fields": {
+        "title": "Task Title",
+        "description": "Description",
+        "category": "Category",
+        "taskLink": "Task Link",
+        "instructions": "Task Details",
+        "rewardPerTask": "Per Task Reward",
+        "totalBudget": "Total Budget"
+      },
+      "placeholders": {
+        "title": "Campaign title",
+        "description": "Describe the campaign",
+        "taskLink": "Optional destination link",
+        "instructions": "Add one instruction per line\\nExample:\\nOpen the page\\nComplete the required action\\nSubmit proof",
+        "rewardPerTask": "Reward per approved slot",
+        "totalBudget": "Campaign budget"
+      },
+      "side": {
+        "currentCategory": "Current category",
+        "availableWallet": "Available wallet",
+        "usedBudget": "Already used budget",
+        "projectedSlots": "Projected slots",
+        "usedSubmissionsLocked": "Used submissions already locked: {count}",
+        "projectedRemainingBudget": "Projected remaining budget",
+        "walletImpact": "Wallet impact",
+        "walletImpactTopUp": "This update needs an additional INR {amount} from the business wallet.",
+        "walletImpactRelease": "This update releases INR {amount} back to the business wallet.",
+        "walletImpactNone": "No wallet change for this update.",
+        "projectedWalletAfterSave": "Projected wallet after save: INR {amount}",
+        "summary": {
+          "projectedTotalSlots": "Projected total slots: {count}",
+          "finalPayable": "Final payable amount after this edit: INR {amount}",
+          "platformFee": "Platform fee on campaign edit: INR 0.00"
+        }
+      },
+      "warnings": {
+        "insufficientWallet": "The wallet does not have enough balance to apply this budget increase.",
+        "invalidUsedSlots": "This update would reduce total slots below the number of submissions already recorded."
+      }
+    },
+    "loading": {
+      "dashboard": "Loading business dashboard..."
+    },
+    "funding": {
+      "loading": "Loading funding center...",
+      "labels": {
+        "notYet": "Not yet",
+        "topUpDescription": "Business wallet top-up"
+      },
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoad": "Failed to load funding data",
+        "gatewayLoadFailed": "Failed to load payment gateway. Try again.",
+        "fundingFailed": "Funding failed",
+        "paymentInitFailed": "Payment initialization failed. Missing gateway details.",
+        "verifyFailed": "Payment verification failed",
+        "refundFailed": "Refund failed"
+      },
+      "messages": {
+        "walletFunded": "Wallet funded successfully",
+        "refundInitiated": "Refund initiated"
+      },
+      "header": {
+        "eyebrow": "Funding and billing",
+        "subtitle": "Manage deposits, refunds, payment status, and wallet ledger activity from one screen."
+      },
+      "lowBalance": {
+        "title": "Low balance warning",
+        "body": "Wallet is below the recommended threshold of INR {threshold}.",
+        "hint": "Add funds to avoid campaign launch failures."
+      },
+      "kpis": {
+        "availableWallet": "Available Wallet",
+        "lockedBudget": "Locked Budget",
+        "totalFunded": "Total Funded",
+        "lastSuccessfulPayment": "Last Successful Payment",
+        "paid": "PAID",
+        "noPayment": "NO PAYMENT"
+      },
+      "topUp": {
+        "eyebrow": "Add funds",
+        "title": "Business wallet top-up",
+        "amountPlaceholder": "Enter amount (min INR {min})",
+        "initializing": "Initializing payment...",
+        "payAndFund": "Pay and Fund Wallet",
+        "breakdown": {
+          "gross": "Gross amount",
+          "fee": "Platform funding fee ({rate}%)",
+          "net": "Net wallet credit"
+        }
+      },
+      "refund": {
+        "eyebrow": "Request refund",
+        "title": "Move unused wallet out",
+        "amountPlaceholder": "Enter refund amount",
+        "processing": "Processing...",
+        "request": "Request Refund",
+        "help": "Refunds reduce available wallet immediately and apply the same configured fee logic as deposits.",
+        "breakdown": {
+          "requested": "Requested amount",
+          "fee": "Refund processing fee ({rate}%)",
+          "net": "Net refund"
+        }
+      },
+      "orders": {
+        "eyebrow": "Payment orders",
+        "title": "Checkout and settlement history",
+        "empty": "No payment orders yet.",
+        "receipt": "Receipt: {receipt}",
+        "created": "Created: {date}",
+        "paid": "Paid: {date}",
+        "providerOrder": "Provider order: {id}"
+      },
+      "ledger": {
+        "eyebrow": "Wallet ledger",
+        "title": "Recent funding and spend activity",
+        "empty": "No wallet activity yet.",
+        "fallbackNote": "Wallet transaction"
+      }
+    },
+    "create": {
+      "errors": {
+        "kycNotVerified": "Business KYC must be verified before creating campaigns.",
+        "minOneSlot": "Budget must be enough to fund at least one slot.",
+        "insufficientWallet": "Insufficient wallet balance for this campaign budget.",
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToCreate": "Failed to create campaign"
+      },
+      "messages": {
+        "created": "Campaign created successfully!"
+      },
+      "header": {
+        "eyebrow": "Campaign setup",
+        "subtitle": "Launch a structured campaign with clear task type, instructions, reward, and total budget."
+      },
+      "kycBlocked": {
+        "title": "KYC verification required",
+        "body": "Your business KYC status is {status}. Admin approval is required before you can create campaigns.",
+        "reviewSettings": "Review business settings",
+        "contactSupport": "Contact support"
+      },
+      "form": {
+        "title": "Task Title",
+        "description": "Description",
+        "category": "Category",
+        "taskType": "Task Type",
+        "taskLink": "Task Link",
+        "taskDetails": "Task Details",
+        "taskDetailsHelp": "Each new line becomes a separate instruction step.",
+        "rewardPerTask": "Per Task Reward",
+        "totalBudget": "Total Budget"
+      },
+      "placeholders": {
+        "title": "Enter task title",
+        "description": "Summarize what the participant needs to do",
+        "taskLink": "Optional destination link",
+        "taskDetails": "Add one instruction per line\\nExample:\\nOpen the app store\\nInstall the app\\nShare screenshot proof",
+        "rewardPerTask": "Reward per approved task",
+        "totalBudget": "Total budget"
+      },
+      "actions": {
+        "launching": "Launching...",
+        "launch": "Launch Campaign",
+        "addFundsLink": "Add funds to wallet"
+      },
+      "preview": {
+        "eyebrow": "Campaign preview",
+        "untitled": "Untitled campaign",
+        "descriptionFallback": "Your task summary will appear here for business review.",
+        "categoryLabel": "Category",
+        "taskDetailsLabel": "Task details",
+        "noInstructions": "No instruction lines added yet.",
+        "rewardPerTask": "Per task reward",
+        "totalBudget": "Total budget",
+        "totalSlots": "Calculated total slots",
+        "availableWallet": "Available wallet",
+        "estimatedFee": "Estimated platform fee: INR 0.00",
+        "finalPayable": "Final payable amount: INR {amount}",
+        "walletSufficiency": "Wallet sufficiency",
+        "checking": "Checking...",
+        "sufficient": "Sufficient",
+        "insufficient": "Insufficient",
+        "commissionHint": "Marketing campaigns use the marketing commission rules. Work-based campaigns use the default non-marketing commission rules already configured in the platform."
+      }
+    }
   },
   "dashboard": {
     "greeting": {

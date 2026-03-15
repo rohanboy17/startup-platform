@@ -180,29 +180,29 @@ export default function UserOverviewPanel() {
         <SectionCard elevated className="space-y-6 p-4 sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm text-foreground/60">Level progress</p>
-                <h3 className="text-xl font-semibold text-foreground">Keep approvals moving</h3>
+                <p className="text-sm text-foreground/60">{t("levelEyebrow")}</p>
+                <h3 className="text-xl font-semibold text-foreground">{t("levelTitle")}</h3>
               </div>
               <Link href="/dashboard/user/submissions" className="text-sm text-emerald-700 transition hover:text-emerald-800 dark:text-emerald-200 dark:hover:text-emerald-100">
-                View submissions
+                {t("viewSubmissions")}
               </Link>
             </div>
 
             <div className="grid gap-4 min-[1400px]:grid-cols-[1fr_auto] min-[1400px]:items-center">
               <div className="space-y-4">
                 <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">Level now</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">{t("levelNow")}</p>
                   <p className="mt-2 text-2xl font-semibold text-foreground">{data.profile.level}</p>
                   <p className="mt-1 text-sm text-foreground/65">
                     {data.progress.target === null
-                      ? `Top tier unlocked with ${data.progress.current} approved submissions.`
-                      : `${data.progress.current} approved so far. Reach ${data.progress.target} to move up.`}
+                      ? t("topTierUnlocked", { count: data.progress.current })
+                      : t("progressSoFar", { current: data.progress.current, target: data.progress.target })}
                   </p>
                 </div>
 
                 <div>
                   <div className="mb-2 flex items-center justify-between text-sm text-foreground/70">
-                    <span>Progress to next level</span>
+                    <span>{t("progressToNext")}</span>
                     <span>{data.progress.percent}%</span>
                   </div>
                   <div className="h-2 rounded-full bg-foreground/10">
@@ -213,15 +213,15 @@ export default function UserOverviewPanel() {
 
                 <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
                   <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">Today approved</p>
+                    <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">{t("todayApproved")}</p>
                   <p className="mt-2 text-2xl font-semibold text-foreground">{data.metrics.todayApprovedCount}</p>
                 </div>
                 <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">Total approved</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">{t("totalApproved")}</p>
                   <p className="mt-2 text-2xl font-semibold text-foreground">{data.profile.totalApproved}</p>
                 </div>
                 <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
-                  <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">Submitted today</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">{t("submittedToday")}</p>
                   <p className="mt-2 text-2xl font-semibold text-foreground">{data.profile.dailySubmits}</p>
                 </div>
               </div>
@@ -229,20 +229,20 @@ export default function UserOverviewPanel() {
 
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               <Link href="/dashboard/user/tasks" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
-                  <p className="text-sm font-medium text-foreground">Open tasks</p>
-                <p className="mt-1 text-sm text-foreground/70">Find available campaigns with open slots.</p>
+                  <p className="text-sm font-medium text-foreground">{t("openTasks")}</p>
+                <p className="mt-1 text-sm text-foreground/70">{t("openTasksDesc")}</p>
               </Link>
               <Link href="/dashboard/user/wallet" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
                   <p className="text-sm font-medium text-foreground">{t("openWallet")}</p>
-                <p className="mt-1 text-sm text-foreground/70">Review credits, debits, and payout history.</p>
+                <p className="mt-1 text-sm text-foreground/70">{t("openWalletDesc")}</p>
               </Link>
               <Link href="/dashboard/user/notifications" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
                   <p className="text-sm font-medium text-foreground">{t("openNotifications")}</p>
-                <p className="mt-1 text-sm text-foreground/70">Check approval, rejection, and payout updates.</p>
+                <p className="mt-1 text-sm text-foreground/70">{t("openNotificationsDesc")}</p>
               </Link>
               <Link href="/dashboard/user/referrals" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
                   <p className="text-sm font-medium text-foreground">{t("openReferrals")}</p>
-                <p className="mt-1 text-sm text-foreground/70">Share your code, earn coins, and redeem them to wallet.</p>
+                <p className="mt-1 text-sm text-foreground/70">{t("openReferralsDesc")}</p>
               </Link>
             </div>
         </SectionCard>

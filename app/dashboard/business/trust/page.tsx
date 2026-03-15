@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getAppSettings } from "@/lib/system-settings";
 import { formatMoney } from "@/lib/format-money";
 import { getBusinessContext } from "@/lib/business-context";
+import { getTranslations } from "next-intl/server";
 
 function parseEntityId(details: string | null | undefined, key: string) {
   if (!details) return null;
@@ -18,6 +19,7 @@ function formatHours(value: number) {
 }
 
 export default async function BusinessTrustPage() {
+  const t = await getTranslations("business");
   const session = await auth();
   if (!session || session.user.role !== "BUSINESS") {
     redirect("/dashboard");
@@ -150,7 +152,7 @@ export default async function BusinessTrustPage() {
     <div className="space-y-8">
       <div>
         <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">Business trust layer</p>
-        <h2 className="mt-2 text-3xl font-semibold md:text-4xl">Trust & Transparency</h2>
+        <h2 className="mt-2 text-3xl font-semibold md:text-4xl">{t("trustPageTitle")}</h2>
         <p className="mt-2 max-w-3xl text-sm text-white/65 md:text-base">
           Commercial terms, review flow, safety controls, and service timing in one business-facing page.
         </p>

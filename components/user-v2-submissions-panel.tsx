@@ -1,12 +1,14 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
+import ProofImageDialog from "@/components/proof-image-dialog";
 
 type SubmissionStage =
   | "PENDING_MANAGER"
@@ -20,6 +22,7 @@ type Submission = {
   proof: string;
   proofLink: string | null;
   proofText: string | null;
+  proofImage: string | null;
   managerStatus: string;
   adminStatus: string;
   rewardAmount: number;
@@ -31,32 +34,6 @@ type Submission = {
     rewardPerTask: number;
   } | null;
 };
-
-const FILTERS: Array<{ value: "ALL" | SubmissionStage; label: string }> = [
-  { value: "ALL", label: "All" },
-  { value: "PENDING_MANAGER", label: "Pending manager" },
-  { value: "PENDING_ADMIN", label: "Pending admin" },
-  { value: "APPROVED", label: "Approved" },
-  { value: "MANAGER_REJECTED", label: "Manager rejected" },
-  { value: "ADMIN_REJECTED", label: "Admin rejected" },
-];
-
-function stageLabel(stage: SubmissionStage) {
-  switch (stage) {
-    case "PENDING_MANAGER":
-      return "Pending manager review";
-    case "PENDING_ADMIN":
-      return "Pending admin review";
-    case "APPROVED":
-      return "Approved";
-    case "MANAGER_REJECTED":
-      return "Rejected by manager";
-    case "ADMIN_REJECTED":
-      return "Rejected by admin";
-    default:
-      return stage;
-  }
-}
 
 function stageTone(stage: SubmissionStage) {
   switch (stage) {
@@ -72,16 +49,59 @@ function stageTone(stage: SubmissionStage) {
   }
 }
 
-function proofPreview(submission: Submission) {
-  return submission.proofText || submission.proofLink || submission.proof || "No proof text stored";
-}
-
 export default function UserV2SubmissionsPanel() {
+  const t = useTranslations("user.submissions");
+  const locale = useLocale();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"ALL" | SubmissionStage>("ALL");
   const [search, setSearch] = useState("");
+
+  const filters = useMemo<Array<{ value: "ALL" | SubmissionStage; label: string }>>(
+    () => [
+      { value: "ALL", label: t("filterAll") },
+      { value: "PENDING_MANAGER", label: t("filterPendingManager") },
+      { value: "PENDING_ADMIN", label: t("filterPendingAdmin") },
+      { value: "APPROVED", label: t("filterApproved") },
+      { value: "MANAGER_REJECTED", label: t("filterManagerRejected") },
+      { value: "ADMIN_REJECTED", label: t("filterAdminRejected") },
+    ],
+    [t]
+  );
+
+  const stageLabel = useCallback(
+    (stage: SubmissionStage) => {
+      switch (stage) {
+        case "PENDING_MANAGER":
+          return t("stagePendingManager");
+        case "PENDING_ADMIN":
+          return t("stagePendingAdmin");
+        case "APPROVED":
+          return t("stageApproved");
+        case "MANAGER_REJECTED":
+          return t("stageRejectedManager");
+        case "ADMIN_REJECTED":
+          return t("stageRejectedAdmin");
+        default:
+          return stage;
+      }
+    },
+    [t]
+  );
+
+  const proofPreview = useCallback(
+    (submission: Submission) => {
+      return (
+        submission.proofText ||
+        submission.proofLink ||
+        submission.proofImage ||
+        submission.proof ||
+        t("noProof")
+      );
+    },
+    [t]
+  );
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/users/me/submissions", { credentials: "include" });
@@ -90,19 +110,19 @@ export default function UserV2SubmissionsPanel() {
     try {
       data = raw ? (JSON.parse(raw) as { submissions?: Submission[]; error?: string }) : {};
     } catch {
-      setError("Unexpected server response");
+      setError(t("unexpected"));
       setLoading(false);
       return;
     }
 
     if (!res.ok) {
-      setError(data.error || "Failed to load submissions");
+      setError(data.error || t("failed"));
     } else {
       setError("");
       setSubmissions(data.submissions || []);
     }
     setLoading(false);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 10000);
 
@@ -126,36 +146,36 @@ export default function UserV2SubmissionsPanel() {
         : true;
       return matchesFilter && matchesSearch;
     });
-  }, [filter, search, submissions]);
+  }, [filter, proofPreview, search, submissions]);
 
-  if (loading) return <p className="text-sm text-white/60">Loading submissions...</p>;
+  if (loading) return <p className="text-sm text-white/60">{t("loading")}</p>;
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="Total Submissions" value={stats.total} />
-        <KpiCard label="Pending Review" value={stats.pending} tone="warning" />
-        <KpiCard label="Approved" value={stats.approved} tone="success" />
-        <KpiCard label="Rejected" value={stats.rejected} tone="danger" />
+        <KpiCard label={t("kpiTotal")} value={stats.total} />
+        <KpiCard label={t("kpiPending")} value={stats.pending} tone="warning" />
+        <KpiCard label={t("kpiApproved")} value={stats.approved} tone="success" />
+        <KpiCard label={t("kpiRejected")} value={stats.rejected} tone="danger" />
       </div>
 
       <SectionCard elevated className="space-y-4 p-4 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm text-white/60">Submission pipeline</p>
-              <h3 className="text-xl font-semibold text-white">Track each review stage clearly</h3>
+              <p className="text-sm text-white/60">{t("eyebrow")}</p>
+              <h3 className="text-xl font-semibold text-white">{t("title")}</h3>
             </div>
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search campaign or proof"
+              placeholder={t("searchPlaceholder")}
               className="min-h-11 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-sm text-white outline-none placeholder:text-white/35 lg:max-w-sm"
             />
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {FILTERS.map((item) => {
+            {filters.map((item) => {
               const active = filter === item.value;
               return (
                 <button
@@ -178,7 +198,7 @@ export default function UserV2SubmissionsPanel() {
       {filtered.length === 0 ? (
         <Card className="rounded-2xl border-white/10 bg-white/5">
           <CardContent className="p-6 text-sm text-white/60">
-            No submissions match the current filters.
+            {t("empty")}
           </CardContent>
         </Card>
       ) : (
@@ -193,10 +213,10 @@ export default function UserV2SubmissionsPanel() {
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                     <div>
                       <p className="text-lg font-semibold text-white">
-                        {submission.campaign?.title || "Campaign submission"}
+                        {submission.campaign?.title || t("campaignFallback")}
                       </p>
                       <p className="mt-1 text-sm text-white/60">
-                        {submission.campaign?.category || "Uncategorized"} | Reward INR {formatMoney(reward)}
+                        {submission.campaign?.category || t("uncategorized")} | {t("reward", { amount: formatMoney(reward) })}
                       </p>
                     </div>
                     <StatusBadge
@@ -208,14 +228,14 @@ export default function UserV2SubmissionsPanel() {
 
                   <div className="grid gap-4 xl:grid-cols-[0.85fr_1.15fr]">
                     <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
-                      <p className="text-xs uppercase tracking-[0.16em] text-white/35">Review status</p>
-                      <p className="text-sm text-white/75">Manager: {submission.managerStatus.replaceAll("_", " ")}</p>
-                      <p className="text-sm text-white/75">Admin: {submission.adminStatus.replaceAll("_", " ")}</p>
-                      <p className="text-sm text-white/50">Submitted {new Date(submission.createdAt).toLocaleString()}</p>
+                      <p className="text-xs uppercase tracking-[0.16em] text-white/35">{t("reviewStatus")}</p>
+                      <p className="text-sm text-white/75">{t("manager", { status: submission.managerStatus.replaceAll("_", " ") })}</p>
+                      <p className="text-sm text-white/75">{t("admin", { status: submission.adminStatus.replaceAll("_", " ") })}</p>
+                      <p className="text-sm text-white/50">{t("submitted", { date: new Date(submission.createdAt).toLocaleString(locale) })}</p>
                     </div>
 
                     <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
-                      <p className="text-xs uppercase tracking-[0.16em] text-white/35">Proof preview</p>
+                      <p className="text-xs uppercase tracking-[0.16em] text-white/35">{t("proofPreview")}</p>
                       <p className="text-sm text-white/80 break-words">{proofPreview(submission)}</p>
                       {submission.proofLink ? (
                         <a
@@ -224,15 +244,18 @@ export default function UserV2SubmissionsPanel() {
                           rel="noreferrer"
                           className="inline-flex text-sm text-emerald-200 underline underline-offset-4"
                         >
-                          Open proof link
+                          {t("openProof")}
                         </a>
+                      ) : null}
+                      {submission.proofImage ? (
+                        <ProofImageDialog url={submission.proofImage} label={t("openScreenshot")} />
                       ) : null}
                     </div>
                   </div>
 
                   {isRejected ? (
                     <div className="rounded-2xl border border-rose-400/20 bg-rose-500/10 p-4 text-sm text-rose-100/85">
-                      No structured rejection reason is stored yet for this submission. Only rejection status is available.
+                      {t("noReason")}
                     </div>
                   ) : null}
                 </CardContent>

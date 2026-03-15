@@ -32,6 +32,46 @@
       "cookie": "कुकी नीति",
       "disclaimer": "डिस्क्लेमर",
       "kyc": "KYC नीति"
+    },
+    "settings": {
+      "eyebrow": "यूज़र सेटिंग्स",
+      "title": "सेटिंग्स",
+      "subtitle": "अपनी प्रोफ़ाइल, विथड्रॉ डिफ़ॉल्ट्स और अकाउंट सिक्योरिटी मैनेज करें।",
+      "securityTitle": "अकाउंट सिक्योरिटी",
+      "securityBody": "पासवर्ड भूल गए? इसे सुरक्षित तरीके से रीसेट करें।",
+      "forgotPassword": "Forgot password"
+    },
+    "help": {
+      "eyebrow": "ट्रस्ट और सपोर्ट",
+      "title": "हेल्प",
+      "subtitle": "अधिक टास्क सबमिट करने से पहले अप्रूवल, लेवल, फ्रॉड चेक्स और विथड्रॉ के बारे में समझें।",
+      "approvalEyebrow": "अप्रूवल वर्कफ़्लो",
+      "approvalTitle": "आपका सबमिशन कैसे अप्रूव होता है",
+      "approvalStep1": "1. आप टास्क डिटेल पेज से प्रूफ सबमिट करते हैं।",
+      "approvalStep2": "2. पहले मैनेजर रिव्यू करता है और अप्रूव या रिजेक्ट कर सकता है।",
+      "approvalStep3": "3. एडमिन अंतिम निर्णय वेरिफ़ाई करता है।",
+      "approvalStep4": "4. अप्रूव्ड सबमिशन आपका वॉलेट ऑटोमैटिकली क्रेडिट करता है।",
+      "levelsEyebrow": "लेवल सिस्टम",
+      "levelsTitle": "लेवल कैसे बदलते हैं",
+      "levelsBullet1": "लेवल अपग्रेड एडमिन-अप्रूव्ड सबमिशन पर आधारित है।",
+      "levelsBullet2": "L1 तुरंत शुरू होता है और अप्रूवल बढ़ने पर उच्च लेवल अनलॉक होते हैं।",
+      "levelsBullet3": "डेली एक्टिविटी काउंटर कॉन्फ़िगर किए गए रीसेट शेड्यूल पर रीसेट होता है।",
+      "levelsBullet4": "ओवरव्यू पेज पर अगले लेवल तक की प्रोग्रेस दिखती है।",
+      "fraudEyebrow": "फ्रॉड पॉलिसी",
+      "fraudTitle": "किस वजह से सबमिशन रिजेक्ट हो सकता है",
+      "fraudBullet1": "कॉपी किया हुआ या फेक प्रूफ।",
+      "fraudBullet2": "ज़रूरी एक्शन किए बिना टास्क के लिए सबमिट करना।",
+      "fraudBullet3": "एक ही डिवाइस या IP से बार-बार दुरुपयोग।",
+      "fraudBullet4": "कैंपेन स्लॉट या रिव्यू कंट्रोल्स को बायपास करने की कोशिश।",
+      "withdrawalsEyebrow": "विथड्रॉ",
+      "withdrawalsTitle": "पेआउट नियम",
+      "withdrawalsBullet1": "नॉर्मल न्यूनतम विथड्रॉ INR {amount} है।",
+      "withdrawalsBullet2": "इमरजेंसी विथड्रॉ न्यूनतम से नीचे, महीने में 2 बार तक अलाउड है।",
+      "withdrawalsBullet3": "एक समय में केवल एक पेंडिंग विथड्रॉ रिक्वेस्ट अलाउड है।",
+      "withdrawalsBullet4": "अप्रूवल या रिजेक्शन एडमिन रिव्यू से तय होता है।",
+      "supportEyebrow": "सपोर्ट",
+      "supportTitle": "हेल्प चाहिए?",
+      "supportBody": "अगर आपके सबमिशन, वॉलेट या विथड्रॉ में कुछ गलत लगे, तो पब्लिक कॉन्टैक्ट पेज या वहाँ दिए गए ऑफिशियल सपोर्ट चैनल का उपयोग करें।"
     }
   },
   "settings": {
@@ -46,6 +86,106 @@
     "en": "English",
     "hi": "हिंदी",
     "bn": "বাংলা"
+  },
+  "auth": {
+    "login": {
+      "side": {
+        "eyebrow": "सुरक्षित लॉगिन",
+        "title": "अपने कंट्रोल सेंटर में वापस स्वागत है।",
+        "subtitle": "अकाउंट सुरक्षा और एडमिन-ग्रेड 2FA के साथ कैंपेन, पेआउट और मॉडरेशन एक्सेस करें।",
+        "bullets": {
+          "roleBased": "रोल-आधारित एक्सेस और प्रोटेक्टेड रूट्स",
+          "admin2fa": "OTP या रिकवरी कोड के साथ एडमिन 2FA",
+          "securityMonitoring": "सिक्योरिटी इवेंट मॉनिटरिंग"
+        }
+      },
+      "card": {
+        "eyebrow": "वापसी पर स्वागत",
+        "title": "साइन इन",
+        "subtitle": "जारी रखने के लिए अपना ईमेल या मोबाइल नंबर और पासवर्ड इस्तेमाल करें।",
+        "registered": "अकाउंट बन गया। अब आप साइन इन कर सकते हैं।"
+      },
+      "form": {
+        "identifierPlaceholder": "ईमेल या मोबाइल नंबर",
+        "mobileExamples": "मोबाइल लॉगिन उदाहरण: India <highlight>{india}</highlight>, US <highlight>{us}</highlight>, UK <highlight>{uk}</highlight>.",
+        "passwordPlaceholder": "पासवर्ड",
+        "forgotPassword": "पासवर्ड भूल गए?",
+        "signingIn": "साइन इन हो रहा है...",
+        "signIn": "साइन इन"
+      },
+      "admin2fa": {
+        "title": "एडमिन 2FA आवश्यक",
+        "requiredHelp": "एडमिन 2FA आवश्यक है। जारी रखने के लिए OTP या रिकवरी कोड दर्ज करें।",
+        "sending": "भेजा जा रहा है...",
+        "resend": "OTP फिर भेजें",
+        "otpPlaceholder": "6-अंकों का OTP",
+        "recoveryPlaceholder": "या रिकवरी कोड (जैसे, ABC12-34DEF)",
+        "otpReady": "OTP अनुरोध किया गया और तैयार है।"
+      },
+      "badges": {
+        "protectedAuth": "प्रोटेक्टेड ऑथ",
+        "liveSecurity": "लाइव सिक्योरिटी"
+      },
+      "footer": {
+        "newHere": "नए हैं?",
+        "createAccount": "अकाउंट बनाएं"
+      },
+      "errors": {
+        "otpSendFailed": "OTP भेजा नहीं जा सका",
+        "invalidCredentials": "गलत ईमेल/मोबाइल या पासवर्ड",
+        "otpInvalid": "OTP गलत या एक्सपायर हो गया। नया कोड मंगाएं।",
+        "recoveryInvalid": "रिकवरी कोड गलत या उपयोग किया हुआ।",
+        "twoFaFailed": "2FA सत्यापन विफल। नया OTP मंगाएं या सही रिकवरी कोड इस्तेमाल करें।"
+      },
+      "info": {
+        "devOtp": "Local dev OTP: {otp} (SMTP configured नहीं है)",
+        "otpSent": "OTP एडमिन ईमेल पर भेजा गया। यह जल्दी एक्सपायर होगा।"
+      }
+    },
+    "register": {
+      "side": {
+        "eyebrow": "शुरू करें",
+        "title": "मिनटों में अपना मार्केटप्लेस अकाउंट बनाएं।",
+        "subtitle": "यूज़र बनकर वेरिफाइड टास्क से कमाएं, या बिजनेस बनकर कैंपेन लॉन्च करें।",
+        "bullets": {
+          "unified": "यूज़र और बिजनेस रोल्स के लिए एक यूनिफाइड अकाउंट",
+          "mobileIdentity": "मोबाइल नंबर आधारित पहचान सपोर्ट",
+          "wallet": "सिक्योर पेआउट-रेडी वॉलेट आर्किटेक्चर"
+        }
+      },
+      "card": {
+        "eyebrow": "नया अकाउंट बनाएं",
+        "title": "EarnHub जॉइन करें",
+        "subtitle": "मोबाइल नंबर से रजिस्टर करें और यूज़र या बिजनेस के रूप में शुरू करें।"
+      },
+      "form": {
+        "fullName": "पूरा नाम",
+        "email": "ईमेल",
+        "mobile": "मोबाइल नंबर (जैसे, +91987XXXX210)",
+        "mobileHelp": "कंट्री कोड शामिल करें। उदाहरण: India <highlight>{india}</highlight>, US <highlight>{us}</highlight>, UK <highlight>{uk}</highlight>.",
+        "password": "पासवर्ड",
+        "referral": "रेफरल कोड (वैकल्पिक)",
+        "referralHelp": "केवल यूज़र रेफरल। पहले एडमिन-अप्रूव्ड सबमिशन के बाद EarnHub Coins अनलॉक करने के लिए कोड डालें।"
+      },
+      "roles": {
+        "user": "यूज़र",
+        "business": "बिजनेस"
+      },
+      "actions": {
+        "creating": "बन रहा है...",
+        "createAccount": "अकाउंट बनाएं"
+      },
+      "messages": {
+        "createdRedirecting": "अकाउंट बन गया। साइन इन पर भेज रहे हैं..."
+      },
+      "errors": {
+        "failed": "रजिस्ट्रेशन विफल"
+      },
+      "footer": {
+        "alreadyHave": "पहले से अकाउंट है?",
+        "signIn": "साइन इन"
+      }
+    }
   },
   "home": {
     "landing": {
@@ -223,6 +363,21 @@
       "openSubmissions": "सबमिशन खोलें",
       "openNotifications": "नोटिफिकेशन खोलें",
       "openReferrals": "रेफ़रल खोलें",
+      "levelEyebrow": "लेवल प्रोग्रेस",
+      "levelTitle": "अप्रूवल्स जारी रखें",
+      "viewSubmissions": "सबमिशन देखें",
+      "levelNow": "अभी का लेवल",
+      "topTierUnlocked": "{count} अप्रूव्ड सबमिशन के साथ टॉप टियर अनलॉक हो गया।",
+      "progressSoFar": "अब तक {current} अप्रूव्ड। लेवल अप के लिए {target} तक पहुँचें।",
+      "progressToNext": "अगले लेवल तक प्रोग्रेस",
+      "todayApproved": "आज अप्रूव्ड",
+      "totalApproved": "कुल अप्रूव्ड",
+      "submittedToday": "आज सबमिट",
+      "openTasks": "टास्क खोलें",
+      "openTasksDesc": "ओपन स्लॉट्स वाले कैंपेन ढूँढें।",
+      "openWalletDesc": "क्रेडिट, डेबिट और पेआउट हिस्ट्री देखें।",
+      "openNotificationsDesc": "अप्रूवल, रिजेक्ट और पेआउट अपडेट्स देखें।",
+      "openReferralsDesc": "कोड शेयर करें, कॉइन्स कमाएँ और वॉलेट में रिडीम करें।",
       "recentNotifications": "हाल की नोटिफिकेशन",
       "attentionTitle": "क्या ध्यान चाहिए",
       "openInbox": "इनबॉक्स खोलें",
@@ -308,6 +463,11 @@
       "filterApproved": "अप्रूव्ड",
       "filterManagerRejected": "मैनेजर रिजेक्टेड",
       "filterAdminRejected": "एडमिन रिजेक्टेड",
+      "stagePendingManager": "मैनेजर रिव्यू पेंडिंग",
+      "stagePendingAdmin": "एडमिन रिव्यू पेंडिंग",
+      "stageApproved": "अप्रूव्ड",
+      "stageRejectedManager": "मैनेजर द्वारा रिजेक्ट",
+      "stageRejectedAdmin": "एडमिन द्वारा रिजेक्ट",
       "empty": "वर्तमान फ़िल्टर के लिए कोई सबमिशन नहीं मिला।",
       "campaignFallback": "कैंपेन सबमिशन",
       "uncategorized": "बिना श्रेणी",
@@ -317,10 +477,12 @@
       "admin": "एडमिन: {status}",
       "submitted": "सबमिट: {date}",
       "proofPreview": "प्रूफ प्रीव्यू",
+      "noProof": "कोई प्रूफ टेक्स्ट उपलब्ध नहीं है",
       "openProof": "प्रूफ लिंक खोलें",
       "noReason": "इस सबमिशन के लिए अभी कोई स्ट्रक्चर्ड रिजेक्शन कारण स्टोर नहीं है। केवल स्टेटस उपलब्ध है।",
       "failed": "सबमिशन लोड नहीं हो पाए",
-      "unexpected": "अनपेक्षित सर्वर रिस्पॉन्स"
+      "unexpected": "अनपेक्षित सर्वर रिस्पॉन्स",
+      "openScreenshot": "Open screenshot"
     },
     "tasks": {
       "title": "लाइव कैंपेन",
@@ -337,6 +499,16 @@
       "viewTask": "टास्क देखें",
       "startTask": "टास्क शुरू करें",
       "alreadySubmitted": "पहले ही सबमिट",
+      "pushNudgeTitle": "अभी कोई कैंपेन नहीं है",
+      "pushNudgeBody": "नोटिफ़िकेशन ऑन करें, नए कैंपेन लाइव होने पर हम बताएँगे।",
+      "pushEnabling": "चालू हो रहा है...",
+      "pushEnableButton": "नोटिफ़िकेशन चालू करें",
+      "pushUnsupported": "यह ब्राउज़र पुश नोटिफ़िकेशन सपोर्ट नहीं करता।",
+      "pushNotConfigured": "इस एनवायरनमेंट में पुश अभी कॉन्फ़िगर नहीं है।",
+      "pushPermissionDenied": "परमिशन नहीं मिली। आप कभी भी ब्राउज़र सेटिंग्स में इसे ऑन कर सकते हैं।",
+      "pushRegisterFailed": "इस डिवाइस को पुश के लिए रजिस्टर नहीं किया जा सका।",
+      "pushEnableFailed": "पुश नोटिफ़िकेशन चालू नहीं हो पाए",
+      "pushEnabled": "नोटिफ़िकेशन चालू हो गए। नए कैंपेन लाइव होने पर हम बताएँगे।",
       "failed": "कैंपेन लोड नहीं हो पाए",
       "unexpected": "अनपेक्षित सर्वर रिस्पॉन्स"
     },
@@ -344,6 +516,10 @@
       "loading": "कैंपेन विवरण लोड हो रहा है...",
       "back": "टास्क पर वापस",
       "eyebrow": "टास्क विवरण",
+      "kpiReward": "प्रति टास्क रिवॉर्ड",
+      "kpiSlotsLeft": "शेष स्लॉट्स",
+      "kpiUsedAllowed": "यूज़्ड / अलाउड",
+      "kpiYourSubmissions": "आपके सबमिशन",
       "detailsEyebrow": "टास्क डिटेल्स",
       "detailsTitle": "वर्तमान स्लॉट निर्देश",
       "currentDetail": "वर्तमान डिटेल #{sequence}",
@@ -354,6 +530,8 @@
       "statusAllOccupied": "सभी कैंपेन स्लॉट फिल हैं।",
       "statusNotAccepting": "यह कैंपेन अभी सबमिशन स्वीकार नहीं कर रहा।",
       "statusSlotsLeft": "{count} स्लॉट{plural} अभी शेष।",
+      "onePerUser": "इस कैंपेन में प्रति यूज़र केवल एक सबमिशन अलाउड है।",
+      "manyPerUser": "स्लॉट्स खुले रहने तक इस कैंपेन में कई सबमिशन अलाउड हैं।",
       "submitEyebrow": "प्रूफ सबमिट",
       "submitTitle": "रिव्यू के लिए भेजें",
       "proofWarning": "केवल वास्तविक प्रूफ सबमिट करें। गलत/कॉपी प्रूफ रिजेक्ट हो सकता है।",
@@ -370,24 +548,51 @@
       "unexpected": "अनपेक्षित सर्वर रिस्पॉन्स",
       "submissionFailed": "सबमिशन असफल",
       "sent": "सबमिशन रिव्यू के लिए भेज दिया गया।",
-      "taskLink": "टास्क लिंक खोलें"
+      "taskLink": "टास्क लिंक खोलें",
+      "proofImageLabel": "Proof screenshot",
+      "proofImageHelp": "Upload a screenshot (jpg/png/webp). Max 500KB. Image will be compressed before upload.",
+      "proofImageUploading": "Uploading screenshot...",
+      "proofImageReady": "Screenshot uploaded",
+      "proofImageRemove": "Remove screenshot",
+      "proofImageTooLarge": "Screenshot must be under 500KB after compression.",
+      "proofImageUploadFailed": "Screenshot upload failed."
     },
     "referrals": {
       "loading": "रेफ़रल लोड हो रहे हैं...",
       "eyebrow": "रेफ़रल रिवॉर्ड",
       "title": "कॉइन्स और रेफ़रल",
+      "subtitle": "नए यूज़र्स को इनवाइट करें, उनके पहले एडमिन-अप्रूव्ड सबमिशन के बाद EarnHub कॉइन्स अनलॉक करें, और कॉइन्स को वॉलेट में रिडीम करें।",
       "kpiCoin": "कॉइन बैलेंस",
       "kpiEstimated": "अनुमानित वॉलेट वैल्यू",
       "kpiTotalInvites": "कुल इनवाइट",
       "kpiRewardedInvites": "रिवॉर्डेड इनवाइट",
       "kpiPendingInvites": "पेंडिंग इनवाइट",
       "kpiMonthlyRedeemed": "इस महीने रिडीम",
+      "shareEyebrow": "आपका रेफ़रल कोड",
+      "shareTitle": "इसे नए यूज़र्स के साथ शेयर करें",
+      "codeLabel": "रेफ़रल कोड",
+      "copyCode": "कोड कॉपी करें",
+      "linkLabel": "रेफ़रल लिंक",
+      "copyLink": "लिंक कॉपी करें",
+      "referrerReward": "रेफ़रर रिवॉर्ड",
+      "newUserBonus": "नए यूज़र बोनस",
+      "rewardTrigger": "रिवॉर्ड ट्रिगर",
+      "rewardTriggerValue": "पहला एडमिन-अप्रूव्ड सबमिशन",
+      "coinsUnit": "कॉइन्स",
+      "redeemEyebrow": "कॉइन्स रिडीम",
+      "redeemTitle": "कॉइन्स को वॉलेट बैलेंस में बदलें",
       "copy": "क्लिपबोर्ड पर कॉपी",
       "copyFail": "ऑटो कॉपी नहीं हो पाया",
       "redeem": "कॉइन्स रिडीम करें",
       "redeeming": "रिडीम हो रहा है...",
       "redeemed": "कॉइन्स रिडीम हो गए",
       "redeemFailed": "रिडेम्प्शन असफल",
+      "status": {
+        "PENDING": "पेंडिंग",
+        "QUALIFIED": "क्वालिफाइड",
+        "REWARDED": "रिवॉर्डेड",
+        "REJECTED": "रिजेक्टेड"
+      },
       "rules": "वर्तमान नियम",
       "minRedeem": "न्यूनतम रिडीम: {count} कॉइन्स",
       "monthlyLimit": "मासिक सीमा: {count} कॉइन्स",
@@ -400,7 +605,49 @@
       "joined": "जॉइन किया: {date}",
       "coinActivityEyebrow": "कॉइन गतिविधि",
       "coinActivityTitle": "क्रेडिट और रिडेम्प्शन",
-      "noCoinTx": "अभी कोई कॉइन ट्रांज़ैक्शन नहीं।"
+      "noCoinTx": "अभी कोई कॉइन ट्रांज़ैक्शन नहीं।",
+      "failed": "रेफ़रल लोड नहीं हो पाए",
+      "unexpected": "अनपेक्षित सर्वर रिस्पॉन्स"
+    },
+    "settings": {
+      "eyebrow": "यूज़र सेटिंग्स",
+      "title": "सेटिंग्स",
+      "subtitle": "अपनी प्रोफ़ाइल, विथड्रॉ डिफ़ॉल्ट्स और अकाउंट सिक्योरिटी मैनेज करें।",
+      "securityTitle": "अकाउंट सिक्योरिटी",
+      "securityBody": "पासवर्ड भूल गए? इसे सुरक्षित तरीके से रीसेट करें।",
+      "forgotPassword": "पासवर्ड भूल गए"
+    },
+    "help": {
+      "eyebrow": "ट्रस्ट और सपोर्ट",
+      "title": "हेल्प",
+      "subtitle": "अधिक टास्क सबमिट करने से पहले अप्रूवल, लेवल, फ्रॉड चेक्स और विथड्रॉ के बारे में समझें।",
+      "approvalEyebrow": "अप्रूवल वर्कफ़्लो",
+      "approvalTitle": "आपका सबमिशन कैसे अप्रूव होता है",
+      "approvalStep1": "1. आप टास्क डिटेल पेज से प्रूफ सबमिट करते हैं।",
+      "approvalStep2": "2. पहले मैनेजर रिव्यू करता है और अप्रूव या रिजेक्ट कर सकता है।",
+      "approvalStep3": "3. एडमिन अंतिम निर्णय वेरिफ़ाई करता है।",
+      "approvalStep4": "4. अप्रूव्ड सबमिशन आपका वॉलेट ऑटोमैटिकली क्रेडिट करता है।",
+      "levelsEyebrow": "लेवल सिस्टम",
+      "levelsTitle": "लेवल कैसे बदलते हैं",
+      "levelsBullet1": "लेवल अपग्रेड एडमिन-अप्रूव्ड सबमिशन पर आधारित है।",
+      "levelsBullet2": "L1 तुरंत शुरू होता है और अप्रूवल बढ़ने पर उच्च लेवल अनलॉक होते हैं।",
+      "levelsBullet3": "डेली एक्टिविटी काउंटर कॉन्फ़िगर किए गए रीसेट शेड्यूल पर रीसेट होता है।",
+      "levelsBullet4": "ओवरव्यू पेज पर अगले लेवल तक की प्रोग्रेस दिखती है।",
+      "fraudEyebrow": "फ्रॉड पॉलिसी",
+      "fraudTitle": "किस वजह से सबमिशन रिजेक्ट हो सकता है",
+      "fraudBullet1": "कॉपी किया हुआ या फेक प्रूफ।",
+      "fraudBullet2": "ज़रूरी एक्शन किए बिना टास्क के लिए सबमिट करना।",
+      "fraudBullet3": "एक ही डिवाइस या IP से बार-बार दुरुपयोग।",
+      "fraudBullet4": "कैंपेन स्लॉट या रिव्यू कंट्रोल्स को बायपास करने की कोशिश।",
+      "withdrawalsEyebrow": "विथड्रॉ",
+      "withdrawalsTitle": "पेआउट नियम",
+      "withdrawalsBullet1": "नॉर्मल न्यूनतम विथड्रॉ INR {amount} है।",
+      "withdrawalsBullet2": "इमरजेंसी विथड्रॉ न्यूनतम से नीचे, महीने में 2 बार तक अलाउड है।",
+      "withdrawalsBullet3": "एक समय में केवल एक पेंडिंग विथड्रॉ रिक्वेस्ट अलाउड है।",
+      "withdrawalsBullet4": "अप्रूवल या रिजेक्शन एडमिन रिव्यू से तय होता है।",
+      "supportEyebrow": "सपोर्ट",
+      "supportTitle": "हेल्प चाहिए?",
+      "supportBody": "अगर आपके सबमिशन, वॉलेट या विथड्रॉ में कुछ गलत लगे, तो पब्लिक कॉन्टैक्ट पेज या वहाँ दिए गए ऑफिशियल सपोर्ट चैनल का उपयोग करें।"
     }
   },
   "business": {
@@ -411,7 +658,592 @@
     "activityPageTitle": "गतिविधि लॉग",
     "reviewsPageTitle": "बिज़नेस रिव्यू",
     "teamPageTitle": "टीम मेंबर्स",
-    "settingsPageTitle": "सेटिंग्स"
+    "settingsPageTitle": "सेटिंग्स",
+    "fundingPageTitle": "वॉलेट फंडिंग",
+    "createPageTitle": "कैंपेन बनाएं",
+    "trustPageTitle": "ट्रस्ट और ट्रांसपेरेंसी",
+    "kycEyebrow": "वेरिफिकेशन",
+    "kycSubtitle": "कैंपेन लॉन्च करने से पहले रिव्यू के लिए बिज़नेस वेरिफिकेशन डिटेल्स सबमिट करें।",
+    "categories": {
+      "marketing": "टाइप A - मार्केटिंग टास्क",
+      "work": "टाइप B - वर्क-बेस्ड टास्क"
+    },
+    "loading": {
+      "dashboard": "डैशबोर्ड लोड हो रहा है..."
+    },
+    "funding": {
+      "labels": {
+        "notYet": "अभी नहीं",
+        "topUpDescription": "वॉलेट टॉप-अप"
+      },
+      "errors": {
+        "unexpectedServerResponse": "अप्रत्याशित सर्वर रिस्पॉन्स",
+        "failedToLoad": "फंडिंग डेटा लोड नहीं हो सका",
+        "gatewayLoadFailed": "पेमेंट गेटवे लोड नहीं हो सका",
+        "fundingFailed": "फंड जोड़ना विफल",
+        "paymentInitFailed": "पेमेंट शुरू नहीं हो सका",
+        "verifyFailed": "पेमेंट सत्यापन विफल",
+        "refundFailed": "रिफंड रिक्वेस्ट विफल"
+      },
+      "messages": {
+        "walletFunded": "वॉलेट सफलतापूर्वक फंड हो गया!",
+        "refundInitiated": "रिफंड रिक्वेस्ट सबमिट हो गई।"
+      },
+      "loading": "लोड हो रहा है...",
+      "header": {
+        "eyebrow": "फंडिंग",
+        "subtitle": "वॉलेट टॉप-अप करें, पेमेंट ऑर्डर देखें और पारदर्शी फीस ब्रेकडाउन के साथ रिफंड रिक्वेस्ट करें।"
+      },
+      "lowBalance": {
+        "title": "कम वॉलेट बैलेंस",
+        "body": "आपका उपलब्ध वॉलेट बैलेंस INR {threshold} से कम है। नए कैंपेन लॉन्च और टॉप-अप तब तक फेल हो सकते हैं जब तक आप फंड नहीं जोड़ते।",
+        "hint": "कैंपेन स्मूद रखने के लिए अभी फंड जोड़ें।"
+      },
+      "kpis": {
+        "availableWallet": "उपलब्ध वॉलेट",
+        "lockedBudget": "लॉक्ड बजट",
+        "totalFunded": "कुल फंडेड",
+        "lastSuccessfulPayment": "आख़िरी सफल पेमेंट",
+        "paid": "पेड",
+        "noPayment": "अभी तक कोई पेमेंट नहीं"
+      },
+      "topUp": {
+        "eyebrow": "वॉलेट टॉप-अप",
+        "title": "फंड जोड़ें",
+        "amountPlaceholder": "राशि दर्ज करें (मिन {min})",
+        "breakdown": {
+          "gross": "कुल राशि",
+          "fee": "फंडिंग फीस ({rate}%)",
+          "net": "नेट क्रेडिट"
+        },
+        "initializing": "पेमेंट शुरू हो रहा है...",
+        "payAndFund": "पे करें और वॉलेट फंड करें"
+      },
+      "refund": {
+        "eyebrow": "रिफंड",
+        "title": "वॉलेट रिफंड रिक्वेस्ट",
+        "amountPlaceholder": "रिफंड राशि दर्ज करें",
+        "breakdown": {
+          "requested": "अनुरोधित राशि",
+          "fee": "फीस ({rate}%)",
+          "net": "नेट रिफंड"
+        },
+        "processing": "प्रोसेस हो रहा है...",
+        "request": "रिफंड रिक्वेस्ट करें",
+        "help": "रिफंड आपके उपलब्ध वॉलेट बैलेंस से प्रोसेस होता है। रिफंड पर फंडिंग फीस लागू होती है।"
+      },
+      "orders": {
+        "eyebrow": "पेमेंट ऑर्डर",
+        "title": "टॉप-अप हिस्ट्री",
+        "empty": "अभी कोई पेमेंट ऑर्डर नहीं।",
+        "receipt": "रसीद: {receipt}",
+        "created": "बनाया: {date}",
+        "paid": "पेड: {date}",
+        "providerOrder": "प्रोवाइडर ऑर्डर: {id}"
+      },
+      "ledger": {
+        "eyebrow": "वॉलेट लेजर",
+        "title": "वॉलेट ट्रांज़ैक्शन",
+        "empty": "अभी कोई ट्रांज़ैक्शन नहीं।",
+        "fallbackNote": "वॉलेट अपडेट"
+      }
+    },
+    "create": {
+      "errors": {
+        "kycNotVerified": "कैंपेन बनाने से पहले आपका KYC वेरिफाइड होना चाहिए।",
+        "minOneSlot": "कम से कम 1 स्लॉट आवश्यक है। रिवॉर्ड और कुल बजट जांचें।",
+        "insufficientWallet": "अपर्याप्त वॉलेट बैलेंस। लॉन्च करने से पहले फंड जोड़ें।",
+        "unexpectedServerResponse": "अप्रत्याशित सर्वर रिस्पॉन्स",
+        "failedToCreate": "कैंपेन बन नहीं सका"
+      },
+      "messages": {
+        "created": "कैंपेन सफलतापूर्वक बन गया!"
+      },
+      "header": {
+        "eyebrow": "कैंपेन बिल्डर",
+        "subtitle": "एक प्रोफेशनल कैंपेन बनाएं: स्पष्ट बजट, प्रति-टास्क रिवॉर्ड, और निर्देश।"
+      },
+      "kycBlocked": {
+        "title": "KYC पूरा करें",
+        "body": "आपका KYC स्टेटस {status} है। वेरिफिकेशन के बाद ही आप कैंपेन बना सकेंगे।",
+        "reviewSettings": "सेटिंग्स खोलें",
+        "contactSupport": "सपोर्ट से संपर्क करें"
+      },
+      "form": {
+        "title": "टास्क टाइटल",
+        "description": "विवरण",
+        "category": "कैटेगरी",
+        "taskType": "टास्क टाइप",
+        "taskLink": "टास्क लिंक",
+        "taskDetails": "टास्क डिटेल्स",
+        "taskDetailsHelp": "हर लाइन में एक निर्देश। यदि निर्देश स्लॉट्स से कम हैं तो इन्हें रोटेट किया जाएगा।",
+        "rewardPerTask": "प्रति टास्क रिवॉर्ड",
+        "totalBudget": "कुल बजट"
+      },
+      "placeholders": {
+        "title": "उदाहरण: 5-स्टार रिव्यू दें",
+        "description": "यूज़र क्या करें और कौन सा प्रूफ सबमिट करें?",
+        "taskLink": "https://example.com",
+        "taskDetails": "स्टेप 1...\nस्टेप 2...\nस्टेप 3...",
+        "rewardPerTask": "जैसे 10",
+        "totalBudget": "जैसे 1000"
+      },
+      "actions": {
+        "launching": "लॉन्च हो रहा है...",
+        "launch": "कैंपेन लॉन्च करें",
+        "addFundsLink": "वॉलेट में फंड जोड़ें"
+      },
+      "preview": {
+        "eyebrow": "लाइव प्रीव्यू",
+        "untitled": "अनटाइटल्ड कैंपेन",
+        "descriptionFallback": "इस कैंपेन के लिए एक छोटा विवरण जोड़ें।",
+        "categoryLabel": "कैटेगरी",
+        "taskDetailsLabel": "निर्देश",
+        "noInstructions": "अभी कोई निर्देश नहीं।",
+        "rewardPerTask": "प्रति टास्क रिवॉर्ड",
+        "totalBudget": "कुल बजट",
+        "totalSlots": "कुल स्लॉट",
+        "availableWallet": "उपलब्ध वॉलेट",
+        "estimatedFee": "फंडिंग फीस वॉलेट डिपॉज़िट और रिफंड पर लागू होती है।",
+        "finalPayable": "फाइनल पेयेबल: INR {amount}",
+        "walletSufficiency": "वॉलेट पर्याप्तता",
+        "checking": "चेक हो रहा है...",
+        "sufficient": "पर्याप्त",
+        "insufficient": "अपर्याप्त",
+        "commissionHint": "अप्रूव्ड सबमिशन पर कमीशन ऑटोमैटिक कैलकुलेट होता है। खर्च केवल अप्रूवल के बाद कटता है।"
+      }
+    },
+    "overviewPanel": {
+      "loading": "बिज़नेस ओवरव्यू लोड हो रहा है...",
+      "eyebrow": "बिज़नेस कंट्रोल सेंटर",
+      "title": "बिज़नेस ओवरव्यू",
+      "subtitle": "उपलब्ध बैलेंस, लॉक्ड बजट, कैंपेन हेल्थ और अगला ज़रूरी एक्शन एक ही जगह देखें।",
+      "time": {
+        "minutesAgo": "{count} मिनट पहले",
+        "hoursAgo": "{count} घंटे पहले",
+        "daysAgo": "{count} दिन पहले"
+      },
+      "errors": {
+        "unexpectedServerResponse": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "failedToLoadOverview": "ओवरव्यू लोड करने में विफल"
+      },
+      "actions": {
+        "addFunds": "फंड जोड़ें",
+        "createCampaign": "कैंपेन बनाएं"
+      },
+      "lowBalance": {
+        "title": "वॉलेट बैलेंस कम है",
+        "body": "उपलब्ध बैलेंस INR {threshold} से कम है। नया कैंपेन या टॉप-अप फेल हो सकता है जब तक आप फंड नहीं जोड़ते।",
+        "cta": "वॉलेट टॉप-अप करें"
+      },
+      "kpis": {
+        "availableWallet": "उपलब्ध वॉलेट",
+        "lockedBudget": "लॉक्ड बजट",
+        "campaignStatus": "कैंपेन स्टेटस",
+        "campaignStatusValue": "{count} लाइव",
+        "kycStatus": "KYC स्टेटस",
+        "kycVerifiedOn": "{date} को वेरिफाइड",
+        "kycNotVerified": "कैंपेन बनाने के लिए KYC सबमिट करें।",
+        "approvedResults": "अप्रूव्ड रिज़ल्ट",
+        "totalBudget": "कुल बजट",
+        "todaySpend": "आज का खर्च",
+        "fundingFee": "फंडिंग फीस"
+      },
+      "snapshot": {
+        "eyebrow": "परफॉर्मेंस स्नैपशॉट",
+        "title": "खर्च और कैंपेन हेल्थ",
+        "openAnalytics": "एनालिटिक्स खोलें",
+        "todaySpend": {
+          "label": "आज का खर्च",
+          "help": "आज अप्रूव्ड रिज़ल्ट पर आधारित।"
+        },
+        "spentSoFar": {
+          "label": "अब तक खर्च",
+          "help": "कैंपेन बजट के खिलाफ वास्तविक अप्रूव्ड खर्च।"
+        },
+        "fundingFee": {
+          "label": "फंडिंग फीस",
+          "help": "वॉलेट डिपॉज़िट और रिफंड पर लागू।"
+        },
+        "budgetDeployment": {
+          "label": "बजट उपयोग",
+          "help": "INR {total} में से INR {spent} खर्च।"
+        },
+        "liveCampaignShare": {
+          "label": "लाइव कैंपेन शेयर",
+          "help": "{total} में से {live} कैंपेन अभी लाइव हैं।"
+        }
+      },
+      "activity": {
+        "eyebrow": "हाल की गतिविधि",
+        "title": "हाल ही में क्या बदला",
+        "viewCampaigns": "कैंपेन देखें",
+        "empty": "अभी कोई गतिविधि नहीं। वॉलेट फंड करें या पहला कैंपेन लॉन्च करें।"
+      }
+    },
+    "analyticsPanel": {
+      "loading": "एनालिटिक्स लोड हो रहा है...",
+      "errors": {
+        "unexpectedServerResponse": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "failedToLoadAnalytics": "एनालिटिक्स लोड करने में विफल"
+      },
+      "charts": {
+        "trend": {
+          "spend": "खर्च",
+          "approved": "अप्रूव्ड",
+          "submissions": "सबमिशन"
+        },
+        "moderation": {
+          "approved": "अप्रूव्ड",
+          "rejected": "रिजेक्टेड"
+        }
+      },
+      "kpis": {
+        "approvedResults": "अप्रूव्ड रिज़ल्ट",
+        "approvalRate": "अप्रूवल रेट",
+        "spentBudget": "खर्च बजट",
+        "costPerApproved": "प्रति अप्रूव्ड लागत"
+      },
+      "trend": {
+        "eyebrow": "14-दिन ट्रेंड",
+        "title": "खर्च बनाम अप्रूव्ड आउटपुट"
+      },
+      "categories": {
+        "eyebrow": "कैटेगरी परफॉर्मेंस",
+        "title": "कौन सा टास्क टाइप काम कर रहा है",
+        "empty": "अभी कैटेगरी डेटा नहीं है।",
+        "rowSummary": "{campaigns} कैंपेन | {approved} अप्रूव्ड | {rejected} रिजेक्टेड",
+        "spend": "खर्च INR {amount}"
+      },
+      "moderation": {
+        "eyebrow": "मॉडरेशन फ्लो",
+        "title": "अप्रूव्ड बनाम रिजेक्टेड वॉल्यूम"
+      },
+      "topCampaigns": {
+        "eyebrow": "टॉप कैंपेन",
+        "title": "अप्रूव्ड आउटपुट के आधार पर रैंकिंग",
+        "empty": "अभी कोई रैंकिंग उपलब्ध नहीं है।",
+        "approvedCount": "{count} अप्रूव्ड",
+        "approvalRate": "अप्रूवल रेट: {value}%",
+        "costPerApproved": "प्रति अप्रूव्ड लागत: INR {amount}",
+        "spent": "खर्च: INR {amount}",
+        "pending": "पेंडिंग: {count}"
+      }
+    },
+    "campaignsPanel": {
+      "loading": "कैंपेन लोड हो रहे हैं...",
+      "errors": {
+        "unexpectedServerResponse": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "failedToLoadCampaigns": "कैंपेन लोड करने में विफल",
+        "actionFailed": "एक्शन फेल"
+      },
+      "messages": {
+        "campaignUpdated": "कैंपेन अपडेट हुआ"
+      },
+      "filters": {
+        "all": "सभी",
+        "live": "लाइव",
+        "pending": "पेंडिंग",
+        "paused": "पॉज़्ड",
+        "completed": "कंप्लीटेड",
+        "rejected": "रिजेक्टेड"
+      },
+      "kpis": {
+        "totalCampaigns": "कुल कैंपेन",
+        "live": "लाइव",
+        "pendingApproval": "पेंडिंग अप्रूवल",
+        "completed": "कंप्लीटेड"
+      },
+      "header": {
+        "eyebrow": "कैंपेन मैनेजमेंट",
+        "title": "स्टेटस, बजट और मॉडरेशन फ्लो ट्रैक करें",
+        "createCampaign": "कैंपेन बनाएं",
+        "openAnalytics": "एनालिटिक्स खोलें"
+      },
+      "search": {
+        "placeholder": "टाइटल, डिस्क्रिप्शन या कैटेगरी खोजें"
+      },
+      "empty": "चुने गए फ़िल्टर के लिए कोई कैंपेन नहीं मिला।",
+      "card": {
+        "created": "{date} को बनाया",
+        "taskLinkAttached": "टास्क लिंक जुड़ा है",
+        "budgetLeft": "बाकी बजट",
+        "rewardPerSlot": "रिवार्ड / स्लॉट",
+        "slotsLeft": "बाकी स्लॉट",
+        "pendingReview": "पेंडिंग रिव्यू",
+        "budgetDeployment": "बजट उपयोग",
+        "budgetDeploymentHelp": "INR {total} में से INR {spent} खर्च",
+        "approvalQuality": "अप्रूवल क्वालिटी",
+        "approvalQualityHelp": "अप्रूव्ड {approved} | रिजेक्टेड {rejected} | कुल सबमिशन {total}"
+      },
+      "actions": {
+        "pause": "पॉज़",
+        "pausing": "पॉज़ हो रहा है...",
+        "resume": "रिज़्यूम",
+        "resuming": "रिज़्यूम हो रहा है...",
+        "close": "क्लोज़",
+        "closing": "क्लोज़ हो रहा है...",
+        "view": "देखें",
+        "viewEdit": "देखें / एडिट"
+      }
+    },
+    "kycPanel": {
+      "loading": "KYC लोड हो रहा है...",
+      "errors": {
+        "unexpectedServerResponse": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "failedToLoadStatus": "KYC स्टेटस लोड करने में विफल",
+        "failedToSubmit": "KYC रिक्वेस्ट सबमिट करने में विफल"
+      },
+      "messages": {
+        "submitted": "KYC रिक्वेस्ट सबमिट हो गई"
+      },
+      "status": {
+        "verified": "वेरिफाइड",
+        "rejected": "रिजेक्टेड",
+        "pending": "पेंडिंग"
+      },
+      "statusCard": {
+        "eyebrow": "KYC स्टेटस"
+      },
+      "accountLabel": "अकाउंट",
+      "reviewerNotes": "रिव्यू नोट्स: {notes}",
+      "pending": {
+        "bodyLine1": "आपकी KYC रिक्वेस्ट रिव्यू में है।",
+        "bodyLine2": "अप्रूव या रिजेक्ट होने पर हम सूचित करेंगे।"
+      },
+      "form": {
+        "eyebrow": "KYC डिटेल्स सबमिट करें",
+        "title": "बिज़नेस वेरिफिकेशन फॉर्म",
+        "legalName": "कानूनी बिज़नेस नाम",
+        "contactName": "कॉन्टैक्ट पर्सन नाम",
+        "phone": "फोन नंबर",
+        "websiteOptional": "वेबसाइट (वैकल्पिक)",
+        "address": "बिज़नेस पता",
+        "taxIdOptional": "टैक्स ID (वैकल्पिक)",
+        "documentUrlOptional": "डॉक्यूमेंट URL (वैकल्पिक)",
+        "submitting": "सबमिट हो रहा है...",
+        "requestReview": "KYC रिव्यू रिक्वेस्ट करें"
+      }
+    },
+    "notificationsPanel": {
+      "loading": "बिज़नेस नोटिफिकेशन लोड हो रहे हैं...",
+      "errors": {
+        "unexpectedServerResponse": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "failedToLoad": "नोटिफिकेशन लोड करने में विफल"
+      },
+      "kpis": {
+        "activeAlerts": "एक्टिव अलर्ट",
+        "unreadInbox": "अनरीड इनबॉक्स"
+      },
+      "alerts": {
+        "eyebrow": "ऑपरेशनल अलर्ट",
+        "title": "लाइव इश्यू जिन्हें ध्यान चाहिए",
+        "empty": "अभी कोई एक्टिव बिज़नेस अलर्ट नहीं है।"
+      },
+      "inbox": {
+        "eyebrow": "इन-ऐप इनबॉक्स",
+        "title": "कैंपेन और पेमेंट नोटिफिकेशन"
+      }
+    },
+    "activityPanel": {
+      "errors": {
+        "unexpectedServerResponse": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "failedToLoad": "एक्टिविटी लॉग लोड करने में विफल"
+      },
+      "empty": "अभी तक कोई बिज़नेस गतिविधि रिकॉर्ड नहीं हुई।"
+    },
+    "teamPanel": {
+      "loading": "टीम लोड हो रही है...",
+      "errors": {
+        "unexpectedServerResponse": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "failedToLoad": "बिज़नेस टीम लोड करने में विफल",
+        "failedToAdd": "टीम मेंबर जोड़ने में विफल",
+        "failedToUpdateRole": "रोल अपडेट करने में विफल",
+        "failedToRemove": "मेंबर हटाने में विफल"
+      },
+      "messages": {
+        "memberAdded": "टीम मेंबर जोड़ दिया गया",
+        "roleUpdated": "रोल अपडेट हुआ",
+        "memberRemoved": "मेंबर हटाया गया"
+      },
+      "kpis": {
+        "owner": "ओनर",
+        "teamMembers": "टीम मेंबर्स",
+        "yourAccess": "आपका एक्सेस"
+      },
+      "roles": {
+        "editor": "एडिटर",
+        "viewer": "व्यूअर"
+      },
+      "add": {
+        "eyebrow": "टीम मेंबर जोड़ें",
+        "title": "मौजूदा बिज़नेस अकाउंट जोड़ें",
+        "emailPlaceholder": "बिज़नेस अकाउंट ईमेल",
+        "adding": "जोड़ रहे हैं...",
+        "addButton": "मेंबर जोड़ें",
+        "help": "टीम मेंबर पहले से बिज़नेस अकाउंट होने चाहिए। ओनर के पास फंडिंग, सेटिंग्स और टीम कंट्रोल रहेगा।"
+      },
+      "notOwner": "टीम मैनेजमेंट केवल बिज़नेस ओनर कर सकता है।",
+      "members": {
+        "eyebrow": "वर्कस्पेस मेंबर्स",
+        "title": "ओनर, एडिटर और व्यूअर",
+        "empty": "अभी कोई टीम मेंबर नहीं जोड़ा गया।",
+        "removing": "हटा रहे हैं...",
+        "remove": "हटाएं"
+      }
+    },
+    "settingsPanel": {
+      "loading": "बिज़नेस सेटिंग्स लोड हो रही हैं...",
+      "errors": {
+        "unexpectedServerResponse": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "failedToLoad": "सेटिंग्स लोड करने में विफल",
+        "failedToSave": "सेटिंग्स सेव करने में विफल"
+      },
+      "messages": {
+        "updated": "सेटिंग्स अपडेट हुई"
+      },
+      "profile": {
+        "eyebrow": "बिज़नेस प्रोफ़ाइल",
+        "title": "ब्रांड और कॉन्टैक्ट पहचान",
+        "displayName": "डिस्प्ले नाम",
+        "brandName": "ब्रांड नाम",
+        "companyName": "कंपनी नाम",
+        "contactEmail": "कॉन्टैक्ट ईमेल",
+        "supportContact": "सपोर्ट कॉन्टैक्ट",
+        "accountEmail": "अकाउंट ईमेल: {email}",
+        "kycStatus": "KYC स्टेटस: {status}",
+        "joined": "जॉइन किया:"
+      },
+      "billing": {
+        "eyebrow": "बिलिंग और नीतियां",
+        "title": "रिफंड और बिलिंग प्रेफरेंस",
+        "billingDetails": "बिलिंग डिटेल्स",
+        "refundPreference": "रिफंड प्रेफरेंस"
+      },
+      "notifications": {
+        "eyebrow": "नोटिफिकेशन प्रेफरेंस",
+        "title": "कौन से अलर्ट चाहिए चुनें",
+        "campaignStatus": "कैंपेन अप्रूव्ड/रिजेक्टेड/कंप्लीटेड",
+        "budgetAlerts": "वॉलेट कम और बजट खत्म होने के अलर्ट",
+        "paymentAlerts": "पेमेंट और फंडिंग स्टेटस अलर्ट",
+        "rejectionSpike": "असामान्य रिजेक्शन स्पाइक अलर्ट"
+      },
+      "actions": {
+        "saving": "सेव हो रहा है...",
+        "save": "सेटिंग्स सेव करें"
+      }
+    },
+    "submissionsPanel": {
+      "loading": "सबमिशन पाइपलाइन लोड हो रही है...",
+      "errors": {
+        "unexpectedServerResponse": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "failedToLoad": "सबमिशन पाइपलाइन लोड करने में विफल"
+      },
+      "filters": {
+        "all": "सभी",
+        "pendingManager": "पेंडिंग मैनेजर",
+        "pendingAdmin": "पेंडिंग एडमिन",
+        "approved": "अप्रूव्ड",
+        "managerRejected": "मैनेजर रिजेक्टेड",
+        "adminRejected": "एडमिन रिजेक्टेड"
+      },
+      "stages": {
+        "pendingManager": "पेंडिंग मैनेजर",
+        "pendingAdmin": "पेंडिंग एडमिन",
+        "approved": "अप्रूव्ड",
+        "managerRejected": "मैनेजर रिजेक्टेड",
+        "adminRejected": "एडमिन रिजेक्टेड"
+      },
+      "kpis": {
+        "total": "कुल",
+        "pendingManager": "पेंडिंग मैनेजर",
+        "pendingAdmin": "पेंडिंग एडमिन",
+        "approved": "अप्रूव्ड",
+        "rejected": "रिजेक्टेड"
+      },
+      "header": {
+        "eyebrow": "सबमिशन रिव्यू",
+        "title": "रीड-ओनली मॉडरेशन पाइपलाइन",
+        "exportCsv": "CSV एक्सपोर्ट"
+      },
+      "search": {
+        "placeholder": "कैंपेन, यूज़र, प्रूफ या रीजन खोजें"
+      },
+      "empty": "इस फ़िल्टर के लिए कोई सबमिशन नहीं मिला।",
+      "fallback": {
+        "campaign": "कैंपेन",
+        "unnamedUser": "अनाम यूज़र"
+      },
+      "row": {
+        "reward": "रिवार्ड INR {amount}",
+        "participant": "पार्टिसिपेंट",
+        "participantPrivacy": "प्राइवेसी के लिए पहचान छिपी रहती है।",
+        "proof": "प्रूफ",
+        "reviewReason": "रिव्यू रीजन",
+        "openScreenshot": "Open screenshot"
+      }
+    },
+    "campaignEditor": {
+      "header": {
+        "eyebrow": "कैंपेन मैनेजमेंट",
+        "title": "कैंपेन, बजट और इंस्ट्रक्शन एडिट करें",
+        "subtitle": "बदलाव लागू करने से पहले मौजूदा खर्च और उपयोग किए गए स्लॉट्स के अनुसार वैलिडेट होते हैं।"
+      },
+      "errors": {
+        "unexpectedServerResponse": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "failedToUpdate": "कैंपेन अपडेट करने में विफल",
+        "failedToDuplicate": "कैंपेन डुप्लिकेट करने में विफल"
+      },
+      "messages": {
+        "updated": "कैंपेन अपडेट हुआ",
+        "duplicated": "कैंपेन डुप्लिकेट हुआ"
+      },
+      "actions": {
+        "duplicate": "कैंपेन डुप्लिकेट करें",
+        "duplicating": "डुप्लिकेट हो रहा है...",
+        "save": "बदलाव सेव करें",
+        "saving": "सेव हो रहा है..."
+      },
+      "fields": {
+        "title": "टास्क टाइटल",
+        "description": "डिस्क्रिप्शन",
+        "category": "कैटेगरी",
+        "taskLink": "टास्क लिंक",
+        "instructions": "टास्क डिटेल्स",
+        "rewardPerTask": "प्रति टास्क रिवार्ड",
+        "totalBudget": "कुल बजट"
+      },
+      "placeholders": {
+        "title": "कैंपेन शीर्षक",
+        "description": "कैंपेन का विवरण लिखें",
+        "taskLink": "वैकल्पिक डेस्टिनेशन लिंक",
+        "instructions": "हर लाइन में एक इंस्ट्रक्शन लिखें\\nउदाहरण:\\nपेज खोलें\\nज़रूरी एक्शन पूरा करें\\nप्रूफ सबमिट करें",
+        "rewardPerTask": "प्रति अप्रूव्ड स्लॉट रिवार्ड",
+        "totalBudget": "कैंपेन बजट"
+      },
+      "side": {
+        "currentCategory": "वर्तमान कैटेगरी",
+        "availableWallet": "उपलब्ध वॉलेट",
+        "usedBudget": "पहले से उपयोग किया बजट",
+        "projectedSlots": "प्रोजेक्टेड स्लॉट",
+        "usedSubmissionsLocked": "लॉक्ड सबमिशन: {count}",
+        "projectedRemainingBudget": "प्रोजेक्टेड शेष बजट",
+        "walletImpact": "वॉलेट इम्पैक्ट",
+        "walletImpactTopUp": "इस अपडेट के लिए वॉलेट से अतिरिक्त INR {amount} चाहिए।",
+        "walletImpactRelease": "इस अपडेट से INR {amount} वापस वॉलेट में रिलीज़ होगा।",
+        "walletImpactNone": "इस अपडेट से वॉलेट में बदलाव नहीं होगा।",
+        "projectedWalletAfterSave": "सेव के बाद अनुमानित वॉलेट: INR {amount}",
+        "summary": {
+          "projectedTotalSlots": "अनुमानित कुल स्लॉट: {count}",
+          "finalPayable": "इस एडिट के बाद अंतिम देय राशि: INR {amount}",
+          "platformFee": "कैंपेन एडिट पर प्लेटफॉर्म फीस: INR 0.00"
+        }
+      },
+      "warnings": {
+        "insufficientWallet": "इस बजट बढ़ोतरी के लिए वॉलेट बैलेंस पर्याप्त नहीं है।",
+        "invalidUsedSlots": "यह अपडेट कुल स्लॉट्स को पहले से रिकॉर्डेड सबमिशन से कम कर देगा।"
+      }
+    }
   },
   "dashboard": {
     "greeting": {
@@ -456,4 +1288,3 @@
     }
   }
 }
-

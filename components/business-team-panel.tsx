@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
@@ -26,6 +27,7 @@ type TeamResponse = {
 };
 
 export default function BusinessTeamPanel() {
+  const t = useTranslations("business.teamPanel");
   const router = useRouter();
   const [data, setData] = useState<TeamResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,20 +45,20 @@ export default function BusinessTeamPanel() {
     try {
       body = raw ? (JSON.parse(raw) as TeamResponse | { error?: string }) : {};
     } catch {
-      setError("Unexpected server response");
+      setError(t("errors.unexpectedServerResponse"));
       setLoading(false);
       return;
     }
 
     if (!res.ok) {
-      setError((body as { error?: string }).error || "Failed to load business team");
+      setError((body as { error?: string }).error || t("errors.failedToLoad"));
     } else {
       setData(body as TeamResponse);
       setError("");
     }
 
     setLoading(false);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 15000);
 
@@ -78,18 +80,18 @@ export default function BusinessTeamPanel() {
     try {
       body = raw ? (JSON.parse(raw) as { error?: string; message?: string }) : {};
     } catch {
-      body = { error: "Unexpected server response" };
+      body = { error: t("errors.unexpectedServerResponse") };
     }
 
     setBusy("");
 
     if (!res.ok) {
-      setError(body.error || "Failed to add team member");
+      setError(body.error || t("errors.failedToAdd"));
       return;
     }
 
     setEmail("");
-    setMessage(body.message || "Team member added");
+    setMessage(body.message || t("messages.memberAdded"));
     emitDashboardLiveRefresh();
     router.refresh();
     void load();
@@ -113,11 +115,11 @@ export default function BusinessTeamPanel() {
     setBusy("");
 
     if (!res.ok) {
-      setError(body.error || "Failed to update role");
+      setError(body.error || t("errors.failedToUpdateRole"));
       return;
     }
 
-    setMessage(body.message || "Role updated");
+    setMessage(body.message || t("messages.roleUpdated"));
     emitDashboardLiveRefresh();
     void load();
   }
@@ -140,16 +142,16 @@ export default function BusinessTeamPanel() {
     setBusy("");
 
     if (!res.ok) {
-      setError(body.error || "Failed to remove member");
+      setError(body.error || t("errors.failedToRemove"));
       return;
     }
 
-    setMessage(body.message || "Member removed");
+    setMessage(body.message || t("messages.memberRemoved"));
     emitDashboardLiveRefresh();
     void load();
   }
 
-  if (loading) return <p className="text-sm text-white/60">Loading team...</p>;
+  if (loading) return <p className="text-sm text-white/60">{t("loading")}</p>;
   if (error && !data) return <p className="text-sm text-rose-300">{error}</p>;
   if (!data) return null;
 
@@ -159,16 +161,16 @@ export default function BusinessTeamPanel() {
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
-          <p className="text-sm text-white/60">Owner</p>
+          <p className="text-sm text-white/60">{t("kpis.owner")}</p>
           <p className="mt-2 break-words text-lg font-semibold text-white">{data.owner?.name || data.owner?.email || "-"}</p>
           <p className="mt-1 break-all text-xs text-white/45">{data.owner?.email}</p>
         </div>
         <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
-          <p className="text-sm text-white/60">Team members</p>
+          <p className="text-sm text-white/60">{t("kpis.teamMembers")}</p>
           <p className="mt-2 text-3xl font-semibold text-white">{data.members.length}</p>
         </div>
         <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-md">
-          <p className="text-sm text-white/60">Your access</p>
+          <p className="text-sm text-white/60">{t("kpis.yourAccess")}</p>
           <p className="mt-2 text-3xl font-semibold text-white">{data.actorRole}</p>
         </div>
       </div>
@@ -176,34 +178,34 @@ export default function BusinessTeamPanel() {
       {canManage ? (
         <div className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
           <div>
-            <p className="text-sm text-white/60">Add team member</p>
-            <h3 className="text-xl font-semibold text-white">Attach an existing business account</h3>
+            <p className="text-sm text-white/60">{t("add.eyebrow")}</p>
+            <h3 className="text-xl font-semibold text-white">{t("add.title")}</h3>
           </div>
           <div className="grid gap-4 md:grid-cols-[1fr_180px_160px]">
             <Input
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Business account email"
+              placeholder={t("add.emailPlaceholder")}
             />
             <select
               value={accessRole}
               onChange={(e) => setAccessRole(e.target.value as "EDITOR" | "VIEWER")}
               className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
             >
-              <option value="EDITOR">Editor</option>
-              <option value="VIEWER">Viewer</option>
+              <option value="EDITOR">{t("roles.editor")}</option>
+              <option value="VIEWER">{t("roles.viewer")}</option>
             </select>
             <Button type="button" onClick={() => void addMember()} disabled={busy === "add"} className="w-full md:w-auto">
-              {busy === "add" ? "Adding..." : "Add member"}
+              {busy === "add" ? t("add.adding") : t("add.addButton")}
             </Button>
           </div>
           <p className="text-xs text-white/45">
-            Team members must already exist as business accounts. Owners keep funding, settings, and team control.
+            {t("add.help")}
           </p>
         </div>
       ) : (
         <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-white/60 backdrop-blur-md">
-          Team membership is managed only by the business owner.
+          {t("notOwner")}
         </div>
       )}
 
@@ -212,13 +214,13 @@ export default function BusinessTeamPanel() {
 
       <div className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
         <div>
-          <p className="text-sm text-white/60">Workspace members</p>
-          <h3 className="text-xl font-semibold text-white">Owner, editors, and viewers</h3>
+          <p className="text-sm text-white/60">{t("members.eyebrow")}</p>
+          <h3 className="text-xl font-semibold text-white">{t("members.title")}</h3>
         </div>
 
         {data.members.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/50">
-            No team members added yet.
+            {t("members.empty")}
           </div>
         ) : (
           <div className="space-y-3">
@@ -245,8 +247,8 @@ export default function BusinessTeamPanel() {
                         className="w-full rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white outline-none sm:w-auto"
                         disabled={busy === `role:${member.id}`}
                       >
-                        <option value="EDITOR">Editor</option>
-                        <option value="VIEWER">Viewer</option>
+                        <option value="EDITOR">{t("roles.editor")}</option>
+                        <option value="VIEWER">{t("roles.viewer")}</option>
                       </select>
 
                       <Button
@@ -256,7 +258,7 @@ export default function BusinessTeamPanel() {
                         disabled={busy === `remove:${member.id}`}
                         className="w-full sm:w-auto"
                       >
-                        {busy === `remove:${member.id}` ? "Removing..." : "Remove"}
+                        {busy === `remove:${member.id}` ? t("members.removing") : t("members.remove")}
                       </Button>
                     </>
                   ) : null}

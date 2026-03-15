@@ -1,6 +1,24 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getAppSettings } from "@/lib/system-settings";
+
+function istMidnight(now = new Date()): Date {
+  // Vercel Cron runs in UTC. We want a stable daily reset boundary at 12:00 AM IST,
+  // independent of cron jitter (late/early execution).
+  const dtf = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Calcutta",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const parts = dtf.formatToParts(now);
+  const get = (type: string) => parts.find((p) => p.type === type)?.value;
+  const y = get("year");
+  const m = get("month");
+  const d = get("day");
+  if (!y || !m || !d) return new Date(now);
+  // Parse with explicit offset for IST.
+  return new Date(`${y}-${m}-${d}T00:00:00+05:30`);
+}
 
 function isAuthorized(req: Request) {
   const configured = process.env.CRON_SECRET;
@@ -22,26 +40,26 @@ function isAuthorized(req: Request) {
 }
 
 async function runReset() {
-  const appSettings = await getAppSettings();
-  const cutoff = new Date(Date.now() - appSettings.levelResetHours * 60 * 60 * 1000);
+  const resetAt = istMidnight(new Date());
 
   const result = await prisma.user.updateMany({
     where: {
-      lastLevelResetAt: {
-        lte: cutoff,
-      },
+      role: "USER",
+      deletedAt: null,
+      lastLevelResetAt: { lt: resetAt },
     },
     data: {
       dailySubmits: 0,
       level: "L1",
-      lastLevelResetAt: new Date(),
+      lastLevelResetAt: resetAt,
     },
   });
 
   return NextResponse.json({
     message: "Daily level reset completed",
     updatedUsers: result.count,
-    resetWindowHours: appSettings.levelResetHours,
+    resetAt: resetAt.toISOString(),
+    timezone: "Asia/Calcutta",
   });
 }
 
