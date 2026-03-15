@@ -12,6 +12,7 @@ import {
   Bell,
   CircleDollarSign,
   ClipboardCheck,
+  Circle,
   House,
   Landmark,
   LayoutDashboard,
@@ -29,6 +30,7 @@ import {
 import { useLiveRefresh } from "@/lib/live-refresh";
 import LogoutButton from "@/components/logout-button";
 import ThemeToggle from "@/components/theme-toggle";
+import { useTranslations } from "next-intl";
 
 type DashboardRole = "USER" | "BUSINESS" | "MANAGER" | "ADMIN";
 type IconName =
@@ -46,6 +48,7 @@ type IconName =
   | "submissions"
   | "wallet"
   | "notifications"
+  | "settings"
   | "help"
   | "risk"
   | "cms"
@@ -56,6 +59,7 @@ type Item = {
   key: string;
   href: string;
   label: string;
+  labelKey?: string;
   icon: IconName;
   matchPrefix?: string;
 };
@@ -75,6 +79,7 @@ const iconMap: Record<IconName, ComponentType<{ size?: number }>> = {
   submissions: ClipboardCheck,
   wallet: Wallet,
   notifications: Bell,
+  settings: Settings2,
   help: ScrollText,
   risk: AlertTriangle,
   cms: Settings2,
@@ -100,6 +105,8 @@ export default function DashboardTabNav({
   items: Item[];
   showForgotPasswordInNav?: boolean;
 }) {
+  const tGreeting = useTranslations("dashboard.greeting");
+  const tNav = useTranslations("dashboard.nav");
   const pathname = usePathname();
   const [alerts, setAlerts] = useState<Record<string, string>>({});
   const [counts, setCounts] = useState<Record<string, number>>({});
@@ -144,7 +151,9 @@ export default function DashboardTabNav({
   const itemsWithState = useMemo(
     () =>
       items.map((item) => {
-        const Icon = iconMap[item.icon];
+        // Defensive fallback: prevents crashes if a stale client bundle (or SW cache) renders a newer icon key.
+        const Icon = iconMap[item.icon] ?? Circle;
+        const label = item.labelKey ? tNav(item.labelKey) : item.label;
         const latest = alerts[item.key] || "";
         const seenToken =
           typeof window !== "undefined"
@@ -155,9 +164,9 @@ export default function DashboardTabNav({
           : pathname === item.href;
         const showDot = !!latest && latest !== seenToken && !isCurrent;
         const badgeCount = counts[item.key] ?? 0;
-        return { ...item, Icon, showDot, badgeCount };
+        return { ...item, Icon, showDot, badgeCount, label };
       }),
-    [alerts, counts, items, pathname, storagePrefix]
+    [alerts, counts, items, pathname, storagePrefix, tNav]
   );
 
   const firstName = useMemo(() => {
@@ -167,18 +176,18 @@ export default function DashboardTabNav({
   }, [displayName]);
 
   const greeting = useMemo(() => {
-    if (hour === null) return `Welcome back, ${firstName}!`;
-    if (hour < 12) return `Good morning, ${firstName}!`;
-    if (hour < 17) return `Good afternoon, ${firstName}!`;
-    return `Good evening, ${firstName}!`;
-  }, [firstName, hour]);
+    if (hour === null) return tGreeting("fallback", { name: firstName });
+    if (hour < 12) return tGreeting("goodMorning", { name: firstName });
+    if (hour < 17) return tGreeting("goodAfternoon", { name: firstName });
+    return tGreeting("goodEvening", { name: firstName });
+  }, [firstName, hour, tGreeting]);
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between md:block">
         <div>
           <h1 className="text-lg font-semibold tracking-tight md:text-xl">{greeting}</h1>
-          <p className="text-xs text-foreground/60 md:text-sm">Welcome back!</p>
+          <p className="text-xs text-foreground/60 md:text-sm">{tGreeting("welcomeBack")}</p>
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle compact className="md:hidden" />

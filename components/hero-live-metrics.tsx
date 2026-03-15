@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import MetricCounter from "@/components/metric-counter";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export default function HeroLiveMetrics({
   className,
@@ -11,6 +12,7 @@ export default function HeroLiveMetrics({
   className?: string;
   compact?: boolean;
 }) {
+  const t = useTranslations("home.live");
   const [stats, setStats] = useState({
     activeOnlineUsers: 0,
     activeOnlineBusinesses: 0,
@@ -46,13 +48,13 @@ export default function HeroLiveMetrics({
         const raw = await res.text();
         const parsed = raw ? (JSON.parse(raw) as { stats?: typeof stats; error?: string }) : {};
         if (!res.ok) {
-          setError(parsed.error || "Failed to load live stats");
+          setError(parsed.error || t("statsError"));
           return;
         }
         setError("");
         if (parsed.stats) setStats(parsed.stats);
       } catch {
-        setError("Failed to load live stats");
+        setError(t("statsError"));
       }
     };
 
@@ -62,16 +64,16 @@ export default function HeroLiveMetrics({
     return () => {
       if (timer) clearInterval(timer);
     };
-  }, [hasIntersected]);
+  }, [hasIntersected, t]);
 
   const cards = useMemo(
     () => [
-      { label: "Active users", value: stats.activeOnlineUsers, tone: "text-emerald-300" },
-      { label: "Active businesses", value: stats.activeOnlineBusinesses, tone: "text-sky-300" },
-      { label: "Live campaigns", value: stats.liveTasks, tone: "text-violet-300" },
-      { label: "Live withdrawals", value: stats.liveWithdraws, tone: "text-amber-300" },
+      { label: t("activeUsersLabel"), value: stats.activeOnlineUsers, tone: "text-emerald-300" },
+      { label: t("activeBusinessesLabel"), value: stats.activeOnlineBusinesses, tone: "text-sky-300" },
+      { label: t("liveCampaignsLabel"), value: stats.liveTasks, tone: "text-violet-300" },
+      { label: t("liveWithdrawalsLabel"), value: stats.liveWithdraws, tone: "text-amber-300" },
     ],
-    [stats]
+    [stats, t]
   );
 
   return (

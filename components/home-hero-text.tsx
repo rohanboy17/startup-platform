@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, CheckCircle2, ShieldCheck, Timer, ArrowUpRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type HomeHeroTextProps = {
   title: string;
@@ -11,6 +12,7 @@ type HomeHeroTextProps = {
 };
 
 export default function HomeHeroText({ title, subtitle, avgApprovalTimeLabel }: HomeHeroTextProps) {
+  const t = useTranslations("home.hero");
   return (
     <div className="space-y-5 sm:space-y-8">
       <motion.h1
@@ -41,13 +43,13 @@ export default function HomeHeroText({ title, subtitle, avgApprovalTimeLabel }: 
           href="/register"
           className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition hover:scale-105 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
         >
-          Start Earning <ArrowRight size={16} />
+          {t("startEarning")} <ArrowRight size={16} />
         </Link>
         <Link
           href="/login"
           className="w-full rounded-full border border-foreground/25 px-5 py-2.5 text-center text-sm text-foreground/90 transition hover:bg-foreground/10 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
         >
-          Create Campaign
+          {t("createCampaign")}
         </Link>
       </motion.div>
 
@@ -59,23 +61,23 @@ export default function HomeHeroText({ title, subtitle, avgApprovalTimeLabel }: 
       >
         <span className="inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1">
           <CheckCircle2 size={14} />
-          Secure approvals
+          {t("secureApprovals")}
         </span>
         <span className="inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1">
           <ShieldCheck size={14} />
-          Manual fraud checks
+          {t("manualFraud")}
         </span>
         <span className="inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1">
           <Timer size={14} />
-          Avg approval: {avgApprovalTimeLabel}
+          {t("avgApproval", { time: avgApprovalTimeLabel })}
         </span>
         <span className="inline-flex w-full flex-wrap items-center justify-between gap-2 rounded-2xl border border-foreground/15 bg-background/70 px-3 py-1.5 text-xs text-foreground/70 sm:w-auto sm:flex-nowrap sm:gap-3 sm:rounded-full sm:py-1">
           <span className="flex items-center gap-2">
             <CheckCircle2 size={14} className="text-emerald-500" />
-            Payouts protected
+            {t("payoutsProtected")}
           </span>
           <Link href="/dashboard" className="flex items-center gap-1 text-foreground transition hover:opacity-80">
-            View dashboard
+            {t("viewDashboard")}
             <ArrowUpRight size={14} />
           </Link>
         </span>

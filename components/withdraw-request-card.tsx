@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatMoney } from "@/lib/format-money";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
+import { useTranslations } from "next-intl";
 
 export default function WithdrawRequestCard({
   minAmount,
@@ -15,6 +16,7 @@ export default function WithdrawRequestCard({
   availableBalance?: number;
   emergencyRemaining?: number;
 }) {
+  const t = useTranslations("user.withdrawRequest");
   const [amount, setAmount] = useState("");
   const [upiId, setUpiId] = useState("");
   const [upiName, setUpiName] = useState("");
@@ -41,17 +43,17 @@ export default function WithdrawRequestCard({
     try {
       data = raw ? (JSON.parse(raw) as { error?: string; message?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpected") };
     }
 
     setLoading(false);
 
     if (!res.ok) {
-      setMessage(data.error || "Withdrawal request failed");
+      setMessage(data.error || t("failed"));
       return;
     }
 
-    setMessage(data.message || "Withdrawal request created");
+    setMessage(data.message || t("created"));
     setAmount("");
     setUpiId("");
     setUpiName("");
@@ -60,43 +62,43 @@ export default function WithdrawRequestCard({
 
   return (
     <div className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-6">
-      <h3 className="text-base font-semibold sm:text-lg">Request Withdrawal</h3>
+      <h3 className="text-base font-semibold sm:text-lg">{t("title")}</h3>
       <p className="text-sm text-white/60">
-        Minimum withdrawal amount: INR {formatMoney(minAmount)}
+        {t("min", { amount: formatMoney(minAmount) })}
       </p>
       {typeof availableBalance === "number" ? (
         <p className="text-sm text-white/60">
-          Available balance: INR {formatMoney(availableBalance)}
+          {t("available", { amount: formatMoney(availableBalance) })}
         </p>
       ) : null}
       <p className="text-sm text-white/60">
-        Emergency withdraws left this month: {emergencyRemaining ?? 0}
+        {t("emergencyLeft", { count: emergencyRemaining ?? 0 })}
       </p>
       <Input
         type="number"
         min={1}
-        placeholder={`Enter amount (normal min INR ${formatMoney(minAmount)})`}
+        placeholder={t("amountPlaceholder", { amount: formatMoney(minAmount) })}
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
         className="min-h-11"
       />
       <Input
-        placeholder="Enter UPI ID or Mobile Number"
+        placeholder={t("upiIdPlaceholder")}
         value={upiId}
         onChange={(e) => setUpiId(e.target.value)}
         className="min-h-11"
       />
       <Input
-        placeholder="Enter UPI Name or Banking Name"
+        placeholder={t("upiNamePlaceholder")}
         value={upiName}
         onChange={(e) => setUpiName(e.target.value)}
         className="min-h-11"
       />
       <Button onClick={requestWithdrawal} disabled={loading} className="w-full">
-        {loading ? "Submitting..." : "Submit Withdrawal Request"}
+        {loading ? t("submitting") : t("submit")}
       </Button>
       <p className="text-xs text-white/45">
-        Amounts below INR {formatMoney(minAmount)} are treated as emergency withdrawals and are limited to 2 per month.
+        {t("helper", { amount: formatMoney(minAmount) })}
       </p>
       {message ? <p className="text-sm text-white/70">{message}</p> : null}
     </div>

@@ -4,14 +4,17 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import PwaInstallButton from "@/components/pwa-install-button";
 import ThemeToggle from "@/components/theme-toggle";
+import LanguageSelect from "@/components/language-select";
 
 function isDashboardPath(pathname: string) {
   return pathname.startsWith("/dashboard");
 }
 
 export default function SiteHeader() {
+  const t = useTranslations("header");
   const pathname = usePathname() || "/";
   const [open, setOpen] = useState(false);
   const onHome = pathname === "/";
@@ -19,19 +22,22 @@ export default function SiteHeader() {
 
   const sectionLinks = useMemo(
     () => [
-      { label: "How it works", href: onHome ? "#how-it-works" : "/#how-it-works" },
-      { label: "Trust & safety", href: onHome ? "#trust" : "/#trust" },
-      { label: "Live activity", href: onHome ? "#live-activity" : "/#live-activity" },
+      { label: t("howItWorks"), href: onHome ? "#how-it-works" : "/#how-it-works" },
+      { label: t("trust"), href: onHome ? "#trust" : "/#trust" },
+      { label: t("liveActivity"), href: onHome ? "#live-activity" : "/#live-activity" },
     ],
-    [onHome]
+    [onHome, t]
   );
 
-  const primaryLinks = [
-    { label: "Home", href: "/" },
-    { label: "About", href: "/about" },
-    { label: "FAQ", href: "/faq" },
-    { label: "Contact", href: "/contact" },
-  ];
+  const primaryLinks = useMemo(
+    () => [
+      { label: t("home"), href: "/" },
+      { label: t("about"), href: "/about" },
+      { label: t("faq"), href: "/faq" },
+      { label: t("contact"), href: "/contact" },
+    ],
+    [t]
+  );
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-foreground/10 bg-background/75 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.8)] backdrop-blur-2xl">
@@ -79,19 +85,22 @@ export default function SiteHeader() {
 
         <div className="hidden items-center gap-2 sm:flex">
           <ThemeToggle />
+          <div className="w-[140px]">
+            <LanguageSelect compact />
+          </div>
           <PwaInstallButton />
           <Link
             href={onDashboard ? "/dashboard" : "/login"}
             className="rounded-full border border-foreground/20 bg-foreground/[0.03] px-3 py-1.5 text-xs font-medium text-foreground/75 transition hover:bg-foreground/10 hover:text-foreground sm:text-sm"
           >
-            {onDashboard ? "Home" : "Sign In"}
+            {onDashboard ? t("dashboardHome") : t("signIn")}
           </Link>
           {!onDashboard ? (
             <Link
               href="/register"
               className="rounded-full bg-foreground px-4 py-1.5 text-xs font-semibold text-background shadow-[0_10px_25px_-12px_rgba(255,255,255,0.9)] transition hover:opacity-90 sm:text-sm"
             >
-              Register
+              {t("register")}
             </Link>
           ) : null}
         </div>
@@ -146,19 +155,22 @@ export default function SiteHeader() {
               <div className="col-span-2 flex justify-center">
                 <ThemeToggle />
               </div>
+              <div className="col-span-2">
+                <LanguageSelect />
+              </div>
               <Link
                 href="/login"
                 onClick={() => setOpen(false)}
                 className="rounded-full border border-foreground/20 px-3 py-2 text-center text-xs font-medium text-foreground/75 transition hover:bg-foreground/5 hover:text-foreground"
               >
-                Sign In
+                {t("signIn")}
               </Link>
               <Link
                 href="/register"
                 onClick={() => setOpen(false)}
                 className="rounded-full bg-foreground px-3 py-2 text-center text-xs font-semibold text-background transition hover:opacity-90"
               >
-                Register
+                {t("register")}
               </Link>
             </div>
             <PwaInstallButton mobile />

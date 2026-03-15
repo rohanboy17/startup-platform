@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useLiveRefresh } from "@/lib/live-refresh";
 import HeroLiveMetrics from "@/components/hero-live-metrics";
+import { useTranslations } from "next-intl";
 
 type LivePayload = {
   stats: {
@@ -19,6 +20,7 @@ type LivePayload = {
 };
 
 export default function HomeLiveSection() {
+  const t = useTranslations("home.live");
   const [data, setData] = useState<LivePayload | null>(null);
   const [error, setError] = useState("");
 
@@ -33,13 +35,13 @@ export default function HomeLiveSection() {
     }
 
     if (!res.ok) {
-      setError((parsed as { error?: string }).error || "Failed to load live activity");
+      setError((parsed as { error?: string }).error || t("activityError"));
       return;
     }
 
     setError("");
     setData(parsed as LivePayload);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 10000);
 
@@ -63,16 +65,16 @@ export default function HomeLiveSection() {
     <div className="mx-auto w-full rounded-2xl border border-foreground/15 bg-foreground/5 p-4 backdrop-blur-none sm:rounded-3xl sm:p-6 sm:backdrop-blur-xl">
       <div className="mb-5 flex flex-col items-start justify-between gap-3 sm:mb-6 sm:flex-row">
         <div className="min-w-0">
-          <h2 className="text-xl font-semibold sm:text-2xl">Live Platform Activity</h2>
-          <p className="text-sm text-foreground/60">Anonymized real-time feed. No personal data shown.</p>
+          <h2 className="text-xl font-semibold sm:text-2xl">{t("title")}</h2>
+          <p className="text-sm text-foreground/60">{t("subtitle")}</p>
         </div>
         <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-400">
           <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(16,185,129,0.7)]" />
-          Live
+          {t("live")}
         </span>
       </div>
 
-      {!data && !error ? <p className="text-sm text-foreground/60">Loading live activity...</p> : null}
+      {!data && !error ? <p className="text-sm text-foreground/60">{t("loading")}</p> : null}
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
       {data ? (

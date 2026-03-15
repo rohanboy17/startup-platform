@@ -1,53 +1,74 @@
 import Link from "next/link";
 import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
+import { getLocale, getTranslations } from "next-intl/server";
 
-const groups = [
-  {
-    title: "Main",
-    links: [
-      ["/", "Home"],
-      ["/about", "About"],
-      ["/faq", "FAQ"],
-      ["/contact", "Contact"],
-      ["/support", "Support Center"],
-    ],
-  },
-  {
-    title: "Legal & Compliance",
-    links: [
-      ["/terms", "Terms & Conditions"],
-      ["/privacy", "Privacy Policy"],
-      ["/refund-policy", "Refund Policy"],
-      ["/cookie-policy", "Cookie Policy"],
-      ["/disclaimer", "Disclaimer"],
-      ["/kyc-policy", "KYC Policy"],
-    ],
-  },
-  {
-    title: "Account",
-    links: [
-      ["/login", "Sign In"],
-      ["/register", "Create Account"],
-      ["/forgot-password", "Forgot Password"],
-      ["/dashboard", "Dashboard"],
-    ],
-  },
-] as const;
+export default async function SitemapPage() {
+  const locale = await getLocale();
+  const tHeader = await getTranslations("header");
+  const tFooterLinks = await getTranslations("footer.links");
 
-export default function SitemapPage() {
+  const groupTitles =
+    locale === "hi"
+      ? { main: "मुख्य", legal: "कानूनी और अनुपालन", account: "अकाउंट" }
+      : locale === "bn"
+        ? { main: "মূল", legal: "আইনি ও কমপ্লায়েন্স", account: "অ্যাকাউন্ট" }
+        : { main: "Main", legal: "Legal & Compliance", account: "Account" };
+
+  const localizedGroups = [
+    {
+      title: groupTitles.main,
+      links: [
+        ["/", tHeader("home")],
+        ["/about", tHeader("about")],
+        ["/faq", tHeader("faq")],
+        ["/contact", tHeader("contact")],
+        ["/support", tFooterLinks("support")],
+      ],
+    },
+    {
+      title: groupTitles.legal,
+      links: [
+        ["/terms", tFooterLinks("terms")],
+        ["/privacy", tFooterLinks("privacy")],
+        ["/refund-policy", tFooterLinks("refund")],
+        ["/cookie-policy", tFooterLinks("cookie")],
+        ["/disclaimer", tFooterLinks("disclaimer")],
+        ["/kyc-policy", tFooterLinks("kyc")],
+      ],
+    },
+    {
+      title: groupTitles.account,
+      links: [
+        ["/login", tHeader("signIn")],
+        ["/register", tHeader("register")],
+        ["/forgot-password", locale === "hi" ? "पासवर्ड भूल गए" : locale === "bn" ? "পাসওয়ার্ড ভুলে গেছেন" : "Forgot Password"],
+        ["/dashboard", locale === "hi" ? "डैशबोर्ड" : locale === "bn" ? "ড্যাশবোর্ড" : "Dashboard"],
+      ],
+    },
+  ] as const;
+
   return (
     <PublicPageShell
-      eyebrow="Navigation"
-      title="Sitemap"
-      description="Quick access to the major pages across the EarnHub platform."
+      eyebrow={locale === "hi" ? "नेविगेशन" : locale === "bn" ? "নেভিগেশন" : "Navigation"}
+      title={locale === "hi" ? "साइटमैप" : locale === "bn" ? "সাইটম্যাপ" : "Sitemap"}
+      description={
+        locale === "hi"
+          ? "EarnHub प्लेटफ़ॉर्म के प्रमुख पेजों तक त्वरित पहुंच।"
+          : locale === "bn"
+            ? "EarnHub প্ল্যাটফর্মের প্রধান পেজগুলোতে দ্রুত অ্যাক্সেস।"
+            : "Quick access to the major pages across the EarnHub platform."
+      }
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {groups.map((group) => (
+        {localizedGroups.map((group) => (
           <PolicySection key={group.title} title={group.title}>
             <ul className="space-y-2">
               {group.links.map(([href, label]) => (
                 <li key={href}>
-                  <Link href={href} className="text-white/80 underline-offset-4 transition hover:text-white hover:underline">
+                  <Link
+                    href={href}
+                    className="text-foreground/80 underline-offset-4 transition hover:text-foreground hover:underline"
+                  >
                     {label}
                   </Link>
                 </li>

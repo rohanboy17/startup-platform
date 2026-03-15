@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import WithdrawRequestCard from "@/components/withdraw-request-card";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
+import { useTranslations } from "next-intl";
 
 type WithdrawalItem = {
   id: string;
@@ -34,6 +35,7 @@ type WithdrawalsPayload = {
 };
 
 export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }) {
+  const t = useTranslations("user.withdrawals");
   const [data, setData] = useState<WithdrawalsPayload | null>(null);
   const [error, setError] = useState("");
 
@@ -48,47 +50,47 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
     }
 
     if (!res.ok) {
-      setError((parsed as { error?: string }).error || "Failed to load withdrawals");
+      setError((parsed as { error?: string }).error || t("failed"));
       return;
     }
 
     setError("");
     setData(parsed as WithdrawalsPayload);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 8000);
 
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">Payout center</p>
-        <h2 className="mt-2 text-3xl font-semibold md:text-4xl">Withdrawals</h2>
+        <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">{t("eyebrow")}</p>
+        <h2 className="mt-2 text-3xl font-semibold md:text-4xl">{t("title")}</h2>
         <p className="mt-2 max-w-2xl text-sm text-white/65 md:text-base">
           Request payouts, monitor pending review, and track approved or rejected withdrawal requests.
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 min-[1500px]:grid-cols-5">
-        <KpiCard label="Available Balance" value={`INR ${formatMoney(data?.balance)}`} tone="success" />
-        <KpiCard label="Pending Amount" value={`INR ${formatMoney(data?.metrics.pendingAmount)}`} tone="warning" />
-        <KpiCard label="Approved Payouts" value={`INR ${formatMoney(data?.metrics.approvedAmount)}`} tone="info" />
-        <KpiCard label="Rejected Requests" value={data?.metrics.rejectedCount ?? 0} tone="danger" />
-        <KpiCard label="Emergency Uses Left" value={data?.metrics.emergencyRemaining ?? 2} tone="info" />
+        <KpiCard label={t("kpiAvailable")} value={`INR ${formatMoney(data?.balance)}`} tone="success" />
+        <KpiCard label={t("kpiPending")} value={`INR ${formatMoney(data?.metrics.pendingAmount)}`} tone="warning" />
+        <KpiCard label={t("kpiApproved")} value={`INR ${formatMoney(data?.metrics.approvedAmount)}`} tone="info" />
+        <KpiCard label={t("kpiRejected")} value={data?.metrics.rejectedCount ?? 0} tone="danger" />
+        <KpiCard label={t("kpiEmergency")} value={data?.metrics.emergencyRemaining ?? 2} tone="info" />
       </div>
 
       <div className="grid gap-6 min-[1500px]:grid-cols-[0.9fr_1.1fr]">
         <SectionCard elevated className="space-y-5 p-4 sm:p-6">
             <div>
               <p className="text-sm text-white/60">Request payout</p>
-              <h3 className="text-xl font-semibold text-white">Submit withdrawal details</h3>
+              <h3 className="text-xl font-semibold text-white">{t("requestTitle")}</h3>
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/65">
-              <p>Minimum withdrawal: INR {formatMoney(minAmount)}</p>
-              <p className="mt-2">Only one pending withdrawal request is allowed at a time.</p>
-              <p className="mt-2">Admin reviews determine approval or rejection.</p>
+              <p>{t("ruleMin", { amount: formatMoney(minAmount) })}</p>
+              <p className="mt-2">{t("ruleOnePending")}</p>
+              <p className="mt-2">{t("ruleAdminReview")}</p>
               <p className="mt-2">
-                Emergency withdrawals below the minimum are allowed 2 times per month.
+                {t("ruleEmergency")}
               </p>
             </div>
 
@@ -103,20 +105,20 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm text-white/60">Withdrawal history</p>
-                <h3 className="text-xl font-semibold text-white">Request status timeline</h3>
+                <h3 className="text-xl font-semibold text-white">{t("historyTitle")}</h3>
               </div>
-              <StatusBadge label={`${data?.metrics.totalRequests ?? 0} total requests`} tone="neutral" />
+              <StatusBadge label={t("totalRequests", { count: data?.metrics.totalRequests ?? 0 })} tone="neutral" />
             </div>
 
             {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
             {!data ? (
               <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-6 text-sm text-white/55">
-                Loading withdrawal history...
+                {t("loadingHistory")}
               </div>
             ) : data.withdrawals.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-6 text-sm text-white/55">
-                No withdrawal history yet.
+                {t("noHistory")}
               </div>
             ) : (
               <div className="space-y-3">
@@ -133,7 +135,7 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
                         ) : null}
                         {w.isEmergency ? (
                           <p className="mt-2 text-xs uppercase tracking-[0.16em] text-violet-200">
-                            Emergency withdrawal
+                            {t("emergencyLabel")}
                           </p>
                         ) : null}
                       </div>
@@ -149,7 +151,7 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
                     </div>
                     {w.adminNote ? (
                       <div className="mt-3 rounded-xl border border-white/10 bg-white/5 p-3 text-sm text-white/70">
-                        Admin note: {w.adminNote}
+                        {t("adminNote", { note: w.adminNote })}
                       </div>
                     ) : null}
                   </div>

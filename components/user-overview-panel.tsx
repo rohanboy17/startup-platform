@@ -9,6 +9,7 @@ import { SectionCard } from "@/components/ui/section-card";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
 import { useHydrated } from "@/lib/use-hydrated";
+import { useLocale, useTranslations } from "next-intl";
 
 type OverviewResponse = {
   profile: {
@@ -50,19 +51,29 @@ type OverviewResponse = {
   error?: string;
 };
 
-function relativeTimeLabel(value: string) {
+function intlLocale(locale: string) {
+  if (locale === "hi") return "hi-IN";
+  if (locale === "bn") return "bn-IN";
+  return "en-IN";
+}
+
+function relativeTimeLabel(locale: string, value: string) {
   const date = new Date(value);
   const diffMs = Date.now() - date.getTime();
   const diffMinutes = Math.max(1, Math.floor(diffMs / (1000 * 60)));
 
-  if (diffMinutes < 60) return `${diffMinutes}m ago`;
+  const rtf = new Intl.RelativeTimeFormat(intlLocale(locale), { numeric: "always", style: "short" });
+
+  if (diffMinutes < 60) return rtf.format(-diffMinutes, "minute");
   const diffHours = Math.floor(diffMinutes / 60);
-  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffHours < 24) return rtf.format(-diffHours, "hour");
   const diffDays = Math.floor(diffHours / 24);
-  return `${diffDays}d ago`;
+  return rtf.format(-diffDays, "day");
 }
 
 export default function UserOverviewPanel() {
+  const t = useTranslations("user.overview");
+  const locale = useLocale();
   const [data, setData] = useState<OverviewResponse | null>(null);
   const [error, setError] = useState("");
   const hydrated = useHydrated();
@@ -75,30 +86,30 @@ export default function UserOverviewPanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as OverviewResponse) : null;
     } catch {
-      setError("Unexpected server response");
+      setError(t("unexpected"));
       return;
     }
 
     if (!res.ok) {
-      setError(parsed?.error || "Failed to load overview");
+      setError(parsed?.error || t("failed"));
       return;
     }
 
     setError("");
     setData(parsed);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 10000);
 
   if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-foreground/60">Loading user overview...</p>;
+  if (!data) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
 
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.24em] text-emerald-600/80 dark:text-emerald-300/70">Daily earning center</p>
-          <h2 className="mt-2 text-3xl font-semibold md:text-4xl">User Overview</h2>
+          <p className="text-sm uppercase tracking-[0.24em] text-emerald-600/80 dark:text-emerald-300/70">{t("eyebrow")}</p>
+          <h2 className="mt-2 text-3xl font-semibold md:text-4xl">{t("title")}</h2>
           <p className="mt-2 max-w-2xl text-sm text-foreground/65 md:text-base">
             Track your balance, approvals, withdrawal status, and current level without switching between tabs.
           </p>
@@ -110,45 +121,45 @@ export default function UserOverviewPanel() {
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-400/20 dark:text-emerald-100 sm:w-auto"
           >
             <Sparkles size={16} />
-            Find Tasks
+            {t("ctaTasks")}
           </Link>
           <Link
             href="/dashboard/user/withdrawals"
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-foreground/15 bg-foreground/[0.04] px-4 py-2 text-sm font-medium text-foreground/85 transition hover:bg-foreground/10 sm:w-auto"
           >
             <Wallet size={16} />
-            Withdraw
+            {t("ctaWithdraw")}
           </Link>
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
         <KpiCard
-          label="Available balance"
+          label={t("kpiAvailable")}
           value={`INR ${formatMoney(data.metrics.availableBalance)}`}
           tone="success"
         />
 
         <KpiCard
-          label="EarnHub Coins"
+          label={t("kpiCoins")}
           value={data.metrics.coinBalance}
           tone="info"
         />
 
         <KpiCard
-          label="Pending withdrawal"
+          label={t("kpiPendingWithdrawal")}
           value={`INR ${formatMoney(data.metrics.pendingWithdrawalAmount)}`}
           tone="warning"
         />
 
         <KpiCard
-          label="Total withdrawn"
+          label={t("kpiTotalWithdrawn")}
           value={`INR ${formatMoney(data.metrics.totalWithdrawn)}`}
           tone="info"
         />
 
         <KpiCard
-          label="Approved submissions"
+          label={t("kpiApprovedSubmissions")}
           value={data.metrics.approvedSubmissions}
         />
 
@@ -159,7 +170,7 @@ export default function UserOverviewPanel() {
         />
 
         <KpiCard
-          label="Unread notifications"
+          label={t("kpiUnread")}
           value={data.metrics.unreadNotifications}
           tone="warning"
         />
@@ -218,19 +229,19 @@ export default function UserOverviewPanel() {
 
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               <Link href="/dashboard/user/tasks" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
-                <p className="text-sm font-medium text-foreground">Open tasks</p>
+                  <p className="text-sm font-medium text-foreground">Open tasks</p>
                 <p className="mt-1 text-sm text-foreground/70">Find available campaigns with open slots.</p>
               </Link>
               <Link href="/dashboard/user/wallet" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
-                <p className="text-sm font-medium text-foreground">Open wallet</p>
+                  <p className="text-sm font-medium text-foreground">{t("openWallet")}</p>
                 <p className="mt-1 text-sm text-foreground/70">Review credits, debits, and payout history.</p>
               </Link>
               <Link href="/dashboard/user/notifications" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
-                <p className="text-sm font-medium text-foreground">Open notifications</p>
+                  <p className="text-sm font-medium text-foreground">{t("openNotifications")}</p>
                 <p className="mt-1 text-sm text-foreground/70">Check approval, rejection, and payout updates.</p>
               </Link>
               <Link href="/dashboard/user/referrals" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
-                <p className="text-sm font-medium text-foreground">Open referrals</p>
+                  <p className="text-sm font-medium text-foreground">{t("openReferrals")}</p>
                 <p className="mt-1 text-sm text-foreground/70">Share your code, earn coins, and redeem them to wallet.</p>
               </Link>
             </div>
@@ -241,17 +252,17 @@ export default function UserOverviewPanel() {
             <CardContent className="space-y-5 p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-foreground/60">Recent notifications</p>
-                  <h3 className="text-xl font-semibold text-foreground">What needs your attention</h3>
+                  <p className="text-sm text-foreground/60">{t("recentNotifications")}</p>
+                  <h3 className="text-xl font-semibold text-foreground">{t("attentionTitle")}</h3>
                 </div>
                 <Link href="/dashboard/user/notifications" className="text-sm text-emerald-700 transition hover:text-emerald-800 dark:text-emerald-200 dark:hover:text-emerald-100">
-                  Open inbox
+                  {t("openInbox")}
                 </Link>
               </div>
 
               {data.recentNotifications.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-foreground/15 bg-foreground/[0.03] p-6 text-sm text-foreground/70">
-                  No notifications yet. Approval and withdrawal updates will appear here.
+                  {t("noNotifications")}
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -260,11 +271,15 @@ export default function UserOverviewPanel() {
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <p className="font-medium text-foreground break-words">{item.title}</p>
                         <span className="shrink-0 text-xs text-foreground/60" suppressHydrationWarning>
-                          {hydrated ? relativeTimeLabel(item.createdAt) : ""}
+                          {hydrated ? relativeTimeLabel(locale, item.createdAt) : ""}
                         </span>
                       </div>
                       <p className="mt-2 text-sm text-foreground/75 break-words">{item.message}</p>
-                      {!item.isRead ? <p className="mt-2 text-xs uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-300">Unread</p> : null}
+                      {!item.isRead ? (
+                        <p className="mt-2 text-xs uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-300">
+                          {t("unread")}
+                        </p>
+                      ) : null}
                     </div>
                   ))}
                 </div>
@@ -276,17 +291,17 @@ export default function UserOverviewPanel() {
             <CardContent className="space-y-5 p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-foreground/60">Recent activity</p>
-                  <h3 className="text-xl font-semibold text-foreground">Latest balance and submission changes</h3>
+                  <p className="text-sm text-foreground/60">{t("recentActivity")}</p>
+                  <h3 className="text-xl font-semibold text-foreground">{t("activityTitle")}</h3>
                 </div>
                 <Link href="/dashboard/user/wallet" className="text-sm text-emerald-700 transition hover:text-emerald-800 dark:text-emerald-200 dark:hover:text-emerald-100">
-                  Wallet details
+                  {t("walletDetails")}
                 </Link>
               </div>
 
               {data.recentActivity.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-foreground/15 bg-foreground/[0.03] p-6 text-sm text-foreground/70">
-                  No activity yet. Complete a task or request a withdrawal to populate the timeline.
+                  {t("noActivity")}
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -295,7 +310,7 @@ export default function UserOverviewPanel() {
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                         <p className="text-sm font-medium text-foreground/90 break-words">{item.message}</p>
                         <span className="shrink-0 text-xs text-foreground/60" suppressHydrationWarning>
-                          {hydrated ? relativeTimeLabel(item.createdAt) : ""}
+                          {hydrated ? relativeTimeLabel(locale, item.createdAt) : ""}
                         </span>
                       </div>
                       <p className="mt-2 text-xs uppercase tracking-[0.16em] text-foreground/60">{item.kind}</p>

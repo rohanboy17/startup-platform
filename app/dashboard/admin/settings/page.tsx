@@ -1,4 +1,5 @@
 import AdminSystemSettingsPanel from "@/components/admin-system-settings-panel";
+import LanguageSettingsCard from "@/components/language-settings-card";
 import { getAppSettings, getRequiredEnvChecks } from "@/lib/system-settings";
 import Link from "next/link";
 
@@ -18,6 +19,7 @@ export default async function AdminSettingsPage() {
           Forgot password
         </Link>
       </div>
+      <LanguageSettingsCard />
       <AdminSystemSettingsPanel initial={settings} envChecks={envChecks} />
     </div>
   );

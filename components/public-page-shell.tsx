@@ -1,4 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 
 export function PublicPageShell({
   eyebrow,
@@ -13,6 +16,7 @@ export function PublicPageShell({
   lastUpdated?: string;
   children: ReactNode;
 }) {
+  const tPublic = useTranslations("public");
   return (
     <main className="min-h-screen bg-[radial-gradient(circle_at_8%_0%,rgba(16,185,129,0.18),transparent_35%),radial-gradient(circle_at_95%_10%,rgba(56,189,248,0.18),transparent_35%),linear-gradient(to_bottom,#020617,#020617)] px-4 py-10 text-white sm:px-6 sm:py-14">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
@@ -21,7 +25,9 @@ export function PublicPageShell({
           <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white sm:text-4xl">{title}</h1>
           <p className="mt-3 max-w-3xl text-sm text-white/70 sm:text-base">{description}</p>
           {lastUpdated ? (
-            <p className="mt-3 text-xs uppercase tracking-[0.16em] text-white/50">Last updated: {lastUpdated}</p>
+            <p className="mt-3 text-xs uppercase tracking-[0.16em] text-white/50">
+              {tPublic("lastUpdated", { date: lastUpdated })}
+            </p>
           ) : null}
         </section>
 

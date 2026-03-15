@@ -40,24 +40,24 @@ export default async function BusinessLayout({
   }
 
     const items = [
-      { key: "business.overview", href: "/dashboard/business", label: "Overview", icon: "overview" as const },
-      { key: "business.campaigns", href: "/dashboard/business/campaigns", label: "Campaigns", icon: "campaigns" as const },
-      { key: "business.reviews", href: "/dashboard/business/reviews", label: "Reviews", icon: "reviews" as const },
-      { key: "business.kyc", href: "/dashboard/business/kyc", label: "KYC", icon: "trust" as const },
+      { key: "business.overview", href: "/dashboard/business", label: "Overview", labelKey: "overview", icon: "overview" as const },
+      { key: "business.campaigns", href: "/dashboard/business/campaigns", label: "Campaigns", labelKey: "campaigns", icon: "campaigns" as const },
+      { key: "business.reviews", href: "/dashboard/business/reviews", label: "Reviews", labelKey: "reviews", icon: "reviews" as const },
+      { key: "business.kyc", href: "/dashboard/business/kyc", label: "KYC", labelKey: "kyc", icon: "trust" as const },
     ...(canManageBusinessCampaigns(context.accessRole)
-      ? [{ key: "business.create", href: "/dashboard/business/create", label: "Create Campaign", icon: "create" as const }]
+      ? [{ key: "business.create", href: "/dashboard/business/create", label: "Create Campaign", labelKey: "createCampaign", icon: "create" as const }]
       : []),
-    { key: "business.analytics", href: "/dashboard/business/analytics", label: "Analytics", icon: "analytics" as const },
+    { key: "business.analytics", href: "/dashboard/business/analytics", label: "Analytics", labelKey: "analytics", icon: "analytics" as const },
     ...(canManageBusinessBilling(context.accessRole)
-      ? [{ key: "business.funding", href: "/dashboard/business/funding", label: "Funding", icon: "funding" as const }]
+      ? [{ key: "business.funding", href: "/dashboard/business/funding", label: "Funding", labelKey: "funding", icon: "funding" as const }]
       : []),
-    { key: "business.notifications", href: "/dashboard/business/notifications", label: "Notifications", icon: "notifications" as const },
-    { key: "business.trust", href: "/dashboard/business/trust", label: "Trust", icon: "trust" as const },
-    { key: "business.activity", href: "/dashboard/business/activity", label: "Activity", icon: "audit" as const },
+    { key: "business.notifications", href: "/dashboard/business/notifications", label: "Notifications", labelKey: "notifications", icon: "notifications" as const },
+    { key: "business.trust", href: "/dashboard/business/trust", label: "Trust", labelKey: "trust", icon: "trust" as const },
+    { key: "business.activity", href: "/dashboard/business/activity", label: "Activity", labelKey: "activity", icon: "audit" as const },
     ...(canManageBusinessSettings(context.accessRole)
       ? [
-          { key: "business.team", href: "/dashboard/business/team", label: "Team", icon: "users" as const },
-          { key: "business.settings", href: "/dashboard/business/settings", label: "Settings", icon: "cms" as const },
+          { key: "business.team", href: "/dashboard/business/team", label: "Team", labelKey: "team", icon: "users" as const },
+          { key: "business.settings", href: "/dashboard/business/settings", label: "Settings", labelKey: "settings", icon: "cms" as const },
         ]
       : []),
   ];

@@ -1,4 +1,5 @@
 import BusinessSettingsPanel from "@/components/business-settings-panel";
+import LanguageSettingsCard from "@/components/language-settings-card";
 import Link from "next/link";
 
 export default function BusinessSettingsPage() {
@@ -21,6 +22,7 @@ export default function BusinessSettingsPage() {
           Forgot password
         </Link>
       </div>
+      <LanguageSettingsCard />
       <BusinessSettingsPanel />
     </div>
   );

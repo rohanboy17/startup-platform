@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import QRCode from "qrcode";
 import { ArrowRight, ShieldCheck, Zap, TrendingUp, Users, Briefcase, Timer } from "lucide-react";
+import { getLocale, getTranslations } from "next-intl/server";
 import HomeLiveSection from "@/components/home-live-section";
 import MotionSection from "@/components/motion-section";
 import HomeHeroText from "@/components/home-hero-text";
@@ -37,6 +38,9 @@ function extractSubmissionId(details: string | null) {
 }
 
 export default async function Home() {
+  const locale = await getLocale();
+  const tHome = await getTranslations("home");
+
   const siteUrl =
     process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
     process.env.NEXTAUTH_URL?.replace(/\/$/, "") ||
@@ -91,6 +95,11 @@ export default async function Home() {
       select: { createdAt: true, details: true },
     }),
   ]);
+
+  const heroTitle = locale === "en" ? landing.heroTitle : tHome("landing.heroTitle");
+  const heroSubtitle = locale === "en" ? landing.heroSubtitle : tHome("landing.heroSubtitle");
+  const howItWorksSteps = tHome.raw("sections.howItWorksSteps") as string[];
+  const forBusinessesSteps = tHome.raw("sections.forBusinessesSteps") as string[];
 
   // Avoid rendering duplicate active announcements (common during admin testing).
   const uniqueAnnouncements = (() => {
@@ -181,7 +190,7 @@ export default async function Home() {
                         target={item.link.startsWith("http") ? "_blank" : undefined}
                         rel={item.link.startsWith("http") ? "noreferrer noopener" : undefined}
                       >
-                        Learn more
+                        {tHome("announcements.learnMore")}
                       </Link>
                     ) : null}
                   </p>
@@ -195,8 +204,8 @@ export default async function Home() {
       <section className="relative mx-auto grid w-full max-w-screen-2xl items-stretch gap-8 px-4 pb-16 pt-8 sm:gap-10 sm:px-6 sm:pb-20 sm:pt-14 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
         <MotionSection className="min-w-0">
           <HomeHeroText
-            title={landing.heroTitle}
-            subtitle={landing.heroSubtitle}
+            title={heroTitle}
+            subtitle={heroSubtitle}
             avgApprovalTimeLabel={avgApprovalTimeLabel}
           />
           <HomeLiveFloatsAndStats initial={heroMetrics} showStats={showStats} />
@@ -216,40 +225,40 @@ export default async function Home() {
         <MotionStagger className="grid gap-6 lg:grid-cols-2">
           <MotionItem className="rounded-3xl border border-foreground/10 bg-foreground/5 p-6 sm:p-7">
             <div className="space-y-4">
-              <p className="text-sm font-semibold uppercase tracking-wide text-foreground/60">How it works</p>
-              <h2 className="text-2xl font-semibold sm:text-3xl">Earn in three simple steps</h2>
+              <p className="text-sm font-semibold uppercase tracking-wide text-foreground/60">{tHome("sections.howItWorksEyebrow")}</p>
+              <h2 className="text-2xl font-semibold sm:text-3xl">{tHome("sections.howItWorksTitle")}</h2>
               <ul className="space-y-3 text-sm text-foreground/70">
                 <li className="flex items-start gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-emerald-400" />
-                  Pick a verified task and follow the instructions.
+                  {howItWorksSteps[0]}
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-sky-400" />
-                  Submit proof and track your status in real time.
+                  {howItWorksSteps[1]}
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-violet-400" />
-                  Get approved and receive wallet credits quickly.
+                  {howItWorksSteps[2]}
                 </li>
               </ul>
             </div>
           </MotionItem>
           <MotionItem className="rounded-3xl border border-foreground/10 bg-foreground/5 p-6 sm:p-7">
             <div className="space-y-4">
-              <p className="text-sm font-semibold uppercase tracking-wide text-foreground/60">For businesses</p>
-              <h2 className="text-2xl font-semibold sm:text-3xl">Launch campaigns without noise</h2>
+              <p className="text-sm font-semibold uppercase tracking-wide text-foreground/60">{tHome("sections.forBusinessesEyebrow")}</p>
+              <h2 className="text-2xl font-semibold sm:text-3xl">{tHome("sections.forBusinessesTitle")}</h2>
               <ul className="space-y-3 text-sm text-foreground/70">
                 <li className="flex items-start gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-emerald-400" />
-                  Fund your wallet, set budget and reward per task.
+                  {forBusinessesSteps[0]}
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-sky-400" />
-                  Receive moderated submissions with fraud signals.
+                  {forBusinessesSteps[1]}
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-violet-400" />
-                  Track ROI with live analytics and export-ready reports.
+                  {forBusinessesSteps[2]}
                 </li>
               </ul>
             </div>
@@ -262,23 +271,23 @@ export default async function Home() {
           <MotionStagger className="grid gap-5 sm:gap-6 md:grid-cols-3 auto-rows-fr">
             <MotionItem className="flex h-full flex-col rounded-2xl border border-foreground/10 bg-foreground/5 p-5 backdrop-blur-none sm:p-6 sm:backdrop-blur-md">
               <ShieldCheck className="text-emerald-500" />
-              <h3 className="mt-4 text-xl font-semibold">Secure By Design</h3>
+              <h3 className="mt-4 text-xl font-semibold">{tHome("features.items.0.title")}</h3>
               <p className="mt-2 text-foreground/65">
-                Wallet ledger, moderation pipeline, and atomic reward settlement for trust at scale.
+                {tHome("features.items.0.body")}
               </p>
             </MotionItem>
             <MotionItem className="flex h-full flex-col rounded-2xl border border-foreground/10 bg-foreground/5 p-5 backdrop-blur-none sm:p-6 sm:backdrop-blur-md">
               <Zap className="text-sky-500" />
-              <h3 className="mt-4 text-xl font-semibold">Fast Campaign Launch</h3>
+              <h3 className="mt-4 text-xl font-semibold">{tHome("features.items.1.title")}</h3>
               <p className="mt-2 text-foreground/65">
-                Fund your business wallet, create campaigns, and start receiving submissions in minutes.
+                {tHome("features.items.1.body")}
               </p>
             </MotionItem>
             <MotionItem className="flex h-full flex-col rounded-2xl border border-foreground/10 bg-foreground/5 p-5 backdrop-blur-none sm:p-6 sm:backdrop-blur-md">
               <TrendingUp className="text-violet-500" />
-              <h3 className="mt-4 text-xl font-semibold">Actionable Growth</h3>
+              <h3 className="mt-4 text-xl font-semibold">{tHome("features.items.2.title")}</h3>
               <p className="mt-2 text-foreground/65">
-                Monitor campaign flow, approvals, and platform revenue from your analytics dashboards.
+                {tHome("features.items.2.body")}
               </p>
             </MotionItem>
           </MotionStagger>
@@ -289,23 +298,23 @@ export default async function Home() {
         <MotionStagger className="grid gap-6 md:grid-cols-3 auto-rows-fr">
           <MotionItem className="flex h-full flex-col rounded-3xl border border-foreground/10 bg-foreground/5 p-6 sm:p-7">
             <Users className="text-emerald-500" />
-            <h3 className="mt-4 text-lg font-semibold">Real users, real work</h3>
+            <h3 className="mt-4 text-lg font-semibold">{tHome("trust.items.0.title")}</h3>
             <p className="mt-2 text-sm text-foreground/70">
-              We show only anonymized activity and verified submissions to protect privacy.
+              {tHome("trust.items.0.body")}
             </p>
           </MotionItem>
           <MotionItem className="flex h-full flex-col rounded-3xl border border-foreground/10 bg-foreground/5 p-6 sm:p-7">
             <Briefcase className="text-sky-500" />
-            <h3 className="mt-4 text-lg font-semibold">Transparent costs</h3>
+            <h3 className="mt-4 text-lg font-semibold">{tHome("trust.items.1.title")}</h3>
             <p className="mt-2 text-sm text-foreground/70">
-              Clear commission breakdowns and funding fees so you know exactly where budgets go.
+              {tHome("trust.items.1.body")}
             </p>
           </MotionItem>
           <MotionItem className="flex h-full flex-col rounded-3xl border border-foreground/10 bg-foreground/5 p-6 sm:p-7">
             <Timer className="text-violet-500" />
-            <h3 className="mt-4 text-lg font-semibold">Reliable approvals</h3>
+            <h3 className="mt-4 text-lg font-semibold">{tHome("trust.items.2.title")}</h3>
             <p className="mt-2 text-sm text-foreground/70">
-              Average approval time: {avgApprovalTimeLabel}. Automated alerts keep queues moving.
+              {tHome("trust.items.2.body", { time: avgApprovalTimeLabel })}
             </p>
           </MotionItem>
         </MotionStagger>
@@ -314,9 +323,9 @@ export default async function Home() {
       <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-20">
         <MotionSection className="flex flex-col items-start justify-between gap-6 rounded-3xl border border-foreground/10 bg-foreground/5 p-6 sm:flex-row sm:items-center sm:p-7">
           <div>
-            <h2 className="text-2xl font-semibold">Ready to start earning?</h2>
+            <h2 className="text-2xl font-semibold">{tHome("cta.title")}</h2>
             <p className="mt-2 text-sm text-foreground/70">
-              Join thousands of users completing verified tasks every week.
+              {tHome("cta.body")}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -324,13 +333,13 @@ export default async function Home() {
               href="/register"
               className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition hover:scale-105"
             >
-              Start Earning <ArrowRight size={16} />
+              {tHome("hero.startEarning")} <ArrowRight size={16} />
             </Link>
             <Link
               href="/login"
               className="rounded-full border border-foreground/25 px-5 py-2.5 text-sm text-foreground/90 transition hover:bg-foreground/10"
             >
-              Create Campaign
+              {tHome("hero.createCampaign")}
             </Link>
           </div>
         </MotionSection>
@@ -341,19 +350,17 @@ export default async function Home() {
           <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
             <div className="space-y-5 lg:pr-6">
               <p className="text-xs font-semibold uppercase tracking-[0.26em] text-emerald-500/80 dark:text-emerald-300/70">
-                Offline Invite
+                {tHome("offlineInvite.eyebrow")}
               </p>
               <h2 className="max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">
-                Print this QR and let anyone join EarnHub in one scan.
+                {tHome("offlineInvite.title")}
               </h2>
               <p className="max-w-3xl text-sm leading-6 text-foreground/70 sm:text-base">
-                Designed for posters, flyers, business cards, and offline campaigns.
-                The code opens the main home page directly so new users can land on the
-                platform without typing the address.
+                {tHome("offlineInvite.body")}
               </p>
               <div className="flex w-full max-w-2xl flex-col gap-2 rounded-2xl border border-foreground/10 bg-foreground/[0.04] px-5 py-4 shadow-[0_12px_30px_-18px_rgba(0,0,0,0.2)]">
                 <span className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/55">
-                  Direct website link
+                  {tHome("offlineInvite.directLinkLabel")}
                 </span>
                 <span className="overflow-hidden text-ellipsis break-words text-sm font-semibold leading-7 text-foreground sm:text-base">
                   {siteUrl}
@@ -367,7 +374,7 @@ export default async function Home() {
                   <div className="mx-auto h-[240px] w-[240px] sm:h-[250px] sm:w-[250px]">
                     <Image
                       src={qrCodeDataUrl}
-                      alt="QR code linking to the EarnHub homepage"
+                      alt={tHome("offlineInvite.qrAlt")}
                       width={260}
                       height={260}
                       unoptimized
@@ -377,10 +384,10 @@ export default async function Home() {
                 </div>
                 <div className="mt-4 rounded-2xl border border-foreground/10 bg-foreground px-4 py-4 text-center text-background">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-300/80 dark:text-emerald-300/80">
-                    Scan To Join and Earn
+                    {tHome("offlineInvite.scanLabel")}
                   </p>
                   <p className="mt-1 text-base font-semibold text-background sm:text-lg">
-                    EarnHub Marketplace
+                    {tHome("offlineInvite.marketplaceLabel")}
                   </p>
                 </div>
               </div>

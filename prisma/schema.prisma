@@ -11,10 +11,14 @@ model User {
   name        String?
   email       String       @unique
   mobile      String?      @unique
+  defaultUpiId String?
+  defaultUpiName String?
   telegramChatId String?   @unique
   telegramLinkedAt DateTime?
   password    String
   role        Role         @default(USER)
+  timezone    String       @default("Asia/Calcutta")
+  sessionVersion Int       @default(0)
   businessOwnerId String?
   businessAccessRole BusinessAccessRole?
   accountStatus UserAccountStatus @default(ACTIVE)
@@ -33,6 +37,10 @@ model User {
   monthlyEmergencyWithdrawCount Int @default(0)
   emergencyWithdrawMonthKey String?
   lastLevelResetAt DateTime @default(now())
+  managerQueueSort ManagerQueueSort @default(NEWEST)
+  managerRiskOnly Boolean   @default(false)
+  managerAutoNext Boolean   @default(false)
+  managerProofMode ManagerProofMode @default(COMPACT)
   createdAt   DateTime     @default(now())
   ipAddress   String?
   isSuspicious Boolean     @default(false)
@@ -515,6 +523,16 @@ enum CampaignStatus {
 enum CampaignSubmissionMode {
   ONE_PER_USER
   MULTIPLE_PER_USER
+}
+
+enum ManagerQueueSort {
+  NEWEST
+  OLDEST
+}
+
+enum ManagerProofMode {
+  COMPACT
+  EXPANDED
 }
 
 enum SubmissionStatus {

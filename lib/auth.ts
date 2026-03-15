@@ -238,6 +238,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           role: user.role,
           accountStatus: user.accountStatus,
+          sessionVersion: user.sessionVersion,
         };
       },
     }),
@@ -248,19 +249,31 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.role = user.role;
         token.accountStatus = user.accountStatus;
+        token.sessionVersion = (user as { sessionVersion?: number }).sessionVersion ?? 0;
       }
 
       // Keep role/id in sync with DB so role changes apply without stale JWT behavior.
       if (token.email) {
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
-          select: { id: true, role: true, accountStatus: true },
+          select: { id: true, role: true, accountStatus: true, sessionVersion: true },
         });
 
         if (dbUser) {
+          const tokenVersion = typeof token.sessionVersion === "number" ? token.sessionVersion : 0;
+          if (dbUser.sessionVersion !== tokenVersion) {
+            // Session was revoked (e.g. "sign out of all devices"). Clear role/id so app guards redirect to /login.
+            delete token.id;
+            delete token.role;
+            delete token.accountStatus;
+            token.sessionVersion = dbUser.sessionVersion;
+            token.error = "SESSION_REVOKED";
+            return token;
+          }
           token.id = dbUser.id;
           token.role = dbUser.role;
           token.accountStatus = dbUser.accountStatus;
+          token.sessionVersion = dbUser.sessionVersion;
         }
       }
 

@@ -1,0 +1,458 @@
+{
+  "header": {
+    "home": "Home",
+    "about": "About",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "howItWorks": "How it works",
+    "trust": "Trust & safety",
+    "liveActivity": "Live activity",
+    "installApp": "Install App",
+    "signIn": "Sign In",
+    "register": "Register",
+    "dashboardHome": "Home"
+  },
+  "footer": {
+    "platform": "Platform",
+    "compliance": "Compliance",
+    "marketplace": "Marketplace",
+    "tagline": "A secure two-sided marketplace where users complete verified tasks and businesses launch measurable growth campaigns.",
+    "rights": "All rights reserved.",
+    "builtFor": "Built for secure payouts, moderation, and campaign analytics.",
+    "links": {
+      "home": "Home",
+      "about": "About",
+      "faq": "FAQ",
+      "contact": "Contact",
+      "support": "Support",
+      "sitemap": "Sitemap",
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "refund": "Refund Policy",
+      "cookie": "Cookie Policy",
+      "disclaimer": "Disclaimer",
+      "kyc": "KYC Policy"
+    }
+  },
+  "settings": {
+    "languageTitle": "Language",
+    "languageHelp": "Choose the language for the entire website on this device.",
+    "languageLabel": "Website language"
+  },
+  "public": {
+    "lastUpdated": "Last updated: {date}"
+  },
+  "languages": {
+    "en": "English",
+    "hi": "Hindi",
+    "bn": "Bengali"
+  },
+  "home": {
+    "landing": {
+      "heroTitle": "Earn by completing verified tasks.",
+      "heroSubtitle": "EarnHub is a secure two-sided marketplace where users complete verified tasks and businesses launch measurable growth campaigns."
+    },
+    "announcements": {
+      "learnMore": "Learn more"
+    },
+    "hero": {
+      "startEarning": "Start Earning",
+      "createCampaign": "Create Campaign",
+      "secureApprovals": "Secure approvals",
+      "manualFraud": "Manual fraud checks",
+      "avgApproval": "Avg approval: {time}",
+      "payoutsProtected": "Payouts protected",
+      "viewDashboard": "View dashboard"
+    },
+    "sections": {
+      "howItWorksEyebrow": "How it works",
+      "howItWorksTitle": "Earn in three simple steps",
+      "howItWorksSteps": [
+        "Pick a verified task and follow the instructions.",
+        "Submit proof and track your status in real time.",
+        "Get approved and receive wallet credits quickly."
+      ],
+      "forBusinessesEyebrow": "For businesses",
+      "forBusinessesTitle": "Launch campaigns without noise",
+      "forBusinessesSteps": [
+        "Fund your wallet, set budget and reward per task.",
+        "Receive moderated submissions with fraud signals.",
+        "Track ROI with live analytics and export-ready reports."
+      ]
+    },
+    "live": {
+      "title": "Live Platform Activity",
+      "subtitle": "Anonymized real-time feed. No personal data shown.",
+      "live": "Live",
+      "activeUsersLabel": "Active users",
+      "activeBusinessesLabel": "Active businesses",
+      "liveCampaignsLabel": "Live campaigns",
+      "liveWithdrawalsLabel": "Live withdrawals",
+      "activityHistory": "Activity History",
+      "loading": "Loading live activity...",
+      "statsError": "Failed to load live stats",
+      "activityError": "Failed to load live activity",
+      "noLiveWithdraw": "No live withdraw requests right now.",
+      "noActivity": "No recent activity yet. New events will appear here."
+    },
+    "features": {
+      "items": [
+        {
+          "title": "Secure By Design",
+          "body": "Wallet ledger, moderation pipeline, and atomic reward settlement for trust at scale."
+        },
+        {
+          "title": "Fast Campaign Launch",
+          "body": "Fund your business wallet, create campaigns, and start receiving submissions in minutes."
+        },
+        {
+          "title": "Actionable Growth",
+          "body": "Monitor campaign flow, approvals, and platform revenue from your analytics dashboards."
+        }
+      ]
+    },
+    "trust": {
+      "items": [
+        {
+          "title": "Real users, real work",
+          "body": "We show only anonymized activity and verified submissions to protect privacy."
+        },
+        {
+          "title": "Transparent costs",
+          "body": "Clear commission breakdowns and funding fees so you know exactly where budgets go."
+        },
+        {
+          "title": "Reliable approvals",
+          "body": "Average approval time: {time}. Automated alerts keep queues moving."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Ready to start earning?",
+      "body": "Join thousands of users completing verified tasks every week."
+    },
+    "offlineInvite": {
+      "eyebrow": "Offline Invite",
+      "title": "Print this QR and let anyone join EarnHub in one scan.",
+      "body": "Designed for posters, flyers, business cards, and offline campaigns. The code opens the main home page directly so new users can land on the platform without typing the address.",
+      "directLinkLabel": "Direct website link",
+      "scanLabel": "Scan To Join and Earn",
+      "marketplaceLabel": "EarnHub Marketplace",
+      "qrAlt": "QR code linking to the EarnHub homepage"
+    }
+  },
+  "about": {
+    "eyebrow": "About",
+    "title": "About EarnHub",
+    "description": "EarnHub is a trusted task marketplace where businesses run measurable campaigns and users earn from verified work.",
+    "sections": {
+      "build": {
+        "title": "What We Build",
+        "body": "We provide a two-sided system: businesses launch campaign tasks, and users submit proof of completion. Every submission flows through moderation before financial settlement."
+      },
+      "trust": {
+        "title": "How Trust Is Maintained",
+        "bullets": [
+          "Role-based moderation (manager + admin workflow)",
+          "Wallet ledger transparency for credits, debits, and payouts",
+          "Fraud and abuse checks before approvals",
+          "Audit-friendly review and decision history"
+        ]
+      },
+      "direction": {
+        "title": "Our Product Direction",
+        "body": "EarnHub is designed as a long-term growth platform, not a one-time gig board. We focus on reliable payouts, clear business ROI, and operational compliance from day one."
+      }
+    }
+  },
+  "faq": {
+    "eyebrow": "Help Center",
+    "title": "Frequently Asked Questions",
+    "description": "Quick answers about accounts, approvals, payouts, campaign workflow, and platform trust.",
+    "sectionTitle": "FAQ",
+    "items": [
+      {
+        "q": "What is EarnHub?",
+        "a": "EarnHub is a two-sided marketplace where businesses launch campaigns and users earn by completing verified tasks."
+      },
+      {
+        "q": "When do users receive rewards?",
+        "a": "Rewards are credited after manager/admin approval according to the moderation workflow and campaign rules."
+      },
+      {
+        "q": "How long do withdrawals take?",
+        "a": "Most withdrawal requests are processed within 3 to 5 business days, subject to fraud and compliance checks."
+      },
+      {
+        "q": "Can businesses launch campaigns immediately?",
+        "a": "Business accounts may require KYC approval before campaign creation and budget deployment."
+      },
+      {
+        "q": "Do you share personal data?",
+        "a": "We do not sell personal data. Data sharing is limited to essential service providers and legal/regulatory obligations."
+      }
+    ]
+  },
+  "contact": {
+    "eyebrow": "Support",
+    "title": "Contact EarnHub",
+    "description": "For account support, payment concerns, compliance questions, or dispute escalation, contact our team.",
+    "supportEmailTitle": "Support Email",
+    "supportEmailLead": "Primary support channel:",
+    "supportResponse": "Typical first response: 24 to 48 business hours.",
+    "hoursTitle": "Business Hours",
+    "hoursDays": "Monday to Saturday",
+    "hoursTime": "10:00 AM to 7:00 PM (IST)",
+    "hoursNote": "Critical payout or security incidents are prioritized.",
+    "addressTitle": "Registered Support Address"
+  },
+  "user": {
+    "overview": {
+      "eyebrow": "Daily earning center",
+      "title": "User Overview",
+      "ctaTasks": "Find Tasks",
+      "ctaWithdraw": "Withdraw",
+      "kpiAvailable": "Available balance",
+      "kpiCoins": "EarnHub Coins",
+      "kpiPendingWithdrawal": "Pending withdrawal",
+      "kpiTotalWithdrawn": "Total withdrawn",
+      "kpiApprovedSubmissions": "Approved submissions",
+      "kpiUnread": "Unread notifications",
+      "shortcutsTitle": "Quick shortcuts",
+      "openWallet": "Open wallet",
+      "openSubmissions": "Open submissions",
+      "openNotifications": "Open notifications",
+      "openReferrals": "Open referrals",
+      "recentNotifications": "Recent notifications",
+      "attentionTitle": "What needs your attention",
+      "openInbox": "Open inbox",
+      "noNotifications": "No notifications yet. Approval and withdrawal updates will appear here.",
+      "unread": "Unread",
+      "recentActivity": "Recent activity",
+      "activityTitle": "Latest balance and submission changes",
+      "walletDetails": "Wallet details",
+      "noActivity": "No activity yet. Complete a task or request a withdrawal to populate the timeline.",
+      "loading": "Loading user overview...",
+      "failed": "Failed to load overview",
+      "unexpected": "Unexpected server response"
+    },
+    "wallet": {
+      "eyebrow": "Money center",
+      "title": "Wallet",
+      "openWithdrawals": "Open withdrawals",
+      "kpiAvailable": "Available Balance",
+      "kpiEarned": "Total Earned",
+      "kpiDebited": "Total Debited",
+      "kpiPending": "Pending Payout",
+      "historyEyebrow": "Transaction history",
+      "historyTitle": "Credits and debits",
+      "latestEntries": "Latest 20 entries",
+      "noTransactions": "No wallet transactions yet. Approved rewards and withdrawals will show here.",
+      "txFallback": "Wallet transaction",
+      "loading": "Loading wallet...",
+      "failed": "Failed to load wallet",
+      "unexpected": "Unexpected server response"
+    },
+    "withdrawals": {
+      "eyebrow": "Payout center",
+      "title": "Withdrawals",
+      "kpiAvailable": "Available Balance",
+      "kpiPending": "Pending Amount",
+      "kpiApproved": "Approved Payouts",
+      "kpiRejected": "Rejected Requests",
+      "kpiEmergency": "Emergency Uses Left",
+      "requestEyebrow": "Request payout",
+      "requestTitle": "Submit withdrawal details",
+      "ruleMin": "Minimum withdrawal: INR {amount}",
+      "ruleOnePending": "Only one pending withdrawal request is allowed at a time.",
+      "ruleAdminReview": "Admin reviews determine approval or rejection.",
+      "ruleEmergency": "Emergency withdrawals below the minimum are allowed 2 times per month.",
+      "historyEyebrow": "Withdrawal history",
+      "historyTitle": "Request status timeline",
+      "totalRequests": "{count} total requests",
+      "loadingHistory": "Loading withdrawal history...",
+      "noHistory": "No withdrawal history yet.",
+      "requestLabel": "Withdrawal request",
+      "emergencyLabel": "Emergency withdrawal",
+      "adminNote": "Admin note: {note}",
+      "failed": "Failed to load withdrawals",
+      "unexpected": "Unexpected response"
+    },
+    "withdrawRequest": {
+      "title": "Request Withdrawal",
+      "min": "Minimum withdrawal amount: INR {amount}",
+      "available": "Available balance: INR {amount}",
+      "emergencyLeft": "Emergency withdraws left this month: {count}",
+      "amountPlaceholder": "Enter amount (normal min INR {amount})",
+      "upiIdPlaceholder": "Enter UPI ID or Mobile Number",
+      "upiNamePlaceholder": "Enter UPI Name or Banking Name",
+      "submit": "Submit Withdrawal Request",
+      "submitting": "Submitting...",
+      "helper": "Amounts below INR {amount} are treated as emergency withdrawals and are limited to 2 per month.",
+      "created": "Withdrawal request created",
+      "failed": "Withdrawal request failed",
+      "unexpected": "Unexpected server response"
+    },
+    "submissions": {
+      "loading": "Loading submissions...",
+      "kpiTotal": "Total Submissions",
+      "kpiPending": "Pending Review",
+      "kpiApproved": "Approved",
+      "kpiRejected": "Rejected",
+      "eyebrow": "Status timeline",
+      "title": "Track each review stage clearly",
+      "searchPlaceholder": "Search campaign or proof",
+      "filterAll": "All",
+      "filterPendingManager": "Pending manager",
+      "filterPendingAdmin": "Pending admin",
+      "filterApproved": "Approved",
+      "filterManagerRejected": "Manager rejected",
+      "filterAdminRejected": "Admin rejected",
+      "empty": "No submissions match the current filters.",
+      "campaignFallback": "Campaign submission",
+      "uncategorized": "Uncategorized",
+      "reward": "Reward INR {amount}",
+      "reviewStatus": "Review status",
+      "manager": "Manager: {status}",
+      "admin": "Admin: {status}",
+      "submitted": "Submitted {date}",
+      "proofPreview": "Proof preview",
+      "openProof": "Open proof link",
+      "noReason": "No structured rejection reason is stored yet for this submission. Only rejection status is available.",
+      "failed": "Failed to load submissions",
+      "unexpected": "Unexpected server response"
+    },
+    "tasks": {
+      "title": "Live Campaigns",
+      "loading": "Loading campaigns...",
+      "empty": "No live campaigns right now.",
+      "openTaskLink": "Open task link",
+      "budgetLeft": "Budget left: INR {amount}",
+      "allowed": "Allowed",
+      "used": "Used",
+      "slotsLeft": "Slots Left",
+      "onePerUser": "One submission per user",
+      "manyPerUser": "Many submissions per user",
+      "blocked": "You already used your one allowed submission for this campaign.",
+      "viewTask": "View Task",
+      "startTask": "Start Task",
+      "alreadySubmitted": "Already Submitted",
+      "failed": "Failed to load campaigns",
+      "unexpected": "Unexpected server response"
+    },
+    "taskDetail": {
+      "loading": "Loading campaign details...",
+      "back": "Back to tasks",
+      "eyebrow": "Task detail",
+      "detailsEyebrow": "Task details",
+      "detailsTitle": "Current slot instruction",
+      "currentDetail": "Current detail #{sequence}",
+      "noVariants": "No task detail variants were added for this campaign. Use the task description and link carefully.",
+      "assignmentTitle": "Live task detail assignment",
+      "assignmentBody": "This detail refreshes automatically as slots are taken and released. If unique task details run out before campaign slots are full, the system reuses available details from the same pool.",
+      "fillRate": "Campaign fill rate",
+      "statusAllOccupied": "All campaign slots are currently occupied.",
+      "statusNotAccepting": "This campaign is not accepting submissions right now.",
+      "statusSlotsLeft": "{count} slot{plural} left right now.",
+      "submitEyebrow": "Submit proof",
+      "submitTitle": "Send this task for review",
+      "proofWarning": "Submit genuine proof only. Invalid or copied proof can be rejected and may trigger fraud review.",
+      "proofLinkLabel": "Proof link",
+      "proofLinkPlaceholder": "Paste the proof URL if this task needs a link",
+      "proofDetailsLabel": "Proof details",
+      "proofDetailsPlaceholder": "Add submission details, notes, or text proof",
+      "submitForReview": "Submit for review",
+      "submissionUnavailable": "Submission unavailable",
+      "submitting": "Submitting...",
+      "blocked": "You have already submitted once for this campaign. Further submissions are disabled by admin.",
+      "addProof": "Add a proof link or proof text before submitting.",
+      "failed": "Failed to load campaign",
+      "unexpected": "Unexpected server response",
+      "submissionFailed": "Submission failed",
+      "sent": "Submission sent for review.",
+      "taskLink": "Open task link"
+    },
+    "referrals": {
+      "loading": "Loading referrals...",
+      "eyebrow": "Referral rewards",
+      "title": "Coins and referrals",
+      "kpiCoin": "Coin balance",
+      "kpiEstimated": "Estimated wallet value",
+      "kpiTotalInvites": "Total invites",
+      "kpiRewardedInvites": "Rewarded invites",
+      "kpiPendingInvites": "Pending invites",
+      "kpiMonthlyRedeemed": "Redeemed this month",
+      "copy": "Copied to clipboard",
+      "copyFail": "Unable to copy automatically",
+      "redeem": "Redeem Coins",
+      "redeeming": "Redeeming...",
+      "redeemed": "Coins redeemed",
+      "redeemFailed": "Redemption failed",
+      "rules": "Current rules",
+      "minRedeem": "Minimum redeem: {count} coins",
+      "monthlyLimit": "Monthly limit: {count} coins",
+      "rate": "Conversion rate: 1 coin = INR {amount}",
+      "redeemedThisMonth": "Redeemed this month: {count} coins",
+      "redeemPlaceholder": "Enter coins (min {count})",
+      "historyEyebrow": "Referral history",
+      "historyTitle": "Users you invited",
+      "noInvites": "No referrals yet. Share your code to start earning coins.",
+      "joined": "Joined {date}",
+      "coinActivityEyebrow": "Coin activity",
+      "coinActivityTitle": "Credits and redemptions",
+      "noCoinTx": "No coin transactions yet."
+    }
+  },
+  "business": {
+    "campaignsPageTitle": "Your Campaigns",
+    "analyticsPageTitle": "Campaign Analytics",
+    "kycPageTitle": "Business KYC",
+    "notificationsPageTitle": "Notifications",
+    "activityPageTitle": "Activity Log",
+    "reviewsPageTitle": "Business Reviews",
+    "teamPageTitle": "Team Members",
+    "settingsPageTitle": "Settings"
+  },
+  "dashboard": {
+    "greeting": {
+      "welcomeBack": "Welcome back!",
+      "fallback": "Welcome back, {name}!",
+      "goodMorning": "Good morning, {name}!",
+      "goodAfternoon": "Good afternoon, {name}!",
+      "goodEvening": "Good evening, {name}!"
+    },
+    "nav": {
+      "overview": "Overview",
+      "tasks": "Tasks",
+      "submissions": "Submissions",
+      "wallet": "Wallet",
+      "withdrawals": "Withdrawals",
+      "referrals": "Referrals",
+      "notifications": "Notifications",
+      "help": "Help",
+      "settings": "Settings",
+      "submissionQueue": "Submission Queue",
+      "history": "History",
+      "risk": "Risk",
+      "campaigns": "Campaigns",
+      "reviews": "Reviews",
+      "kyc": "KYC",
+      "createCampaign": "Create Campaign",
+      "analytics": "Analytics",
+      "funding": "Funding",
+      "trust": "Trust",
+      "activity": "Activity",
+      "team": "Team",
+      "riskCenter": "Risk Center",
+      "campaignManagement": "Campaign Management",
+      "finalReviews": "Final Reviews",
+      "users": "Users",
+      "businesses": "Businesses",
+      "revenue": "Revenue",
+      "compliance": "Compliance",
+      "cms": "Content & CMS",
+      "auditLogs": "Audit Logs",
+      "systemSettings": "System Settings"
+    }
+  }
+}

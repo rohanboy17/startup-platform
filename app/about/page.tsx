@@ -1,34 +1,31 @@
 import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
+import { getTranslations } from "next-intl/server";
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const t = await getTranslations("about");
+  const bullets = (t.raw("sections.trust.bullets") as string[]) || [];
+
   return (
     <PublicPageShell
-      eyebrow="About"
-      title="About EarnHub"
-      description="EarnHub is a trusted task marketplace where businesses run measurable campaigns and users earn from verified work."
+      eyebrow={t("eyebrow")}
+      title={t("title")}
+      description={t("description")}
     >
       <div className="space-y-4">
-        <PolicySection title="What We Build">
-          <p>
-            We provide a two-sided system: businesses launch campaign tasks, and users submit proof
-            of completion. Every submission flows through moderation before financial settlement.
-          </p>
+        <PolicySection title={t("sections.build.title")}>
+          <p>{t("sections.build.body")}</p>
         </PolicySection>
 
-        <PolicySection title="How Trust Is Maintained">
+        <PolicySection title={t("sections.trust.title")}>
           <ul className="list-disc space-y-1 pl-5">
-            <li>Role-based moderation (manager + admin workflow)</li>
-            <li>Wallet ledger transparency for credits, debits, and payouts</li>
-            <li>Fraud and abuse checks before approvals</li>
-            <li>Audit-friendly review and decision history</li>
+            {bullets.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
           </ul>
         </PolicySection>
 
-        <PolicySection title="Our Product Direction">
-          <p>
-            EarnHub is designed as a long-term growth platform, not a one-time gig board. We focus
-            on reliable payouts, clear business ROI, and operational compliance from day one.
-          </p>
+        <PolicySection title={t("sections.direction.title")}>
+          <p>{t("sections.direction.body")}</p>
         </PolicySection>
       </div>
     </PublicPageShell>

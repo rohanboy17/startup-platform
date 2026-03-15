@@ -41,14 +41,15 @@ export default async function UserLayout({
             userId={session.user.id}
             showForgotPasswordInNav
             items={[
-              { key: "user.overview", href: "/dashboard/user", label: "Overview", icon: "overview" },
-              { key: "user.tasks", href: "/dashboard/user/tasks", label: "Tasks", icon: "tasks" },
-              { key: "user.submissions", href: "/dashboard/user/submissions", label: "Submissions", icon: "submissions" },
-              { key: "user.wallet", href: "/dashboard/user/wallet", label: "Wallet", icon: "wallet" },
-              { key: "user.withdrawals", href: "/dashboard/user/withdrawals", label: "Withdrawals", icon: "withdrawals" },
-              { key: "user.referrals", href: "/dashboard/user/referrals", label: "Referrals", icon: "referrals" },
-              { key: "user.notifications", href: "/dashboard/user/notifications", label: "Notifications", icon: "notifications" },
-              { key: "user.help", href: "/dashboard/user/help", label: "Help", icon: "help" },
+              { key: "user.overview", href: "/dashboard/user", label: "Overview", labelKey: "overview", icon: "overview" },
+              { key: "user.tasks", href: "/dashboard/user/tasks", label: "Tasks", labelKey: "tasks", icon: "tasks" },
+              { key: "user.submissions", href: "/dashboard/user/submissions", label: "Submissions", labelKey: "submissions", icon: "submissions" },
+              { key: "user.wallet", href: "/dashboard/user/wallet", label: "Wallet", labelKey: "wallet", icon: "wallet" },
+              { key: "user.withdrawals", href: "/dashboard/user/withdrawals", label: "Withdrawals", labelKey: "withdrawals", icon: "withdrawals" },
+              { key: "user.referrals", href: "/dashboard/user/referrals", label: "Referrals", labelKey: "referrals", icon: "referrals" },
+              { key: "user.notifications", href: "/dashboard/user/notifications", label: "Notifications", labelKey: "notifications", icon: "notifications" },
+              { key: "user.settings", href: "/dashboard/user/settings", label: "Settings", labelKey: "settings", icon: "settings" },
+              { key: "user.help", href: "/dashboard/user/help", label: "Help", labelKey: "help", icon: "help" },
             ]}
           />
         </aside>
