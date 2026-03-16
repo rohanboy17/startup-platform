@@ -1183,7 +1183,8 @@
         "reviewReason": "রিভিউ কারণ",
         "openScreenshot": "Open screenshot",
         "screenshotUploaded": "Screenshot proof uploaded. Use the preview button to view it."
-      }
+      },
+      "openProof": "Open proof link"
     },
     "campaignEditor": {
       "header": {

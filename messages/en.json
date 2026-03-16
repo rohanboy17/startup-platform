@@ -1143,7 +1143,8 @@
         "openScreenshot": "Open screenshot",
         "reviewReason": "Review reason",
         "screenshotUploaded": "Screenshot proof uploaded. Use the preview button to view it."
-      }
+      },
+      "openProof": "Open proof link"
     },
     "campaignEditor": {
       "header": {
