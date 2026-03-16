@@ -241,10 +241,10 @@ export default async function AdminReviewsPage({
                     Proof:{" "}
                     {submission.proofText ||
                       submission.proofLink ||
-                      submission.proofImage ||
+                      (submission.proofImage ? "Screenshot proof uploaded." : null) ||
                       submission.proof}
                   </p>
-                  <div className="flex flex-wrap gap-3 text-sm">
+                  <div className="flex flex-col gap-2 text-sm sm:flex-row sm:flex-wrap sm:items-center">
                     {submission.proofLink ? (
                       <a
                         href={submission.proofLink}
@@ -312,7 +312,7 @@ export default async function AdminReviewsPage({
                   Proof:{" "}
                   {submission.proofText ||
                     submission.proofLink ||
-                    submission.proofImage ||
+                    (submission.proofImage ? "Screenshot proof uploaded." : null) ||
                     submission.proof}
                 </p>
                 <p className="text-xs text-white/50">

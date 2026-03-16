@@ -64,7 +64,10 @@ function waitLabel(value: string) {
 }
 
 function proofPreview(item: QueueItem) {
-  return item.proofText || item.proofLink || item.proofImage || item.proof || "No proof content";
+  if (item.proofText) return item.proofText;
+  if (item.proofLink) return item.proofLink;
+  if (item.proofImage) return "Screenshot proof uploaded. Use the preview button to view it.";
+  return item.proof || "No proof content";
 }
 
 export default function ManagerSubmissionQueuePanel() {
@@ -277,7 +280,7 @@ export default function ManagerSubmissionQueuePanel() {
 
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <p className="text-xs uppercase tracking-[0.16em] text-white/35">Proof preview</p>
-                      <div className="flex flex-wrap gap-3">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                         {submission.proofLink ? (
                           <a
                             href={normalizeExternalUrl(submission.proofLink) ?? "#"}

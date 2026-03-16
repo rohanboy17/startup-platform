@@ -18,7 +18,13 @@ export default function ProofImageDialog({
 
   return (
     <>
-      <Button type="button" variant="outline" size="sm" onClick={() => setOpen(true)}>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => setOpen(true)}
+        className="w-full sm:w-auto"
+      >
         {label}
       </Button>
 
@@ -28,19 +34,19 @@ export default function ProofImageDialog({
             <DialogTitle className="text-base text-foreground">{title}</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-4 px-5 py-4">
+          <div className="space-y-4 px-4 py-4 sm:px-5">
             <div className="rounded-2xl border border-foreground/10 bg-background/60 p-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={url}
                 alt="Proof screenshot"
                 loading="lazy"
-                className="block h-auto w-full rounded-xl bg-background object-contain"
+                className="block max-h-[60vh] w-full rounded-xl bg-background object-contain"
               />
             </div>
 
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <p className="break-all text-xs text-foreground/60">{url}</p>
+              <p className="hidden break-all text-xs text-foreground/60 sm:block">{url}</p>
               <a
                 href={url}
                 target="_blank"
@@ -56,4 +62,3 @@ export default function ProofImageDialog({
     </>
   );
 }
-
