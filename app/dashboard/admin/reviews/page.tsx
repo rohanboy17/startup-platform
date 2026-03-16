@@ -13,6 +13,13 @@ type SearchParams = {
   sort?: "newest" | "fraud";
 };
 
+function isLikelyScreenshotUrl(value: string | null | undefined) {
+  if (!value) return false;
+  if (!/^https:\/\//i.test(value)) return false;
+  if (value.includes("res.cloudinary.com") && value.includes("/task_proofs/")) return true;
+  return /\.(webp|png|jpe?g)$/i.test(value);
+}
+
 function getFraudScore(opts: {
   ipSubmissionCount: number;
   rapidSubmissionCount: number;
@@ -241,7 +248,7 @@ export default async function AdminReviewsPage({
                     Proof:{" "}
                     {submission.proofText ||
                       submission.proofLink ||
-                      (submission.proofImage ? "Screenshot proof uploaded." : null) ||
+                      ((submission.proofImage || isLikelyScreenshotUrl(submission.proof)) ? "Screenshot proof uploaded." : null) ||
                       submission.proof}
                   </p>
                   <div className="flex flex-col gap-2 text-sm sm:flex-row sm:flex-wrap sm:items-center">
@@ -255,9 +262,13 @@ export default async function AdminReviewsPage({
                         View link
                       </a>
                     ) : null}
-                    {submission.proofImage ? (
-                      <ProofImageDialog url={submission.proofImage} label="Preview screenshot" />
-                    ) : null}
+                    {(() => {
+                      const screenshotUrl =
+                        submission.proofImage || (isLikelyScreenshotUrl(submission.proof) ? submission.proof : null);
+                      return screenshotUrl ? (
+                        <ProofImageDialog url={screenshotUrl} label="Preview screenshot" />
+                      ) : null;
+                    })()}
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2 text-xs">
@@ -312,7 +323,7 @@ export default async function AdminReviewsPage({
                   Proof:{" "}
                   {submission.proofText ||
                     submission.proofLink ||
-                    (submission.proofImage ? "Screenshot proof uploaded." : null) ||
+                    ((submission.proofImage || isLikelyScreenshotUrl(submission.proof)) ? "Screenshot proof uploaded." : null) ||
                     submission.proof}
                 </p>
                 <p className="text-xs text-white/50">

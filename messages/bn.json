@@ -482,7 +482,8 @@
       "noReason": "এই সাবমিশনের জন্য এখনো কোনো স্ট্রাকচার্ড রিজেকশন কারণ সংরক্ষণ করা হয়নি। শুধু স্ট্যাটাস পাওয়া যাবে।",
       "failed": "সাবমিশন লোড করা যায়নি",
       "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
-      "openScreenshot": "Open screenshot"
+      "openScreenshot": "Open screenshot",
+      "screenshotUploaded": "Screenshot proof uploaded. Use the preview button to view it."
     },
     "tasks": {
       "title": "লাইভ ক্যাম্পেইন",
@@ -1180,7 +1181,8 @@
         "participantPrivacy": "প্রাইভেসির জন্য পরিচয় গোপন রাখা হয়।",
         "proof": "প্রুফ",
         "reviewReason": "রিভিউ কারণ",
-        "openScreenshot": "Open screenshot"
+        "openScreenshot": "Open screenshot",
+        "screenshotUploaded": "Screenshot proof uploaded. Use the preview button to view it."
       }
     },
     "campaignEditor": {

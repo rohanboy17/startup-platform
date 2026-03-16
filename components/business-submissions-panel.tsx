@@ -62,6 +62,13 @@ function stageTone(stage: SubmissionStage) {
   return "bg-rose-400/15 text-rose-100 border-rose-400/20";
 }
 
+function isLikelyScreenshotUrl(value: string | null | undefined) {
+  if (!value) return false;
+  if (!/^https:\/\//i.test(value)) return false;
+  if (value.includes("res.cloudinary.com") && value.includes("/task_proofs/")) return true;
+  return /\.(webp|png|jpe?g)$/i.test(value);
+}
+
 export default function BusinessSubmissionsPanel() {
   const t = useTranslations("business.submissionsPanel");
   const tCategories = useTranslations("business.categories");
@@ -271,25 +278,38 @@ export default function BusinessSubmissionsPanel() {
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("row.proof")}</p>
-                    <p className="mt-2 break-words text-sm text-white/75">
-                      {submission.proofText || submission.proofLink || submission.proof}
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {submission.proofImage ? (
-                        <ProofImageDialog url={submission.proofImage} label={t("row.openScreenshot")} />
-                      ) : null}
-                      {submission.proofLink ? (
-                        <a
-                          href={submission.proofLink}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-sm text-emerald-200 underline underline-offset-4"
-                        >
-                          <ExternalLink size={14} />
-                          Open proof link
-                        </a>
-                      ) : null}
-                    </div>
+                    {(() => {
+                      const screenshotUrl =
+                        submission.proofImage || (isLikelyScreenshotUrl(submission.proof) ? submission.proof : null);
+                      const proofText =
+                        submission.proofText ||
+                        submission.proofLink ||
+                        (screenshotUrl ? t("row.screenshotUploaded") : null) ||
+                        submission.proof ||
+                        "";
+
+                      return (
+                        <>
+                          <p className="mt-2 break-words text-sm text-white/75">{proofText}</p>
+                          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+                            {screenshotUrl ? (
+                              <ProofImageDialog url={screenshotUrl} label={t("row.openScreenshot")} />
+                            ) : null}
+                            {submission.proofLink ? (
+                              <a
+                                href={submission.proofLink}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1 text-sm text-emerald-200 underline underline-offset-4"
+                              >
+                                <ExternalLink size={14} />
+                                {t("openProof")}
+                              </a>
+                            ) : null}
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
 

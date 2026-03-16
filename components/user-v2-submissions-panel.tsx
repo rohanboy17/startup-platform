@@ -49,6 +49,13 @@ function stageTone(stage: SubmissionStage) {
   }
 }
 
+function isLikelyScreenshotUrl(value: string | null | undefined) {
+  if (!value) return false;
+  if (!/^https:\/\//i.test(value)) return false;
+  if (value.includes("res.cloudinary.com") && value.includes("/task_proofs/")) return true;
+  return /\.(webp|png|jpe?g)$/i.test(value);
+}
+
 export default function UserV2SubmissionsPanel() {
   const t = useTranslations("user.submissions");
   const locale = useLocale();
@@ -92,10 +99,13 @@ export default function UserV2SubmissionsPanel() {
 
   const proofPreview = useCallback(
     (submission: Submission) => {
+      const screenshotUrl =
+        submission.proofImage || (isLikelyScreenshotUrl(submission.proof) ? submission.proof : null);
+
       return (
         submission.proofText ||
         submission.proofLink ||
-        submission.proofImage ||
+        (screenshotUrl ? t("screenshotUploaded") : null) ||
         submission.proof ||
         t("noProof")
       );
@@ -247,9 +257,13 @@ export default function UserV2SubmissionsPanel() {
                           {t("openProof")}
                         </a>
                       ) : null}
-                      {submission.proofImage ? (
-                        <ProofImageDialog url={submission.proofImage} label={t("openScreenshot")} />
-                      ) : null}
+                      {(() => {
+                        const screenshotUrl =
+                          submission.proofImage || (isLikelyScreenshotUrl(submission.proof) ? submission.proof : null);
+                        return screenshotUrl ? (
+                          <ProofImageDialog url={screenshotUrl} label={t("openScreenshot")} />
+                        ) : null;
+                      })()}
                     </div>
                   </div>
 

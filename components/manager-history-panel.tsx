@@ -52,6 +52,13 @@ function statusLabel(action: string) {
         : "Updated";
 }
 
+function isLikelyScreenshotUrl(value: string | null | undefined) {
+  if (!value) return false;
+  if (!/^https:\/\//i.test(value)) return false;
+  if (value.includes("res.cloudinary.com") && value.includes("/task_proofs/")) return true;
+  return /\.(webp|png|jpe?g)$/i.test(value);
+}
+
 export default function ManagerHistoryPanel() {
   const [rows, setRows] = useState<HistoryRow[]>([]);
   const [error, setError] = useState("");
@@ -197,7 +204,7 @@ export default function ManagerHistoryPanel() {
                     <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
                       <div className="flex items-center justify-between gap-3">
                         <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">Reason / Proof</p>
-                        <div className="flex flex-wrap gap-3">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
                           {row.submission?.proofLink ? (
                             <a
                               href={normalizeExternalUrl(row.submission.proofLink) ?? "#"}
@@ -209,9 +216,15 @@ export default function ManagerHistoryPanel() {
                               Open link
                             </a>
                           ) : null}
-                          {row.submission?.proofImage ? (
-                            <ProofImageDialog url={row.submission.proofImage} label="Preview screenshot" />
-                          ) : null}
+                          {(() => {
+                            const submission = row.submission;
+                            const screenshotUrl =
+                              submission?.proofImage ||
+                              (isLikelyScreenshotUrl(submission?.proof) ? submission?.proof : null);
+                            return screenshotUrl ? (
+                              <ProofImageDialog url={screenshotUrl} label="Preview screenshot" />
+                            ) : null;
+                          })()}
                         </div>
                       </div>
                       {row.reason || row.submission?.managerEscalationReason ? (
@@ -223,11 +236,19 @@ export default function ManagerHistoryPanel() {
                         </div>
                       ) : (
                         <p className="text-sm text-foreground/70 break-words">
-                          {row.submission?.proofText ||
-                            row.submission?.proofLink ||
-                            row.submission?.proofImage ||
-                            row.submission?.proof ||
-                            "No proof stored"}
+                          {(() => {
+                            const submission = row.submission;
+                            if (!submission) return "No proof stored";
+                            const screenshotUrl =
+                              submission.proofImage || (isLikelyScreenshotUrl(submission.proof) ? submission.proof : null);
+                            return (
+                              submission.proofText ||
+                              submission.proofLink ||
+                              (screenshotUrl ? "Screenshot proof uploaded." : null) ||
+                              submission.proof ||
+                              "No proof stored"
+                            );
+                          })()}
                         </p>
                       )}
                     </div>

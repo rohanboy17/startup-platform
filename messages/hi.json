@@ -482,7 +482,8 @@
       "noReason": "इस सबमिशन के लिए अभी कोई स्ट्रक्चर्ड रिजेक्शन कारण स्टोर नहीं है। केवल स्टेटस उपलब्ध है।",
       "failed": "सबमिशन लोड नहीं हो पाए",
       "unexpected": "अनपेक्षित सर्वर रिस्पॉन्स",
-      "openScreenshot": "Open screenshot"
+      "openScreenshot": "Open screenshot",
+      "screenshotUploaded": "Screenshot proof uploaded. Use the preview button to view it."
     },
     "tasks": {
       "title": "लाइव कैंपेन",
@@ -1180,7 +1181,8 @@
         "participantPrivacy": "प्राइवेसी के लिए पहचान छिपी रहती है।",
         "proof": "प्रूफ",
         "reviewReason": "रिव्यू रीजन",
-        "openScreenshot": "Open screenshot"
+        "openScreenshot": "Open screenshot",
+        "screenshotUploaded": "Screenshot proof uploaded. Use the preview button to view it."
       }
     },
     "campaignEditor": {

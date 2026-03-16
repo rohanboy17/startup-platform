@@ -442,7 +442,8 @@
       "openScreenshot": "Open screenshot",
       "noReason": "No structured rejection reason is stored yet for this submission. Only rejection status is available.",
       "failed": "Failed to load submissions",
-      "unexpected": "Unexpected server response"
+      "unexpected": "Unexpected server response",
+      "screenshotUploaded": "Screenshot proof uploaded. Use the preview button to view it."
     },
     "tasks": {
       "title": "Live Campaigns",
@@ -629,72 +630,72 @@
       "work": "Type B - Work-Based Task"
     },
     "loading": {
-      "dashboard": "Loading dashboard..."
+      "dashboard": "Loading business dashboard..."
     },
     "funding": {
+      "loading": "Loading funding center...",
       "labels": {
         "notYet": "Not yet",
-        "topUpDescription": "Wallet top-up"
+        "topUpDescription": "Business wallet top-up"
       },
       "errors": {
         "unexpectedServerResponse": "Unexpected server response",
         "failedToLoad": "Failed to load funding data",
-        "gatewayLoadFailed": "Failed to load payment gateway",
+        "gatewayLoadFailed": "Failed to load payment gateway. Try again.",
         "fundingFailed": "Funding failed",
-        "paymentInitFailed": "Unable to initialize payment",
+        "paymentInitFailed": "Payment initialization failed. Missing gateway details.",
         "verifyFailed": "Payment verification failed",
-        "refundFailed": "Refund request failed"
+        "refundFailed": "Refund failed"
       },
       "messages": {
-        "walletFunded": "Wallet funded successfully!",
-        "refundInitiated": "Refund request submitted."
+        "walletFunded": "Wallet funded successfully",
+        "refundInitiated": "Refund initiated"
       },
-      "loading": "Loading...",
       "header": {
-        "eyebrow": "Funding",
-        "subtitle": "Top up your wallet, review payment orders, and request refunds with a clear fee breakdown."
+        "eyebrow": "Funding and billing",
+        "subtitle": "Manage deposits, refunds, payment status, and wallet ledger activity from one screen."
       },
       "lowBalance": {
-        "title": "Low wallet balance",
-        "body": "Your available wallet balance is below INR {threshold}. New campaign launches and top-ups may fail until you add funds.",
-        "hint": "Add funds to keep campaigns running smoothly."
+        "title": "Low balance warning",
+        "body": "Wallet is below the recommended threshold of INR {threshold}.",
+        "hint": "Add funds to avoid campaign launch failures."
       },
       "kpis": {
         "availableWallet": "Available Wallet",
         "lockedBudget": "Locked Budget",
         "totalFunded": "Total Funded",
-        "lastSuccessfulPayment": "Last successful payment",
-        "paid": "Paid",
-        "noPayment": "No payments yet"
+        "lastSuccessfulPayment": "Last Successful Payment",
+        "paid": "PAID",
+        "noPayment": "NO PAYMENT"
       },
       "topUp": {
-        "eyebrow": "Wallet top-up",
-        "title": "Add funds",
-        "amountPlaceholder": "Enter amount (min {min})",
+        "eyebrow": "Add funds",
+        "title": "Business wallet top-up",
+        "amountPlaceholder": "Enter amount (min INR {min})",
+        "initializing": "Initializing payment...",
+        "payAndFund": "Pay and Fund Wallet",
         "breakdown": {
           "gross": "Gross amount",
-          "fee": "Funding fee ({rate}%)",
-          "net": "Net credit"
-        },
-        "initializing": "Initializing payment...",
-        "payAndFund": "Pay and fund wallet"
+          "fee": "Platform funding fee ({rate}%)",
+          "net": "Net wallet credit"
+        }
       },
       "refund": {
-        "eyebrow": "Refund",
-        "title": "Request wallet refund",
+        "eyebrow": "Request refund",
+        "title": "Move unused wallet out",
         "amountPlaceholder": "Enter refund amount",
+        "processing": "Processing...",
+        "request": "Request Refund",
+        "help": "Refunds reduce available wallet immediately and apply the same configured fee logic as deposits.",
         "breakdown": {
           "requested": "Requested amount",
-          "fee": "Fee ({rate}%)",
+          "fee": "Refund processing fee ({rate}%)",
           "net": "Net refund"
-        },
-        "processing": "Processing...",
-        "request": "Request refund",
-        "help": "Refunds are processed from your available wallet balance. A funding fee applies to refunds."
+        }
       },
       "orders": {
         "eyebrow": "Payment orders",
-        "title": "Top-up history",
+        "title": "Checkout and settlement history",
         "empty": "No payment orders yet.",
         "receipt": "Receipt: {receipt}",
         "created": "Created: {date}",
@@ -703,16 +704,16 @@
       },
       "ledger": {
         "eyebrow": "Wallet ledger",
-        "title": "Wallet transactions",
-        "empty": "No wallet transactions yet.",
-        "fallbackNote": "Wallet update"
+        "title": "Recent funding and spend activity",
+        "empty": "No wallet activity yet.",
+        "fallbackNote": "Wallet transaction"
       }
     },
     "create": {
       "errors": {
-        "kycNotVerified": "Your KYC must be verified before you can create a campaign.",
-        "minOneSlot": "At least 1 slot is required. Check your reward and total budget.",
-        "insufficientWallet": "Insufficient wallet balance. Add funds before launching.",
+        "kycNotVerified": "Business KYC must be verified before creating campaigns.",
+        "minOneSlot": "Budget must be enough to fund at least one slot.",
+        "insufficientWallet": "Insufficient wallet balance for this campaign budget.",
         "unexpectedServerResponse": "Unexpected server response",
         "failedToCreate": "Failed to create campaign"
       },
@@ -720,57 +721,57 @@
         "created": "Campaign created successfully!"
       },
       "header": {
-        "eyebrow": "Campaign builder",
-        "subtitle": "Create a campaign like a modern growth dashboard: clear budget, reward per task, and instructions."
+        "eyebrow": "Campaign setup",
+        "subtitle": "Launch a structured campaign with clear task type, instructions, reward, and total budget."
       },
       "kycBlocked": {
-        "title": "Complete KYC to launch",
-        "body": "Your KYC status is {status}. Once verified, you can create and launch campaigns.",
-        "reviewSettings": "Go to settings",
+        "title": "KYC verification required",
+        "body": "Your business KYC status is {status}. Admin approval is required before you can create campaigns.",
+        "reviewSettings": "Review business settings",
         "contactSupport": "Contact support"
       },
       "form": {
-        "title": "Task title",
+        "title": "Task Title",
         "description": "Description",
         "category": "Category",
-        "taskType": "Task type",
-        "taskLink": "Task link",
-        "taskDetails": "Task details",
-        "taskDetailsHelp": "One instruction per line. Instructions will be rotated if fewer than available slots.",
-        "rewardPerTask": "Per task reward",
-        "totalBudget": "Total budget"
+        "taskType": "Task Type",
+        "taskLink": "Task Link",
+        "taskDetails": "Task Details",
+        "taskDetailsHelp": "Each new line becomes a separate instruction step.",
+        "rewardPerTask": "Per Task Reward",
+        "totalBudget": "Total Budget"
       },
       "placeholders": {
-        "title": "Example: Leave a 5-star review",
-        "description": "What should users do and what proof should they submit?",
-        "taskLink": "https://example.com",
-        "taskDetails": "Step 1...\nStep 2...\nStep 3...",
-        "rewardPerTask": "e.g. 10",
-        "totalBudget": "e.g. 1000"
+        "title": "Enter task title",
+        "description": "Summarize what the participant needs to do",
+        "taskLink": "Optional destination link",
+        "taskDetails": "Add one instruction per line\\nExample:\\nOpen the app store\\nInstall the app\\nShare screenshot proof",
+        "rewardPerTask": "Reward per approved task",
+        "totalBudget": "Total budget"
       },
       "actions": {
         "launching": "Launching...",
-        "launch": "Launch campaign",
-        "addFundsLink": "Add funds to your wallet"
+        "launch": "Launch Campaign",
+        "addFundsLink": "Add funds to wallet"
       },
       "preview": {
-        "eyebrow": "Live preview",
+        "eyebrow": "Campaign preview",
         "untitled": "Untitled campaign",
-        "descriptionFallback": "Add a short description for this campaign.",
+        "descriptionFallback": "Your task summary will appear here for business review.",
         "categoryLabel": "Category",
-        "taskDetailsLabel": "Instructions",
-        "noInstructions": "No instructions provided yet.",
-        "rewardPerTask": "Reward per task",
+        "taskDetailsLabel": "Task details",
+        "noInstructions": "No instruction lines added yet.",
+        "rewardPerTask": "Per task reward",
         "totalBudget": "Total budget",
-        "totalSlots": "Total slots",
+        "totalSlots": "Calculated total slots",
         "availableWallet": "Available wallet",
-        "estimatedFee": "Funding fee is applied when you deposit or refund wallet balance.",
-        "finalPayable": "Final payable: INR {amount}",
+        "estimatedFee": "Estimated platform fee: INR 0.00",
+        "finalPayable": "Final payable amount: INR {amount}",
         "walletSufficiency": "Wallet sufficiency",
         "checking": "Checking...",
         "sufficient": "Sufficient",
         "insufficient": "Insufficient",
-        "commissionHint": "Commission is automatically calculated on approved submissions. Spend is deducted only after approvals."
+        "commissionHint": "Marketing campaigns use the marketing commission rules. Work-based campaigns use the default non-marketing commission rules already configured in the platform."
       }
     },
     "overviewPanel": {
@@ -1140,7 +1141,8 @@
         "participantPrivacy": "Participant identity is hidden for privacy.",
         "proof": "Proof",
         "openScreenshot": "Open screenshot",
-        "reviewReason": "Review reason"
+        "reviewReason": "Review reason",
+        "screenshotUploaded": "Screenshot proof uploaded. Use the preview button to view it."
       }
     },
     "campaignEditor": {
@@ -1202,151 +1204,6 @@
       "warnings": {
         "insufficientWallet": "The wallet does not have enough balance to apply this budget increase.",
         "invalidUsedSlots": "This update would reduce total slots below the number of submissions already recorded."
-      }
-    },
-    "loading": {
-      "dashboard": "Loading business dashboard..."
-    },
-    "funding": {
-      "loading": "Loading funding center...",
-      "labels": {
-        "notYet": "Not yet",
-        "topUpDescription": "Business wallet top-up"
-      },
-      "errors": {
-        "unexpectedServerResponse": "Unexpected server response",
-        "failedToLoad": "Failed to load funding data",
-        "gatewayLoadFailed": "Failed to load payment gateway. Try again.",
-        "fundingFailed": "Funding failed",
-        "paymentInitFailed": "Payment initialization failed. Missing gateway details.",
-        "verifyFailed": "Payment verification failed",
-        "refundFailed": "Refund failed"
-      },
-      "messages": {
-        "walletFunded": "Wallet funded successfully",
-        "refundInitiated": "Refund initiated"
-      },
-      "header": {
-        "eyebrow": "Funding and billing",
-        "subtitle": "Manage deposits, refunds, payment status, and wallet ledger activity from one screen."
-      },
-      "lowBalance": {
-        "title": "Low balance warning",
-        "body": "Wallet is below the recommended threshold of INR {threshold}.",
-        "hint": "Add funds to avoid campaign launch failures."
-      },
-      "kpis": {
-        "availableWallet": "Available Wallet",
-        "lockedBudget": "Locked Budget",
-        "totalFunded": "Total Funded",
-        "lastSuccessfulPayment": "Last Successful Payment",
-        "paid": "PAID",
-        "noPayment": "NO PAYMENT"
-      },
-      "topUp": {
-        "eyebrow": "Add funds",
-        "title": "Business wallet top-up",
-        "amountPlaceholder": "Enter amount (min INR {min})",
-        "initializing": "Initializing payment...",
-        "payAndFund": "Pay and Fund Wallet",
-        "breakdown": {
-          "gross": "Gross amount",
-          "fee": "Platform funding fee ({rate}%)",
-          "net": "Net wallet credit"
-        }
-      },
-      "refund": {
-        "eyebrow": "Request refund",
-        "title": "Move unused wallet out",
-        "amountPlaceholder": "Enter refund amount",
-        "processing": "Processing...",
-        "request": "Request Refund",
-        "help": "Refunds reduce available wallet immediately and apply the same configured fee logic as deposits.",
-        "breakdown": {
-          "requested": "Requested amount",
-          "fee": "Refund processing fee ({rate}%)",
-          "net": "Net refund"
-        }
-      },
-      "orders": {
-        "eyebrow": "Payment orders",
-        "title": "Checkout and settlement history",
-        "empty": "No payment orders yet.",
-        "receipt": "Receipt: {receipt}",
-        "created": "Created: {date}",
-        "paid": "Paid: {date}",
-        "providerOrder": "Provider order: {id}"
-      },
-      "ledger": {
-        "eyebrow": "Wallet ledger",
-        "title": "Recent funding and spend activity",
-        "empty": "No wallet activity yet.",
-        "fallbackNote": "Wallet transaction"
-      }
-    },
-    "create": {
-      "errors": {
-        "kycNotVerified": "Business KYC must be verified before creating campaigns.",
-        "minOneSlot": "Budget must be enough to fund at least one slot.",
-        "insufficientWallet": "Insufficient wallet balance for this campaign budget.",
-        "unexpectedServerResponse": "Unexpected server response",
-        "failedToCreate": "Failed to create campaign"
-      },
-      "messages": {
-        "created": "Campaign created successfully!"
-      },
-      "header": {
-        "eyebrow": "Campaign setup",
-        "subtitle": "Launch a structured campaign with clear task type, instructions, reward, and total budget."
-      },
-      "kycBlocked": {
-        "title": "KYC verification required",
-        "body": "Your business KYC status is {status}. Admin approval is required before you can create campaigns.",
-        "reviewSettings": "Review business settings",
-        "contactSupport": "Contact support"
-      },
-      "form": {
-        "title": "Task Title",
-        "description": "Description",
-        "category": "Category",
-        "taskType": "Task Type",
-        "taskLink": "Task Link",
-        "taskDetails": "Task Details",
-        "taskDetailsHelp": "Each new line becomes a separate instruction step.",
-        "rewardPerTask": "Per Task Reward",
-        "totalBudget": "Total Budget"
-      },
-      "placeholders": {
-        "title": "Enter task title",
-        "description": "Summarize what the participant needs to do",
-        "taskLink": "Optional destination link",
-        "taskDetails": "Add one instruction per line\\nExample:\\nOpen the app store\\nInstall the app\\nShare screenshot proof",
-        "rewardPerTask": "Reward per approved task",
-        "totalBudget": "Total budget"
-      },
-      "actions": {
-        "launching": "Launching...",
-        "launch": "Launch Campaign",
-        "addFundsLink": "Add funds to wallet"
-      },
-      "preview": {
-        "eyebrow": "Campaign preview",
-        "untitled": "Untitled campaign",
-        "descriptionFallback": "Your task summary will appear here for business review.",
-        "categoryLabel": "Category",
-        "taskDetailsLabel": "Task details",
-        "noInstructions": "No instruction lines added yet.",
-        "rewardPerTask": "Per task reward",
-        "totalBudget": "Total budget",
-        "totalSlots": "Calculated total slots",
-        "availableWallet": "Available wallet",
-        "estimatedFee": "Estimated platform fee: INR 0.00",
-        "finalPayable": "Final payable amount: INR {amount}",
-        "walletSufficiency": "Wallet sufficiency",
-        "checking": "Checking...",
-        "sufficient": "Sufficient",
-        "insufficient": "Insufficient",
-        "commissionHint": "Marketing campaigns use the marketing commission rules. Work-based campaigns use the default non-marketing commission rules already configured in the platform."
       }
     }
   },
