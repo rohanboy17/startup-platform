@@ -92,12 +92,17 @@ export default async function AdminCampaignsPage({
 
   return (
     <div className="space-y-8">
-      <h2 className="text-3xl font-semibold">Campaign Management</h2>
+      <div className="space-y-2">
+        <h2 className="text-3xl font-semibold">Campaign Approvals</h2>
+        <p className="max-w-3xl text-sm text-foreground/70">
+          Review new campaign requests, watch approval speed, and step in before launch delays affect businesses.
+        </p>
+      </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <KpiCard label="Pending On Time (<4h)" value={pendingOnTime} tone="success" />
-        <KpiCard label="At Risk (4-24h)" value={pendingAtRisk} tone="warning" />
-        <KpiCard label="Breached (>24h)" value={pendingBreached} tone="danger" />
+        <KpiCard label="New in last 4h" value={pendingOnTime} tone="success" />
+        <KpiCard label="Needs attention" value={pendingAtRisk} tone="warning" />
+        <KpiCard label="Overdue" value={pendingBreached} tone="danger" />
         <KpiCard label="Escalated" value={pendingEscalated} tone="info" />
       </div>
 
@@ -109,13 +114,13 @@ export default async function AdminCampaignsPage({
               type="text"
               name="q"
               defaultValue={q}
-              placeholder="Search campaign / business"
-              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+              placeholder="Search campaign or business"
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             />
             <select
               name="status"
               defaultValue={statusFilter}
-              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             >
               <option value="ALL">All Status</option>
               <option value="PENDING">PENDING</option>
@@ -127,71 +132,71 @@ export default async function AdminCampaignsPage({
             <select
               name="sla"
               defaultValue={slaFilter}
-              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             >
-              <option value="ALL">All SLA</option>
-              <option value="ON_TIME">On Time (&lt;4h)</option>
-              <option value="AT_RISK">At Risk (4-24h)</option>
-              <option value="BREACHED">Breached (&gt;24h)</option>
+              <option value="ALL">All review speeds</option>
+              <option value="ON_TIME">New (&lt;4h)</option>
+              <option value="AT_RISK">Needs attention (4-24h)</option>
+              <option value="BREACHED">Overdue (&gt;24h)</option>
               <option value="ESCALATED">Escalated</option>
             </select>
             <button
               type="submit"
-              className="rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/20"
+              className="rounded-md border border-foreground/15 bg-foreground/[0.06] px-3 py-2 text-sm text-foreground transition hover:bg-foreground/[0.10]"
             >
-              Apply Filters
+              Apply
             </button>
           </form>
       </SectionCard>
 
       <div className="space-y-4">
         {campaigns.length === 0 ? (
-          <Card className="rounded-2xl border-white/10 bg-white/5">
-            <CardContent className="p-6 text-sm text-white/60">
-              No campaigns found for the selected filters.
+          <Card className="rounded-2xl border-foreground/10 bg-background/60">
+            <CardContent className="p-6 text-sm text-foreground/70">
+              No campaigns match the current filters.
             </CardContent>
           </Card>
         ) : (
           campaigns.map((campaign) => (
-            <Card key={campaign.id} className="rounded-2xl border-white/10 bg-white/5">
+            <Card key={campaign.id} className="rounded-2xl border-foreground/10 bg-background/60">
               <CardContent className="space-y-4 p-6">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="font-semibold">{campaign.title}</p>
                   <StatusBadge label={campaign.status} tone={campaign.status === "LIVE" ? "success" : campaign.status === "REJECTED" ? "danger" : campaign.status === "PENDING" ? "warning" : "neutral"} />
                 </div>
-                <p className="text-sm text-white/70">Category: {campaign.category}</p>
-                <p className="text-sm text-white/70">{campaign.description}</p>
-                <p className="break-all text-sm text-white/70">
-                  Business: {campaign.business.name || "Unnamed"} ({campaign.business.email})
+                <p className="text-sm text-foreground/70">Category: {campaign.category}</p>
+                <p className="text-sm text-foreground/70">{campaign.description}</p>
+                <p className="break-all text-sm text-foreground/70">
+                  Business account: {campaign.business.name || "Unnamed"} ({campaign.business.email})
                 </p>
-                <p className="text-sm text-white/70">
+                <p className="text-sm text-foreground/70">
                   Reward: INR {formatMoney(campaign.rewardPerTask)} | Budget: INR{" "}
                   {formatMoney(campaign.totalBudget)}
                 </p>
-                <p className="text-sm text-white/70">
+                <p className="text-sm text-foreground/70">
                   Submission mode:{" "}
                   {campaign.submissionMode === "ONE_PER_USER"
                     ? "One submission per user"
                     : "Many submissions per user"}
                 </p>
-                <p className="text-sm text-white/70">
-                  Existing submissions: {campaign._count.submissions}
+                <p className="text-sm text-foreground/70">
+                  Responses received: {campaign._count.submissions}
                 </p>
-                <p className="text-xs text-white/50">
+                <p className="text-xs text-foreground/55">
                   Created: {new Date(campaign.createdAt).toLocaleString()}
                 </p>
-                <p className="text-xs text-white/50">
-                  SLA:{" "}
+                <p className="text-xs text-foreground/55">
+                  Review speed:{" "}
                   <StatusBadge
                     label={campaign.status !== "PENDING"
-                      ? "Not in queue"
+                      ? "Already processed"
                       : campaign.escalatedAt
                         ? "Escalated"
                         : campaign.createdAt < twentyFourHoursAgo
-                          ? "Breached"
+                          ? "Overdue"
                           : campaign.createdAt < fourHoursAgo
-                            ? "At Risk"
-                            : "On Time"}
+                            ? "Needs attention"
+                            : "On track"}
                     tone={campaign.status !== "PENDING"
                       ? "neutral"
                       : campaign.escalatedAt

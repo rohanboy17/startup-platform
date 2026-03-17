@@ -264,14 +264,19 @@ export default async function AdminUsersPage({
 
   return (
     <div className="space-y-8">
-      <h2 className="text-3xl font-semibold">User Management</h2>
+      <div className="space-y-2">
+        <h2 className="text-3xl font-semibold">People &amp; Accounts</h2>
+        <p className="max-w-3xl text-sm text-foreground/70">
+          Review account details, payout defaults, trust status, and recent activity from one place.
+        </p>
+      </div>
 
       {!loadError ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <KpiCard label="Total Results" value={users.length} />
-          <KpiCard label="Flagged Users" value={users.filter((user) => user.isSuspicious).length} tone="warning" />
-          <KpiCard label="Suspended" value={users.filter((user) => user.accountStatus === "SUSPENDED").length} tone="warning" />
-          <KpiCard label="Banned" value={users.filter((user) => user.accountStatus === "BANNED").length} tone="danger" />
+          <KpiCard label="Accounts found" value={users.length} />
+          <KpiCard label="Needs review" value={users.filter((user) => user.isSuspicious).length} tone="warning" />
+          <KpiCard label="Suspended accounts" value={users.filter((user) => user.accountStatus === "SUSPENDED").length} tone="warning" />
+          <KpiCard label="Banned accounts" value={users.filter((user) => user.accountStatus === "BANNED").length} tone="danger" />
         </div>
       ) : null}
 
@@ -281,7 +286,7 @@ export default async function AdminUsersPage({
               type="text"
               name="q"
               defaultValue={q}
-              placeholder="Search name, email, or mobile"
+              placeholder="Search by name, email, or mobile"
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             />
             <select
@@ -289,7 +294,7 @@ export default async function AdminUsersPage({
               defaultValue={roleFilter}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             >
-              <option value="ALL">All Roles</option>
+              <option value="ALL">All account types</option>
               <option value="USER">USER</option>
               <option value="BUSINESS">BUSINESS</option>
               <option value="MANAGER">MANAGER</option>
@@ -300,7 +305,7 @@ export default async function AdminUsersPage({
               defaultValue={statusFilter}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             >
-              <option value="ALL">All Status</option>
+              <option value="ALL">All account states</option>
               <option value="ACTIVE">ACTIVE</option>
               <option value="SUSPENDED">SUSPENDED</option>
               <option value="BANNED">BANNED</option>
@@ -310,7 +315,7 @@ export default async function AdminUsersPage({
               defaultValue={flaggedFilter}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             >
-              <option value="ALL">All Risk States</option>
+              <option value="ALL">All trust states</option>
               <option value="FLAGGED">Flagged</option>
               <option value="CLEAR">Clear</option>
             </select>
@@ -319,7 +324,7 @@ export default async function AdminUsersPage({
                 type="submit"
                 className="rounded-md border border-foreground/15 bg-foreground/[0.06] px-3 py-2 text-sm text-foreground shadow-sm transition hover:bg-foreground/[0.10]"
               >
-                Apply Filters
+                Apply
               </button>
               <a
                 href={`/api/admin/export/users?${exportQuery}`}
@@ -331,7 +336,7 @@ export default async function AdminUsersPage({
                 href="/dashboard/admin/users"
                 className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm transition hover:bg-foreground/[0.06]"
               >
-                Clear
+                Reset
               </a>
             </div>
           </form>
@@ -359,7 +364,7 @@ export default async function AdminUsersPage({
           {users.length === 0 ? (
             <Card className="rounded-2xl border-foreground/10 bg-background/60 md:col-span-2">
               <CardContent className="p-6 text-sm text-foreground/70">
-                No users found for the selected filters.
+                No accounts match the current filters.
               </CardContent>
             </Card>
           ) : null}
@@ -395,11 +400,11 @@ export default async function AdminUsersPage({
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="rounded-xl border border-foreground/10 bg-background/60 p-3">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
-                      Identity
+                      Account details
                     </p>
                     <div className="mt-2 grid gap-2 text-sm">
                       <p className="break-all">
-                        <span className="text-foreground/60">User ID:</span>{" "}
+                        <span className="text-foreground/60">Account ID:</span>{" "}
                         <span className="font-medium">{user.id}</span>
                       </p>
                       <p className="break-all">
@@ -423,7 +428,7 @@ export default async function AdminUsersPage({
 
                   <div className="rounded-xl border border-foreground/10 bg-background/60 p-3">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
-                      Wallet & Level
+                      Earnings &amp; level
                     </p>
                     <div className="mt-2 grid gap-2 text-sm">
                       <p>
@@ -439,7 +444,7 @@ export default async function AdminUsersPage({
                         <span className="font-medium">{user.level}</span>
                       </p>
                       <p>
-                        <span className="text-foreground/60">Daily submits:</span>{" "}
+                        <span className="text-foreground/60">Submitted today:</span>{" "}
                         <span className="font-medium">{user.dailySubmits}</span>
                       </p>
                       <p>
@@ -450,7 +455,7 @@ export default async function AdminUsersPage({
                         <span className="font-medium">{user.totalRejected}</span>
                       </p>
                       <p className="text-xs text-foreground/55">
-                        Last level reset: {new Date(user.lastLevelResetAt).toLocaleString()}
+                        Daily level reset: {new Date(user.lastLevelResetAt).toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -459,33 +464,33 @@ export default async function AdminUsersPage({
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="rounded-xl border border-foreground/10 bg-background/60 p-3">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
-                      Status & Risk
+                      Account status
                     </p>
                     <div className="mt-2 grid gap-2 text-sm">
                       <p className="break-all">
-                        <span className="text-foreground/60">Last IP:</span>{" "}
+                        <span className="text-foreground/60">Last sign-in IP:</span>{" "}
                         <span className="font-medium">{user.ipAddress || "unknown"}</span>
                       </p>
                       {user.statusReason ? (
                         <p className="break-words text-sm text-foreground/70">
-                          <span className="text-foreground/60">Status reason:</span>{" "}
+                          <span className="text-foreground/60">Account note:</span>{" "}
                           <span className="font-medium">{user.statusReason}</span>
                         </p>
                       ) : null}
                       {user.statusUpdatedAt ? (
                         <p className="text-xs text-foreground/55">
-                          Status updated: {new Date(user.statusUpdatedAt).toLocaleString()}
+                          Last account update: {new Date(user.statusUpdatedAt).toLocaleString()}
                         </p>
                       ) : null}
                       {user.suspiciousReason ? (
                         <p className="break-words text-sm text-foreground/70">
-                          <span className="text-foreground/60">Risk note:</span>{" "}
+                          <span className="text-foreground/60">Trust note:</span>{" "}
                           <span className="font-medium">{user.suspiciousReason}</span>
                         </p>
                       ) : null}
                       {user.flaggedAt ? (
                         <p className="text-xs text-foreground/55">
-                          Flagged at: {new Date(user.flaggedAt).toLocaleString()}
+                          Marked for review: {new Date(user.flaggedAt).toLocaleString()}
                         </p>
                       ) : null}
                     </div>
@@ -493,11 +498,11 @@ export default async function AdminUsersPage({
 
                   <div className="rounded-xl border border-foreground/10 bg-background/60 p-3">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
-                      Integrations & Defaults
+                      Payouts, security &amp; connections
                     </p>
                     <div className="mt-2 grid gap-2 text-sm">
                       <p>
-                        <span className="text-foreground/60">KYC:</span>{" "}
+                        <span className="text-foreground/60">Verification:</span>{" "}
                         <span className="font-medium">{user.kycStatus}</span>
                         {user.kycVerifiedAt ? (
                           <span className="text-foreground/55">
@@ -508,7 +513,7 @@ export default async function AdminUsersPage({
                       </p>
                       {user.role === "BUSINESS" && businessKycMap[user.id] ? (
                         <div className="rounded-lg border border-foreground/10 bg-background/60 p-2 text-sm">
-                          <p className="font-medium">Latest business KYC</p>
+                          <p className="font-medium">Latest business verification</p>
                           <p className="break-words text-foreground/70">
                             <span className="text-foreground/60">Legal:</span>{" "}
                             {businessKycMap[user.id].legalName}
@@ -602,10 +607,10 @@ export default async function AdminUsersPage({
 
                     <div className="rounded-xl border border-foreground/10 bg-background/60 p-3">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
-                        Work assignments
+                        Invite-only work access
                       </p>
                       <p className="mt-2 text-sm text-foreground/70">
-                        Assign this user to invite-only work campaigns.
+                        Assign this user to private work-based campaigns when needed.
                       </p>
                       <div className="mt-3">
                         <AdminUserWorkAssignments
@@ -619,13 +624,13 @@ export default async function AdminUsersPage({
 
                 <div className="grid gap-2 text-xs text-foreground/60 sm:grid-cols-2">
                   <p>
-                    Latest Submission:{" "}
+                    Latest submission:{" "}
                     {latestSubmissionMap[user.id]
                       ? new Date(latestSubmissionMap[user.id]).toLocaleString()
                       : "No submissions yet"}
                   </p>
                   <p>
-                    Latest Withdrawal:{" "}
+                    Latest withdrawal:{" "}
                     {latestWithdrawalMap[user.id]
                       ? new Date(latestWithdrawalMap[user.id]).toLocaleString()
                       : "No withdrawals yet"}
@@ -634,11 +639,11 @@ export default async function AdminUsersPage({
 
                 <details className="rounded-xl border border-foreground/10 bg-background/60 p-3">
                   <summary className="cursor-pointer text-sm text-foreground/80">
-                    Activity Timeline
+                    Recent activity
                   </summary>
                   <div className="mt-2 space-y-2">
                     {(activityMap[user.id] || []).length === 0 ? (
-                      <p className="text-xs text-foreground/55">No recent activity events.</p>
+                      <p className="text-xs text-foreground/55">No recent activity yet.</p>
                     ) : (
                       (activityMap[user.id] || []).map((event, idx) => (
                         <p

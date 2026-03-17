@@ -122,8 +122,8 @@ export default function RegisterPage() {
               </motion.div>
 
               <div className="grid grid-cols-2 gap-2 rounded-xl border border-foreground/10 bg-background/60 p-2 text-xs">
-                <div className="rounded-lg bg-foreground/10 px-3 py-2 text-center font-medium text-foreground">1. Account Details</div>
-                <div className="rounded-lg bg-foreground/[0.04] px-3 py-2 text-center font-medium text-foreground/80">2. Choose Role</div>
+                <div className="rounded-lg bg-foreground/10 px-3 py-2 text-center font-medium text-foreground">1. Your details</div>
+                <div className="rounded-lg bg-foreground/[0.04] px-3 py-2 text-center font-medium text-foreground/80">2. Account type</div>
               </div>
 
               <motion.form

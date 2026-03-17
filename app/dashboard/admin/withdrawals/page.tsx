@@ -36,25 +36,30 @@ export default async function AdminWithdrawalsPage() {
 
   return (
     <div className="space-y-8">
-      <h2 className="text-3xl font-semibold">Withdrawals</h2>
+      <div className="space-y-2">
+        <h2 className="text-3xl font-semibold">Payout Requests</h2>
+        <p className="max-w-3xl text-sm text-foreground/70">
+          Review withdrawal requests, check the net payout amount, and leave clear notes before releasing funds.
+        </p>
+      </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <KpiCard label="Pending" value={pendingCount} tone="warning" />
+        <KpiCard label="Waiting review" value={pendingCount} tone="warning" />
         <KpiCard label="Approved" value={approvedCount} tone="success" />
         <KpiCard label="Rejected" value={rejectedCount} tone="danger" />
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <KpiCard label="Pending Gross" value={`INR ${formatMoney(pendingGross)}`} />
-        <KpiCard label="Pending Commission" value={`INR ${formatMoney(pendingFee)}`} tone="warning" />
-        <KpiCard label="Pending Payout (Net)" value={`INR ${formatMoney(pendingPayout)}`} tone="info" />
+        <KpiCard label="Gross requested" value={`INR ${formatMoney(pendingGross)}`} />
+        <KpiCard label="Platform fee held" value={`INR ${formatMoney(pendingFee)}`} tone="warning" />
+        <KpiCard label="Net payout due" value={`INR ${formatMoney(pendingPayout)}`} tone="info" />
       </div>
 
       <div className="space-y-4">
         {withdrawals.length === 0 ? (
-          <Card className="rounded-2xl border-white/10 bg-white/5">
-            <CardContent className="p-6 text-sm text-white/60">
-              No withdrawals available.
+          <Card className="rounded-2xl border-foreground/10 bg-background/60">
+            <CardContent className="p-6 text-sm text-foreground/70">
+              No payout requests yet.
             </CardContent>
           </Card>
         ) : (
@@ -63,16 +68,16 @@ export default async function AdminWithdrawalsPage() {
             const payout = Number((w.amount - fee).toFixed(2));
 
             return (
-              <Card key={w.id} className="rounded-2xl border-white/10 bg-white/5">
+              <Card key={w.id} className="rounded-2xl border-foreground/10 bg-background/60">
                 <CardContent className="space-y-4 p-6">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                     <div>
                       <p className="font-medium">{w.user.name || w.user.email}</p>
-                      <p className="text-sm text-white/60">{w.user.email}</p>
-                      <p className="text-xs text-white/50">
+                      <p className="text-sm text-foreground/70">{w.user.email}</p>
+                      <p className="text-xs text-foreground/55">
                         UPI: {w.upiName || "N/A"} | {w.upiId || "N/A"}
                       </p>
-                      <p className="text-xs text-white/50">
+                      <p className="text-xs text-foreground/55">
                         {new Date(w.createdAt).toLocaleString()}
                       </p>
                     </div>
@@ -84,13 +89,13 @@ export default async function AdminWithdrawalsPage() {
                     </div>
                   </div>
 
-                  <div className="text-sm text-white/70 break-words">
-                    Estimated fee ({(commissionRate * 100).toFixed(1)}%): INR {formatMoney(fee)} |
-                    User payout: INR {formatMoney(payout)}
+                  <div className="text-sm break-words text-foreground/70">
+                    Platform fee ({(commissionRate * 100).toFixed(1)}%): INR {formatMoney(fee)} |
+                    Net payout: INR {formatMoney(payout)}
                   </div>
-                  {w.adminNote ? <p className="text-xs text-white/60">Admin note: {w.adminNote}</p> : null}
+                  {w.adminNote ? <p className="text-xs text-foreground/65">Review note: {w.adminNote}</p> : null}
                   {w.processedAt ? (
-                    <p className="text-xs text-white/50">
+                    <p className="text-xs text-foreground/55">
                       Processed: {new Date(w.processedAt).toLocaleString()}
                     </p>
                   ) : null}

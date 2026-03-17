@@ -90,31 +90,36 @@ export default async function AdminAuditPage({
 
   return (
     <div className="space-y-8">
-      <h2 className="text-3xl font-semibold">Audit Logs</h2>
+      <div className="space-y-2">
+        <h2 className="text-3xl font-semibold">Admin Activity Log</h2>
+        <p className="max-w-3xl text-sm text-foreground/70">
+          Review who changed what, when it happened, and which account or record was affected.
+        </p>
+      </div>
 
-      <Card className="rounded-2xl border-white/10 bg-white/5">
+      <Card className="rounded-2xl border-foreground/10 bg-background/60">
         <CardContent className="p-4">
           <form className="grid gap-3 md:grid-cols-4">
             <input
               type="text"
               name="q"
               defaultValue={q}
-              placeholder="Search details, actor, target"
-              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+              placeholder="Search notes, actor, or target"
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             />
             <input
               type="text"
               name="action"
               defaultValue={action}
-              placeholder="Action contains (optional)"
-              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+              placeholder="Filter by action"
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             />
             <select
               name="actorRole"
               defaultValue={actorRole}
-              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             >
-              <option value="ALL">All Actor Roles</option>
+              <option value="ALL">All actor roles</option>
               <option value="ADMIN">ADMIN</option>
               <option value="MANAGER">MANAGER</option>
               <option value="BUSINESS">BUSINESS</option>
@@ -123,15 +128,15 @@ export default async function AdminAuditPage({
             <div className="flex gap-2">
               <button
                 type="submit"
-                className="rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/20"
+                className="rounded-md border border-foreground/15 bg-foreground/[0.06] px-3 py-2 text-sm text-foreground transition hover:bg-foreground/[0.10]"
               >
-                Apply Filters
+                Apply
               </button>
               <a
                 href="/dashboard/admin/audit"
-                className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-sm text-white hover:bg-white/10"
+                className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground transition hover:bg-foreground/[0.06]"
               >
-                Clear
+                Reset
               </a>
             </div>
           </form>
@@ -141,7 +146,7 @@ export default async function AdminAuditPage({
       {!delegate ? (
         <Card className="rounded-2xl border-amber-300/20 bg-amber-500/10">
           <CardContent className="p-6 text-sm text-amber-200">
-            Audit log table is not available yet. Run migrations and restart the server.
+            Audit history is not available yet. Run the latest database migrations and restart the app.
           </CardContent>
         </Card>
       ) : loadError ? (
@@ -149,34 +154,34 @@ export default async function AdminAuditPage({
           <CardContent className="p-6 text-sm text-amber-200">{loadError}</CardContent>
         </Card>
       ) : logs.length === 0 ? (
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-6 text-sm text-white/60">No moderation logs yet.</CardContent>
+        <Card className="rounded-2xl border-foreground/10 bg-background/60">
+          <CardContent className="p-6 text-sm text-foreground/70">No admin activity has been recorded yet.</CardContent>
         </Card>
       ) : (
         <div className="space-y-3">
           {logs.map((log) => (
-            <Card key={log.id} className="rounded-2xl border-white/10 bg-white/5">
+            <Card key={log.id} className="rounded-2xl border-foreground/10 bg-background/60">
               <CardContent className="space-y-1 p-5">
                 <p className="font-medium">{log.action}</p>
-                <p className="text-sm text-white/70">
-                  Actor: {log.actorRole || "SYSTEM"} {log.actorUserId ? `(${log.actorUserId})` : ""}
+                <p className="text-sm text-foreground/70">
+                  Done by: {log.actorRole || "SYSTEM"} {log.actorUserId ? `(${log.actorUserId})` : ""}
                 </p>
                 {log.targetUserId ? (
-                  <p className="text-sm text-white/70">Target User: {log.targetUserId}</p>
+                  <p className="text-sm text-foreground/70">Affected account: {log.targetUserId}</p>
                 ) : null}
-                {log.details ? <p className="text-sm text-white/60">{log.details}</p> : null}
-                {log.ipAddress ? <p className="text-xs text-white/50">IP: {log.ipAddress}</p> : null}
+                {log.details ? <p className="text-sm text-foreground/65">{log.details}</p> : null}
+                {log.ipAddress ? <p className="text-xs text-foreground/55">IP address: {log.ipAddress}</p> : null}
                 {log.beforeState ? (
-                  <pre className="max-h-40 overflow-auto rounded-md border border-white/10 bg-black/20 p-2 text-xs text-white/60">
-                    Before: {JSON.stringify(log.beforeState)}
+                  <pre className="max-h-40 overflow-auto rounded-md border border-foreground/10 bg-background/60 p-2 text-xs text-foreground/65">
+                    Before change: {JSON.stringify(log.beforeState)}
                   </pre>
                 ) : null}
                 {log.afterState ? (
-                  <pre className="max-h-40 overflow-auto rounded-md border border-white/10 bg-black/20 p-2 text-xs text-white/60">
-                    After: {JSON.stringify(log.afterState)}
+                  <pre className="max-h-40 overflow-auto rounded-md border border-foreground/10 bg-background/60 p-2 text-xs text-foreground/65">
+                    After change: {JSON.stringify(log.afterState)}
                   </pre>
                 ) : null}
-                <p className="text-xs text-white/50">{new Date(log.createdAt).toLocaleString()}</p>
+                <p className="text-xs text-foreground/55">{new Date(log.createdAt).toLocaleString()}</p>
               </CardContent>
             </Card>
           ))}

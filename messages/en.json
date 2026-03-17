@@ -51,8 +51,8 @@
     "login": {
       "side": {
         "eyebrow": "Secure Login",
-        "title": "Sign in and pick up where you left off.",
-        "subtitle": "Access your tasks, earnings, campaigns, and updates from one secure account.",
+        "title": "Welcome back to your account.",
+        "subtitle": "Check tasks, earnings, campaigns, and updates from one secure sign-in.",
         "bullets": {
           "roleBased": "Role-based access for every account type",
           "admin2fa": "Extra protection for admin sign-in",
@@ -105,8 +105,8 @@
     "register": {
       "side": {
         "eyebrow": "Get Started",
-        "title": "Create your account in a few minutes.",
-        "subtitle": "Join as a user to earn from simple verified tasks, or as a business to launch real campaigns.",
+        "title": "Create your account in just a few minutes.",
+        "subtitle": "Join as a user to earn from verified tasks, or as a business to launch real campaigns.",
         "bullets": {
           "unified": "One account for user or business access",
           "mobileIdentity": "Mobile-number based sign-up support",
@@ -125,7 +125,7 @@
         "mobileHelp": "Include country code. Examples: India <highlight>{india}</highlight>, US <highlight>{us}</highlight>, UK <highlight>{uk}</highlight>.",
         "password": "Password",
         "referral": "Referral code (optional)",
-        "referralHelp": "User referral only. Add a code now to unlock FreeEarnHub Coins after your first approved task."
+        "referralHelp": "Only users can apply a referral code. Add one now to unlock FreeEarnHub Coins after your first approved task."
       },
       "roles": {
         "user": "User",
@@ -150,7 +150,7 @@
   "home": {
     "landing": {
       "heroTitle": "Earn by completing verified tasks.",
-      "heroSubtitle": "FreeEarnHub helps people earn from verified tasks while businesses grow through simple, trackable campaigns."
+      "heroSubtitle": "FreeEarnHub is a simple earning platform where users complete verified tasks and businesses run trackable growth campaigns."
     },
     "announcements": {
       "learnMore": "Learn more"
@@ -244,7 +244,7 @@
   "about": {
     "eyebrow": "About",
     "title": "About FreeEarnHub",
-    "description": "FreeEarnHub is a trusted task platform where businesses run campaigns and users earn from verified work.",
+    "description": "FreeEarnHub is a trusted earning platform where businesses launch campaigns and users earn from verified work.",
     "sections": {
       "build": {
         "title": "What We Build",
@@ -268,7 +268,7 @@
   "faq": {
     "eyebrow": "Help Center",
     "title": "Frequently Asked Questions",
-    "description": "Quick answers about accounts, rewards, withdrawals, campaigns, and platform safety.",
+    "description": "Clear answers about accounts, rewards, withdrawals, campaigns, and platform safety.",
     "sectionTitle": "FAQ",
     "items": [
       {
@@ -296,7 +296,7 @@
   "contact": {
     "eyebrow": "Support",
     "title": "Contact FreeEarnHub",
-    "description": "For help with your account, payments, KYC, or campaign issues, contact our support team.",
+    "description": "Need help with your account, payments, KYC, or campaigns? Contact the FreeEarnHub support team.",
     "supportEmailTitle": "Support Email",
     "supportEmailLead": "Primary support channel:",
     "supportResponse": "Typical first response: 24 to 48 business hours.",
@@ -522,7 +522,7 @@
       "loading": "Loading referrals...",
       "eyebrow": "Referral rewards",
       "title": "Coins and referrals",
-      "subtitle": "Invite new users, earn FreeEarnHub Coins after their first approved task, and redeem coins into wallet balance.",
+      "subtitle": "Invite new users, earn FreeEarnHub Coins after their first approved task, and redeem coins into your wallet balance.",
       "kpiCoin": "Coin balance",
       "kpiEstimated": "Estimated wallet value",
       "kpiTotalInvites": "Total invites",
@@ -1264,4 +1264,3 @@
     }
   }
 }
-
