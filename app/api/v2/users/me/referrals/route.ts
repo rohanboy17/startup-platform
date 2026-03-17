@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ensureReferralCodeForUser, getMonthStart, getReferralSettings } from "@/lib/referrals";
+import { headers } from "next/headers";
 
 export async function GET() {
   const session = await auth();
@@ -64,7 +65,14 @@ export async function GET() {
     }),
   ]);
 
-  const referralLinkBase = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || "";
+  const h = await headers();
+  const proto = (h.get("x-forwarded-proto") || "").split(",")[0].trim() || "http";
+  const host =
+    (h.get("x-forwarded-host") || "").split(",")[0].trim() ||
+    (h.get("host") || "").split(",")[0].trim();
+  const inferredBase = host ? `${proto}://${host}` : "";
+  const referralLinkBaseRaw = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || inferredBase || "";
+  const referralLinkBase = referralLinkBaseRaw.replace(/\/$/, "");
 
   return NextResponse.json({
     settings,
