@@ -216,26 +216,36 @@ export default function UserReferralsPanel() {
             <h3 className="text-xl font-semibold text-white">{t("shareTitle")}</h3>
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-3">
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-black/20 p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-white/45">{t("codeLabel")}</p>
               <p className="mt-2 text-2xl font-semibold text-white">{data.referral.code}</p>
-              <Button className="mt-4 w-full sm:w-auto" variant="outline" onClick={() => void copyText(data.referral.code)}>
+              <Button
+                className="mt-auto w-full sm:w-auto"
+                variant="outline"
+                onClick={() => void copyText(data.referral.code)}
+              >
                 <Copy size={16} />
                 {t("copyCode")}
               </Button>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+            <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-black/20 p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-white/45">{t("linkLabel")}</p>
-              <p className="mt-2 break-all text-sm text-white/75">{data.referral.link}</p>
-              <Button className="mt-4 w-full sm:w-auto" variant="outline" onClick={() => void copyText(data.referral.link)}>
+              <div className="mt-3 rounded-xl border border-white/10 bg-black/10 px-3 py-2 text-xs text-white/75">
+                <p className="break-all font-mono leading-5">{data.referral.link}</p>
+              </div>
+              <Button
+                className="mt-auto w-full sm:w-auto"
+                variant="outline"
+                onClick={() => void copyText(data.referral.link)}
+              >
                 <Gift size={16} />
                 {t("copyLink")}
               </Button>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+            <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-black/20 p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-white/45">{t("qrLabel")}</p>
               <div className="mt-3 flex justify-center">
                 {qrDataUrl ? (
@@ -252,13 +262,13 @@ export default function UserReferralsPanel() {
                 )}
               </div>
               <p className="mt-3 text-xs text-white/55">{t("qrHelp")}</p>
-              <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+              <div className="mt-auto grid gap-2">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => void ensureQrForLink(data.referral.link)}
                   disabled={qrLoading}
-                  className="w-full sm:w-auto"
+                  className="w-full"
                 >
                   {qrLoading ? t("qrLoading") : t("qrRegenerate")}
                 </Button>
@@ -267,7 +277,7 @@ export default function UserReferralsPanel() {
                   variant="outline"
                   onClick={() => downloadQr(data.referral.code)}
                   disabled={!qrDataUrl}
-                  className="w-full sm:w-auto"
+                  className="w-full"
                 >
                   {t("qrDownload")}
                 </Button>
