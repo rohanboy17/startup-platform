@@ -26,7 +26,7 @@ export default async function OfflinePage() {
           };
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.2),transparent_40%),#020617] px-4 py-16 text-white">
+    <main className="public-shell min-h-screen bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.2),transparent_40%),#020617] px-4 py-16 text-white">
       <div className="mx-auto max-w-xl rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center shadow-xl shadow-black/30 backdrop-blur-xl">
         <p className="text-xs uppercase tracking-[0.22em] text-emerald-300/80">{content.eyebrow}</p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">{content.title}</h1>

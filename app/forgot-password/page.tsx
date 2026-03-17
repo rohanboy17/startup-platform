@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-zinc-900 to-black px-4 py-16 text-white">
+    <div className="auth-shell min-h-screen bg-gradient-to-b from-black via-zinc-900 to-black px-4 py-16 text-white">
       <div className="mx-auto max-w-md">
         <Card className="rounded-3xl border-white/15 bg-white/[0.04] backdrop-blur-xl">
           <CardContent className="space-y-5 p-6 sm:p-8">

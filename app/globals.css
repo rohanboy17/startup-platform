@@ -565,3 +565,55 @@
 .light .home-shell .bg-black\/30 {
   background-color: color-mix(in oklch, var(--foreground) 4%, var(--background)) !important;
 }
+
+.light .public-shell {
+  background:
+    radial-gradient(circle at 8% 0%, color-mix(in oklch, oklch(0.82 0.11 160) 22%, transparent), transparent 35%),
+    radial-gradient(circle at 95% 10%, color-mix(in oklch, oklch(0.8 0.08 230) 20%, transparent), transparent 35%),
+    linear-gradient(to bottom, color-mix(in oklch, var(--background) 98%, #eff6ff 2%), color-mix(in oklch, var(--background) 96%, #eef2ff 4%));
+  color: color-mix(in oklch, var(--foreground) 100%, transparent);
+}
+
+.light .public-shell .text-white {
+  color: color-mix(in oklch, var(--foreground) 100%, transparent) !important;
+}
+
+.light .public-shell .text-white\/75 {
+  color: color-mix(in oklch, var(--foreground) 75%, transparent) !important;
+}
+
+.light .public-shell .text-white\/70 {
+  color: color-mix(in oklch, var(--foreground) 70%, transparent) !important;
+}
+
+.light .public-shell .text-white\/50 {
+  color: color-mix(in oklch, var(--foreground) 50%, transparent) !important;
+}
+
+.light .public-shell .border-white\/10 {
+  border-color: color-mix(in oklch, var(--foreground) 12%, transparent) !important;
+}
+
+.light .public-shell .border-white\/20 {
+  border-color: color-mix(in oklch, var(--foreground) 18%, transparent) !important;
+}
+
+.light .public-shell .bg-white\/\[0\.03\] {
+  background-color: color-mix(in oklch, var(--foreground) 4%, var(--background)) !important;
+}
+
+.light .public-shell .bg-white\/10 {
+  background-color: color-mix(in oklch, var(--foreground) 7%, var(--background)) !important;
+}
+
+.light .public-shell .bg-black\/20 {
+  background-color: color-mix(in oklch, var(--foreground) 4%, var(--background)) !important;
+}
+
+.light .public-shell .hover\:bg-white\/15:hover {
+  background-color: color-mix(in oklch, var(--foreground) 10%, var(--background)) !important;
+}
+
+.light .public-shell .text-emerald-300\/80 {
+  color: oklch(0.46 0.11 160) !important;
+}

@@ -18,7 +18,7 @@ export function PublicPageShell({
 }) {
   const tPublic = useTranslations("public");
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_8%_0%,rgba(16,185,129,0.18),transparent_35%),radial-gradient(circle_at_95%_10%,rgba(56,189,248,0.18),transparent_35%),linear-gradient(to_bottom,#020617,#020617)] px-4 py-10 text-white sm:px-6 sm:py-14">
+    <main className="public-shell min-h-screen bg-[radial-gradient(circle_at_8%_0%,rgba(16,185,129,0.18),transparent_35%),radial-gradient(circle_at_95%_10%,rgba(56,189,248,0.18),transparent_35%),linear-gradient(to_bottom,#020617,#020617)] px-4 py-10 text-white sm:px-6 sm:py-14">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
         <section className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 shadow-[0_20px_80px_-40px_rgba(16,185,129,0.6)] backdrop-blur-xl sm:p-8">
           <p className="text-xs font-medium uppercase tracking-[0.22em] text-emerald-300/80">{eyebrow}</p>
