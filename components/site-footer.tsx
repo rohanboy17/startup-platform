@@ -11,7 +11,7 @@ export default function SiteFooter({ year }: { year: number }) {
     <footer className="relative border-t border-foreground/10 bg-background px-4 py-8 text-sm text-foreground/70 sm:px-6 sm:py-12">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.15),transparent_70%)]" />
       <div className="mx-auto w-full max-w-screen-2xl space-y-8">
-        <div className="surface-card-elevated rounded-3xl p-5 sm:p-8">
+        <div className="surface-card-focus rounded-3xl p-5 sm:p-8">
           <div className="space-y-6 sm:space-y-8 lg:grid lg:grid-cols-[1.15fr_1fr] lg:gap-10 lg:space-y-0">
             <div className="space-y-4 text-center sm:text-left">
               <div className="flex items-center justify-center gap-3 sm:justify-start">
@@ -29,49 +29,49 @@ export default function SiteFooter({ year }: { year: number }) {
             </div>
 
             <div className="grid grid-cols-2 gap-3 border-t border-foreground/10 pt-5 text-center md:gap-8 md:pt-6 md:text-left lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
-              <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4 sm:p-5">
+              <div className="surface-card rounded-2xl p-4 sm:p-5">
                 <p className="mb-3 text-sm font-semibold text-foreground">{tFooter("platform")}</p>
                 <nav className="grid gap-2 text-sm text-foreground/70">
-                  <Link href="/" className="rounded-md px-2 py-1 transition hover:bg-foreground/5 hover:text-foreground">
+                  <Link href="/" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("home")}
                   </Link>
-                  <Link href="/about" className="rounded-md px-2 py-1 transition hover:bg-foreground/5 hover:text-foreground">
+                  <Link href="/about" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("about")}
                   </Link>
-                  <Link href="/faq" className="rounded-md px-2 py-1 transition hover:bg-foreground/5 hover:text-foreground">
+                  <Link href="/faq" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("faq")}
                   </Link>
-                  <Link href="/contact" className="rounded-md px-2 py-1 transition hover:bg-foreground/5 hover:text-foreground">
+                  <Link href="/contact" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("contact")}
                   </Link>
-                  <Link href="/support" className="rounded-md px-2 py-1 transition hover:bg-foreground/5 hover:text-foreground">
+                  <Link href="/support" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("support")}
                   </Link>
-                  <Link href="/sitemap" className="rounded-md px-2 py-1 transition hover:bg-foreground/5 hover:text-foreground">
+                  <Link href="/sitemap" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("sitemap")}
                   </Link>
                 </nav>
               </div>
 
-              <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4 sm:p-5">
+              <div className="surface-card rounded-2xl p-4 sm:p-5">
                 <p className="mb-3 text-sm font-semibold text-foreground">{tFooter("compliance")}</p>
                 <nav className="grid gap-2 text-sm text-foreground/70">
-                  <Link href="/terms" className="rounded-md px-2 py-1 transition hover:bg-foreground/5 hover:text-foreground">
+                  <Link href="/terms" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("terms")}
                   </Link>
-                  <Link href="/privacy" className="rounded-md px-2 py-1 transition hover:bg-foreground/5 hover:text-foreground">
+                  <Link href="/privacy" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("privacy")}
                   </Link>
-                  <Link href="/refund-policy" className="rounded-md px-2 py-1 transition hover:bg-foreground/5 hover:text-foreground">
+                  <Link href="/refund-policy" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("refund")}
                   </Link>
-                  <Link href="/cookie-policy" className="rounded-md px-2 py-1 transition hover:bg-foreground/5 hover:text-foreground">
+                  <Link href="/cookie-policy" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("cookie")}
                   </Link>
-                  <Link href="/disclaimer" className="rounded-md px-2 py-1 transition hover:bg-foreground/5 hover:text-foreground">
+                  <Link href="/disclaimer" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("disclaimer")}
                   </Link>
-                  <Link href="/kyc-policy" className="rounded-md px-2 py-1 transition hover:bg-foreground/5 hover:text-foreground">
+                  <Link href="/kyc-policy" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("kyc")}
                   </Link>
                 </nav>

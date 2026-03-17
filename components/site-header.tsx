@@ -40,13 +40,13 @@ export default function SiteHeader() {
   );
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-foreground/10 bg-background/75 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.8)] backdrop-blur-2xl">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-foreground/10 bg-background/82 shadow-[0_10px_40px_-25px_rgba(0,0,0,0.28)] backdrop-blur-2xl supports-[backdrop-filter]:bg-background/72">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(circle_at_15%_-20%,rgba(16,185,129,0.2),transparent_40%),radial-gradient(circle_at_85%_-20%,rgba(56,189,248,0.16),transparent_40%)]" />
       <div className="relative mx-auto flex h-14 w-full max-w-screen-2xl items-center gap-2 px-3 sm:h-16 sm:px-6">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <Link
             href={onDashboard ? "/dashboard" : "/"}
-            className="inline-flex items-center gap-2 rounded-xl border border-foreground/10 bg-foreground/[0.03] px-2.5 py-1.5 text-sm font-semibold tracking-tight text-foreground transition hover:bg-foreground/10"
+            className="inline-flex items-center gap-2 rounded-xl border border-foreground/10 bg-foreground/[0.04] px-2.5 py-1.5 text-sm font-semibold tracking-tight text-foreground transition hover:bg-foreground/[0.08]"
           >
             <span className="h-2.5 w-2.5 rounded-full bg-gradient-to-br from-emerald-400 to-sky-400" />
             <span>FreeEarnHub</span>
@@ -59,8 +59,8 @@ export default function SiteHeader() {
                 href={item.href}
                 className={`rounded-full px-3 py-1.5 transition ${
                   pathname === item.href
-                    ? "bg-foreground text-background"
-                    : "hover:bg-foreground/10 hover:text-foreground"
+                    ? "bg-foreground text-background shadow-sm"
+                    : "hover:bg-foreground/[0.08] hover:text-foreground"
                 }`}
               >
                 {item.label}
@@ -75,7 +75,7 @@ export default function SiteHeader() {
               <a
                 key={item.label}
                 href={item.href}
-                className="rounded-full px-3 py-1.5 transition hover:bg-foreground/10 hover:text-foreground"
+                className="rounded-full px-3 py-1.5 transition hover:bg-foreground/[0.08] hover:text-foreground"
               >
                 {item.label}
               </a>
@@ -91,7 +91,7 @@ export default function SiteHeader() {
           <PwaInstallButton />
           <Link
             href={onDashboard ? "/dashboard" : "/login"}
-            className="rounded-full border border-foreground/20 bg-foreground/[0.03] px-3 py-1.5 text-xs font-medium text-foreground/75 transition hover:bg-foreground/10 hover:text-foreground sm:text-sm"
+            className="rounded-full border border-foreground/20 bg-foreground/[0.04] px-3 py-1.5 text-xs font-medium text-foreground/75 transition hover:bg-foreground/[0.08] hover:text-foreground sm:text-sm"
           >
             {onDashboard ? t("dashboardHome") : t("signIn")}
           </Link>
@@ -112,7 +112,7 @@ export default function SiteHeader() {
             <button
               type="button"
               onClick={() => setOpen((prev) => !prev)}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-foreground/15 bg-foreground/[0.04] text-foreground/70 transition hover:bg-foreground/10"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-foreground/15 bg-foreground/[0.04] text-foreground/70 transition hover:bg-foreground/[0.08]"
               aria-label="Toggle navigation"
               aria-expanded={open}
             >
@@ -123,8 +123,8 @@ export default function SiteHeader() {
       </div>
 
       {open && !onDashboard ? (
-        <div className="relative border-t border-foreground/10 bg-background/95 p-3 sm:hidden">
-          <div className="grid gap-1 text-sm text-foreground/75">
+        <div className="relative border-t border-foreground/10 bg-background/95 p-3 shadow-2xl shadow-black/10 sm:hidden">
+          <div className="grid gap-1 rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-2 text-sm text-foreground/75">
             {primaryLinks.map((item) => (
               <Link
                 key={item.href}
@@ -132,8 +132,8 @@ export default function SiteHeader() {
                 onClick={() => setOpen(false)}
                 className={`rounded-xl px-3 py-2 transition ${
                   pathname === item.href
-                    ? "bg-foreground text-background"
-                    : "hover:bg-foreground/10 hover:text-foreground"
+                    ? "bg-foreground text-background shadow-sm"
+                    : "hover:bg-foreground/[0.08] hover:text-foreground"
                 }`}
               >
                 {item.label}
@@ -145,7 +145,7 @@ export default function SiteHeader() {
                     key={item.label}
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="rounded-md px-3 py-2 transition hover:bg-foreground/5 hover:text-foreground"
+                    className="rounded-xl px-3 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground"
                   >
                     {item.label}
                   </a>
@@ -161,7 +161,7 @@ export default function SiteHeader() {
               <Link
                 href="/login"
                 onClick={() => setOpen(false)}
-                className="rounded-full border border-foreground/20 px-3 py-2 text-center text-xs font-medium text-foreground/75 transition hover:bg-foreground/5 hover:text-foreground"
+                className="rounded-full border border-foreground/20 px-3 py-2 text-center text-xs font-medium text-foreground/75 transition hover:bg-foreground/[0.06] hover:text-foreground"
               >
                 {t("signIn")}
               </Link>
