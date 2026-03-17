@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getDailyResetState } from "@/lib/level";
 
 function levelTarget(level: string) {
   switch (level) {
@@ -17,9 +18,9 @@ function levelTarget(level: string) {
   }
 }
 
-function levelProgress(totalApproved: number, level: string) {
+function levelProgress(dailyApproved: number, level: string) {
   if (level === "L5") {
-    return { current: totalApproved, target: null, percent: 100 };
+    return { current: dailyApproved, target: null, percent: 100 };
   }
 
   const floor =
@@ -28,11 +29,11 @@ function levelProgress(totalApproved: number, level: string) {
     level === "L2" ? 10 :
     0;
   const target = levelTarget(level);
-  const span = Math.max(1, (target ?? totalApproved) - floor);
-  const percent = Math.max(0, Math.min(100, Math.round(((totalApproved - floor) / span) * 100)));
+  const span = Math.max(1, (target ?? dailyApproved) - floor);
+  const percent = Math.max(0, Math.min(100, Math.round(((dailyApproved - floor) / span) * 100)));
 
   return {
-    current: totalApproved,
+    current: dailyApproved,
     target,
     percent,
   };
@@ -116,9 +117,11 @@ export async function GET() {
         id: true,
         name: true,
         email: true,
-      balance: true,
-      coinBalance: true,
-      level: true,
+        balance: true,
+        coinBalance: true,
+        level: true,
+        dailyApproved: true,
+        lastLevelResetAt: true,
         totalApproved: true,
         dailySubmits: true,
       },
@@ -178,16 +181,21 @@ export async function GET() {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  const progress = levelProgress(user.totalApproved, user.level);
+  const { resetNeeded } = getDailyResetState(user.lastLevelResetAt);
+  const effectiveLevel = resetNeeded ? "L1" : user.level;
+  const effectiveDailyApproved = resetNeeded ? 0 : user.dailyApproved;
+  const effectiveDailySubmits = resetNeeded ? 0 : user.dailySubmits;
+  const progress = levelProgress(effectiveDailyApproved, effectiveLevel);
 
   return NextResponse.json({
     profile: {
       displayName: user.name?.trim() || user.email,
-      level: user.level,
+      level: effectiveLevel,
       balance: user.balance,
       coinBalance: user.coinBalance,
       totalApproved: user.totalApproved,
-      dailySubmits: user.dailySubmits,
+      dailyApproved: effectiveDailyApproved,
+      dailySubmits: effectiveDailySubmits,
     },
     metrics: {
       availableBalance: user.balance,

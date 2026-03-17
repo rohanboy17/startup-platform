@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getSubmissionCommissionRate } from "@/lib/commission";
-import { getLevelFromApprovedCount } from "@/lib/level";
+import { getDailyResetState, getLevelFromApprovedCount } from "@/lib/level";
 import { applyReferralRewardsOnFirstApproval } from "@/lib/referrals";
 import { getAppSettings } from "@/lib/system-settings";
 
@@ -99,71 +99,89 @@ export async function PATCH(req: Request) {
           });
         });
       } else {
-        const commissionRate = getSubmissionCommissionRate({
-          category: submission.campaign.category,
-          userLevel: submission.user.level,
-          oneTimeRateOverride: appSettings.commissionRateDefault,
-        });
-        const grossReward = submission.campaign.rewardPerTask;
-        const commission = Number((grossReward * commissionRate).toFixed(2));
-        const netReward = Number((grossReward - commission).toFixed(2));
+        const campaign = submission.campaign;
+        const grossReward = campaign.rewardPerTask;
 
         await prisma.$transaction(async (tx) => {
           const freshCampaign = await tx.campaign.findUnique({
-            where: { id: submission.campaign!.id },
+            where: { id: campaign.id },
             select: { remainingBudget: true },
+          });
+          const freshUser = await tx.user.findUnique({
+            where: { id: submission.user.id },
+            select: {
+              level: true,
+              totalApproved: true,
+              dailyApproved: true,
+              lastLevelResetAt: true,
+            },
           });
           if (!freshCampaign || freshCampaign.remainingBudget < grossReward) {
             throw new Error("Insufficient campaign budget");
           }
+          if (!freshUser) {
+            throw new Error("User not found");
+          }
+
+          const commissionRate = getSubmissionCommissionRate({
+            category: campaign.category,
+            userLevel: freshUser.level,
+            oneTimeRateOverride: appSettings.commissionRateDefault,
+          });
+          const freshCommission = Number((grossReward * commissionRate).toFixed(2));
+          const freshNetReward = Number((grossReward - freshCommission).toFixed(2));
 
           await tx.campaign.update({
-            where: { id: submission.campaign!.id },
+            where: { id: campaign.id },
             data: { remainingBudget: { decrement: grossReward } },
           });
 
-          const nextApprovedCount = submission.user.totalApproved + 1;
-          const nextLevel = getLevelFromApprovedCount(nextApprovedCount);
+          const { resetAt, resetNeeded } = getDailyResetState(freshUser.lastLevelResetAt);
+          const currentDailyApproved = resetNeeded ? 0 : freshUser.dailyApproved;
+          const nextDailyApproved = currentDailyApproved + 1;
+          const nextLevel = getLevelFromApprovedCount(nextDailyApproved);
           await tx.user.update({
             where: { id: submission.user.id },
             data: {
-              balance: { increment: netReward },
+              balance: { increment: freshNetReward },
+              dailyApproved: nextDailyApproved,
               totalApproved: { increment: 1 },
               level: nextLevel,
+              lastLevelResetAt: resetNeeded ? resetAt : freshUser.lastLevelResetAt,
             },
           });
 
           await tx.walletTransaction.create({
             data: {
               userId: submission.user.id,
-              amount: netReward,
+              amount: freshNetReward,
               type: "CREDIT",
-              note: `Campaign reward (${submission.campaign!.title})`,
+              note: `Campaign reward (${campaign.title})`,
             },
           });
 
           await tx.platformEarning.create({
             data: {
-              amount: commission,
-              source: `Campaign commission - ${submission.campaign!.title}`,
+              amount: freshCommission,
+              source: `Campaign commission - ${campaign.title}`,
             },
           });
 
           await tx.platformTreasury.upsert({
             where: { id: "main" },
-            update: { balance: { increment: commission } },
-            create: { id: "main", balance: commission },
+            update: { balance: { increment: freshCommission } },
+            create: { id: "main", balance: freshCommission },
           });
 
           await tx.submission.update({
             where: { id: submissionId },
-            data: { adminStatus: "ADMIN_APPROVED", status: "APPROVED", rewardAmount: netReward },
+            data: { adminStatus: "ADMIN_APPROVED", status: "APPROVED", rewardAmount: freshNetReward },
           });
 
-          if (submission.user.totalApproved === 0) {
+          if (freshUser.totalApproved === 0) {
             await applyReferralRewardsOnFirstApproval(tx, {
               referredUserId: submission.user.id,
-              campaignTitle: submission.campaign!.title,
+              campaignTitle: campaign.title,
             });
           }
 
@@ -171,7 +189,7 @@ export async function PATCH(req: Request) {
             data: {
               userId: submission.user.id,
               title: "Submission approved by admin",
-              message: `Final approval complete. INR ${netReward} credited to your wallet.`,
+              message: `Final approval complete. INR ${freshNetReward} credited to your wallet.`,
               type: "SUCCESS",
             },
           });
@@ -182,7 +200,7 @@ export async function PATCH(req: Request) {
               templateKey: "submission.admin_approved",
               channel: "IN_APP",
               status: "SENT",
-              payload: { submissionId, netReward },
+              payload: { submissionId, netReward: freshNetReward },
             },
           });
 
@@ -191,7 +209,7 @@ export async function PATCH(req: Request) {
               userId: session.user.id,
               action: "ADMIN_BULK_APPROVED_SUBMISSION",
               entity: "Submission",
-              details: `submissionId=${submissionId}, gross=${grossReward}, commission=${commission}, net=${netReward}`,
+              details: `submissionId=${submissionId}, gross=${grossReward}, commission=${freshCommission}, net=${freshNetReward}`,
             },
           });
         });

@@ -17,6 +17,7 @@ type OverviewResponse = {
     level: "L1" | "L2" | "L3" | "L4" | "L5";
     balance: number;
     coinBalance: number;
+    dailyApproved: number;
     totalApproved: number;
     dailySubmits: number;
   };
@@ -213,8 +214,8 @@ export default function UserOverviewPanel() {
 
                 <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
                   <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">{t("todayApproved")}</p>
-                  <p className="mt-2 text-2xl font-semibold text-foreground">{data.metrics.todayApprovedCount}</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">{t("todayApproved")}</p>
+                  <p className="mt-2 text-2xl font-semibold text-foreground">{data.profile.dailyApproved}</p>
                 </div>
                 <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">{t("totalApproved")}</p>

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getSubmissionCommissionRate } from "@/lib/commission";
-import { getLevelFromApprovedCount } from "@/lib/level";
+import { getDailyResetState, getLevelFromApprovedCount } from "@/lib/level";
 import { applyReferralRewardsOnFirstApproval } from "@/lib/referrals";
 import { getAppSettings } from "@/lib/system-settings";
 
@@ -34,8 +34,10 @@ export async function PATCH(
         select: {
           id: true,
           level: true,
+          dailyApproved: true,
           totalApproved: true,
           totalRejected: true,
+          lastLevelResetAt: true,
         },
       },
       campaign: {
@@ -129,7 +131,7 @@ export async function PATCH(
     const reopened = await prisma.$transaction(async (tx) => {
       const freshUser = await tx.user.findUnique({
         where: { id: submission.user.id },
-        select: { balance: true, totalApproved: true },
+        select: { balance: true, totalApproved: true, dailyApproved: true, lastLevelResetAt: true },
       });
 
       if (!freshUser || freshUser.balance < netReward) {
@@ -153,15 +155,19 @@ export async function PATCH(
         },
       });
 
-      const nextApprovedCount = Math.max(0, freshUser.totalApproved - 1);
-      const nextLevel = getLevelFromApprovedCount(nextApprovedCount);
+      const { resetAt, resetNeeded } = getDailyResetState(freshUser.lastLevelResetAt);
+      const currentDailyApproved = resetNeeded ? 0 : freshUser.dailyApproved;
+      const nextDailyApproved = Math.max(0, currentDailyApproved - 1);
+      const nextLevel = getLevelFromApprovedCount(nextDailyApproved);
 
       await tx.user.update({
         where: { id: submission.user.id },
         data: {
           balance: { decrement: netReward },
           totalApproved: { decrement: 1 },
+          dailyApproved: nextDailyApproved,
           level: nextLevel,
+          lastLevelResetAt: resetNeeded ? resetAt : freshUser.lastLevelResetAt,
         },
       });
 
@@ -303,15 +309,19 @@ export async function PATCH(
       },
     });
 
-    const nextApprovedCount = submission.user.totalApproved + 1;
-    const nextLevel = getLevelFromApprovedCount(nextApprovedCount);
+    const { resetAt, resetNeeded } = getDailyResetState(submission.user.lastLevelResetAt);
+    const currentDailyApproved = resetNeeded ? 0 : submission.user.dailyApproved;
+    const nextDailyApproved = currentDailyApproved + 1;
+    const nextLevel = getLevelFromApprovedCount(nextDailyApproved);
 
     await tx.user.update({
       where: { id: submission.user.id },
       data: {
         balance: { increment: netReward },
+        dailyApproved: nextDailyApproved,
         totalApproved: { increment: 1 },
         level: nextLevel,
+        lastLevelResetAt: resetNeeded ? resetAt : submission.user.lastLevelResetAt,
       },
     });
 

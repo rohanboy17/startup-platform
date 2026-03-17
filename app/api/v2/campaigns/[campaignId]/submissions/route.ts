@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { shouldResetDailyCounter } from "@/lib/level";
+import { getDailyResetState } from "@/lib/level";
 import { getClientIp } from "@/lib/ip";
 import { checkIpAccess, createSecurityEvent } from "@/lib/security";
 import { autoFlagSuspiciousUser } from "@/lib/safety";
@@ -207,14 +207,14 @@ export async function POST(
     const result = await prisma.$transaction(async (tx) => {
       const user = await tx.user.findUnique({
         where: { id: session.user.id },
-        select: { dailySubmits: true, lastLevelResetAt: true },
+        select: { dailySubmits: true, dailyApproved: true, lastLevelResetAt: true },
       });
 
       if (!user) {
         throw new Error("User not found");
       }
 
-      const resetNeeded = shouldResetDailyCounter(user.lastLevelResetAt);
+      const { resetAt, resetNeeded } = getDailyResetState(user.lastLevelResetAt);
       const currentSubmits = resetNeeded ? 0 : user.dailySubmits;
       const nextSubmits = currentSubmits + 1;
 
@@ -250,7 +250,15 @@ export async function POST(
         where: { id: session.user.id },
         data: {
           dailySubmits: nextSubmits,
-          lastLevelResetAt: resetNeeded ? new Date() : user.lastLevelResetAt,
+          ...(resetNeeded
+            ? {
+                dailyApproved: 0,
+                level: "L1",
+                lastLevelResetAt: resetAt,
+              }
+            : {
+                lastLevelResetAt: user.lastLevelResetAt,
+              }),
         },
       });
 

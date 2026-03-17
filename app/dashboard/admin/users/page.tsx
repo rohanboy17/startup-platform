@@ -57,6 +57,7 @@ export default async function AdminUsersPage({
     balance: number;
     coinBalance: number;
     dailySubmits: number;
+    dailyApproved: number;
     totalApproved: number;
     totalRejected: number;
     emergencyWithdrawCount: number;
@@ -135,6 +136,7 @@ export default async function AdminUsersPage({
         balance: true,
         coinBalance: true,
         dailySubmits: true,
+        dailyApproved: true,
         totalApproved: true,
         totalRejected: true,
         emergencyWithdrawCount: true,
@@ -446,6 +448,10 @@ export default async function AdminUsersPage({
                       <p>
                         <span className="text-foreground/60">Submitted today:</span>{" "}
                         <span className="font-medium">{user.dailySubmits}</span>
+                      </p>
+                      <p>
+                        <span className="text-foreground/60">Approved today:</span>{" "}
+                        <span className="font-medium">{user.dailyApproved}</span>
                       </p>
                       <p>
                         <span className="text-foreground/60">Approved:</span>{" "}

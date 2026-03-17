@@ -31,6 +31,7 @@ model User {
   balance     Float        @default(0)
   coinBalance Int          @default(0)
   dailySubmits Int         @default(0)
+  dailyApproved Int        @default(0)
   totalApproved Int        @default(0)
   totalRejected Int        @default(0)
   emergencyWithdrawCount Int @default(0)

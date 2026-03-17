@@ -48,7 +48,7 @@ export default async function AdminDashboard() {
     prisma.withdrawal.count({ where: { status: "PENDING" } }),
     prisma.user.count({ where: { role: "BUSINESS", businessOwnerId: null, kycStatus: "PENDING" } }),
     prisma.user.count({ where: { isSuspicious: true } }),
-    prisma.user.count({ where: { lastLevelResetAt: { lt: staleResetCutoff } } }),
+    prisma.user.count({ where: { role: "USER", lastLevelResetAt: { lt: staleResetCutoff } } }),
     prisma.paymentOrder.count({ where: { status: "FAILED" } }),
     prisma.withdrawal.count({
       where: { status: "PENDING", createdAt: { lt: staleQueueCutoff } },
