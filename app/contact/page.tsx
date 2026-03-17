@@ -1,7 +1,7 @@
 import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
 import { getTranslations } from "next-intl/server";
 
-const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@earnhub.in";
+const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@freeearnhub.in";
 const SUPPORT_ADDRESS =
   process.env.NEXT_PUBLIC_SUPPORT_ADDRESS ||
   "FreeEarnHub Support Desk, Bengaluru, Karnataka, India";

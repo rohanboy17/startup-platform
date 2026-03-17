@@ -61,8 +61,8 @@ export default async function MaintenancePage() {
         <PolicySection title={meta.helpTitle}>
           <p>
             {meta.helpLead}{" "}
-            <a href="mailto:support@earnhub.in" className="underline underline-offset-4">
-              support@earnhub.in
+            <a href="mailto:support@freeearnhub.in" className="underline underline-offset-4">
+              support@freeearnhub.in
             </a>
             .
           </p>
