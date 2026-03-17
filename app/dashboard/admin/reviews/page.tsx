@@ -244,20 +244,20 @@ export default async function AdminReviewsPage({
                   Budget left: INR {formatMoney(submission.campaign?.remainingBudget)}
                 </p>
                 <div className="space-y-2">
-                  <p className="break-words text-sm text-white/70">
+                  <p className="break-all text-sm text-white/70">
                     Proof:{" "}
                     {submission.proofText ||
                       submission.proofLink ||
                       ((submission.proofImage || isLikelyScreenshotUrl(submission.proof)) ? "Screenshot proof uploaded." : null) ||
                       submission.proof}
                   </p>
-                  <div className="flex flex-col gap-2 text-sm sm:flex-row sm:flex-wrap sm:items-center">
+                  <div className="flex flex-col gap-2 text-sm md:flex-row md:flex-wrap md:items-center">
                     {submission.proofLink ? (
                       <a
                         href={submission.proofLink}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-1 text-emerald-200 underline underline-offset-4"
+                        className="inline-flex w-full items-center gap-1 text-emerald-200 underline underline-offset-4 md:w-auto"
                       >
                         View link
                       </a>
@@ -319,7 +319,7 @@ export default async function AdminReviewsPage({
                 <p className="break-all text-sm text-white/70">
                   User: {submission.user.name || "Unnamed"} ({submission.user.email})
                 </p>
-                <p className="break-words text-sm text-white/70">
+                <p className="break-all text-sm text-white/70">
                   Proof:{" "}
                   {submission.proofText ||
                     submission.proofLink ||

@@ -6,6 +6,8 @@ import AdminUserStatusActions from "@/components/admin-user-status-actions";
 import AdminUserWalletAdjustment from "@/components/admin-user-wallet-adjustment";
 import AdminUserBulkActions from "@/components/admin-user-bulk-actions";
 import AdminUserLifecycleActions from "@/components/admin-user-lifecycle-actions";
+import AdminUserWorkAssignments from "@/components/admin-user-work-assignments";
+import AdminBulkAssignBySkill from "@/components/admin-bulk-assign-by-skill";
 import { formatMoney } from "@/lib/format-money";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
@@ -73,6 +75,7 @@ export default async function AdminUsersPage({
   const activityMap: Record<string, Array<{ action: string; entity: string; createdAt: Date }>> = {};
   const latestSubmissionMap: Record<string, Date> = {};
   const latestWithdrawalMap: Record<string, Date> = {};
+  const userSkillsMap: Record<string, string[]> = {};
   const businessKycMap: Record<
     string,
     {
@@ -204,6 +207,17 @@ export default async function AdminUsersPage({
           : Promise.resolve([]),
       ]);
 
+      const userSkills = await prisma.userSkill.findMany({
+        where: { userId: { in: userIds } },
+        include: { skill: { select: { label: true } } },
+        orderBy: { createdAt: "asc" },
+      });
+
+      for (const row of userSkills) {
+        if (!userSkillsMap[row.userId]) userSkillsMap[row.userId] = [];
+        userSkillsMap[row.userId].push(row.skill.label);
+      }
+
       for (const req of businessKycRequests) {
         if (!businessKycMap[req.businessId]) {
           businessKycMap[req.businessId] = {
@@ -333,6 +347,8 @@ export default async function AdminUsersPage({
           }))}
         />
       ) : null}
+
+      {!loadError ? <AdminBulkAssignBySkill /> : null}
 
       {loadError ? (
         <Card className="rounded-2xl border-amber-300/20 bg-amber-500/10">
@@ -556,6 +572,50 @@ export default async function AdminUsersPage({
                     </div>
                   </div>
                 </div>
+
+                {user.role === "USER" ? (
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div className="rounded-xl border border-foreground/10 bg-background/60 p-3">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+                        Skills
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {(userSkillsMap[user.id] || []).length === 0 ? (
+                          <p className="text-sm text-foreground/60">No skills added yet.</p>
+                        ) : (
+                          (userSkillsMap[user.id] || []).slice(0, 18).map((skill) => (
+                            <span
+                              key={skill}
+                              className="rounded-full border border-foreground/10 bg-foreground/[0.04] px-3 py-1 text-xs text-foreground/80"
+                            >
+                              {skill}
+                            </span>
+                          ))
+                        )}
+                      </div>
+                      {(userSkillsMap[user.id] || []).length > 18 ? (
+                        <p className="mt-2 text-xs text-foreground/55">
+                          Showing 18 of {(userSkillsMap[user.id] || []).length} skills.
+                        </p>
+                      ) : null}
+                    </div>
+
+                    <div className="rounded-xl border border-foreground/10 bg-background/60 p-3">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+                        Work assignments
+                      </p>
+                      <p className="mt-2 text-sm text-foreground/70">
+                        Assign this user to invite-only work campaigns.
+                      </p>
+                      <div className="mt-3">
+                        <AdminUserWorkAssignments
+                          userId={user.id}
+                          userSkills={userSkillsMap[user.id] || []}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
 
                 <div className="grid gap-2 text-xs text-foreground/60 sm:grid-cols-2">
                   <p>

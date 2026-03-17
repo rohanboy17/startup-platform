@@ -3,7 +3,12 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
-const nextConfig: NextConfig = {
+const nextConfig = {
+  typescript: {
+    // We run `node node_modules/typescript/bin/tsc --noEmit` explicitly in the build script.
+    // Disabling here avoids Windows spawn issues in restricted environments.
+    ignoreBuildErrors: true,
+  },
   async headers() {
     return [
       {
@@ -32,6 +37,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-};
+} as unknown as NextConfig;
 
 export default withNextIntl(nextConfig);

@@ -578,6 +578,11 @@
       "securityBody": "Forgot your password? Reset it securely.",
       "forgotPassword": "Forgot password"
     },
+    "skills": {
+      "eyebrow": "User profile",
+      "title": "Skills",
+      "subtitle": "Add skills so admins can match you to invite-only work campaigns."
+    },
     "help": {
       "eyebrow": "Trust and support",
       "title": "Help",
@@ -1224,6 +1229,7 @@
       "withdrawals": "Withdrawals",
       "referrals": "Referrals",
       "notifications": "Notifications",
+      "skills": "Skills",
       "help": "Help",
       "settings": "Settings",
       "submissionQueue": "Submission Queue",

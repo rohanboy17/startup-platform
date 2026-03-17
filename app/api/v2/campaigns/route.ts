@@ -12,6 +12,15 @@ export async function GET() {
     where: {
       status: "LIVE",
       remainingBudget: { gt: 0 },
+      OR: [
+        { category: "marketing" },
+        {
+          AND: [
+            { category: "work" },
+            { assignments: { some: { userId: session.user.id } } },
+          ],
+        },
+      ],
     },
     select: {
       id: true,

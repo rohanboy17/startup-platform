@@ -72,6 +72,9 @@ model User {
   referralInviteReceived ReferralInvite? @relation("ReferralInviteReceived")
   coinTransactions CoinTransaction[]
   coinRedemptions CoinRedemption[]
+  skills UserSkill[]
+  campaignAssignments CampaignAssignment[]
+  campaignAssignmentsAssignedBy CampaignAssignment[] @relation("CampaignAssignmentAssignedBy")
   deletedAt DateTime?
   deletedByUserId String?
   deletionReason String?
@@ -217,6 +220,45 @@ model Campaign {
   createdAt       DateTime              @default(now())
   submissions     Submission[]
   instructions    CampaignInstruction[]
+  assignments    CampaignAssignment[]
+}
+
+model Skill {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  label     String
+  createdAt DateTime @default(now())
+
+  users UserSkill[]
+}
+
+model UserSkill {
+  id        String   @id @default(cuid())
+  userId    String
+  skillId   String
+  createdAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  skill Skill @relation(fields: [skillId], references: [id])
+
+  @@unique([userId, skillId])
+  @@index([skillId])
+}
+
+model CampaignAssignment {
+  id             String   @id @default(cuid())
+  campaignId     String
+  userId         String
+  assignedByUserId String
+  createdAt      DateTime @default(now())
+
+  campaign  Campaign @relation(fields: [campaignId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  assignedBy User    @relation("CampaignAssignmentAssignedBy", fields: [assignedByUserId], references: [id])
+
+  @@unique([campaignId, userId])
+  @@index([userId])
+  @@index([campaignId])
 }
 
 model CampaignInstruction {

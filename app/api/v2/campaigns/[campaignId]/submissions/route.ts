@@ -53,6 +53,17 @@ export async function GET(
     return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
   }
 
+  if (campaign.category.toLowerCase() === "work") {
+    const assigned = await prisma.campaignAssignment.findUnique({
+      where: { campaignId_userId: { campaignId, userId: session.user.id } },
+      select: { id: true },
+    });
+
+    if (!assigned) {
+      return NextResponse.json({ error: "This campaign is invite-only." }, { status: 403 });
+    }
+  }
+
   const allowedSubmissions = Math.max(1, Math.floor(campaign.totalBudget / campaign.rewardPerTask));
   const [occupiedSubmissions, userSubmissionCount] = await Promise.all([
     prisma.submission.count({
@@ -159,6 +170,7 @@ export async function POST(
     select: {
       id: true,
       status: true,
+      category: true,
       rewardPerTask: true,
       totalBudget: true,
       remainingBudget: true,
@@ -168,6 +180,17 @@ export async function POST(
 
   if (!campaign || campaign.status !== "LIVE") {
     return NextResponse.json({ error: "Campaign is not live" }, { status: 400 });
+  }
+
+  if (campaign.category.toLowerCase() === "work") {
+    const assigned = await prisma.campaignAssignment.findUnique({
+      where: { campaignId_userId: { campaignId, userId: session.user.id } },
+      select: { id: true },
+    });
+
+    if (!assigned) {
+      return NextResponse.json({ error: "This campaign is invite-only." }, { status: 403 });
+    }
   }
 
   if (campaign.remainingBudget < campaign.rewardPerTask) {

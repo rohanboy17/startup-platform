@@ -40,8 +40,9 @@ export default function UserSettingsPanel() {
   const [initialized, setInitialized] = useState(false);
 
   const load = useCallback(async () => {
-    const res = await fetch("/api/v2/users/me/settings", { cache: "no-store" });
-    const raw = await res.text();
+    const settingsRes = await fetch("/api/v2/users/me/settings", { cache: "no-store" });
+
+    const raw = await settingsRes.text();
     let parsed: SettingsPayload | { error?: string } = { error: "Unexpected response" };
     try {
       parsed = raw ? (JSON.parse(raw) as SettingsPayload) : parsed;
@@ -49,7 +50,7 @@ export default function UserSettingsPanel() {
       parsed = { error: "Unexpected response" };
     }
 
-    if (!res.ok) {
+    if (!settingsRes.ok) {
       setError((parsed as { error?: string }).error || "Failed to load settings");
       setLoading(false);
       return;
@@ -189,7 +190,7 @@ export default function UserSettingsPanel() {
             <p className="font-medium text-foreground">Emergency withdrawals</p>
             <p className="mt-1">
               Used this month: <span className="font-semibold text-foreground">{data?.withdrawals.emergencyUsed ?? 0}</span>
-              {" · "}
+              {" - "}
               Remaining:{" "}
               <span className="font-semibold text-foreground">{data?.withdrawals.emergencyRemaining ?? 0}</span>
             </p>

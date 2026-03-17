@@ -610,6 +610,11 @@
       "failed": "রেফারাল লোড করা যায়নি",
       "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স"
     },
+    "skills": {
+      "eyebrow": "User profile",
+      "title": "Skills",
+      "subtitle": "Add skills so admins can match you to invite-only work campaigns."
+    },
     "settings": {
       "eyebrow": "ইউজার সেটিংস",
       "title": "সেটিংস",
@@ -1264,6 +1269,7 @@
       "withdrawals": "উইথড্র",
       "referrals": "রেফারাল",
       "notifications": "নোটিফিকেশন",
+      "skills": "Skills",
       "help": "হেল্প",
       "settings": "সেটিংস",
       "submissionQueue": "সাবমিশন কিউ",

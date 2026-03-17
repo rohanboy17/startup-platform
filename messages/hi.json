@@ -610,6 +610,11 @@
       "failed": "रेफ़रल लोड नहीं हो पाए",
       "unexpected": "अनपेक्षित सर्वर रिस्पॉन्स"
     },
+    "skills": {
+      "eyebrow": "User profile",
+      "title": "Skills",
+      "subtitle": "Add skills so admins can match you to invite-only work campaigns."
+    },
     "settings": {
       "eyebrow": "यूज़र सेटिंग्स",
       "title": "सेटिंग्स",
@@ -1264,6 +1269,7 @@
       "withdrawals": "विथड्रॉ",
       "referrals": "रेफ़रल",
       "notifications": "नोटिफिकेशन",
+      "skills": "Skills",
       "help": "हेल्प",
       "settings": "सेटिंग्स",
       "submissionQueue": "सबमिशन क्यू",

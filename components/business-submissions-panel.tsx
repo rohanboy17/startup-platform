@@ -290,8 +290,8 @@ export default function BusinessSubmissionsPanel() {
 
                       return (
                         <>
-                          <p className="mt-2 break-words text-sm text-white/75">{proofText}</p>
-                          <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+                          <p className="mt-2 break-all text-sm text-white/75">{proofText}</p>
+                          <div className="mt-3 flex flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
                             {screenshotUrl ? (
                               <ProofImageDialog url={screenshotUrl} label={t("row.openScreenshot")} />
                             ) : null}
@@ -300,7 +300,7 @@ export default function BusinessSubmissionsPanel() {
                                 href={submission.proofLink}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center gap-1 text-sm text-emerald-200 underline underline-offset-4"
+                                className="inline-flex w-full items-center gap-1 text-sm text-emerald-200 underline underline-offset-4 md:w-auto"
                               >
                                 <ExternalLink size={14} />
                                 {t("openProof")}

@@ -246,13 +246,13 @@ export default function UserV2SubmissionsPanel() {
 
                     <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
                       <p className="text-xs uppercase tracking-[0.16em] text-white/35">{t("proofPreview")}</p>
-                      <p className="text-sm text-white/80 break-words">{proofPreview(submission)}</p>
+                      <p className="break-all text-sm text-white/80">{proofPreview(submission)}</p>
                       {submission.proofLink ? (
                         <a
                           href={submission.proofLink}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex text-sm text-emerald-200 underline underline-offset-4"
+                          className="inline-flex w-full text-sm text-emerald-200 underline underline-offset-4 md:w-auto"
                         >
                           {t("openProof")}
                         </a>

@@ -6,11 +6,12 @@
     "node": ">=20 <25"
   },
   "scripts": {
-    "postinstall": "prisma generate",
-    "dev": "next dev",
-    "build": "next build",
-    "build:prod": "prisma generate && next build",
-    "start": "next start",
+    "postinstall": "prisma generate && node scripts/fix-windows-bin.mjs",
+    "dev": "node node_modules/next/dist/bin/next dev",
+    "typecheck": "node node_modules/typescript/bin/tsc --noEmit",
+    "build": "node node_modules/typescript/bin/tsc --noEmit && node node_modules/next/dist/bin/next build",
+    "build:prod": "prisma generate && node node_modules/typescript/bin/tsc --noEmit && node node_modules/next/dist/bin/next build",
+    "start": "node node_modules/next/dist/bin/next start",
     "lint": "eslint",
     "db:generate": "prisma generate",
     "db:migrate:deploy": "prisma migrate deploy",
