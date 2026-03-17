@@ -15,6 +15,7 @@ export default function AdminCampaignActions({
   initialDescription,
   initialCategory,
   initialTaskLink,
+  initialTutorialVideoUrl,
   initialRewardPerTask,
   initialTotalBudget,
   initialSubmissionMode,
@@ -28,6 +29,7 @@ export default function AdminCampaignActions({
   initialDescription: string;
   initialCategory: string;
   initialTaskLink: string | null;
+  initialTutorialVideoUrl: string | null;
   initialRewardPerTask: number;
   initialTotalBudget: number;
   initialSubmissionMode: "ONE_PER_USER" | "MULTIPLE_PER_USER";
@@ -39,6 +41,7 @@ export default function AdminCampaignActions({
   const [description, setDescription] = useState(initialDescription);
   const [category, setCategory] = useState(initialCategory);
   const [taskLink, setTaskLink] = useState(initialTaskLink || "");
+  const [tutorialVideoUrl, setTutorialVideoUrl] = useState(initialTutorialVideoUrl || "");
   const [rewardPerTask, setRewardPerTask] = useState(String(initialRewardPerTask));
   const [totalBudget, setTotalBudget] = useState(String(initialTotalBudget));
   const [submissionMode, setSubmissionMode] = useState(initialSubmissionMode);
@@ -113,6 +116,7 @@ export default function AdminCampaignActions({
         description,
         category,
         taskLink: taskLink || null,
+        tutorialVideoUrl: tutorialVideoUrl || null,
         rewardPerTask: Number(rewardPerTask),
         totalBudget: Number(totalBudget),
         submissionMode,
@@ -259,6 +263,12 @@ export default function AdminCampaignActions({
             onChange={(e) => setTaskLink(e.target.value)}
             className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
             placeholder="Task link (optional)"
+          />
+          <input
+            value={tutorialVideoUrl}
+            onChange={(e) => setTutorialVideoUrl(e.target.value)}
+            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
+            placeholder="Tutorial video URL (YouTube, Loom, or direct video)"
           />
           <textarea
             value={description}

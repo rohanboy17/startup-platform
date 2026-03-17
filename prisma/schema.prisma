@@ -210,6 +210,7 @@ model Campaign {
   description     String
   category        String
   taskLink        String?
+  tutorialVideoUrl String?
   rewardPerTask   Float
   totalBudget     Float
   remainingBudget Float

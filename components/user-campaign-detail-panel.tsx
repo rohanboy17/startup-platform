@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import CampaignTutorialVideo from "@/components/campaign-tutorial-video";
 import { normalizeExternalUrl } from "@/lib/external-url";
 import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
 import { formatMoney } from "@/lib/format-money";
@@ -19,6 +20,7 @@ type CampaignResponse = {
     description: string;
     category: string;
     taskLink: string | null;
+    tutorialVideoUrl: string | null;
     rewardPerTask: number;
     totalBudget: number;
     remainingBudget: number;
@@ -293,6 +295,16 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
                 </p>
               </div>
             )}
+
+            {campaign.tutorialVideoUrl ? (
+              <CampaignTutorialVideo
+                videoUrl={campaign.tutorialVideoUrl}
+                eyebrow={t("tutorialEyebrow")}
+                title={t("tutorialTitle")}
+                body={t("tutorialBody")}
+                openLabel={t("openTutorial")}
+              />
+            ) : null}
 
             <div>
               <div className="mb-2 flex items-center justify-between text-sm text-white/70">

@@ -179,6 +179,11 @@ export default async function AdminCampaignsPage({
                     ? "One submission per user"
                     : "Many submissions per user"}
                 </p>
+                {campaign.tutorialVideoUrl ? (
+                  <p className="text-sm text-foreground/70">
+                    Tutorial video: attached
+                  </p>
+                ) : null}
                 <p className="text-sm text-foreground/70">
                   Responses received: {campaign._count.submissions}
                 </p>
@@ -219,6 +224,7 @@ export default async function AdminCampaignsPage({
                   initialDescription={campaign.description}
                   initialCategory={campaign.category}
                   initialTaskLink={campaign.taskLink}
+                  initialTutorialVideoUrl={campaign.tutorialVideoUrl}
                   initialRewardPerTask={campaign.rewardPerTask}
                   initialTotalBudget={campaign.totalBudget}
                   initialSubmissionMode={campaign.submissionMode}

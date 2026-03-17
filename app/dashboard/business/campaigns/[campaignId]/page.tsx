@@ -8,6 +8,7 @@ import { getCampaignCategoryLabel } from "@/lib/campaign-options";
 import { formatMoney } from "@/lib/format-money";
 import { Card, CardContent } from "@/components/ui/card";
 import BusinessCampaignEditor from "@/components/business-campaign-editor";
+import CampaignTutorialVideo from "@/components/campaign-tutorial-video";
 
 function statusTone(status: string) {
   if (status === "LIVE") return "bg-emerald-400/15 text-emerald-200 border-emerald-400/20";
@@ -240,6 +241,16 @@ export default async function BusinessCampaignDetailPage({
               <p className="text-sm text-white/60">Task details</p>
               <h3 className="text-xl font-semibold text-white">Instruction checklist</h3>
             </div>
+
+            {campaign.tutorialVideoUrl ? (
+              <CampaignTutorialVideo
+                videoUrl={campaign.tutorialVideoUrl}
+                eyebrow="How-to video"
+                title="What users will watch before they submit"
+                body="This admin-managed guide appears on the task page so users can understand the work before sending proof."
+                openLabel="Open video in new tab"
+              />
+            ) : null}
 
             {campaign.instructions.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/50">

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { normalizeTutorialVideoUrl } from "@/lib/tutorial-video";
 
 export async function PATCH(
   req: Request,
@@ -178,6 +179,7 @@ export async function PUT(
     description?: string;
     category?: string;
     taskLink?: string | null;
+    tutorialVideoUrl?: string | null;
     rewardPerTask?: number;
     totalBudget?: number;
     submissionMode?: "ONE_PER_USER" | "MULTIPLE_PER_USER";
@@ -191,6 +193,7 @@ export async function PUT(
       description: true,
       category: true,
       taskLink: true,
+      tutorialVideoUrl: true,
       rewardPerTask: true,
       totalBudget: true,
       remainingBudget: true,
@@ -206,6 +209,10 @@ export async function PUT(
   const description = body.description?.trim() || campaign.description;
   const category = body.category?.trim() || campaign.category;
   const taskLink = body.taskLink === undefined ? campaign.taskLink : body.taskLink?.trim() || null;
+  const tutorialVideoUrl =
+    body.tutorialVideoUrl === undefined
+      ? campaign.tutorialVideoUrl
+      : normalizeTutorialVideoUrl(body.tutorialVideoUrl);
   const rewardPerTask = Number(body.rewardPerTask ?? campaign.rewardPerTask);
   const totalBudget = Number(body.totalBudget ?? campaign.totalBudget);
   const submissionMode = body.submissionMode ?? campaign.submissionMode;
@@ -221,6 +228,12 @@ export async function PUT(
   }
   if (!["ONE_PER_USER", "MULTIPLE_PER_USER"].includes(submissionMode)) {
     return NextResponse.json({ error: "Invalid submission mode" }, { status: 400 });
+  }
+  if (body.tutorialVideoUrl !== undefined && body.tutorialVideoUrl?.trim() && !tutorialVideoUrl) {
+    return NextResponse.json(
+      { error: "Tutorial video must be a valid YouTube, Loom, or direct video URL" },
+      { status: 400 }
+    );
   }
 
   const spent = campaign.totalBudget - campaign.remainingBudget;
@@ -239,6 +252,7 @@ export async function PUT(
         description,
         category,
         taskLink,
+        tutorialVideoUrl,
         rewardPerTask,
         totalBudget,
         remainingBudget: totalBudget - spent,

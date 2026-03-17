@@ -33,6 +33,7 @@ export async function GET(
       description: true,
       category: true,
       taskLink: true,
+      tutorialVideoUrl: true,
       rewardPerTask: true,
       totalBudget: true,
       remainingBudget: true,

@@ -390,6 +390,7 @@ export async function POST(
         description: sourceCampaign.description,
         category: sourceCampaign.category,
         taskLink: sourceCampaign.taskLink,
+        tutorialVideoUrl: sourceCampaign.tutorialVideoUrl,
         rewardPerTask: sourceCampaign.rewardPerTask,
         totalBudget: sourceCampaign.totalBudget,
         remainingBudget: sourceCampaign.totalBudget,
