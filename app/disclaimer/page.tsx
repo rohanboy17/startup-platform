@@ -9,18 +9,18 @@ export default async function DisclaimerPage() {
       ? {
           eyebrow: "अनुपालन",
           title: "डिस्क्लेमर",
-          description: "EarnHub प्लेटफ़ॉर्म उपयोग के लिए महत्वपूर्ण सीमाएँ और संचालन सीमाबंध।",
+          description: "FreeEarnHub प्लेटफ़ॉर्म उपयोग के लिए महत्वपूर्ण सीमाएँ और संचालन सीमाबंध।",
         }
       : locale === "bn"
         ? {
             eyebrow: "কমপ্লায়েন্স",
             title: "ডিসক্লেইমার",
-            description: "EarnHub প্ল্যাটফর্ম ব্যবহারের জন্য গুরুত্বপূর্ণ সীমাবদ্ধতা ও অপারেশনাল সীমা।",
+            description: "FreeEarnHub প্ল্যাটফর্ম ব্যবহারের জন্য গুরুত্বপূর্ণ সীমাবদ্ধতা ও অপারেশনাল সীমা।",
           }
         : {
             eyebrow: "Compliance",
             title: "Disclaimer",
-            description: "Important limitations and operational boundaries for using the EarnHub platform.",
+            description: "Important limitations and operational boundaries for using the FreeEarnHub platform.",
           };
 
   const sections =
@@ -28,7 +28,7 @@ export default async function DisclaimerPage() {
       ? [
           {
             title: "सेवा का दायरा",
-            body: "EarnHub कैंपेन निष्पादन और यूज़र भागीदारी के लिए वर्कफ़्लो इंफ़्रास्ट्रक्चर प्रदान करता है। हम किसी विशेष बिज़नेस परिणाम, कमाई परिणाम या निरंतर उपलब्धता की गारंटी नहीं देते।",
+            body: "FreeEarnHub कैंपेन निष्पादन और यूज़र भागीदारी के लिए वर्कफ़्लो इंफ़्रास्ट्रक्चर प्रदान करता है। हम किसी विशेष बिज़नेस परिणाम, कमाई परिणाम या निरंतर उपलब्धता की गारंटी नहीं देते।",
           },
           {
             title: "थर्ड-पार्टी निर्भरता",
@@ -43,7 +43,7 @@ export default async function DisclaimerPage() {
         ? [
             {
               title: "সার্ভিসের পরিধি",
-              body: "EarnHub ক্যাম্পেইন এক্সিকিউশন ও ব্যবহারকারী অংশগ্রহণের জন্য ওয়ার্কফ্লো অবকাঠামো প্রদান করে। আমরা নির্দিষ্ট ব্যবসায়িক ফলাফল, আয়ের ফলাফল বা নিরবচ্ছিন্ন উপলভ্যতার গ্যারান্টি দিই না।",
+              body: "FreeEarnHub ক্যাম্পেইন এক্সিকিউশন ও ব্যবহারকারী অংশগ্রহণের জন্য ওয়ার্কফ্লো অবকাঠামো প্রদান করে। আমরা নির্দিষ্ট ব্যবসায়িক ফলাফল, আয়ের ফলাফল বা নিরবচ্ছিন্ন উপলভ্যতার গ্যারান্টি দিই না।",
             },
             {
               title: "তৃতীয় পক্ষের নির্ভরতা",
@@ -57,7 +57,7 @@ export default async function DisclaimerPage() {
         : [
             {
               title: "Service Scope",
-              body: "EarnHub provides workflow infrastructure for campaign execution and user participation. We do not guarantee specific business results, earning outcomes, or uninterrupted availability.",
+              body: "FreeEarnHub provides workflow infrastructure for campaign execution and user participation. We do not guarantee specific business results, earning outcomes, or uninterrupted availability.",
             },
             {
               title: "Third-Party Dependencies",
@@ -86,3 +86,4 @@ export default async function DisclaimerPage() {
     </PublicPageShell>
   );
 }
+

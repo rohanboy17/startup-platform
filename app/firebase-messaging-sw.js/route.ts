@@ -13,7 +13,7 @@ export async function GET() {
   };
 
   const body = `
-// EarnHub Service Worker (PWA shell + Firebase background push)
+// FreeEarnHub Service Worker (PWA shell + Firebase background push)
 const CACHE_NAME = "earnhub-shell-v1";
 const OFFLINE_URL = "/offline";
 const SHELL_ASSETS = ["/", OFFLINE_URL, "/manifest.webmanifest", "/icons/icon-192.svg", "/icons/icon-512.svg"];
@@ -75,7 +75,7 @@ firebase.initializeApp(${JSON.stringify(config)});
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  const title = payload.notification?.title || "EarnHub update";
+  const title = payload.notification?.title || "FreeEarnHub update";
   const options = {
     body: payload.notification?.body || "You have a new notification.",
     icon: "/icons/icon-192.png",
@@ -100,3 +100,4 @@ self.addEventListener("notificationclick", (event) => {
     },
   });
 }
+

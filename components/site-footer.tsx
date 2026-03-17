@@ -19,7 +19,7 @@ export default function SiteFooter({ year }: { year: number }) {
                   <div className="h-full w-full rounded-[14px] bg-gradient-to-br from-emerald-400/80 to-sky-400/70" />
                 </div>
                 <div>
-                  <p className="text-lg font-semibold tracking-tight text-foreground">EarnHub</p>
+                  <p className="text-lg font-semibold tracking-tight text-foreground">FreeEarnHub</p>
                   <p className="text-[10px] uppercase tracking-[0.22em] text-foreground/50 sm:text-[11px]">
                     {tFooter("marketplace")}
                   </p>
@@ -82,7 +82,7 @@ export default function SiteFooter({ year }: { year: number }) {
 
         <div className="flex flex-col gap-2 border-t border-foreground/10 pt-4 text-center text-xs text-foreground/50 sm:flex-row sm:items-center sm:justify-between sm:text-left">
           <p>
-            (c) {year} EarnHub. {tFooter("rights")}
+            (c) {year} FreeEarnHub. {tFooter("rights")}
           </p>
           <p>{tFooter("builtFor")}</p>
         </div>
@@ -90,4 +90,5 @@ export default function SiteFooter({ year }: { year: number }) {
     </footer>
   );
 }
+
 

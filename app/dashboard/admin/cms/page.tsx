@@ -40,7 +40,7 @@ export default async function AdminCmsPage() {
     getCmsValue<{ heroTitle: string; heroSubtitle: string }>("landing.home", {
       heroTitle: "Run campaigns. Reward real users. Grow with confidence.",
       heroSubtitle:
-        "EarnHub is a secure two-sided marketplace where users complete verified tasks and businesses launch measurable growth campaigns.",
+        "FreeEarnHub helps people earn from verified tasks while businesses grow through simple, trackable campaigns.",
     }),
     getCmsValue<{ body: string }>("legal.terms", { body: "" }),
     getCmsValue<{ body: string }>("legal.privacy", { body: "" }),
@@ -69,3 +69,4 @@ export default async function AdminCmsPage() {
     </div>
   );
 }
+

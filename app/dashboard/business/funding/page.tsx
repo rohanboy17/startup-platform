@@ -206,7 +206,7 @@ export default function BusinessFundingPage() {
       key: payload.keyId,
       amount: payload.amountInPaise,
       currency: payload.currency || "INR",
-      name: "EarnHub",
+      name: "FreeEarnHub",
       description: t("labels.topUpDescription"),
       order_id: payload.razorpayOrderId,
       handler: async (response) => {
@@ -492,3 +492,4 @@ export default function BusinessFundingPage() {
     </div>
   );
 }
+

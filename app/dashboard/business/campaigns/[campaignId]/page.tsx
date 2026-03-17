@@ -90,8 +90,8 @@ export default async function BusinessCampaignDetailPage({
           : submission.adminStatus === "ADMIN_REJECTED"
             ? "Submission rejected during admin review."
             : submission.managerStatus === "MANAGER_APPROVED"
-              ? "Submission waiting for final admin review."
-              : "Submission received and queued for review.",
+              ? "Submission is waiting for final approval."
+              : "Submission received and waiting for review.",
       createdAt: submission.createdAt,
     })),
   ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());

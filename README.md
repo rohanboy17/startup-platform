@@ -1,4 +1,4 @@
-# EarnHub (Startup Platform)
+# FreeEarnHub (Startup Platform)
 
 Role-based micro-task marketplace with:
 - Next.js App Router + NextAuth
@@ -119,3 +119,4 @@ Current production, internal, and removed legacy routes are listed in:
 ```bash
 docs/route-inventory.md
 ```
+

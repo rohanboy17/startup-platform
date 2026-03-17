@@ -10,7 +10,7 @@ export async function POST() {
 
   const result = await sendPushDelivery({
     userId: session.user.id,
-    title: "EarnHub test push",
+    title: "FreeEarnHub test push",
     message: "If you can see this notification, device push is working.",
     templateKey: "push.test",
     payload: { source: "self_test" },
@@ -19,4 +19,5 @@ export async function POST() {
 
   return NextResponse.json({ message: "Push test sent", result });
 }
+
 

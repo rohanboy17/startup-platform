@@ -154,7 +154,7 @@ export async function applyReferralRewardsOnFirstApproval(
     data: {
       userId: invite.referrerUserId,
       title: "Referral reward unlocked",
-      message: `${REFERRAL_REWARD_COINS} EarnHub Coins were added after your referral completed a first approved task.`,
+      message: `${REFERRAL_REWARD_COINS} FreeEarnHub Coins were added after your referral completed a first approved task.`,
       type: "SUCCESS",
     },
   });
@@ -175,7 +175,7 @@ export async function applyReferralRewardsOnFirstApproval(
       data: {
         userId: invite.referredUserId,
         title: "Welcome coins added",
-        message: `${REFERRAL_NEW_USER_BONUS_COINS} EarnHub Coins were added to your account after your first approved task.`,
+        message: `${REFERRAL_NEW_USER_BONUS_COINS} FreeEarnHub Coins were added to your account after your first approved task.`,
         type: "SUCCESS",
       },
     });
@@ -198,3 +198,4 @@ export async function applyReferralRewardsOnFirstApproval(
 export function getMonthStart(input = new Date()) {
   return new Date(input.getFullYear(), input.getMonth(), 1, 0, 0, 0, 0);
 }
+

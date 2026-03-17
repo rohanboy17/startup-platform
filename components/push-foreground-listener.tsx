@@ -30,7 +30,7 @@ export default function PushForegroundListener() {
 
       unsub = onMessage(messaging, (payload) => {
         try {
-          const title = payload.notification?.title || "EarnHub update";
+          const title = payload.notification?.title || "FreeEarnHub update";
           const body = payload.notification?.body || "You have a new notification.";
           const link = normalizeLink((payload.data as Record<string, unknown> | undefined)?.link);
 
@@ -69,4 +69,3 @@ export default function PushForegroundListener() {
 
   return null;
 }
-

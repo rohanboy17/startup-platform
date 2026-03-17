@@ -203,8 +203,8 @@ export default async function BusinessTrustPage() {
 
         <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
           <div>
-            <p className="text-sm text-white/60">Review workflow</p>
-            <h3 className="text-xl font-semibold text-white">What happens after launch</h3>
+            <p className="text-sm text-white/60">Review steps</p>
+            <h3 className="text-xl font-semibold text-white">What happens after your campaign goes live</h3>
           </div>
           <ol className="space-y-3 text-sm text-white/70">
             <li>1. Business creates the campaign and budget is reserved.</li>
@@ -216,11 +216,11 @@ export default async function BusinessTrustPage() {
           </ol>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Pending manager review</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Waiting for first review</p>
               <p className="mt-2 text-lg font-semibold text-white">{managerPending}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Pending admin review</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Waiting for final approval</p>
               <p className="mt-2 text-lg font-semibold text-white">{adminPending}</p>
             </div>
           </div>
@@ -249,8 +249,8 @@ export default async function BusinessTrustPage() {
 
         <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
           <div>
-            <p className="text-sm text-white/60">Service timing and operational status</p>
-            <h3 className="text-xl font-semibold text-white">Current queue conditions</h3>
+            <p className="text-sm text-white/60">Service timing and status</p>
+            <h3 className="text-xl font-semibold text-white">Current review status</h3>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
@@ -271,7 +271,7 @@ export default async function BusinessTrustPage() {
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-white/40">Processing guidance</p>
               <p className="mt-2 text-lg font-semibold text-white">24h target</p>
-              <p className="mt-1 text-xs text-white/45">Campaign review and queue monitoring target window</p>
+              <p className="mt-1 text-xs text-white/45">Target time for campaign review and monitoring</p>
             </div>
           </div>
           <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/60">

@@ -22,18 +22,18 @@ export default async function PrivacyPage() {
       ? {
           eyebrow: "कानूनी",
           title: "प्राइवेसी पॉलिसी",
-          description: "EarnHub पर हम खाते और लेनदेन डेटा कैसे एकत्र, उपयोग, सुरक्षित और संरक्षित रखते हैं।",
+          description: "FreeEarnHub पर हम खाते और लेनदेन डेटा कैसे एकत्र, उपयोग, सुरक्षित और संरक्षित रखते हैं।",
         }
       : locale === "bn"
         ? {
             eyebrow: "আইনি",
             title: "প্রাইভেসি নীতি",
-            description: "EarnHub-এ আমরা অ্যাকাউন্ট ও লেনদেন ডেটা কীভাবে সংগ্রহ, ব্যবহার, সুরক্ষা ও সংরক্ষণ করি।",
+            description: "FreeEarnHub-এ আমরা অ্যাকাউন্ট ও লেনদেন ডেটা কীভাবে সংগ্রহ, ব্যবহার, সুরক্ষা ও সংরক্ষণ করি।",
           }
         : {
             eyebrow: "Legal",
             title: "Privacy Policy",
-            description: "How we collect, use, protect, and retain account and transaction data on EarnHub.",
+            description: "How we collect, use, protect, and retain account and transaction data on FreeEarnHub.",
           };
 
   const fallback =
@@ -84,3 +84,4 @@ export default async function PrivacyPage() {
     </PublicPageShell>
   );
 }
+

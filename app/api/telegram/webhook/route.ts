@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
   const token = text.split(" ")[1]?.trim();
   if (!token) {
-    await reply(chatId, "Open the Telegram connect link from your EarnHub dashboard to link this chat.");
+    await reply(chatId, "Open the Telegram connect link from your FreeEarnHub dashboard to link this chat.");
     return NextResponse.json({ ok: true });
   }
 
@@ -57,7 +57,7 @@ export async function POST(req: Request) {
   });
 
   if (linkedElsewhere) {
-    await reply(chatId, "This Telegram chat is already linked to another EarnHub account.");
+    await reply(chatId, "This Telegram chat is already linked to another FreeEarnHub account.");
     return NextResponse.json({ ok: true });
   }
 
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
   });
 
   if (!user) {
-    await reply(chatId, "We could not find that EarnHub account anymore. Please try again from the dashboard.");
+    await reply(chatId, "We could not find that FreeEarnHub account anymore. Please try again from the dashboard.");
     return NextResponse.json({ ok: true });
   }
 
@@ -88,6 +88,7 @@ export async function POST(req: Request) {
     payload: { channel: "TELEGRAM" },
   });
 
-  await reply(chatId, `Telegram alerts are now linked to ${user.name || "your EarnHub account"}.`);
+  await reply(chatId, `Telegram alerts are now linked to ${user.name || "your FreeEarnHub account"}.`);
   return NextResponse.json({ ok: true });
 }
+

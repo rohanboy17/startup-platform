@@ -4,7 +4,7 @@ import { getTranslations } from "next-intl/server";
 const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@earnhub.in";
 const SUPPORT_ADDRESS =
   process.env.NEXT_PUBLIC_SUPPORT_ADDRESS ||
-  "EarnHub Support Desk, Bengaluru, Karnataka, India";
+  "FreeEarnHub Support Desk, Bengaluru, Karnataka, India";
 
 export default async function ContactPage() {
   const t = await getTranslations("contact");
@@ -41,3 +41,4 @@ export default async function ContactPage() {
     </PublicPageShell>
   );
 }
+

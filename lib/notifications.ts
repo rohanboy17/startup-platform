@@ -43,7 +43,7 @@ export async function sendLowBalanceAlertEmail(params: {
   await transporter.sendMail({
     from,
     to: params.to,
-    subject: "EarnHub: Low Wallet Balance Alert",
+    subject: "FreeEarnHub: Low Wallet Balance Alert",
     text: `Your business wallet balance is low (INR ${params.balance}). Please top up to keep campaigns running without interruption.`,
   });
 }
@@ -70,7 +70,7 @@ export async function sendAdminOtpEmail(params: {
   await transporter.sendMail({
     from,
     to: params.to,
-    subject: "EarnHub Admin Login Verification Code",
+    subject: "FreeEarnHub Admin Login Verification Code",
     text: `Your one-time admin login code is ${params.otp}. It expires in ${params.expiresInMinutes} minutes.`,
   });
   return { delivered: true as const, channel: "smtp" as const };
@@ -95,7 +95,7 @@ export async function sendPasswordResetEmail(params: {
     await transporter.sendMail({
       from,
       to: params.to,
-      subject: "EarnHub Password Reset",
+      subject: "FreeEarnHub Password Reset",
       text: `Reset your password using this link: ${params.resetUrl}\n\nThis link expires in ${params.expiresInMinutes} minutes.`,
     });
   } catch (error) {
@@ -105,3 +105,4 @@ export async function sendPasswordResetEmail(params: {
 
   return { delivered: true as const, channel: "smtp" as const };
 }
+

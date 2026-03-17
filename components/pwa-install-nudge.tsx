@@ -93,7 +93,7 @@ export default function PwaInstallNudge() {
               Better on mobile
             </p>
             <h3 className="mt-2 text-xl font-semibold tracking-tight text-foreground">
-              Install EarnHub for faster access
+              Install FreeEarnHub for faster access
             </h3>
             <p className="mt-2 text-sm leading-6 text-foreground/70">
               Installing keeps you signed in, loads faster, and improves notification reliability.

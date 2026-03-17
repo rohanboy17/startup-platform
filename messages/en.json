@@ -51,12 +51,12 @@
     "login": {
       "side": {
         "eyebrow": "Secure Login",
-        "title": "Welcome back to your control center.",
-        "subtitle": "Access campaigns, payouts, and moderation with account protection and admin-grade 2FA.",
+        "title": "Sign in and pick up where you left off.",
+        "subtitle": "Access your tasks, earnings, campaigns, and updates from one secure account.",
         "bullets": {
-          "roleBased": "Role-based access with protected routes",
-          "admin2fa": "Admin 2FA with OTP or recovery codes",
-          "securityMonitoring": "Security event monitoring"
+          "roleBased": "Role-based access for every account type",
+          "admin2fa": "Extra protection for admin sign-in",
+          "securityMonitoring": "Ongoing account security checks"
         }
       },
       "card": {
@@ -105,18 +105,18 @@
     "register": {
       "side": {
         "eyebrow": "Get Started",
-        "title": "Create your marketplace account in minutes.",
-        "subtitle": "Join as a user to earn from verified tasks, or as a business to launch measurable campaigns.",
+        "title": "Create your account in a few minutes.",
+        "subtitle": "Join as a user to earn from simple verified tasks, or as a business to launch real campaigns.",
         "bullets": {
-          "unified": "Unified account for user and business roles",
-          "mobileIdentity": "Mobile-number based identity support",
-          "wallet": "Secure payout-ready wallet architecture"
+          "unified": "One account for user or business access",
+          "mobileIdentity": "Mobile-number based sign-up support",
+          "wallet": "Secure wallet and payout setup"
         }
       },
       "card": {
         "eyebrow": "Create New Account",
-        "title": "Join EarnHub",
-        "subtitle": "Register with your mobile number and start as a user or business."
+        "title": "Join FreeEarnHub",
+        "subtitle": "Register with your mobile number and start earning or creating campaigns."
       },
       "form": {
         "fullName": "Full name",
@@ -125,7 +125,7 @@
         "mobileHelp": "Include country code. Examples: India <highlight>{india}</highlight>, US <highlight>{us}</highlight>, UK <highlight>{uk}</highlight>.",
         "password": "Password",
         "referral": "Referral code (optional)",
-        "referralHelp": "User referrals only. Enter a code to unlock EarnHub Coins after your first approved submission."
+        "referralHelp": "User referral only. Add a code now to unlock FreeEarnHub Coins after your first approved task."
       },
       "roles": {
         "user": "User",
@@ -150,7 +150,7 @@
   "home": {
     "landing": {
       "heroTitle": "Earn by completing verified tasks.",
-      "heroSubtitle": "EarnHub is a secure two-sided marketplace where users complete verified tasks and businesses launch measurable growth campaigns."
+      "heroSubtitle": "FreeEarnHub helps people earn from verified tasks while businesses grow through simple, trackable campaigns."
     },
     "announcements": {
       "learnMore": "Learn more"
@@ -198,16 +198,16 @@
     "features": {
       "items": [
         {
-          "title": "Secure By Design",
-          "body": "Wallet ledger, moderation pipeline, and atomic reward settlement for trust at scale."
+          "title": "Safe payouts",
+          "body": "Every approved task is tracked clearly so users and businesses can trust the money flow."
         },
         {
-          "title": "Fast Campaign Launch",
-          "body": "Fund your business wallet, create campaigns, and start receiving submissions in minutes."
+          "title": "Fast campaign launch",
+          "body": "Add funds, publish a campaign, and start getting responses without a complicated setup."
         },
         {
-          "title": "Actionable Growth",
-          "body": "Monitor campaign flow, approvals, and platform revenue from your analytics dashboards."
+          "title": "Clear performance tracking",
+          "body": "See approvals, spending, and campaign results in one place without guessing what is working."
         }
       ]
     },
@@ -223,61 +223,61 @@
         },
         {
           "title": "Reliable approvals",
-          "body": "Average approval time: {time}. Automated alerts keep queues moving."
+          "body": "Average approval time: {time}. We keep review updates clear so everyone knows what happens next."
         }
       ]
     },
     "cta": {
       "title": "Ready to start earning?",
-      "body": "Join thousands of users completing verified tasks every week."
+      "body": "Create an account, complete verified tasks, and grow your earnings with confidence."
     },
     "offlineInvite": {
       "eyebrow": "Offline Invite",
-      "title": "Print this QR and let anyone join EarnHub in one scan.",
+      "title": "Print this QR so anyone can join FreeEarnHub in one scan.",
       "body": "Designed for posters, flyers, business cards, and offline campaigns. The code opens the main home page directly so new users can land on the platform without typing the address.",
       "directLinkLabel": "Direct website link",
       "scanLabel": "Scan To Join and Earn",
-      "marketplaceLabel": "EarnHub Marketplace",
-      "qrAlt": "QR code linking to the EarnHub homepage"
+      "marketplaceLabel": "FreeEarnHub Marketplace",
+      "qrAlt": "QR code linking to the FreeEarnHub homepage"
     }
   },
   "about": {
     "eyebrow": "About",
-    "title": "About EarnHub",
-    "description": "EarnHub is a trusted task marketplace where businesses run measurable campaigns and users earn from verified work.",
+    "title": "About FreeEarnHub",
+    "description": "FreeEarnHub is a trusted task platform where businesses run campaigns and users earn from verified work.",
     "sections": {
       "build": {
         "title": "What We Build",
-        "body": "We provide a two-sided system: businesses launch campaign tasks, and users submit proof of completion. Every submission flows through moderation before financial settlement."
+        "body": "Businesses create campaigns, users complete the tasks, and we review each submission before rewards are released."
       },
       "trust": {
         "title": "How Trust Is Maintained",
         "bullets": [
-          "Role-based moderation (manager + admin workflow)",
-          "Wallet ledger transparency for credits, debits, and payouts",
-          "Fraud and abuse checks before approvals",
-          "Audit-friendly review and decision history"
+          "Human review before rewards are approved",
+          "Clear wallet records for credits, debits, and withdrawals",
+          "Fraud and abuse checks before payouts",
+          "Recorded decisions for support and dispute handling"
         ]
       },
       "direction": {
         "title": "Our Product Direction",
-        "body": "EarnHub is designed as a long-term growth platform, not a one-time gig board. We focus on reliable payouts, clear business ROI, and operational compliance from day one."
+        "body": "FreeEarnHub is built for long-term trust. We focus on clear payouts, useful business results, and simple rules people can understand."
       }
     }
   },
   "faq": {
     "eyebrow": "Help Center",
     "title": "Frequently Asked Questions",
-    "description": "Quick answers about accounts, approvals, payouts, campaign workflow, and platform trust.",
+    "description": "Quick answers about accounts, rewards, withdrawals, campaigns, and platform safety.",
     "sectionTitle": "FAQ",
     "items": [
       {
-        "q": "What is EarnHub?",
-        "a": "EarnHub is a two-sided marketplace where businesses launch campaigns and users earn by completing verified tasks."
+        "q": "What is FreeEarnHub?",
+        "a": "FreeEarnHub is a task platform where businesses launch campaigns and users earn by completing verified tasks."
       },
       {
         "q": "When do users receive rewards?",
-        "a": "Rewards are credited after manager/admin approval according to the moderation workflow and campaign rules."
+        "a": "Rewards are added after the submission is reviewed and approved under the campaign rules."
       },
       {
         "q": "How long do withdrawals take?",
@@ -295,8 +295,8 @@
   },
   "contact": {
     "eyebrow": "Support",
-    "title": "Contact EarnHub",
-    "description": "For account support, payment concerns, compliance questions, or dispute escalation, contact our team.",
+    "title": "Contact FreeEarnHub",
+    "description": "For help with your account, payments, KYC, or campaign issues, contact our support team.",
     "supportEmailTitle": "Support Email",
     "supportEmailLead": "Primary support channel:",
     "supportResponse": "Typical first response: 24 to 48 business hours.",
@@ -313,7 +313,7 @@
       "ctaTasks": "Find Tasks",
       "ctaWithdraw": "Withdraw",
       "kpiAvailable": "Available balance",
-      "kpiCoins": "EarnHub Coins",
+      "kpiCoins": "FreeEarnHub Coins",
       "kpiPendingWithdrawal": "Pending withdrawal",
       "kpiTotalWithdrawn": "Total withdrawn",
       "kpiApprovedSubmissions": "Approved submissions",
@@ -522,7 +522,7 @@
       "loading": "Loading referrals...",
       "eyebrow": "Referral rewards",
       "title": "Coins and referrals",
-      "subtitle": "Invite new users, unlock EarnHub Coins after their first approved submission, and redeem coins into wallet value.",
+      "subtitle": "Invite new users, earn FreeEarnHub Coins after their first approved task, and redeem coins into wallet balance.",
       "kpiCoin": "Coin balance",
       "kpiEstimated": "Estimated wallet value",
       "kpiTotalInvites": "Total invites",
@@ -788,9 +788,9 @@
     },
     "overviewPanel": {
       "loading": "Loading business overview...",
-      "eyebrow": "Business control center",
+      "eyebrow": "Business dashboard",
       "title": "Business Overview",
-      "subtitle": "Track available cash, locked campaign budget, campaign health, and the next action required without opening five separate screens.",
+      "subtitle": "Check wallet balance, campaign progress, and the next important action from one place.",
       "time": {
         "minutesAgo": "{count}m ago",
         "hoursAgo": "{count}h ago",
@@ -889,8 +889,8 @@
         "spend": "Spend INR {amount}"
       },
       "moderation": {
-        "eyebrow": "Moderation flow",
-        "title": "Approved vs rejected volume"
+        "eyebrow": "Review results",
+        "title": "Approved vs rejected submissions"
       },
       "topCampaigns": {
         "eyebrow": "Top campaigns",
@@ -928,8 +928,8 @@
         "completed": "Completed"
       },
       "header": {
-        "eyebrow": "Campaign management",
-        "title": "Track status, budget, and moderation flow",
+        "eyebrow": "Campaigns",
+        "title": "Track status, budget, and results",
         "createCampaign": "Create campaign",
         "openAnalytics": "Open analytics"
       },
@@ -1107,40 +1107,40 @@
       }
     },
     "submissionsPanel": {
-      "loading": "Loading submission pipeline...",
+      "loading": "Loading campaign responses...",
       "errors": {
         "unexpectedServerResponse": "Unexpected server response",
-        "failedToLoad": "Failed to load submission pipeline"
+        "failedToLoad": "Failed to load campaign responses"
       },
       "filters": {
         "all": "All",
-        "pendingManager": "Pending Manager",
-        "pendingAdmin": "Pending Admin",
+        "pendingManager": "Waiting for review",
+        "pendingAdmin": "In final review",
         "approved": "Approved",
-        "managerRejected": "Manager Rejected",
-        "adminRejected": "Admin Rejected"
+        "managerRejected": "Rejected by manager",
+        "adminRejected": "Rejected by admin"
       },
       "stages": {
-        "pendingManager": "Pending Manager",
-        "pendingAdmin": "Pending Admin",
+        "pendingManager": "Waiting for review",
+        "pendingAdmin": "In final review",
         "approved": "Approved",
-        "managerRejected": "Manager Rejected",
-        "adminRejected": "Admin Rejected"
+        "managerRejected": "Rejected by manager",
+        "adminRejected": "Rejected by admin"
       },
       "kpis": {
         "total": "Total",
-        "pendingManager": "Pending Manager",
-        "pendingAdmin": "Pending Admin",
+        "pendingManager": "Waiting for review",
+        "pendingAdmin": "In final review",
         "approved": "Approved",
         "rejected": "Rejected"
       },
       "header": {
-        "eyebrow": "Submission review",
-        "title": "Read-only moderation pipeline",
+        "eyebrow": "Campaign responses",
+        "title": "Track every submission clearly",
         "exportCsv": "Export CSV"
       },
       "search": {
-        "placeholder": "Search campaign, user, proof, or reason"
+        "placeholder": "Search by campaign, participant, proof, or reason"
       },
       "empty": "No submissions found for the current filter.",
       "fallback": {
@@ -1148,21 +1148,21 @@
         "unnamedUser": "Unnamed User"
       },
       "row": {
-        "reward": "Reward INR {amount}",
+        "reward": "Reward: INR {amount}",
         "participant": "Participant",
         "participantPrivacy": "Participant identity is hidden for privacy.",
         "proof": "Proof",
         "openScreenshot": "Open screenshot",
-        "reviewReason": "Review reason",
-        "screenshotUploaded": "Screenshot proof uploaded. Use the preview button to view it."
+        "reviewReason": "Why it was rejected",
+        "screenshotUploaded": "Screenshot attached. Use the preview button to open it."
       },
-      "openProof": "Open proof link"
+      "openProof": "Open proof"
     },
     "campaignEditor": {
       "header": {
-        "eyebrow": "Campaign management",
+        "eyebrow": "Campaign editor",
         "title": "Edit campaign, budget, and instructions",
-        "subtitle": "Changes are validated against current spend and used slots before they are applied."
+        "subtitle": "Update the task details, reward, budget, and instructions before saving."
       },
       "errors": {
         "unexpectedServerResponse": "Unexpected server response",
@@ -1170,8 +1170,8 @@
         "failedToDuplicate": "Failed to duplicate campaign"
       },
       "messages": {
-        "updated": "Campaign updated",
-        "duplicated": "Campaign duplicated"
+        "updated": "Campaign saved",
+        "duplicated": "Campaign copied"
       },
       "actions": {
         "duplicate": "Duplicate campaign",
@@ -1197,26 +1197,26 @@
         "totalBudget": "Campaign budget"
       },
       "side": {
-        "currentCategory": "Current category",
+        "currentCategory": "Selected category",
         "availableWallet": "Available wallet",
-        "usedBudget": "Already used budget",
-        "projectedSlots": "Projected slots",
-        "usedSubmissionsLocked": "Used submissions already locked: {count}",
-        "projectedRemainingBudget": "Projected remaining budget",
-        "walletImpact": "Wallet impact",
-        "walletImpactTopUp": "This update needs an additional INR {amount} from the business wallet.",
-        "walletImpactRelease": "This update releases INR {amount} back to the business wallet.",
-        "walletImpactNone": "No wallet change for this update.",
-        "projectedWalletAfterSave": "Projected wallet after save: INR {amount}",
+        "usedBudget": "Used budget",
+        "projectedSlots": "Estimated slots",
+        "usedSubmissionsLocked": "Already taken slots: {count}",
+        "projectedRemainingBudget": "Estimated budget left",
+        "walletImpact": "Wallet change",
+        "walletImpactTopUp": "You need INR {amount} more in your wallet to save this update.",
+        "walletImpactRelease": "This update returns INR {amount} to your wallet.",
+        "walletImpactNone": "Your wallet balance will stay the same.",
+        "projectedWalletAfterSave": "Wallet after save: INR {amount}",
         "summary": {
-          "projectedTotalSlots": "Projected total slots: {count}",
-          "finalPayable": "Final payable amount after this edit: INR {amount}",
-          "platformFee": "Platform fee on campaign edit: INR 0.00"
+          "projectedTotalSlots": "Estimated total slots: {count}",
+          "finalPayable": "Additional amount to pay now: INR {amount}",
+          "platformFee": "Extra platform fee on this edit: INR 0.00"
         }
       },
       "warnings": {
         "insufficientWallet": "The wallet does not have enough balance to apply this budget increase.",
-        "invalidUsedSlots": "This update would reduce total slots below the number of submissions already recorded."
+        "invalidUsedSlots": "This budget would reduce total slots below the submissions already received."
       }
     }
   },
@@ -1264,3 +1264,4 @@
     }
   }
 }
+

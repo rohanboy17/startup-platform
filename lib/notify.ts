@@ -224,7 +224,7 @@ export async function sendSmsDelivery(input: {
       body: JSON.stringify({
         to: input.toMobile,
         message: input.message,
-        from: process.env.SMS_FROM || "EarnHub",
+        from: process.env.SMS_FROM || "FreeEarnHub",
       }),
     });
 

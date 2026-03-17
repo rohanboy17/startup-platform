@@ -53,10 +53,10 @@ export default async function SitemapPage() {
       title={locale === "hi" ? "साइटमैप" : locale === "bn" ? "সাইটম্যাপ" : "Sitemap"}
       description={
         locale === "hi"
-          ? "EarnHub प्लेटफ़ॉर्म के प्रमुख पेजों तक त्वरित पहुंच।"
+          ? "FreeEarnHub प्लेटफ़ॉर्म के प्रमुख पेजों तक त्वरित पहुंच।"
           : locale === "bn"
-            ? "EarnHub প্ল্যাটফর্মের প্রধান পেজগুলোতে দ্রুত অ্যাক্সেস।"
-            : "Quick access to the major pages across the EarnHub platform."
+            ? "FreeEarnHub প্ল্যাটফর্মের প্রধান পেজগুলোতে দ্রুত অ্যাক্সেস।"
+            : "Quick access to the major pages across the FreeEarnHub platform."
       }
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -80,3 +80,4 @@ export default async function SitemapPage() {
     </PublicPageShell>
   );
 }
+

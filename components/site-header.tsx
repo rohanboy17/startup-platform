@@ -49,7 +49,7 @@ export default function SiteHeader() {
             className="inline-flex items-center gap-2 rounded-xl border border-foreground/10 bg-foreground/[0.03] px-2.5 py-1.5 text-sm font-semibold tracking-tight text-foreground transition hover:bg-foreground/10"
           >
             <span className="h-2.5 w-2.5 rounded-full bg-gradient-to-br from-emerald-400 to-sky-400" />
-            <span>EarnHub</span>
+            <span>FreeEarnHub</span>
           </Link>
 
           <nav className={`${onDashboard ? "hidden" : "hidden md:flex"} items-center gap-1 text-sm text-foreground/75`}>
@@ -180,3 +180,4 @@ export default function SiteHeader() {
     </header>
   );
 }
+

@@ -11,13 +11,13 @@ import PushForegroundListener from "@/components/push-foreground-listener";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "EarnHub",
-  description: "Micro-task marketplace for users and businesses",
+  title: "FreeEarnHub",
+  description: "Verified task platform for users and businesses",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "EarnHub",
+    title: "FreeEarnHub",
   },
   icons: {
     icon: [
@@ -65,3 +65,4 @@ export default async function RootLayout({
     </html>
   );
 }
+

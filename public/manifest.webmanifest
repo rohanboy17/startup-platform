@@ -1,7 +1,7 @@
 {
-  "name": "EarnHub Marketplace",
-  "short_name": "EarnHub",
-  "description": "Micro-task marketplace for users and businesses",
+  "name": "FreeEarnHub Marketplace",
+  "short_name": "FreeEarnHub",
+  "description": "Verified task platform for users and businesses",
   "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",
@@ -36,3 +36,4 @@
     }
   ]
 }
+

@@ -63,7 +63,7 @@ export default async function Home() {
     getCmsValue<LandingContent>("landing.home", {
       heroTitle: "Earn by completing verified tasks.",
       heroSubtitle:
-        "EarnHub is a secure two-sided marketplace where users complete verified tasks and businesses launch measurable growth campaigns.",
+        "FreeEarnHub helps people earn from verified tasks while businesses grow through simple, trackable campaigns.",
     }),
     getFeatureFlag("home.announcements", true),
     getFeatureFlag("home.stats", true),
@@ -398,3 +398,4 @@ export default async function Home() {
     </div>
   );
 }
+

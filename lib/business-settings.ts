@@ -21,7 +21,7 @@ function keyFor(userId: string) {
 
 export function getDefaultBusinessSettings(params: { name?: string | null; email?: string | null }): BusinessSettings {
   return {
-    brandName: params.name?.trim() || "EarnHub Business",
+    brandName: params.name?.trim() || "FreeEarnHub Business",
     companyName: params.name?.trim() || "",
     contactEmail: params.email?.trim() || "",
     supportContact: "",
@@ -82,3 +82,4 @@ export async function updateBusinessSettings(
     create: { key: keyFor(userId), value },
   });
 }
+
