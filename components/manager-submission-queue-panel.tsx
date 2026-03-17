@@ -91,7 +91,7 @@ export default function ManagerSubmissionQueuePanel() {
     }
 
     if (!res.ok) {
-      setError(parsed.error || "Failed to load manager queue");
+      setError(parsed.error || "Failed to load submissions");
     } else {
       setError("");
       setData(parsed.submissions || []);
@@ -138,22 +138,22 @@ export default function ManagerSubmissionQueuePanel() {
     });
   }, [data, filter, search]);
 
-  if (loading) return <p className="text-sm text-white/60">Loading manager queue...</p>;
+  if (loading) return <p className="text-sm text-white/60">Loading submissions...</p>;
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <KpiCard label="Queue Size" value={stats.total} />
-        <KpiCard label="Suspicious In Queue" value={stats.suspicious} tone="warning" />
-        <KpiCard label="High-Level Users" value={stats.highLevel} tone="info" />
+        <KpiCard label="Total in review" value={stats.total} />
+        <KpiCard label="Flagged submissions" value={stats.suspicious} tone="warning" />
+        <KpiCard label="High-level users" value={stats.highLevel} tone="info" />
       </div>
 
       <SectionCard elevated className="space-y-4 p-4 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm text-white/60">Queue filters</p>
-              <h3 className="text-xl font-semibold text-white">Sort by risk or search quickly</h3>
+              <p className="text-sm text-white/60">Filters</p>
+              <h3 className="text-xl font-semibold text-white">Sort by risk or find a submission quickly</h3>
             </div>
             <input
               value={search}
@@ -189,7 +189,7 @@ export default function ManagerSubmissionQueuePanel() {
       {filtered.length === 0 ? (
         <Card className="rounded-2xl border-white/10 bg-white/5">
           <CardContent className="p-6 text-sm text-white/60">
-            No queue items match the current filters.
+            No submissions match the current filters.
           </CardContent>
         </Card>
       ) : (
@@ -200,7 +200,7 @@ export default function ManagerSubmissionQueuePanel() {
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                   <div>
                     <p className="text-lg font-semibold text-white break-words">
-                      {submission.campaign?.title || "Campaign submission"}
+                      {submission.campaign?.title || "Submission"}
                     </p>
                     <p className="mt-1 text-sm text-white/60">
                       {submission.campaign?.category || "Uncategorized"} | Reward INR {formatMoney(submission.campaign?.rewardPerTask)}
@@ -217,7 +217,7 @@ export default function ManagerSubmissionQueuePanel() {
 
                 <div className="grid gap-4 min-[1450px]:grid-cols-[0.72fr_1.28fr]">
                   <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs uppercase tracking-[0.16em] text-white/35">User context</p>
+                      <p className="text-xs uppercase tracking-[0.16em] text-white/35">User summary</p>
                     <p className="text-sm text-white/80 break-words">
                       {submission.user.name || "Unnamed user"}
                     </p>
@@ -229,7 +229,7 @@ export default function ManagerSubmissionQueuePanel() {
                         <div className="flex items-start gap-2">
                           <ShieldAlert size={16} className="mt-0.5 shrink-0" />
                           <p className="break-words">
-                            {submission.user.suspiciousReason || "This account is currently flagged for review."}
+                            {submission.user.suspiciousReason || "This account is currently flagged for closer review."}
                           </p>
                         </div>
                       </div>
@@ -259,7 +259,7 @@ export default function ManagerSubmissionQueuePanel() {
                         {submission.campaign.instructions?.length ? (
                           <details className="rounded-2xl border border-white/10 bg-white/5 p-3">
                             <summary className="cursor-pointer text-sm text-white/70">
-                              View instructions ({submission.campaign.instructions.length})
+                              View steps ({submission.campaign.instructions.length})
                             </summary>
                             <div className="mt-3 space-y-2 text-sm text-white/75">
                               {submission.campaign.instructions.map((row) => (
@@ -273,7 +273,7 @@ export default function ManagerSubmissionQueuePanel() {
                             </div>
                           </details>
                         ) : (
-                          <p className="text-sm text-white/55">No instructions have been configured for this campaign.</p>
+                          <p className="text-sm text-white/55">No task steps were added for this campaign.</p>
                         )}
                       </div>
                     ) : null}
@@ -289,7 +289,7 @@ export default function ManagerSubmissionQueuePanel() {
                             className="inline-flex w-full items-center gap-1 text-sm text-emerald-200 underline underline-offset-4 lg:w-auto"
                           >
                             <ExternalLink size={14} />
-                            Open proof link
+                            Open proof
                           </a>
                         ) : null}
                         {submission.proofImage ? (
@@ -306,7 +306,7 @@ export default function ManagerSubmissionQueuePanel() {
                       <div className="rounded-xl border border-amber-400/20 bg-amber-500/10 p-3 text-sm text-amber-100/85">
                         <div className="flex items-start gap-2">
                           <AlertTriangle size={16} className="mt-0.5 shrink-0" />
-                          <p>Only raw proof text is stored for this item. Review carefully before approving.</p>
+                          <p>Only text proof is available for this item. Review carefully before approving.</p>
                         </div>
                       </div>
                     ) : null}

@@ -141,8 +141,8 @@ export default function ManagerSettingsPanel() {
         <SectionCard elevated className="space-y-5">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">Profile</p>
-            <h3 className="mt-2 text-xl font-semibold tracking-tight">Manager identity</h3>
-            <p className="mt-1 text-sm text-foreground/70">Control your display name and timezone.</p>
+            <h3 className="mt-2 text-xl font-semibold tracking-tight">Profile details</h3>
+            <p className="mt-1 text-sm text-foreground/70">Update your display name and local timezone.</p>
           </div>
 
           <div className="grid gap-3">
@@ -193,7 +193,7 @@ export default function ManagerSettingsPanel() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">Moderation</p>
             <h3 className="mt-2 text-xl font-semibold tracking-tight">Review preferences</h3>
-            <p className="mt-1 text-sm text-foreground/70">Defaults for your submission queue UX.</p>
+            <p className="mt-1 text-sm text-foreground/70">Choose how new submissions are shown while you work.</p>
           </div>
 
           <div className="grid gap-4">
@@ -217,8 +217,8 @@ export default function ManagerSettingsPanel() {
                 className="mt-1 h-4 w-4 accent-emerald-400"
               />
               <span className="space-y-1">
-                <span className="block text-sm font-medium text-foreground">Risk-only mode</span>
-                <span className="block text-sm text-foreground/70">Focus on suspicious or flagged submissions first.</span>
+                <span className="block text-sm font-medium text-foreground">Risk-first mode</span>
+                <span className="block text-sm text-foreground/70">Show suspicious or flagged submissions first.</span>
               </span>
             </label>
 
@@ -249,7 +249,7 @@ export default function ManagerSettingsPanel() {
           </div>
 
           <Button onClick={saveSettings} disabled={saving} className="w-full sm:w-auto">
-            {saving ? "Saving..." : "Save moderation preferences"}
+            {saving ? "Saving..." : "Save preferences"}
           </Button>
         </SectionCard>
       </div>

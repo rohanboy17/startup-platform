@@ -183,15 +183,15 @@ export default async function AdminDashboard() {
               </div>
               <div className="flex flex-col gap-1 rounded-lg border border-foreground/10 bg-background/60 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between">
                 <span>Moderation Queue</span>
-                <StatusBadge label={queueHealthy ? "HEALTHY" : "STALE ITEMS"} tone={queueHealthy ? "success" : "warning"} />
+                <StatusBadge label={queueHealthy ? "ON TRACK" : "ATTENTION NEEDED"} tone={queueHealthy ? "success" : "warning"} />
               </div>
             </div>
         </SectionCard>
 
         <SectionCard elevated className="lg:col-span-2">
-            <p className="mb-4 text-sm text-foreground/60">Action Alerts</p>
+            <p className="mb-4 text-sm text-foreground/60">Action alerts</p>
             {alerts.length === 0 ? (
-              <p className="text-sm text-emerald-700 dark:text-emerald-300">No critical alert right now.</p>
+              <p className="text-sm text-emerald-700 dark:text-emerald-300">No critical alerts right now.</p>
             ) : (
               <ul className="space-y-2 text-sm text-amber-800 dark:text-amber-200">
                 {alerts.map((alert) => (

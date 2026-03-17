@@ -194,9 +194,9 @@ export default async function AdminRiskCenterPage() {
 
       <Card className="rounded-2xl border-white/10 bg-white/5">
         <CardContent className="p-5">
-          <p className="mb-3 text-sm text-white/60">Unified Severity Queue</p>
+          <p className="mb-3 text-sm text-white/60">Priority review list</p>
           {queue.length === 0 ? (
-            <p className="text-sm text-emerald-300">No high-risk item right now.</p>
+            <p className="text-sm text-emerald-300">No high-priority items right now.</p>
           ) : (
             <div className="space-y-2">
               {queue.slice(0, 25).map((item) => (
@@ -207,7 +207,7 @@ export default async function AdminRiskCenterPage() {
                   <span className="text-white/80">
                     {item.kind} | Open for {hoursSince(item.openedAt, now.getTime())}h
                   </span>
-                  <span className="font-semibold text-amber-300">Severity {item.score}</span>
+                  <span className="font-semibold text-amber-300">Priority {item.score}</span>
                 </div>
               ))}
             </div>
@@ -220,7 +220,7 @@ export default async function AdminRiskCenterPage() {
           <CardContent className="space-y-4 p-5">
             <p className="text-sm text-white/60">Flagged Users</p>
             {flaggedUsers.length === 0 ? (
-              <p className="text-sm text-white/50">No flagged users.</p>
+              <p className="text-sm text-white/50">No flagged users right now.</p>
             ) : (
               flaggedUsers.map((user) => (
                 <div key={user.id} className="space-y-2 rounded-lg border border-white/10 bg-black/20 p-3">
@@ -241,9 +241,9 @@ export default async function AdminRiskCenterPage() {
 
         <Card className="rounded-2xl border-white/10 bg-white/5">
           <CardContent className="space-y-4 p-5">
-            <p className="text-sm text-white/60">Suspended / Banned Accounts</p>
+            <p className="text-sm text-white/60">Suspended / banned accounts</p>
             {blockedUsers.length === 0 ? (
-              <p className="text-sm text-white/50">No suspended or banned users.</p>
+              <p className="text-sm text-white/50">No suspended or banned users right now.</p>
             ) : (
               blockedUsers.map((user) => (
                 <div key={user.id} className="space-y-2 rounded-lg border border-white/10 bg-black/20 p-3">
@@ -264,9 +264,9 @@ export default async function AdminRiskCenterPage() {
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="rounded-2xl border-white/10 bg-white/5">
           <CardContent className="space-y-4 p-5">
-            <p className="text-sm text-white/60">Escalated Campaigns</p>
+            <p className="text-sm text-white/60">Escalated campaigns</p>
             {escalatedCampaigns.length === 0 ? (
-              <p className="text-sm text-white/50">No escalated campaigns.</p>
+              <p className="text-sm text-white/50">No escalated campaigns right now.</p>
             ) : (
               escalatedCampaigns.map((campaign) => (
                 <div key={campaign.id} className="space-y-2 rounded-lg border border-white/10 bg-black/20 p-3">
@@ -290,9 +290,9 @@ export default async function AdminRiskCenterPage() {
 
         <Card className="rounded-2xl border-white/10 bg-white/5">
           <CardContent className="space-y-4 p-5">
-            <p className="text-sm text-white/60">Risky Pending Withdrawals</p>
+            <p className="text-sm text-white/60">High-risk pending withdrawals</p>
             {riskyWithdrawals.length === 0 ? (
-              <p className="text-sm text-white/50">No risky withdrawals.</p>
+              <p className="text-sm text-white/50">No high-risk withdrawals right now.</p>
             ) : (
               riskyWithdrawals.map((w) => (
                 <div key={w.id} className="space-y-2 rounded-lg border border-white/10 bg-black/20 p-3">

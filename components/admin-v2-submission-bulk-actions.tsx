@@ -53,7 +53,7 @@ export default function AdminV2SubmissionBulkActions({ items }: { items: BulkIte
 
     setLoading(false);
     if (!res.ok) {
-      setMessage(data.error || "Bulk moderation failed");
+      setMessage(data.error || "Bulk review update failed");
       return;
     }
 
@@ -67,7 +67,7 @@ export default function AdminV2SubmissionBulkActions({ items }: { items: BulkIte
   return (
     <div className="space-y-3 rounded-2xl border border-foreground/10 bg-background/50 p-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-foreground/70">Bulk Moderation</p>
+        <p className="text-sm text-foreground/70">Bulk review update</p>
         <span className="text-xs text-foreground/60">Selected: {selected.length}</span>
       </div>
 
@@ -116,7 +116,7 @@ export default function AdminV2SubmissionBulkActions({ items }: { items: BulkIte
       </div>
 
       <Button type="button" onClick={submit} disabled={loading}>
-        {loading ? "Processing..." : "Apply Bulk Action"}
+        {loading ? "Processing..." : "Apply changes"}
       </Button>
       {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>

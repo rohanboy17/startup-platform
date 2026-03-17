@@ -131,7 +131,7 @@ export default function ManagerInboxPanel() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="Total Notifications" value={data.totalCount} />
+        <KpiCard label="Total notifications" value={data.totalCount} />
         <KpiCard label="Unread" value={data.unreadCount} tone="success" />
         <KpiCard label="Success Updates" value={data.typeCounts.success} tone="info" />
         <KpiCard label="Warnings" value={data.typeCounts.warning} tone="warning" />
@@ -141,7 +141,7 @@ export default function ManagerInboxPanel() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-sm text-foreground/60">Inbox filters</p>
-            <h3 className="text-xl font-semibold text-foreground">Broadcasts and workflow updates</h3>
+            <h3 className="text-xl font-semibold text-foreground">Broadcasts and important updates</h3>
           </div>
           <Button
             variant="outline"
@@ -215,4 +215,3 @@ export default function ManagerInboxPanel() {
     </div>
   );
 }
-

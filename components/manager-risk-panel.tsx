@@ -112,16 +112,16 @@ export default function ManagerRiskPanel() {
     return { flaggedUsers, ipHotspots, outliers, velocity, spikes, escalations };
   }, [data]);
 
-  if (loading) return <p className="text-sm text-white/60">Loading risk signals...</p>;
+  if (loading) return <p className="text-sm text-white/60">Loading review alerts...</p>;
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
-  if (!data || !summary) return <p className="text-sm text-white/60">No risk data available.</p>;
+  if (!data || !summary) return <p className="text-sm text-white/60">No alert data available.</p>;
 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
         <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
           <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Suspicious queue</p>
+            <p className="text-sm text-white/60">Flagged in review</p>
             <p className="text-3xl font-semibold text-amber-200">{data.suspiciousQueueCount}</p>
           </CardContent>
         </Card>
@@ -139,7 +139,7 @@ export default function ManagerRiskPanel() {
         </Card>
         <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
           <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">High velocity (1h)</p>
+            <p className="text-sm text-white/60">High activity (1h)</p>
             <p className="text-3xl font-semibold text-white">{summary.velocity}</p>
           </CardContent>
         </Card>
@@ -151,7 +151,7 @@ export default function ManagerRiskPanel() {
         </Card>
         <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
           <CardContent className="space-y-2 p-4 sm:p-6">
-            <p className="text-sm text-white/60">Admin backlog</p>
+            <p className="text-sm text-white/60">Waiting with admin</p>
             <p className="text-3xl font-semibold text-white">{data.adminBacklog.count}</p>
           </CardContent>
         </Card>
@@ -162,7 +162,7 @@ export default function ManagerRiskPanel() {
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-white/40">Flagged users</p>
-              <p className="mt-1 text-sm text-white/60">Account flags that likely require extra proof scrutiny.</p>
+              <p className="mt-1 text-sm text-white/60">Accounts that may need extra proof checks.</p>
             </div>
             {data.suspiciousUsers.length === 0 ? (
               <p className="text-sm text-white/60">No flagged users at the moment.</p>
@@ -195,7 +195,7 @@ export default function ManagerRiskPanel() {
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-white/40">IP hotspots</p>
-              <p className="mt-1 text-sm text-white/60">High volume IPs (masked) across multiple accounts.</p>
+              <p className="mt-1 text-sm text-white/60">Masked IPs with unusually high activity across multiple accounts.</p>
             </div>
             {data.ipHotspots.length === 0 ? (
               <p className="text-sm text-white/60">No hotspots detected in the selected window.</p>
@@ -220,7 +220,7 @@ export default function ManagerRiskPanel() {
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-white/40">Escalations</p>
-              <p className="mt-1 text-sm text-white/60">Items escalated by managers to the Risk Center.</p>
+              <p className="mt-1 text-sm text-white/60">Items escalated by managers for extra review.</p>
             </div>
             {data.escalations.latest.length === 0 ? (
               <p className="text-sm text-white/60">No escalations recorded yet.</p>
@@ -253,7 +253,7 @@ export default function ManagerRiskPanel() {
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-white/40">High submission velocity</p>
-              <p className="mt-1 text-sm text-white/60">Users submitting unusually fast (last 1 hour).</p>
+              <p className="mt-1 text-sm text-white/60">Users submitting unusually fast in the last hour.</p>
             </div>
             {data.highVelocity.length === 0 ? (
               <p className="text-sm text-white/60">No velocity alerts.</p>
@@ -288,7 +288,7 @@ export default function ManagerRiskPanel() {
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-white/40">High rejection rate users</p>
-              <p className="mt-1 text-sm text-white/60">Potential low-quality submitters. Use stricter checks.</p>
+              <p className="mt-1 text-sm text-white/60">Accounts with an unusually high rejection rate.</p>
             </div>
             {data.rejectionOutliers.length === 0 ? (
               <p className="text-sm text-white/60">No outliers found right now.</p>
@@ -319,7 +319,7 @@ export default function ManagerRiskPanel() {
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-white/40">Pending admin backlog</p>
-              <p className="mt-1 text-sm text-white/60">Oldest items waiting for admin verification.</p>
+              <p className="mt-1 text-sm text-white/60">Oldest items still waiting for final admin approval.</p>
             </div>
             {data.adminBacklog.oldest.length === 0 ? (
               <p className="text-sm text-white/60">No pending-admin items.</p>
@@ -340,7 +340,7 @@ export default function ManagerRiskPanel() {
                       <div className="mt-3 rounded-xl border border-amber-400/20 bg-amber-500/10 p-3 text-sm text-amber-100/85">
                         <div className="flex items-start gap-2">
                           <AlertTriangle size={16} className="mt-0.5 shrink-0" />
-                          <p>This user is flagged. Consider escalating this item for extra review.</p>
+                          <p>This user is flagged. Consider escalating this item for closer review.</p>
                         </div>
                       </div>
                     ) : null}
@@ -385,8 +385,8 @@ export default function ManagerRiskPanel() {
           <div className="flex items-start gap-2">
             <ShieldAlert size={16} className="mt-0.5 shrink-0" />
             <p>
-              This view masks IPs and hides contact details by design. If you need stronger controls (device fingerprint,
-              device fingerprinting, or IP blacklists), we can add them as admin-only tooling.
+              This view masks IPs and hides contact details by design. If you need stronger controls such as device
+              fingerprinting or IP blacklists, those can be added as admin-only tools.
             </p>
           </div>
         </CardContent>

@@ -122,16 +122,16 @@ export default async function ManagerDashboardPage() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-sm uppercase tracking-[0.24em] text-emerald-600/80 dark:text-emerald-300/70">Moderation control</p>
+        <p className="text-sm uppercase tracking-[0.24em] text-emerald-600/80 dark:text-emerald-300/70">Manager dashboard</p>
         <h2 className="mt-2 text-3xl font-semibold md:text-4xl">Manager Overview</h2>
         <p className="mt-2 max-w-3xl text-sm text-foreground/65 md:text-base">
-          Monitor review workload, see what is waiting for admin, and surface suspicious submissions before they move deeper into the system.
+          Review incoming submissions, flag suspicious activity, and pass valid work to the admin team for final approval.
         </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <KpiCard
-          label="Pending queue"
+          label="Waiting for review"
           value={pendingCount}
           tone="warning"
         />
@@ -151,7 +151,7 @@ export default async function ManagerDashboardPage() {
           tone="info"
         />
         <KpiCard
-          label="Suspicious in queue"
+          label="Flagged for review"
           value={suspiciousQueue}
           tone="warning"
         />
@@ -161,17 +161,17 @@ export default async function ManagerDashboardPage() {
         <SectionCard elevated className="space-y-4">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-foreground/60">Queue snapshot</p>
-              <h3 className="text-xl font-semibold text-foreground">Oldest items first</h3>
+              <p className="text-sm text-foreground/60">Review snapshot</p>
+              <h3 className="text-xl font-semibold text-foreground">Oldest submissions first</h3>
             </div>
             <a href="/dashboard/manager/submissions" className="text-sm text-emerald-200 transition hover:text-emerald-100">
-              Open queue
+              Open submissions
             </a>
           </div>
 
           {pendingQueue.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-6 text-sm text-white/55">
-              No submissions are waiting for manager review right now.
+              No submissions are waiting for review right now.
             </div>
           ) : (
             <div className="space-y-3">
@@ -187,7 +187,7 @@ export default async function ManagerDashboardPage() {
                       </p>
                     </div>
                     <div className="sm:text-right">
-                      <p className="text-sm text-white/75">{ageLabel(submission.createdAt)} waiting</p>
+                      <p className="text-sm text-white/75">{ageLabel(submission.createdAt)} in review</p>
                       {submission.user.isSuspicious ? (
                         <div className="mt-1">
                           <StatusBadge label="Suspicious" tone="warning" />
@@ -204,7 +204,7 @@ export default async function ManagerDashboardPage() {
         <SectionCard elevated className="space-y-4">
           <div>
             <p className="text-sm text-white/60">Review pace</p>
-            <h3 className="text-xl font-semibold text-white">How fast the queue is moving</h3>
+            <h3 className="text-xl font-semibold text-white">How quickly reviews are moving</h3>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -216,12 +216,12 @@ export default async function ManagerDashboardPage() {
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-white/40">Oldest pending item</p>
               <p className="mt-2 text-2xl font-semibold text-white">{oldestPending ? ageLabel(oldestPending) : "Clear"}</p>
-              <p className="mt-1 text-xs text-white/45">Longest wait currently sitting in the manager queue.</p>
+              <p className="mt-1 text-xs text-white/45">Longest wait among submissions still with the manager team.</p>
             </div>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/60">
-            <p>Manager scope is limited to first-pass moderation only.</p>
+            <p>Manager access covers first-pass review only.</p>
             <p className="mt-2">Financial approval, payout control, and user-role changes remain with admin.</p>
           </div>
         </SectionCard>

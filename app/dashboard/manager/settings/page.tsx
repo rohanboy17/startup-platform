@@ -9,7 +9,7 @@ export default function ManagerSettingsPage() {
         <p className="text-xs font-semibold uppercase tracking-[0.26em] text-foreground/60">Manager settings</p>
         <h2 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">Settings</h2>
         <p className="mt-2 max-w-2xl text-sm text-foreground/70 md:text-base">
-          Configure moderation preferences and account security.
+          Manage your profile, review preferences, and account security.
         </p>
       </div>
 

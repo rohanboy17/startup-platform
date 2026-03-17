@@ -85,7 +85,7 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
 
     setLoading(false);
     if (!res.ok) {
-      setMessage(data.error || "Bulk action failed");
+      setMessage(data.error || "Bulk update failed");
       return;
     }
 
@@ -99,7 +99,7 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
   return (
     <div className="space-y-3 rounded-2xl border border-foreground/10 bg-background/50 p-4">
       <div className="flex flex-wrap items-center gap-2">
-        <p className="text-sm text-foreground/70">Bulk moderation</p>
+        <p className="text-sm text-foreground/70">Bulk account update</p>
         <span className="rounded-full bg-foreground/10 px-2 py-0.5 text-xs text-foreground/70">
           Selected: {selected.length}
         </span>
@@ -180,7 +180,7 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
       </div>
 
       <Button type="button" onClick={runBulk} disabled={loading} className="w-full sm:w-auto">
-        {loading ? "Applying..." : "Apply Bulk Action"}
+        {loading ? "Applying..." : "Apply changes"}
       </Button>
       {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
