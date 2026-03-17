@@ -23,7 +23,7 @@ export default function ProofImageDialog({
         variant="outline"
         size="sm"
         onClick={() => setOpen(true)}
-        className="w-full md:w-auto"
+        className="w-full lg:w-auto"
       >
         {label}
       </Button>

@@ -204,13 +204,13 @@ export default function ManagerHistoryPanel() {
                     <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
                       <div className="flex items-center justify-between gap-3">
                         <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">Reason / Proof</p>
-                        <div className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
+                        <div className="flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
                           {row.submission?.proofLink ? (
                             <a
                               href={normalizeExternalUrl(row.submission.proofLink) ?? "#"}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex w-full items-center gap-1 text-sm text-emerald-700 underline underline-offset-4 dark:text-emerald-200 md:w-auto"
+                              className="inline-flex w-full items-center gap-1 text-sm text-emerald-700 underline underline-offset-4 dark:text-emerald-200 lg:w-auto"
                             >
                               <ExternalLink size={14} />
                               Open link

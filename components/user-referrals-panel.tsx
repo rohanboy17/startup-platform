@@ -216,53 +216,55 @@ export default function UserReferralsPanel() {
             <h3 className="text-xl font-semibold text-white">{t("shareTitle")}</h3>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/45">{t("codeLabel")}</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{data.referral.code}</p>
-              <Button
-                className="mt-auto w-full sm:w-auto"
-                variant="outline"
-                onClick={() => void copyText(data.referral.code)}
-              >
+          <div className="grid gap-5 sm:grid-cols-2 2xl:grid-cols-3">
+            <div className="flex min-h-[200px] flex-col justify-between rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-md">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("codeLabel")}</p>
+                <p className="mt-3 break-all text-2xl font-semibold text-white">{data.referral.code}</p>
+              </div>
+
+              <Button className="mt-6 w-full" variant="outline" onClick={() => void copyText(data.referral.code)}>
                 <Copy size={16} />
                 {t("copyCode")}
               </Button>
             </div>
 
-            <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/45">{t("linkLabel")}</p>
-              <div className="mt-3 rounded-xl border border-white/10 bg-black/10 px-3 py-2 text-xs text-white/75">
-                <p className="break-all font-mono leading-5">{data.referral.link}</p>
+            <div className="flex min-h-[200px] flex-col justify-between rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-md">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("linkLabel")}</p>
+                <div className="mt-3 rounded-xl border border-white/10 bg-black/20 p-3 text-xs text-white/80">
+                  <p className="break-all font-mono leading-5">{data.referral.link}</p>
+                </div>
               </div>
-              <Button
-                className="mt-auto w-full sm:w-auto"
-                variant="outline"
-                onClick={() => void copyText(data.referral.link)}
-              >
+
+              <Button className="mt-6 w-full" variant="outline" onClick={() => void copyText(data.referral.link)}>
                 <Gift size={16} />
                 {t("copyLink")}
               </Button>
             </div>
 
-            <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/45">{t("qrLabel")}</p>
-              <div className="mt-3 flex justify-center">
-                {qrDataUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={qrDataUrl}
-                    alt={t("qrAlt")}
-                    className="h-44 w-44 rounded-2xl bg-white p-3 shadow-lg shadow-black/30 sm:h-52 sm:w-52"
-                  />
-                ) : (
-                  <div className="flex h-44 w-44 items-center justify-center rounded-2xl border border-dashed border-white/15 bg-black/10 px-4 text-center text-sm text-white/60 sm:h-52 sm:w-52">
-                    {qrLoading ? t("qrLoading") : qrError || t("qrHelp")}
-                  </div>
-                )}
+            <div className="flex min-h-[260px] flex-col justify-between rounded-2xl border border-white/10 bg-black/30 p-5 backdrop-blur-md">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("qrLabel")}</p>
+                <div className="mt-4 flex justify-center">
+                  {qrDataUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={qrDataUrl}
+                      alt={t("qrAlt")}
+                      className="h-40 w-40 rounded-xl bg-white p-2 sm:h-44 sm:w-44"
+                    />
+                  ) : (
+                    <div className="flex h-40 w-40 items-center justify-center rounded-xl border border-dashed border-white/20 px-3 text-center text-xs text-white/60 sm:h-44 sm:w-44">
+                      {qrLoading ? t("qrLoading") : qrError || t("qrHelp")}
+                    </div>
+                  )}
+                </div>
+
+                <p className="mt-3 text-center text-xs text-white/50">{t("qrHelp")}</p>
               </div>
-              <p className="mt-3 text-xs text-white/55">{t("qrHelp")}</p>
-              <div className="mt-auto grid gap-2">
+
+              <div className="mt-5 grid gap-2">
                 <Button
                   type="button"
                   variant="outline"

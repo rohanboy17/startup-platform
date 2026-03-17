@@ -270,7 +270,7 @@ export default function BusinessSubmissionsPanel() {
                   </p>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-4 lg:grid-cols-2">
                   <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("row.participant")}</p>
                     <p className="mt-2 text-sm text-white">{submission.user.name || t("fallback.unnamedUser")}</p>
@@ -291,7 +291,7 @@ export default function BusinessSubmissionsPanel() {
                       return (
                         <>
                           <p className="mt-2 break-all text-sm text-white/75">{proofText}</p>
-                          <div className="mt-3 flex flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
+                          <div className="mt-3 flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
                             {screenshotUrl ? (
                               <ProofImageDialog url={screenshotUrl} label={t("row.openScreenshot")} />
                             ) : null}
@@ -300,7 +300,7 @@ export default function BusinessSubmissionsPanel() {
                                 href={submission.proofLink}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex w-full items-center gap-1 text-sm text-emerald-200 underline underline-offset-4 md:w-auto"
+                                className="inline-flex w-full items-center gap-1 text-sm text-emerald-200 underline underline-offset-4 lg:w-auto"
                               >
                                 <ExternalLink size={14} />
                                 {t("openProof")}

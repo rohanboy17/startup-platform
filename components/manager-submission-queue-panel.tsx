@@ -280,13 +280,13 @@ export default function ManagerSubmissionQueuePanel() {
 
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                       <p className="text-xs uppercase tracking-[0.16em] text-white/35">Proof preview</p>
-                      <div className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
+                      <div className="flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
                         {submission.proofLink ? (
                           <a
                             href={normalizeExternalUrl(submission.proofLink) ?? "#"}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex w-full items-center gap-1 text-sm text-emerald-200 underline underline-offset-4 md:w-auto"
+                            className="inline-flex w-full items-center gap-1 text-sm text-emerald-200 underline underline-offset-4 lg:w-auto"
                           >
                             <ExternalLink size={14} />
                             Open proof link

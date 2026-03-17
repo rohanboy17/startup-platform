@@ -251,13 +251,13 @@ export default async function AdminReviewsPage({
                       ((submission.proofImage || isLikelyScreenshotUrl(submission.proof)) ? "Screenshot proof uploaded." : null) ||
                       submission.proof}
                   </p>
-                  <div className="flex flex-col gap-2 text-sm md:flex-row md:flex-wrap md:items-center">
+                  <div className="flex flex-col gap-2 text-sm lg:flex-row lg:flex-wrap lg:items-center">
                     {submission.proofLink ? (
                       <a
                         href={submission.proofLink}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex w-full items-center gap-1 text-emerald-200 underline underline-offset-4 md:w-auto"
+                        className="inline-flex w-full items-center gap-1 text-emerald-200 underline underline-offset-4 lg:w-auto"
                       >
                         View link
                       </a>
