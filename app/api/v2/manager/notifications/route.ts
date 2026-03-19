@@ -39,11 +39,24 @@ export async function GET(req: Request) {
     recentSubmissions,
     recentManagerDecisions,
   ] = await Promise.all([
-    prisma.submission.count({ where: { managerStatus: "PENDING", managerEscalatedAt: null } }),
     prisma.submission.count({
-      where: { managerStatus: "PENDING", managerEscalatedAt: null, user: { isSuspicious: true } },
+      where: { campaignId: { not: null }, managerStatus: "PENDING", managerEscalatedAt: null },
     }),
-    prisma.submission.count({ where: { managerStatus: "MANAGER_APPROVED", adminStatus: "PENDING" } }),
+    prisma.submission.count({
+      where: {
+        campaignId: { not: null },
+        managerStatus: "PENDING",
+        managerEscalatedAt: null,
+        user: { isSuspicious: true },
+      },
+    }),
+    prisma.submission.count({
+      where: {
+        campaignId: { not: null },
+        managerStatus: "MANAGER_APPROVED",
+        adminStatus: "PENDING",
+      },
+    }),
     prisma.submission.count({ where: { managerEscalatedAt: { gte: since } } }),
     prisma.submission.findMany({
       where: { createdAt: { gte: since }, ipAddress: { not: null } },
