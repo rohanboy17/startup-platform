@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { useHydrated } from "@/lib/use-hydrated";
 
 type Template = {
   id: string;
@@ -25,15 +27,51 @@ type DeliveryLog = {
   user: { email: string; role: string; mobile?: string | null };
 };
 
+type NotificationItem = {
+  id: string;
+  title: string;
+  message: string;
+  createdAt: string;
+  isRead: boolean;
+  type: string;
+};
+
+type NotificationFilter = "ALL" | "UNREAD" | "SUCCESS" | "WARNING" | "INFO";
+
+const FILTERS: Array<{ value: NotificationFilter; label: string }> = [
+  { value: "ALL", label: "All" },
+  { value: "UNREAD", label: "Unread" },
+  { value: "SUCCESS", label: "Success" },
+  { value: "WARNING", label: "Warnings" },
+  { value: "INFO", label: "Info" },
+];
+
 export default function AdminNotificationCenter({
   templates,
+  notifications,
+  totalCount,
+  typeCounts,
+  selectedLimit,
+  selectedLogStatus,
   logs,
 }: {
   templates: Template[];
+  notifications: NotificationItem[];
+  totalCount: number;
+  typeCounts: {
+    success: number;
+    warning: number;
+    info: number;
+  };
+  selectedLimit: string;
+  selectedLogStatus: "ALL" | "SENT" | "FAILED" | "SKIPPED";
   logs: DeliveryLog[];
 }) {
   const router = useRouter();
+  const hydrated = useHydrated();
+  const [inboxItems, setInboxItems] = useState<NotificationItem[]>(notifications);
   const [segment, setSegment] = useState("ALL");
+  const [filter, setFilter] = useState<NotificationFilter>("ALL");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [broadcastChannels, setBroadcastChannels] = useState<Array<"IN_APP" | "EMAIL" | "SMS" | "PUSH" | "TELEGRAM">>(["IN_APP"]);
@@ -50,6 +88,22 @@ export default function AdminNotificationCenter({
   const [newBody, setNewBody] = useState("");
   const [loading, setLoading] = useState<string | null>(null);
   const [feedback, setFeedback] = useState("");
+  const unreadNotifications = useMemo(
+    () => inboxItems.filter((item) => !item.isRead),
+    [inboxItems]
+  );
+  const filteredNotifications = useMemo(() => {
+    switch (filter) {
+      case "UNREAD":
+        return inboxItems.filter((item) => !item.isRead);
+      case "SUCCESS":
+      case "WARNING":
+      case "INFO":
+        return inboxItems.filter((item) => item.type === filter);
+      default:
+        return inboxItems;
+    }
+  }, [filter, inboxItems]);
 
   async function sendBroadcast() {
     setLoading("broadcast");
@@ -100,8 +154,177 @@ export default function AdminNotificationCenter({
     if (res.ok) router.refresh();
   }
 
+  async function markRead(notificationId?: string) {
+    setLoading(notificationId ?? "mark-all");
+    setFeedback("");
+
+    const res = await fetch("/api/notifications/read", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(notificationId ? { notificationId } : { all: true }),
+    });
+
+    const raw = await res.text();
+    let data: { error?: string; message?: string } = {};
+    try {
+      data = raw ? (JSON.parse(raw) as { error?: string; message?: string }) : {};
+    } catch {
+      data = { error: "Unexpected server response" };
+    }
+
+    setLoading(null);
+    setFeedback(data.message || data.error || "Done");
+    if (res.ok) {
+      setInboxItems((current) =>
+        current.map((item) =>
+          !notificationId || item.id === notificationId ? { ...item, isRead: true } : item
+        )
+      );
+      router.refresh();
+    }
+  }
+
+  function typeTone(type: string, isRead: boolean) {
+    if (isRead) return "border-foreground/10 bg-background/50 text-foreground";
+    if (type === "SUCCESS") return "border-emerald-400/25 bg-emerald-500/10 text-foreground";
+    if (type === "WARNING") return "border-amber-400/25 bg-amber-500/10 text-foreground";
+    return "border-sky-400/25 bg-sky-500/10 text-foreground";
+  }
+
   return (
     <div className="space-y-6">
+      <div className="space-y-3 rounded-2xl border border-foreground/10 bg-background/50 p-4 sm:p-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h3 className="text-lg font-semibold">Admin Inbox</h3>
+            <p className="text-sm text-foreground/60">
+              Review your own alerts before checking delivery logs and broadcast history.
+            </p>
+          </div>
+          <form className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+            <select
+              name="limit"
+              defaultValue={selectedLimit}
+              className="w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground sm:min-w-[120px]"
+            >
+              <option value="5">Show 5</option>
+              <option value="10">Show 10</option>
+              <option value="20">Show 20</option>
+              <option value="ALL">Show all</option>
+            </select>
+            <select
+              name="logStatus"
+              defaultValue={selectedLogStatus}
+              className="w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground sm:min-w-[140px]"
+            >
+              <option value="ALL">All logs</option>
+              <option value="FAILED">Failed logs</option>
+              <option value="SENT">Sent logs</option>
+              <option value="SKIPPED">Skipped logs</option>
+            </select>
+            <Button type="submit" variant="outline" className="w-full sm:w-auto">
+              Apply
+            </Button>
+          </form>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-sm text-foreground/60">Total inbox items</p>
+            <p className="mt-2 text-2xl font-semibold">{totalCount}</p>
+          </div>
+          <div className="rounded-xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-sm text-foreground/60">Unread</p>
+            <p className="mt-2 text-2xl font-semibold">{unreadNotifications.length}</p>
+          </div>
+          <div className="rounded-xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-sm text-foreground/60">Success</p>
+            <p className="mt-2 text-2xl font-semibold">{typeCounts.success}</p>
+          </div>
+          <div className="rounded-xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-sm text-foreground/60">Warnings</p>
+            <p className="mt-2 text-2xl font-semibold">{typeCounts.warning}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="text-sm text-foreground/60">Notifications</p>
+            <h4 className="text-base font-semibold">Mark updates as read from here</h4>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => void markRead()}
+            disabled={loading !== null || inboxItems.every((item) => item.isRead)}
+            className="w-full sm:w-auto"
+          >
+            {loading === "mark-all" ? "Updating..." : "Mark all read"}
+          </Button>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
+          {FILTERS.map((item) => {
+            const active = filter === item.value;
+            return (
+              <button
+                key={item.value}
+                type="button"
+                onClick={() => setFilter(item.value)}
+                className={`rounded-full border px-3 py-2 text-sm transition ${
+                  active
+                    ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-800 dark:text-emerald-100"
+                    : "border-foreground/10 bg-background/50 text-foreground/70 hover:bg-background/70 hover:text-foreground"
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {filteredNotifications.length === 0 ? (
+          <p className="text-sm text-foreground/60">No admin notifications yet.</p>
+        ) : (
+          <div className="space-y-3">
+            {filteredNotifications.map((item) => (
+              <div
+                key={item.id}
+                className={`rounded-xl border p-4 ${typeTone(item.type, item.isRead)}`}
+              >
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="min-w-0">
+                    <p className="break-words font-medium">{item.title}</p>
+                    <p className="mt-1 break-words text-sm opacity-80">{item.message}</p>
+                  </div>
+                  {!item.isRead ? (
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => void markRead(item.id)}
+                      disabled={loading !== null}
+                      className="w-full lg:w-auto"
+                    >
+                      {loading === item.id ? "Saving..." : "Mark read"}
+                    </Button>
+                  ) : null}
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-3 text-xs opacity-70">
+                  <span suppressHydrationWarning>
+                    {hydrated ? new Date(item.createdAt).toLocaleString() : ""}
+                  </span>
+                  <StatusBadge
+                    label={item.type}
+                    tone={item.type === "SUCCESS" ? "success" : item.type === "WARNING" ? "warning" : "info"}
+                  />
+                  {!item.isRead ? <StatusBadge label="Unread" tone="neutral" /> : null}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
       <div className="space-y-3 rounded-2xl border border-foreground/10 bg-background/50 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Broadcast</h3>
         <select
@@ -191,7 +414,7 @@ export default function AdminNotificationCenter({
       <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/50 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Delivery Logs</h3>
         {logs.length === 0 ? (
-          <p className="text-sm text-foreground/60">No logs yet.</p>
+          <p className="text-sm text-foreground/60">No delivery logs match the current filter.</p>
         ) : (
           logs.map((log) => (
             <div key={log.id} className="rounded-md border border-foreground/10 bg-background/60 p-3 text-sm">

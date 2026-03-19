@@ -142,7 +142,7 @@ export default function BusinessNotificationsPanel() {
             <h3 className="text-xl font-semibold text-white">{t("inbox.title")}</h3>
           </div>
         </div>
-        <UserNotificationsList notifications={data.inbox} />
+        <UserNotificationsList notifications={data.inbox} showLimitSelector />
       </div>
     </div>
   );

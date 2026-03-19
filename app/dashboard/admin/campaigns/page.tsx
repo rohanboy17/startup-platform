@@ -11,6 +11,7 @@ type SearchParams = {
   q?: string;
   status?: "ALL" | "PENDING" | "APPROVED" | "REJECTED" | "LIVE" | "COMPLETED";
   sla?: "ALL" | "ON_TIME" | "AT_RISK" | "BREACHED" | "ESCALATED";
+  limit?: string;
 };
 
 export default async function AdminCampaignsPage({
@@ -22,6 +23,7 @@ export default async function AdminCampaignsPage({
   const q = params.q?.trim() || "";
   const statusFilter = params.status || "ALL";
   const slaFilter = params.sla || "ALL";
+  const limit = [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
   const now = new Date();
   const fourHoursAgo = new Date(now.getTime() - 4 * 60 * 60 * 1000);
   const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -88,6 +90,7 @@ export default async function AdminCampaignsPage({
       },
     },
     orderBy: { createdAt: "desc" },
+    take: limit,
   });
 
   return (
@@ -109,7 +112,7 @@ export default async function AdminCampaignsPage({
       <AdminCampaignEscalationControls />
 
       <SectionCard elevated className="p-4">
-          <form className="grid gap-3 md:grid-cols-4">
+          <form className="grid gap-3 md:grid-cols-5">
             <input
               type="text"
               name="q"
@@ -139,6 +142,15 @@ export default async function AdminCampaignsPage({
               <option value="AT_RISK">Needs attention (4-24h)</option>
               <option value="BREACHED">Overdue (&gt;24h)</option>
               <option value="ESCALATED">Escalated</option>
+            </select>
+            <select
+              name="limit"
+              defaultValue={String(limit)}
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
+            >
+              <option value="5">Show 5</option>
+              <option value="10">Show 10</option>
+              <option value="20">Show 20</option>
             </select>
             <button
               type="submit"
