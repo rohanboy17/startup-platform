@@ -40,15 +40,15 @@ export default function PwaInstallNudge() {
       })()
     : "";
 
-  useEffect(() => {
-    if (hydrated && !installed && !seen) {
-      try {
-        window.localStorage.setItem(SEEN_KEY, String(Date.now()));
-      } catch {
-        // ignore
-      }
+  function markSeen() {
+    try {
+      window.localStorage.setItem(SEEN_KEY, String(Date.now()));
+    } catch {
+      // ignore
     }
+  }
 
+  useEffect(() => {
     const onBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
       setDeferredPrompt(event as BeforeInstallPromptEvent);
@@ -56,6 +56,7 @@ export default function PwaInstallNudge() {
 
     const onAppInstalled = () => {
       setInstalledOverride(true);
+      markSeen();
       setDeferredPrompt(null);
     };
 
@@ -65,7 +66,7 @@ export default function PwaInstallNudge() {
       window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
       window.removeEventListener("appinstalled", onAppInstalled);
     };
-  }, [hydrated, installed, seen]);
+  }, []);
 
   const open = hydrated && !installed && !dismissed && !seen;
   if (!open) return null;
@@ -74,6 +75,7 @@ export default function PwaInstallNudge() {
     if (deferredPrompt) {
       await deferredPrompt.prompt();
       await deferredPrompt.userChoice;
+      markSeen();
       setDeferredPrompt(null);
       setDismissed(true);
       return;
@@ -88,7 +90,10 @@ export default function PwaInstallNudge() {
         type="button"
         aria-label="Close install prompt"
         className="absolute inset-0 bg-background/40 backdrop-blur-sm"
-        onClick={() => setDismissed(true)}
+        onClick={() => {
+          markSeen();
+          setDismissed(true);
+        }}
       />
 
       <div className="relative w-full max-w-md rounded-3xl border border-foreground/10 bg-background/95 p-5 shadow-[0_30px_90px_-45px_rgba(0,0,0,0.8)]">
@@ -106,7 +111,10 @@ export default function PwaInstallNudge() {
           </div>
           <button
             type="button"
-            onClick={() => setDismissed(true)}
+            onClick={() => {
+              markSeen();
+              setDismissed(true);
+            }}
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-foreground/15 bg-foreground/[0.03] text-foreground/70 transition hover:bg-foreground/10 hover:text-foreground"
           >
             <X size={16} />
@@ -124,7 +132,10 @@ export default function PwaInstallNudge() {
           </button>
           <button
             type="button"
-            onClick={() => setDismissed(true)}
+            onClick={() => {
+              markSeen();
+              setDismissed(true);
+            }}
             className="inline-flex items-center justify-center rounded-2xl border border-foreground/15 bg-foreground/[0.03] px-4 py-3 text-sm font-semibold text-foreground/80 transition hover:bg-foreground/10 hover:text-foreground"
           >
             Not now

@@ -1,4 +1,5 @@
 import UserProfilePanel from "@/components/user-profile-panel";
+import UserProfileCompletionBanner from "@/components/user-profile-completion-banner";
 import { getTranslations } from "next-intl/server";
 
 export default async function UserProfilePage() {
@@ -13,6 +14,7 @@ export default async function UserProfilePage() {
         </p>
       </div>
 
+      <UserProfileCompletionBanner variant="full" />
       <UserProfilePanel />
     </div>
   );

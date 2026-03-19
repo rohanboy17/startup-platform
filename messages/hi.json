@@ -882,6 +882,35 @@
         "unexpected": "अप्रत्याशित सर्वर प्रतिक्रिया",
         "updateFailed": "नोटिफिकेशन अपडेट नहीं हो सके"
       }
+    },
+    "profileCompletion": {
+      "progressLabel": "प्रोफ़ाइल पूर्णता",
+      "cta": "प्रोफ़ाइल पूरी करें",
+      "compact": {
+        "eyebrow": "बेहतर काम सुझाव",
+        "title": "बेहतर काम सिफारिशों के लिए अपनी प्रोफ़ाइल पूरी करें",
+        "body": "जो प्रोफ़ाइल जानकारी अभी बाकी है उसे पूरा करें, ताकि FreeEarnHub आपको बेहतर और सही काम सुझा सके।"
+      },
+      "full": {
+        "eyebrow": "प्रोफ़ाइल मज़बूती",
+        "title": "अपनी वर्क प्रोफ़ाइल को और मज़बूत बनाइए",
+        "body": "बाकी प्रोफ़ाइल फ़ील्ड्स पूरी करें, ताकि मैनेजर और एडमिन आपको बेहतर work-based opportunities के लिए चुन सकें।",
+        "completeBody": "आपकी प्रोफ़ाइल पूरी है। अब आप बेहतर work recommendations और targeted assignments के लिए तैयार हैं।"
+      },
+      "fields": {
+        "name": "नाम",
+        "address": "पता",
+        "gender": "जेंडर",
+        "religion": "धर्म",
+        "dateOfBirth": "जन्म तिथि",
+        "skills": "स्किल्स",
+        "workMode": "वर्क मोड",
+        "educationQualification": "शिक्षा",
+        "courseAndCertificate": "कोर्स और सर्टिफिकेट",
+        "workTime": "काम का समय",
+        "workingPreference": "काम की पसंद",
+        "languages": "भाषाएँ"
+      }
     }
   },
   "business": {

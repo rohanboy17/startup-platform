@@ -842,6 +842,35 @@
         "unexpected": "Unexpected server response",
         "updateFailed": "Failed to update notifications"
       }
+    },
+    "profileCompletion": {
+      "progressLabel": "Profile completion",
+      "cta": "Complete profile",
+      "compact": {
+        "eyebrow": "Better work matches",
+        "title": "Complete your profile for better work recommendations",
+        "body": "Add the missing profile details so FreeEarnHub can recommend better-fit work opportunities."
+      },
+      "full": {
+        "eyebrow": "Profile strength",
+        "title": "Build a stronger work profile",
+        "body": "Complete the remaining profile fields so managers and admins can match you with better work-based opportunities.",
+        "completeBody": "Your profile is complete. You are ready for better work recommendations and targeted assignments."
+      },
+      "fields": {
+        "name": "Name",
+        "address": "Address",
+        "gender": "Gender",
+        "religion": "Religion",
+        "dateOfBirth": "Date of birth",
+        "skills": "Skills",
+        "workMode": "Work mode",
+        "educationQualification": "Education",
+        "courseAndCertificate": "Course & certificate",
+        "workTime": "Work time",
+        "workingPreference": "Working preference",
+        "languages": "Languages"
+      }
     }
   },
   "business": {

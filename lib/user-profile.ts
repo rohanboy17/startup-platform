@@ -89,3 +89,67 @@ export function calculateAgeFromDate(dateOfBirth: string | null) {
 
   return age >= 0 ? age : null;
 }
+
+export type ProfileCompletionSource = {
+  name?: string | null;
+  address?: string | null;
+  gender?: string | null;
+  religion?: string | null;
+  dateOfBirth?: string | null;
+  workMode?: string | null;
+  educationQualification?: string | null;
+  courseAndCertificate?: string | null;
+  workTime?: string | null;
+  workingPreference?: string | null;
+  languages?: string[];
+};
+
+export type ProfileCompletionItem = {
+  key:
+    | "name"
+    | "address"
+    | "gender"
+    | "religion"
+    | "dateOfBirth"
+    | "skills"
+    | "workMode"
+    | "educationQualification"
+    | "courseAndCertificate"
+    | "workTime"
+    | "workingPreference"
+    | "languages";
+  complete: boolean;
+};
+
+function hasValue(value: string | null | undefined) {
+  return typeof value === "string" ? value.trim().length > 0 : false;
+}
+
+export function getUserProfileCompletion(profile: ProfileCompletionSource, skills: string[]) {
+  const items: ProfileCompletionItem[] = [
+    { key: "name", complete: hasValue(profile.name) },
+    { key: "address", complete: hasValue(profile.address) },
+    { key: "gender", complete: hasValue(profile.gender) },
+    { key: "religion", complete: hasValue(profile.religion) },
+    { key: "dateOfBirth", complete: hasValue(profile.dateOfBirth) },
+    { key: "skills", complete: skills.length > 0 },
+    { key: "workMode", complete: hasValue(profile.workMode) },
+    { key: "educationQualification", complete: hasValue(profile.educationQualification) },
+    { key: "courseAndCertificate", complete: hasValue(profile.courseAndCertificate) },
+    { key: "workTime", complete: hasValue(profile.workTime) },
+    { key: "workingPreference", complete: hasValue(profile.workingPreference) },
+    { key: "languages", complete: Array.isArray(profile.languages) && profile.languages.length > 0 },
+  ];
+
+  const completed = items.filter((item) => item.complete).length;
+  const percentage = Math.round((completed / items.length) * 100);
+
+  return {
+    percentage,
+    completed,
+    total: items.length,
+    items,
+    missing: items.filter((item) => !item.complete).map((item) => item.key),
+    isComplete: completed === items.length,
+  };
+}

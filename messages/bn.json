@@ -882,6 +882,35 @@
         "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
         "updateFailed": "নোটিফিকেশন আপডেট করা যায়নি"
       }
+    },
+    "profileCompletion": {
+      "progressLabel": "প্রোফাইল সম্পূর্ণতা",
+      "cta": "প্রোফাইল সম্পূর্ণ করুন",
+      "compact": {
+        "eyebrow": "ভালো কাজের মিল",
+        "title": "ভালো কাজের সুপারিশ পেতে প্রোফাইল সম্পূর্ণ করুন",
+        "body": "যে প্রোফাইল তথ্য এখনো বাকি আছে তা পূরণ করুন, যাতে FreeEarnHub আপনাকে আরও ভালো মানানসই কাজ দেখাতে পারে।"
+      },
+      "full": {
+        "eyebrow": "প্রোফাইল শক্তি",
+        "title": "আপনার কাজের প্রোফাইল আরও শক্তিশালী করুন",
+        "body": "বাকি থাকা প্রোফাইল ফিল্ডগুলো পূরণ করুন, যাতে ম্যানেজার এবং অ্যাডমিন আপনাকে আরও ভালো work-based সুযোগের জন্য বেছে নিতে পারেন।",
+        "completeBody": "আপনার প্রোফাইল সম্পূর্ণ। এখন আপনি আরও ভালো work recommendations এবং targeted assignments-এর জন্য প্রস্তুত।"
+      },
+      "fields": {
+        "name": "নাম",
+        "address": "ঠিকানা",
+        "gender": "লিঙ্গ",
+        "religion": "ধর্ম",
+        "dateOfBirth": "জন্মতারিখ",
+        "skills": "স্কিল",
+        "workMode": "কাজের ধরন",
+        "educationQualification": "শিক্ষাগত যোগ্যতা",
+        "courseAndCertificate": "কোর্স ও সার্টিফিকেট",
+        "workTime": "কাজের সময়",
+        "workingPreference": "কাজের পছন্দ",
+        "languages": "ভাষা"
+      }
     }
   },
   "business": {

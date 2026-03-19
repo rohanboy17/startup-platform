@@ -1,4 +1,5 @@
 import UserV2SubmissionsPanel from "@/components/user-v2-submissions-panel";
+import UserProfileCompletionBanner from "@/components/user-profile-completion-banner";
 import { getTranslations } from "next-intl/server";
 
 export default async function UserSubmissionsPage() {
@@ -6,6 +7,7 @@ export default async function UserSubmissionsPage() {
   return (
     <div className="space-y-8">
       <h2 className="text-3xl font-semibold">{t("title")}</h2>
+      <UserProfileCompletionBanner />
       <UserV2SubmissionsPanel />
     </div>
   );
