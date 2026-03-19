@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SectionCard } from "@/components/ui/section-card";
@@ -33,8 +33,6 @@ export default function UserSettingsPanel() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const [name, setName] = useState("");
-  const [mobile, setMobile] = useState("");
   const [defaultUpiId, setDefaultUpiId] = useState("");
   const [defaultUpiName, setDefaultUpiName] = useState("");
   const [initialized, setInitialized] = useState(false);
@@ -62,8 +60,6 @@ export default function UserSettingsPanel() {
     setLoading(false);
 
     if (!initialized) {
-      setName(payload.profile.name || "");
-      setMobile(payload.profile.mobile || "");
       setDefaultUpiId(payload.withdrawals.defaultUpiId || "");
       setDefaultUpiName(payload.withdrawals.defaultUpiName || "");
       setInitialized(true);
@@ -71,12 +67,6 @@ export default function UserSettingsPanel() {
   }, [initialized]);
 
   useLiveRefresh(load, 60000);
-
-  const createdAtValue = data?.profile.createdAt ?? "";
-  const createdAtLabel = useMemo(() => {
-    if (!createdAtValue) return "";
-    return new Date(createdAtValue).toLocaleString();
-  }, [createdAtValue]);
 
   async function saveProfile() {
     setSaving(true);
@@ -88,7 +78,6 @@ export default function UserSettingsPanel() {
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({
-        profile: { name, mobile },
         withdrawals: { defaultUpiId, defaultUpiName },
       }),
     });
@@ -120,49 +109,17 @@ export default function UserSettingsPanel() {
         </SectionCard>
       ) : null}
 
+      {message ? (
+        <SectionCard className="border border-emerald-500/20 bg-emerald-500/5 text-sm text-emerald-700 dark:text-emerald-200">
+          {message}
+        </SectionCard>
+      ) : null}
+
       {loading ? (
         <SectionCard className="text-sm text-foreground/70">Loading settings...</SectionCard>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <SectionCard elevated className="space-y-5">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">Profile</p>
-            <h3 className="mt-2 text-xl font-semibold tracking-tight">Account details</h3>
-            <p className="mt-1 text-sm text-foreground/70">Update your name and mobile number.</p>
-          </div>
-
-          <div className="grid gap-3">
-            <Input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} className="min-h-11" />
-            <Input
-              placeholder="Mobile (optional)"
-              value={mobile}
-              onChange={(e) => setMobile(e.target.value)}
-              className="min-h-11"
-            />
-          </div>
-
-          <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4 text-sm text-foreground/70">
-            <p className="break-all">
-              <span className="text-foreground/50">Email:</span> {data?.profile.email}
-            </p>
-            <p className="mt-2">
-              <span className="text-foreground/50">Role:</span> {data?.profile.role}
-            </p>
-            <p className="mt-2">
-              <span className="text-foreground/50">Created:</span> {createdAtLabel}
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <Button onClick={saveProfile} disabled={saving} className="w-full sm:w-auto">
-              {saving ? "Saving..." : "Save profile"}
-            </Button>
-            {message ? <p className="text-sm text-foreground/70">{message}</p> : null}
-          </div>
-        </SectionCard>
-
-        <SectionCard elevated className="space-y-5">
+      <SectionCard elevated className="space-y-5">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">Withdrawals</p>
             <h3 className="mt-2 text-xl font-semibold tracking-tight">Default payout details</h3>
@@ -200,8 +157,7 @@ export default function UserSettingsPanel() {
           <Button onClick={saveProfile} disabled={saving} className="w-full sm:w-auto">
             {saving ? "Saving..." : "Save withdrawal defaults"}
           </Button>
-        </SectionCard>
-      </div>
+      </SectionCard>
     </div>
   );
 }

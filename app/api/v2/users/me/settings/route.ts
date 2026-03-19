@@ -2,6 +2,37 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+type UserProfileDetails = {
+  address: string | null;
+  gender: string | null;
+  religion: string | null;
+  dateOfBirth: string | null;
+  workMode: string | null;
+  educationQualification: string | null;
+  courseAndCertificate: string | null;
+  workTime: string | null;
+  workingPreference: string | null;
+  languages: string[];
+};
+
+const EMPTY_PROFILE_DETAILS: UserProfileDetails = {
+  address: null,
+  gender: null,
+  religion: null,
+  dateOfBirth: null,
+  workMode: null,
+  educationQualification: null,
+  courseAndCertificate: null,
+  workTime: null,
+  workingPreference: null,
+  languages: [],
+};
+
+const ALLOWED_GENDERS = ["MALE", "FEMALE", "OTHER", "PREFER_NOT_TO_SAY"] as const;
+const ALLOWED_WORK_MODES = ["WORK_FROM_HOME", "WORK_FROM_OFFICE", "WORK_IN_FIELD"] as const;
+const ALLOWED_WORK_TIMES = ["FULL_TIME", "PART_TIME"] as const;
+const ALLOWED_WORKING_PREFERENCES = ["SALARIED", "FREELANCE_CONTRACTUAL", "DAY_BASIS"] as const;
+
 function normalizeMobile(input: unknown) {
   if (typeof input !== "string") return null;
   const trimmed = input.trim();
@@ -15,6 +46,56 @@ function normalizeText(input: unknown, max = 120) {
   const trimmed = input.trim();
   if (!trimmed) return "";
   return trimmed.slice(0, max);
+}
+
+function normalizeOption<T extends readonly string[]>(input: unknown, allowed: T) {
+  const value = normalizeText(input, 48);
+  if (!value) return null;
+  return (allowed as readonly string[]).includes(value) ? value : "__INVALID__";
+}
+
+function normalizeDate(input: unknown) {
+  const value = normalizeText(input, 32);
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "__INVALID__";
+  return date.toISOString().slice(0, 10);
+}
+
+function normalizeStringArray(input: unknown, maxItems = 10, maxLength = 40) {
+  if (!Array.isArray(input)) return [];
+  const seen = new Set<string>();
+  const values: string[] = [];
+  for (const item of input) {
+    const normalized = normalizeText(item, maxLength);
+    if (!normalized) continue;
+    const key = normalized.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    values.push(normalized);
+    if (values.length >= maxItems) break;
+  }
+  return values;
+}
+
+function parseProfileDetails(input: unknown): UserProfileDetails {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return { ...EMPTY_PROFILE_DETAILS };
+  }
+
+  const source = input as Record<string, unknown>;
+  return {
+    address: normalizeText(source.address, 240) || null,
+    gender: normalizeText(source.gender, 48) || null,
+    religion: normalizeText(source.religion, 80) || null,
+    dateOfBirth: normalizeDate(source.dateOfBirth) || null,
+    workMode: normalizeText(source.workMode, 48) || null,
+    educationQualification: normalizeText(source.educationQualification, 120) || null,
+    courseAndCertificate: normalizeText(source.courseAndCertificate, 240) || null,
+    workTime: normalizeText(source.workTime, 48) || null,
+    workingPreference: normalizeText(source.workingPreference, 64) || null,
+    languages: normalizeStringArray(source.languages, 10, 40),
+  };
 }
 
 export async function GET() {
@@ -33,6 +114,7 @@ export async function GET() {
       role: true,
       createdAt: true,
       timezone: true,
+      profileDetails: true,
       defaultUpiId: true,
       defaultUpiName: true,
       monthlyEmergencyWithdrawCount: true,
@@ -50,6 +132,7 @@ export async function GET() {
 
   const currentMonthKey = new Date().toISOString().slice(0, 7);
   const emergencyUsed = user.emergencyWithdrawMonthKey === currentMonthKey ? user.monthlyEmergencyWithdrawCount : 0;
+  const profileDetails = parseProfileDetails(user.profileDetails);
 
   return NextResponse.json({
     profile: {
@@ -60,6 +143,16 @@ export async function GET() {
       role: user.role,
       createdAt: user.createdAt.toISOString(),
       timezone: user.timezone,
+      address: profileDetails.address,
+      gender: profileDetails.gender,
+      religion: profileDetails.religion,
+      dateOfBirth: profileDetails.dateOfBirth,
+      workMode: profileDetails.workMode,
+      educationQualification: profileDetails.educationQualification,
+      courseAndCertificate: profileDetails.courseAndCertificate,
+      workTime: profileDetails.workTime,
+      workingPreference: profileDetails.workingPreference,
+      languages: profileDetails.languages,
     },
     withdrawals: {
       defaultUpiId: user.defaultUpiId,
@@ -87,7 +180,21 @@ export async function POST(req: Request) {
 
   const body = (await req.json().catch(() => null)) as
     | {
-        profile?: { name?: unknown; mobile?: unknown; timezone?: unknown };
+        profile?: {
+          name?: unknown;
+          mobile?: unknown;
+          timezone?: unknown;
+          address?: unknown;
+          gender?: unknown;
+          religion?: unknown;
+          dateOfBirth?: unknown;
+          workMode?: unknown;
+          educationQualification?: unknown;
+          courseAndCertificate?: unknown;
+          workTime?: unknown;
+          workingPreference?: unknown;
+          languages?: unknown;
+        };
         withdrawals?: { defaultUpiId?: unknown; defaultUpiName?: unknown };
         manager?: { queueSort?: unknown; riskOnly?: unknown; autoNext?: unknown; proofMode?: unknown; timezone?: unknown };
       }
@@ -98,6 +205,25 @@ export async function POST(req: Request) {
   }
 
   const updates: Record<string, unknown> = {};
+  const shouldUpdateProfileDetails =
+    session.user.role === "USER" &&
+    Boolean(
+      body.profile &&
+        [
+          "address",
+          "gender",
+          "religion",
+          "dateOfBirth",
+          "workMode",
+          "educationQualification",
+          "courseAndCertificate",
+          "workTime",
+          "workingPreference",
+          "languages",
+        ].some((key) => typeof (body.profile as Record<string, unknown>)[key] !== "undefined")
+    );
+
+  let nextProfileDetails = { ...EMPTY_PROFILE_DETAILS };
 
   if (body.profile) {
     if (typeof body.profile.name !== "undefined") {
@@ -121,6 +247,69 @@ export async function POST(req: Request) {
         updates.timezone = tz || "Asia/Calcutta";
       }
     }
+  }
+
+  if (shouldUpdateProfileDetails) {
+    const existingUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { profileDetails: true },
+    });
+    nextProfileDetails = parseProfileDetails(existingUser?.profileDetails);
+
+    if (typeof body.profile?.address !== "undefined") {
+      nextProfileDetails.address = normalizeText(body.profile.address, 240) || null;
+    }
+    if (typeof body.profile?.gender !== "undefined") {
+      const value = normalizeOption(body.profile.gender, ALLOWED_GENDERS);
+      if (value === "__INVALID__") {
+        return NextResponse.json({ error: "Invalid gender" }, { status: 400 });
+      }
+      nextProfileDetails.gender = value;
+    }
+    if (typeof body.profile?.religion !== "undefined") {
+      nextProfileDetails.religion = normalizeText(body.profile.religion, 80) || null;
+    }
+    if (typeof body.profile?.dateOfBirth !== "undefined") {
+      const value = normalizeDate(body.profile.dateOfBirth);
+      if (value === "__INVALID__") {
+        return NextResponse.json({ error: "Invalid date of birth" }, { status: 400 });
+      }
+      nextProfileDetails.dateOfBirth = value;
+    }
+    if (typeof body.profile?.workMode !== "undefined") {
+      const value = normalizeOption(body.profile.workMode, ALLOWED_WORK_MODES);
+      if (value === "__INVALID__") {
+        return NextResponse.json({ error: "Invalid work mode" }, { status: 400 });
+      }
+      nextProfileDetails.workMode = value;
+    }
+    if (typeof body.profile?.educationQualification !== "undefined") {
+      nextProfileDetails.educationQualification =
+        normalizeText(body.profile.educationQualification, 120) || null;
+    }
+    if (typeof body.profile?.courseAndCertificate !== "undefined") {
+      nextProfileDetails.courseAndCertificate =
+        normalizeText(body.profile.courseAndCertificate, 240) || null;
+    }
+    if (typeof body.profile?.workTime !== "undefined") {
+      const value = normalizeOption(body.profile.workTime, ALLOWED_WORK_TIMES);
+      if (value === "__INVALID__") {
+        return NextResponse.json({ error: "Invalid work time" }, { status: 400 });
+      }
+      nextProfileDetails.workTime = value;
+    }
+    if (typeof body.profile?.workingPreference !== "undefined") {
+      const value = normalizeOption(body.profile.workingPreference, ALLOWED_WORKING_PREFERENCES);
+      if (value === "__INVALID__") {
+        return NextResponse.json({ error: "Invalid working preference" }, { status: 400 });
+      }
+      nextProfileDetails.workingPreference = value;
+    }
+    if (typeof body.profile?.languages !== "undefined") {
+      nextProfileDetails.languages = normalizeStringArray(body.profile.languages, 10, 40);
+    }
+
+    updates.profileDetails = nextProfileDetails;
   }
 
   if (body.withdrawals && session.user.role === "USER") {
@@ -176,6 +365,7 @@ export async function POST(req: Request) {
         role: true,
         createdAt: true,
         timezone: true,
+        profileDetails: true,
         defaultUpiId: true,
         defaultUpiName: true,
         managerQueueSort: true,
@@ -190,6 +380,7 @@ export async function POST(req: Request) {
     const currentMonthKey = new Date().toISOString().slice(0, 7);
     const emergencyUsed =
       updated.emergencyWithdrawMonthKey === currentMonthKey ? updated.monthlyEmergencyWithdrawCount : 0;
+    const profileDetails = parseProfileDetails(updated.profileDetails);
 
     return NextResponse.json({
       message: "Settings updated",
@@ -200,6 +391,16 @@ export async function POST(req: Request) {
         role: updated.role,
         createdAt: updated.createdAt.toISOString(),
         timezone: updated.timezone,
+        address: profileDetails.address,
+        gender: profileDetails.gender,
+        religion: profileDetails.religion,
+        dateOfBirth: profileDetails.dateOfBirth,
+        workMode: profileDetails.workMode,
+        educationQualification: profileDetails.educationQualification,
+        courseAndCertificate: profileDetails.courseAndCertificate,
+        workTime: profileDetails.workTime,
+        workingPreference: profileDetails.workingPreference,
+        languages: profileDetails.languages,
       },
       withdrawals: {
         defaultUpiId: updated.defaultUpiId,

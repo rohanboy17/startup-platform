@@ -55,7 +55,8 @@ type IconName =
   | "cms"
   | "trust"
   | "referrals"
-  | "skills";
+  | "skills"
+  | "profile";
 
 type Item = {
   key: string;
@@ -88,6 +89,7 @@ const iconMap: Record<IconName, ComponentType<{ size?: number }>> = {
   trust: ScrollText,
   referrals: Gift,
   skills: Sparkles,
+  profile: Users,
 };
 
 type NavAlertsResponse = {
