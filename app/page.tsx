@@ -14,6 +14,8 @@ import HomeLiveFloatsAndStats from "@/components/home-live-floats-and-stats";
 import HomeLiveHeroVisual from "@/components/home-live-hero-visual";
 import PwaInstallNudge from "@/components/pwa-install-nudge";
 import PwaStandaloneDashboardRedirect from "@/components/pwa-standalone-dashboard-redirect";
+import HomeGuidedVideoSection from "@/components/home-guided-video-section";
+import HomeTestimonialsSection from "@/components/home-testimonials-section";
 
 type LandingContent = {
   heroTitle: string;
@@ -100,6 +102,19 @@ export default async function Home() {
   const heroSubtitle = locale === "en" ? landing.heroSubtitle : tHome("landing.heroSubtitle");
   const howItWorksSteps = tHome.raw("sections.howItWorksSteps") as string[];
   const forBusinessesSteps = tHome.raw("sections.forBusinessesSteps") as string[];
+  const guidedVideos = tHome.raw("guidedVideos.items") as Array<{
+    id: string;
+    tabLabel: string;
+    eyebrow: string;
+    title: string;
+    body: string;
+    bullets: string[];
+  }>;
+  const testimonials = tHome.raw("testimonials.items") as Array<{
+    quote: string;
+    name: string;
+    role: string;
+  }>;
 
   // Avoid rendering duplicate active announcements (common during admin testing).
   const uniqueAnnouncements = (() => {
@@ -161,6 +176,8 @@ export default async function Home() {
     activeCampaigns,
     tasksCompleted,
   };
+  const homeEarnVideoUrl = process.env.NEXT_PUBLIC_HOME_EARNING_VIDEO_URL || null;
+  const homeCampaignVideoUrl = process.env.NEXT_PUBLIC_HOME_CAMPAIGN_VIDEO_URL || null;
 
   return (
     <div className="home-shell relative min-h-screen overflow-x-clip bg-background text-foreground">
@@ -266,6 +283,19 @@ export default async function Home() {
         </MotionStagger>
       </section>
 
+      <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-12 sm:px-6 sm:pb-16">
+        <MotionSection className="rounded-[2rem] border border-foreground/10 bg-foreground/5 p-5 sm:p-7">
+          <HomeGuidedVideoSection
+            items={[
+              { ...guidedVideos[0], videoUrl: homeEarnVideoUrl },
+              { ...guidedVideos[1], videoUrl: homeCampaignVideoUrl },
+            ]}
+            openLabel={tHome("guidedVideos.openLabel")}
+            fallbackLabel={tHome("guidedVideos.fallbackLabel")}
+          />
+        </MotionSection>
+      </section>
+
       {showFeatures ? (
         <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-12 sm:px-6 sm:pb-16">
           <MotionStagger className="grid gap-5 sm:gap-6 md:grid-cols-3 auto-rows-fr">
@@ -318,6 +348,15 @@ export default async function Home() {
             </p>
           </MotionItem>
         </MotionStagger>
+      </section>
+
+      <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-12 sm:px-6 sm:pb-16">
+        <HomeTestimonialsSection
+          eyebrow={tHome("testimonials.eyebrow")}
+          title={tHome("testimonials.title")}
+          subtitle={tHome("testimonials.subtitle")}
+          items={testimonials}
+        />
       </section>
 
       <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-20">

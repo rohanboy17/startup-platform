@@ -253,18 +253,20 @@ export default function BusinessOverviewPanel() {
               </Link>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-              <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/45">{t("snapshot.todaySpend.label")}</p>
-                <p className="mt-2 text-2xl font-semibold text-white">INR {formatMoney(data.todaySpend)}</p>
-                <p className="mt-1 text-xs text-white/55">{t("snapshot.todaySpend.help")}</p>
+            <div className="grid gap-4 xl:grid-cols-[minmax(0,0.72fr)_minmax(0,1.28fr)] xl:items-stretch">
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-1">
+                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/45">{t("snapshot.todaySpend.label")}</p>
+                  <p className="mt-2 text-2xl font-semibold text-white">INR {formatMoney(data.todaySpend)}</p>
+                  <p className="mt-1 text-xs text-white/55">{t("snapshot.todaySpend.help")}</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/45">{t("snapshot.spentSoFar.label")}</p>
+                  <p className="mt-2 text-2xl font-semibold text-white">INR {formatMoney(data.spentBudget)}</p>
+                  <p className="mt-1 text-xs text-white/55">{t("snapshot.spentSoFar.help")}</p>
+                </div>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/45">{t("snapshot.spentSoFar.label")}</p>
-                <p className="mt-2 text-2xl font-semibold text-white">INR {formatMoney(data.spentBudget)}</p>
-                <p className="mt-1 text-xs text-white/55">{t("snapshot.spentSoFar.help")}</p>
-              </div>
-              <div className="rounded-2xl border border-emerald-400/15 bg-gradient-to-br from-emerald-500/12 via-black/25 to-sky-500/10 p-4 shadow-[0_24px_80px_-44px_rgba(16,185,129,0.55)] sm:col-span-2 xl:col-span-2">
+              <div className="rounded-2xl border border-emerald-400/15 bg-gradient-to-br from-emerald-500/12 via-black/25 to-sky-500/10 p-4 shadow-[0_24px_80px_-44px_rgba(16,185,129,0.55)]">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="text-xs uppercase tracking-[0.2em] text-emerald-200/70">Pricing model</p>

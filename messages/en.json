@@ -239,6 +239,58 @@
       "scanLabel": "Scan To Join and Earn",
       "marketplaceLabel": "FreeEarnHub Marketplace",
       "qrAlt": "QR code linking to the FreeEarnHub homepage"
+    },
+    "guidedVideos": {
+      "openLabel": "Open video",
+      "fallbackLabel": "Video walkthrough will appear here",
+      "items": [
+        {
+          "id": "earn",
+          "tabLabel": "Start earning",
+          "eyebrow": "Earning walkthrough",
+          "title": "Learn how to start earning on FreeEarnHub",
+          "body": "Watch the full earning flow before you begin. It explains how to pick tasks, submit proof, and move from review to wallet credit in simple steps.",
+          "bullets": [
+            "See where to find verified tasks and how to choose the right one.",
+            "Understand what proof to submit so your work gets approved faster.",
+            "Learn how earnings reach your wallet and when withdrawals become available."
+          ]
+        },
+        {
+          "id": "campaign",
+          "tabLabel": "Run campaigns",
+          "eyebrow": "Business walkthrough",
+          "title": "Learn how businesses launch campaigns",
+          "body": "This guide shows the full campaign flow from funding the wallet to creating tasks, getting reviewed submissions, and tracking campaign performance clearly.",
+          "bullets": [
+            "Understand wallet funding, budget setup, and reward planning.",
+            "See how submissions are reviewed before results are approved.",
+            "Follow how to measure spend, approvals, and campaign health from the dashboard."
+          ]
+        }
+      ]
+    },
+    "testimonials": {
+      "eyebrow": "Community feedback",
+      "title": "Why people stay with FreeEarnHub",
+      "subtitle": "Clear reviews, simple steps, and visible earnings help both users and businesses trust the platform from day one.",
+      "items": [
+        {
+          "quote": "The task flow feels easy to understand. I can see what to do, submit proof, and track the result without guessing what happens next.",
+          "name": "Riya S.",
+          "role": "Verified user"
+        },
+        {
+          "quote": "The campaign side is clean and practical. I can fund the wallet, launch work, and see what is happening without digging through complicated screens.",
+          "name": "Arjun K.",
+          "role": "Business owner"
+        },
+        {
+          "quote": "The review system feels controlled and transparent. It is easier to trust a platform when the checks, statuses, and history are all visible.",
+          "name": "Nadia R.",
+          "role": "Operations lead"
+        }
+      ]
     }
   },
   "about": {
