@@ -28,7 +28,7 @@ export function applyFundingFee(amount: number, feeRateOverride?: number) {
   const feeRate =
     typeof feeRateOverride === "number"
       ? Math.min(Math.max(feeRateOverride, 0), 0.5)
-      : 0.03;
+      : 0;
   const fee = Number((amount * feeRate).toFixed(2));
   const net = Number((amount - fee).toFixed(2));
   return { fee, net, feeRate };

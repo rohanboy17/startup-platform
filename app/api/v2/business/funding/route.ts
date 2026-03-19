@@ -2,39 +2,49 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
-import { getAppSettings } from "@/lib/system-settings";
 import { getMinFundingThreshold } from "@/lib/notifications";
-import { getBusinessContext } from "@/lib/business-context";
+import { canManageBusinessBilling, getBusinessContext } from "@/lib/business-context";
+import { getManualBusinessFundingConfig } from "@/lib/manual-business-funding";
+import { getAppSettings } from "@/lib/system-settings";
 
 export async function GET() {
   const session = await auth();
   if (!session || session.user.role !== "BUSINESS") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
+
   const context = await getBusinessContext(session.user.id);
   if (!context) {
     return NextResponse.json({ error: "Business context not found" }, { status: 404 });
   }
 
-  const [wallet, appSettings, paymentOrders, transactions, campaignBudget] = await Promise.all([
+  const [wallet, campaignBudget, recentRequests, transactions, appSettings] = await Promise.all([
     ensureBusinessWalletSynced(context.businessUserId),
-    getAppSettings(),
-    prisma.paymentOrder.findMany({
-      where: { userId: context.businessUserId },
+    prisma.campaign.aggregate({
+      where: {
+        businessId: context.businessUserId,
+        status: { in: ["PENDING", "APPROVED", "LIVE"] },
+      },
+      _sum: {
+        remainingBudget: true,
+      },
+    }),
+    prisma.businessFunding.findMany({
+      where: { businessId: context.businessUserId },
+      orderBy: { createdAt: "desc" },
+      take: 10,
       select: {
         id: true,
         amount: true,
-        currency: true,
+        referenceId: true,
+        utr: true,
+        proofImage: true,
         status: true,
-        receipt: true,
-        providerOrderId: true,
-        providerPaymentId: true,
+        flaggedReason: true,
+        reviewNote: true,
+        reviewedAt: true,
         createdAt: true,
-        updatedAt: true,
-        paidAt: true,
       },
-      orderBy: { createdAt: "desc" },
-      take: 8,
     }),
     prisma.walletTransaction.findMany({
       where: { userId: context.businessUserId },
@@ -48,21 +58,35 @@ export async function GET() {
       orderBy: { createdAt: "desc" },
       take: 12,
     }),
-    prisma.campaign.aggregate({
+    getAppSettings(),
+  ]);
+  const [refundRequests, pendingRefundAgg] = await Promise.all([
+    prisma.businessRefundRequest.findMany({
+      where: { businessId: context.businessUserId },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+      select: {
+        id: true,
+        amount: true,
+        requestNote: true,
+        status: true,
+        flaggedReason: true,
+        reviewNote: true,
+        reviewedAt: true,
+        createdAt: true,
+      },
+    }),
+    prisma.businessRefundRequest.aggregate({
       where: {
         businessId: context.businessUserId,
-        status: { in: ["PENDING", "APPROVED", "LIVE"] },
+        status: "PENDING",
       },
-      _sum: {
-        remainingBudget: true,
-      },
+      _sum: { amount: true },
     }),
   ]);
 
-  const recentDeposits = transactions.filter((item) => item.type === "CREDIT");
-  const recentRefunds = transactions.filter(
-    (item) => item.type === "DEBIT" && item.note?.toLowerCase().includes("refund")
-  );
+  const config = getManualBusinessFundingConfig();
+  const pendingCount = recentRequests.filter((item) => item.status === "PENDING").length;
 
   return NextResponse.json({
     wallet: {
@@ -73,15 +97,25 @@ export async function GET() {
       lockedBudget: campaignBudget._sum.remainingBudget || 0,
     },
     config: {
-      fundingFeeRate: appSettings.fundingFeeRate,
       minFundingThreshold: getMinFundingThreshold(),
+      upiId: config.upiId,
+      upiName: config.upiName,
+      phoneNumber: config.phoneNumber,
+      whatsappNumber: config.whatsappNumber,
+      manualFundingEnabled: Boolean(config.upiId || config.phoneNumber),
+      canManageBilling: canManageBusinessBilling(context.accessRole),
+      fundingFeeRate: appSettings.fundingFeeRate,
+      businessRefundFeeRate: appSettings.businessRefundFeeRate,
     },
-    paymentOrders,
+    requests: recentRequests,
     transactions,
+    refundRequests,
+    refundableBalance: Math.max(0, wallet.balance - (pendingRefundAgg._sum.amount || 0)),
     stats: {
-      depositsCount: recentDeposits.length,
-      refundCount: recentRefunds.length,
-      lastPaidAt: paymentOrders.find((item) => item.status === "PAID")?.paidAt || null,
+      pendingCount,
+      approvedCount: recentRequests.filter((item) => item.status === "APPROVED").length,
+      rejectedCount: recentRequests.filter((item) => item.status === "REJECTED").length,
+      pendingRefundCount: refundRequests.filter((item) => item.status === "PENDING").length,
     },
   });
 }

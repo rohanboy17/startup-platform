@@ -9,6 +9,17 @@ import { checkIpAccess, createSecurityEvent } from "@/lib/security";
 
 export async function POST(req: Request) {
   try {
+    if (process.env.MANUAL_BUSINESS_FUNDING_ONLY !== "false") {
+      return NextResponse.json(
+        {
+          error:
+            "Automated Razorpay top-ups are paused right now. Use the manual QR/UPI funding page instead.",
+          mode: "MANUAL_FUNDING_ACTIVE",
+        },
+        { status: 410 }
+      );
+    }
+
     const ip = getClientIp(req);
     const ipAccess = await checkIpAccess({ ip });
     if (ipAccess.blocked) {

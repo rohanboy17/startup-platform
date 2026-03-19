@@ -26,7 +26,7 @@ export function getDefaultBusinessSettings(params: { name?: string | null; email
     contactEmail: params.email?.trim() || "",
     supportContact: "",
     billingDetails: "",
-    refundPreference: "Refund unused wallet balance after applicable fee.",
+    refundPreference: "Refund unused wallet balance with zero business fee during launch.",
     notificationPreferences: {
       campaignStatus: true,
       budgetAlerts: true,

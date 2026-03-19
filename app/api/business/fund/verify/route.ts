@@ -5,6 +5,17 @@ import { settleBusinessFunding } from "@/lib/payment-credit";
 
 export async function POST(req: Request) {
   try {
+    if (process.env.MANUAL_BUSINESS_FUNDING_ONLY !== "false") {
+      return NextResponse.json(
+        {
+          error:
+            "Automated Razorpay verification is paused right now. Use the manual QR/UPI funding workflow instead.",
+          mode: "MANUAL_FUNDING_ACTIVE",
+        },
+        { status: 410 }
+      );
+    }
+
     const session = await auth();
     if (!session || session.user.role !== "BUSINESS") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });

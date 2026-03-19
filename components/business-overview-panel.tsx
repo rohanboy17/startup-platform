@@ -32,6 +32,7 @@ type OverviewResponse = {
   todaySpend: number;
   averageCostPerApproval: number;
   fundingFeeRate: number;
+  businessRefundFeeRate: number;
   activityFeed: Array<{
     id: string;
     kind: "CAMPAIGN" | "APPROVAL" | "WALLET";
@@ -88,6 +89,7 @@ export default function BusinessOverviewPanel() {
       todaySpend: 0,
       averageCostPerApproval: 0,
       fundingFeeRate: 0,
+      businessRefundFeeRate: 0.03,
       activityFeed: [],
     };
     try {
@@ -251,7 +253,7 @@ export default function BusinessOverviewPanel() {
               </Link>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
               <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                 <p className="text-xs uppercase tracking-[0.2em] text-white/45">{t("snapshot.todaySpend.label")}</p>
                 <p className="mt-2 text-2xl font-semibold text-white">INR {formatMoney(data.todaySpend)}</p>
@@ -262,12 +264,42 @@ export default function BusinessOverviewPanel() {
                 <p className="mt-2 text-2xl font-semibold text-white">INR {formatMoney(data.spentBudget)}</p>
                 <p className="mt-1 text-xs text-white/55">{t("snapshot.spentSoFar.help")}</p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/45">{t("snapshot.fundingFee.label")}</p>
-                <p className="mt-2 text-2xl font-semibold text-white">
-                  {(data.fundingFeeRate * 100).toFixed(2)}%
-                </p>
-                <p className="mt-1 text-xs text-white/55">{t("snapshot.fundingFee.help")}</p>
+              <div className="rounded-2xl border border-emerald-400/15 bg-gradient-to-br from-emerald-500/12 via-black/25 to-sky-500/10 p-4 shadow-[0_24px_80px_-44px_rgba(16,185,129,0.55)] sm:col-span-2 xl:col-span-2">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.2em] text-emerald-200/70">Pricing model</p>
+                    <p className="mt-2 text-lg font-semibold text-white">Business wallet pricing</p>
+                    <p className="mt-2 max-w-xl text-sm text-white/65">
+                      Top up the wallet with zero launch fee, and use the refund fee card below when you need money returned.
+                    </p>
+                  </div>
+                  <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-emerald-200">
+                    Launch terms
+                  </div>
+                </div>
+
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-emerald-300/15 bg-black/25 p-4 shadow-inner shadow-emerald-400/5">
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/45">{t("snapshot.fundingFee.label")}</p>
+                    <p className="mt-2 text-2xl font-semibold text-white">
+                      {(data.fundingFeeRate * 100).toFixed(2)}%
+                    </p>
+                    <p className="mt-1 text-xs text-white/55">{t("snapshot.fundingFee.help")}</p>
+                    <p className="mt-3 inline-flex rounded-full border border-emerald-400/15 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-emerald-200">
+                      Live now
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-cyan-400/15 bg-cyan-500/10 p-4 shadow-inner shadow-cyan-400/5">
+                    <p className="text-xs uppercase tracking-[0.2em] text-cyan-100/70">Refund fee</p>
+                    <p className="mt-2 text-2xl font-semibold text-white">
+                      {(data.businessRefundFeeRate * 100).toFixed(2)}%
+                    </p>
+                    <p className="mt-1 text-xs text-cyan-50/70">Applied only when a wallet refund request is approved.</p>
+                    <p className="mt-3 inline-flex rounded-full border border-cyan-300/15 bg-cyan-950/30 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-cyan-100/80">
+                      Manual review
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 

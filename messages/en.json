@@ -219,7 +219,7 @@
         },
         {
           "title": "Transparent costs",
-          "body": "Clear commission breakdowns and funding fees so you know exactly where budgets go."
+          "body": "Clear commission breakdowns and zero business wallet fees during launch so you know exactly where budgets go."
         },
         {
           "title": "Reliable approvals",
@@ -665,7 +665,7 @@
       },
       "messages": {
         "walletFunded": "Wallet funded successfully",
-        "refundInitiated": "Refund initiated"
+        "refundInitiated": "Refund request submitted"
       },
       "header": {
         "eyebrow": "Funding and billing",
@@ -692,7 +692,7 @@
         "payAndFund": "Pay and Fund Wallet",
         "breakdown": {
           "gross": "Gross amount",
-          "fee": "Platform funding fee ({rate}%)",
+          "fee": "Business wallet fee ({rate}%)",
           "net": "Net wallet credit"
         }
       },
@@ -702,10 +702,10 @@
         "amountPlaceholder": "Enter refund amount",
         "processing": "Processing...",
         "request": "Request Refund",
-        "help": "Refunds reduce available wallet immediately and apply the same configured fee logic as deposits.",
+        "help": "Refunds reduce available wallet immediately. The same business wallet fee setting is used here, and it is currently 0% during launch.",
         "breakdown": {
           "requested": "Requested amount",
-          "fee": "Refund processing fee ({rate}%)",
+          "fee": "Business wallet fee ({rate}%)",
           "net": "Net refund"
         }
       },
@@ -824,7 +824,7 @@
         "approvedResults": "Approved Results",
         "totalBudget": "Total Budget",
         "todaySpend": "Today Spend",
-        "fundingFee": "Funding Fee"
+        "fundingFee": "Business Wallet Fee"
       },
       "snapshot": {
         "eyebrow": "Performance snapshot",
@@ -839,8 +839,8 @@
           "help": "Actual approved spend against campaign budgets."
         },
         "fundingFee": {
-          "label": "Funding fee",
-          "help": "Applied on business wallet deposits and refunds."
+          "label": "Business wallet fee",
+          "help": "Currently set to 0% for wallet top-ups. Refund approvals use a separate refund fee setting."
         },
         "budgetDeployment": {
           "label": "Budget deployment",

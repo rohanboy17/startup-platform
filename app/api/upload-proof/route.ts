@@ -17,7 +17,7 @@ const ALLOWED_TYPES = new Set([
 
 export async function POST(req: Request) {
   const session = await auth();
-  if (!session || session.user.role !== "USER") {
+  if (!session || !["USER", "BUSINESS"].includes(session.user.role)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 

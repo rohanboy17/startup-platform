@@ -5,6 +5,7 @@ export type AppSettings = {
   withdrawalFeeRate: number;
   minWithdrawalAmount: number;
   fundingFeeRate: number;
+  businessRefundFeeRate: number;
   levelResetHours: number;
   maintenanceMode: boolean;
 };
@@ -13,7 +14,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   commissionRateDefault: 0.3,
   withdrawalFeeRate: Number(process.env.WITHDRAWAL_COMMISSION_RATE ?? 0.02),
   minWithdrawalAmount: Number(process.env.MIN_WITHDRAWAL_AMOUNT ?? 100),
-  fundingFeeRate: 0.03,
+  fundingFeeRate: 0,
+  businessRefundFeeRate: 0.03,
   levelResetHours: 24,
   maintenanceMode: false,
 };
@@ -40,6 +42,10 @@ export async function getAppSettings(): Promise<AppSettings> {
       typeof raw.fundingFeeRate === "number"
         ? Math.min(Math.max(raw.fundingFeeRate, 0), 0.5)
         : DEFAULT_SETTINGS.fundingFeeRate,
+    businessRefundFeeRate:
+      typeof raw.businessRefundFeeRate === "number"
+        ? Math.min(Math.max(raw.businessRefundFeeRate, 0), 0.5)
+        : DEFAULT_SETTINGS.businessRefundFeeRate,
     levelResetHours:
       typeof raw.levelResetHours === "number" && raw.levelResetHours >= 1
         ? Math.min(Math.max(raw.levelResetHours, 1), 168)

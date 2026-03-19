@@ -10,6 +10,7 @@ type Settings = {
   withdrawalFeeRate: number;
   minWithdrawalAmount: number;
   fundingFeeRate: number;
+  businessRefundFeeRate: number;
   levelResetHours: number;
   maintenanceMode: boolean;
 };
@@ -67,12 +68,19 @@ export default function AdminSystemSettingsPanel({
           value={settings.withdrawalFeeRate}
           onChange={(e) => setSettings((s) => ({ ...s, withdrawalFeeRate: Number(e.target.value) }))}
         />
-        <label className="text-sm text-foreground/70">Funding fee rate (0-0.5)</label>
+        <label className="text-sm text-foreground/70">Business wallet fee rate (0-0.5, keep 0 for launch)</label>
         <Input
           type="number"
           step="0.01"
           value={settings.fundingFeeRate}
           onChange={(e) => setSettings((s) => ({ ...s, fundingFeeRate: Number(e.target.value) }))}
+        />
+        <label className="text-sm text-foreground/70">Business refund fee rate (0-0.5)</label>
+        <Input
+          type="number"
+          step="0.01"
+          value={settings.businessRefundFeeRate}
+          onChange={(e) => setSettings((s) => ({ ...s, businessRefundFeeRate: Number(e.target.value) }))}
         />
         <label className="text-sm text-foreground/70">Daily reset hours</label>
         <Input

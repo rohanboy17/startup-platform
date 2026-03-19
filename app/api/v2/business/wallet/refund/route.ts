@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { applyFundingFee } from "@/lib/commission";
-import { getAppSettings } from "@/lib/system-settings";
 import { canManageBusinessBilling, getBusinessContext } from "@/lib/business-context";
 
 export async function POST(req: Request) {
@@ -10,6 +8,7 @@ export async function POST(req: Request) {
   if (!session || session.user.role !== "BUSINESS") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
+
   const context = await getBusinessContext(session.user.id);
   if (!context) {
     return NextResponse.json({ error: "Business context not found" }, { status: 404 });
@@ -18,78 +17,86 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Only the business owner can request refunds" }, { status: 403 });
   }
 
-  const { amount } = (await req.json()) as { amount?: number };
+  const { amount, requestNote } = (await req.json()) as {
+    amount?: number;
+    requestNote?: string;
+  };
   const amountNumber = Number(amount);
+  const normalizedRequestNote = typeof requestNote === "string" ? requestNote.trim() : "";
 
   if (Number.isNaN(amountNumber) || amountNumber <= 0) {
     return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
   }
 
-  const wallet = await prisma.businessWallet.findUnique({
-    where: { businessId: context.businessUserId },
-  });
+  const [wallet, pendingRefunds, recentRequests] = await Promise.all([
+    prisma.businessWallet.findUnique({
+      where: { businessId: context.businessUserId },
+    }),
+    prisma.businessRefundRequest.aggregate({
+      where: {
+        businessId: context.businessUserId,
+        status: "PENDING",
+      },
+      _sum: { amount: true },
+    }),
+    prisma.businessRefundRequest.count({
+      where: {
+        businessId: context.businessUserId,
+        createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+      },
+    }),
+  ]);
 
-  if (!wallet || wallet.balance < amountNumber) {
-    return NextResponse.json({ error: "Insufficient business wallet balance" }, { status: 400 });
+  const refundableBalance = Math.max(0, (wallet?.balance || 0) - (pendingRefunds._sum.amount || 0));
+
+  if (!wallet || refundableBalance < amountNumber) {
+    return NextResponse.json(
+      { error: "Refund amount is higher than the currently refundable wallet balance" },
+      { status: 400 }
+    );
   }
 
-  const appSettings = await getAppSettings();
-  const { fee, net, feeRate } = applyFundingFee(amountNumber, appSettings.fundingFeeRate);
+  let flaggedReason: string | null = null;
+  if (recentRequests >= 3) {
+    flaggedReason = `High refund request volume: ${recentRequests + 1} requests in 24h`;
+  }
 
-  const updated = await prisma.$transaction(async (tx) => {
-    const next = await tx.businessWallet.update({
-      where: { businessId: context.businessUserId },
+  const refundRequest = await prisma.$transaction(async (tx) => {
+    const created = await tx.businessRefundRequest.create({
       data: {
-        balance: { decrement: amountNumber },
-        totalRefund: { increment: net },
-      },
-    });
-
-    await tx.user.update({
-      where: { id: context.businessUserId },
-      data: {
-        balance: { decrement: amountNumber },
-      },
-    });
-
-    await tx.platformEarning.create({
-      data: {
-        amount: fee,
-        source: `Business refund fee (${(feeRate * 100).toFixed(2)}%)`,
-      },
-    });
-
-    await tx.platformTreasury.upsert({
-      where: { id: "main" },
-      update: { balance: { increment: fee } },
-      create: { id: "main", balance: fee },
-    });
-
-    await tx.walletTransaction.create({
-      data: {
-        userId: context.businessUserId,
-        type: "DEBIT",
+        businessId: context.businessUserId,
         amount: amountNumber,
-        note: `Business refund requested; ${(feeRate * 100).toFixed(0)}% fee applied`,
+        requestNote: normalizedRequestNote || null,
+        flaggedReason,
       },
     });
 
     await tx.activityLog.create({
       data: {
         userId: context.actorUserId,
-        action: "BUSINESS_REFUND_REQUESTED",
-        entity: "BusinessWallet",
-        details: `businessId=${context.businessUserId}, gross=${amountNumber}, fee=${fee}, netRefund=${net}`,
+        action: "BUSINESS_REFUND_REQUEST_CREATED",
+        entity: "BusinessRefundRequest",
+        details: `refundRequestId=${created.id}, businessId=${context.businessUserId}, amount=${amountNumber}`,
       },
     });
 
-    return next;
+    await tx.notification.create({
+      data: {
+        userId: context.businessUserId,
+        title: "Refund request submitted",
+        message: `Your refund request for INR ${amountNumber.toFixed(2)} is waiting for admin review.`,
+        type: flaggedReason ? "WARNING" : "INFO",
+      },
+    });
+
+    return created;
   });
 
   return NextResponse.json({
-    message: "Refund initiated",
-    netRefund: net,
-    fee,
-    wallet: updated,
+    message: flaggedReason
+      ? "Refund request submitted and marked for manual review"
+      : "Refund request submitted",
+    refundRequest,
+    flaggedReason,
   });
 }

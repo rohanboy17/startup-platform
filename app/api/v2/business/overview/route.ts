@@ -155,6 +155,7 @@ export async function GET() {
     todaySpend,
     averageCostPerApproval,
     fundingFeeRate: appSettings.fundingFeeRate,
+    businessRefundFeeRate: appSettings.businessRefundFeeRate,
     activityFeed,
   });
 }

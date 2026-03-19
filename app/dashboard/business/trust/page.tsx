@@ -158,26 +158,73 @@ export default async function BusinessTrustPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
-          <p className="text-sm text-white/60">Funding fee</p>
-          <p className="mt-2 text-3xl font-semibold text-white">{(settings.fundingFeeRate * 100).toFixed(2)}%</p>
-          <p className="mt-2 text-xs text-white/45">Applied on wallet top-ups and refund requests.</p>
-        </div>
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
-          <p className="text-sm text-white/60">Locked campaign budget</p>
-          <p className="mt-2 text-3xl font-semibold text-white">INR {formatMoney(lockedBudget)}</p>
-          <p className="mt-2 text-xs text-white/45">Budget reserved across pending, approved, and live campaigns.</p>
-        </div>
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
-          <p className="text-sm text-white/60">Avg manager review time</p>
-          <p className="mt-2 text-3xl font-semibold text-white">{formatHours(avgManagerHours)}</p>
-          <p className="mt-2 text-xs text-white/45">Based on recent submissions reviewed by managers.</p>
-        </div>
-        <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
-          <p className="text-sm text-white/60">Avg admin final review time</p>
-          <p className="mt-2 text-3xl font-semibold text-white">{formatHours(avgAdminHours)}</p>
-          <p className="mt-2 text-xs text-white/45">Measured from submission creation to final admin decision.</p>
+      <div className="grid gap-6 2xl:grid-cols-[1.1fr_0.9fr]">
+        <section className="rounded-3xl border border-emerald-400/15 bg-gradient-to-br from-emerald-500/10 via-white/5 to-sky-500/10 p-4 shadow-[0_30px_100px_-52px_rgba(16,185,129,0.7)] backdrop-blur-md sm:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.22em] text-emerald-200/70">Wallet pricing</p>
+              <h3 className="mt-2 text-2xl font-semibold text-white">Business wallet fee structure</h3>
+              <p className="mt-2 max-w-2xl text-sm text-white/65">
+                Top-ups stay free during launch, while approved refund requests use the refund fee shown below.
+              </p>
+            </div>
+            <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-emerald-200">
+              Launch model
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-4 sm:grid-cols-2">
+            <div className="rounded-3xl border border-emerald-300/15 bg-black/20 p-4 shadow-inner shadow-emerald-400/5 sm:p-5">
+              <p className="text-sm text-white/60">Add-fund fee</p>
+              <p className="mt-2 text-3xl font-semibold text-white">{(settings.fundingFeeRate * 100).toFixed(2)}%</p>
+              <p className="mt-2 text-xs text-white/45">Applied on wallet top-ups. Currently waived during launch.</p>
+              <p className="mt-4 inline-flex rounded-full border border-emerald-400/15 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-emerald-200">
+                Best for recharging budget
+              </p>
+            </div>
+            <div className="rounded-3xl border border-cyan-400/15 bg-cyan-500/10 p-4 shadow-inner shadow-cyan-400/5 sm:p-5">
+              <p className="text-sm text-cyan-100/80">Refund fee</p>
+              <p className="mt-2 text-3xl font-semibold text-white">
+                {(settings.businessRefundFeeRate * 100).toFixed(2)}%
+              </p>
+              <p className="mt-2 text-xs text-cyan-50/70">Applied only when a business refund request is approved.</p>
+              <p className="mt-4 inline-flex rounded-full border border-cyan-300/15 bg-cyan-950/30 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-cyan-100/80">
+                Used for reviewed refunds
+              </p>
+            </div>
+
+            <div className="rounded-3xl border border-white/10 bg-black/20 p-4 sm:col-span-2 sm:p-5">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-medium text-white">How to read these wallet fees</p>
+                  <p className="mt-1 text-sm text-white/60">
+                    Add-fund pricing helps you top up campaigns, while refund pricing applies only when an approved refund is sent back out.
+                  </p>
+                </div>
+                <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-white/55">
+                  Business wallet rules
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div className="grid gap-4">
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
+            <p className="text-sm text-white/60">Locked campaign budget</p>
+            <p className="mt-2 text-3xl font-semibold text-white">INR {formatMoney(lockedBudget)}</p>
+            <p className="mt-2 text-xs text-white/45">Budget reserved across pending, approved, and live campaigns.</p>
+          </div>
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
+            <p className="text-sm text-white/60">Avg manager review time</p>
+            <p className="mt-2 text-3xl font-semibold text-white">{formatHours(avgManagerHours)}</p>
+            <p className="mt-2 text-xs text-white/45">Based on recent submissions reviewed by managers.</p>
+          </div>
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
+            <p className="text-sm text-white/60">Avg admin final review time</p>
+            <p className="mt-2 text-3xl font-semibold text-white">{formatHours(avgAdminHours)}</p>
+            <p className="mt-2 text-xs text-white/45">Measured from submission creation to final admin decision.</p>
+          </div>
         </div>
       </div>
 

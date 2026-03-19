@@ -59,6 +59,10 @@ model User {
   devicePushTokens DevicePushToken[]
   paymentOrders PaymentOrder[]
   businessWallet BusinessWallet?
+  businessFundingRequests BusinessFunding[] @relation("BusinessFundingBusiness")
+  reviewedBusinessFundingRequests BusinessFunding[] @relation("BusinessFundingReviewer")
+  businessRefundRequests BusinessRefundRequest[] @relation("BusinessRefundBusiness")
+  reviewedBusinessRefundRequests BusinessRefundRequest[] @relation("BusinessRefundReviewer")
   kycRequests BusinessKycRequest[]
   twoFactorEnabled Boolean @default(false)
   twoFactorEnabledAt DateTime?
@@ -307,6 +311,38 @@ model BusinessWallet {
   totalFunded Float  @default(0)
   totalSpent  Float  @default(0)
   totalRefund Float  @default(0)
+}
+
+model BusinessFunding {
+  id               String                @id @default(cuid())
+  businessId       String
+  business         User                  @relation("BusinessFundingBusiness", fields: [businessId], references: [id])
+  amount           Float
+  referenceId      String                @unique
+  utr              String?
+  proofImage       String
+  status           BusinessFundingStatus @default(PENDING)
+  flaggedReason    String?
+  reviewNote       String?
+  reviewedAt       DateTime?
+  reviewedByUserId String?
+  reviewedBy       User?                 @relation("BusinessFundingReviewer", fields: [reviewedByUserId], references: [id])
+  createdAt        DateTime              @default(now())
+}
+
+model BusinessRefundRequest {
+  id               String                @id @default(cuid())
+  businessId       String
+  business         User                  @relation("BusinessRefundBusiness", fields: [businessId], references: [id])
+  amount           Float
+  requestNote      String?
+  status           BusinessFundingStatus @default(PENDING)
+  flaggedReason    String?
+  reviewNote       String?
+  reviewedAt       DateTime?
+  reviewedByUserId String?
+  reviewedBy       User?                 @relation("BusinessRefundReviewer", fields: [reviewedByUserId], references: [id])
+  createdAt        DateTime              @default(now())
 }
 
 model ActivityLog {
@@ -630,6 +666,12 @@ enum PaymentOrderStatus {
   CREATED
   PAID
   FAILED
+}
+
+enum BusinessFundingStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum IpRuleType {

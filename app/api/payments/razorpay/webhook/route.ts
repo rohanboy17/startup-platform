@@ -16,6 +16,13 @@ type RazorpayPaymentCapturedPayload = {
 
 export async function POST(req: Request) {
   try {
+    if (process.env.MANUAL_BUSINESS_FUNDING_ONLY !== "false") {
+      return NextResponse.json({
+        ok: true,
+        message: "Manual business funding mode is active. Razorpay webhook is currently parked.",
+      });
+    }
+
     const signature = req.headers.get("x-razorpay-signature") || "";
     const rawBody = await req.text();
 

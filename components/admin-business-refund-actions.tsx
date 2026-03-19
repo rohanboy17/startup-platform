@@ -1,0 +1,87 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
+
+type ReviewAction = "APPROVE" | "REJECT";
+
+export default function AdminBusinessRefundActions({
+  refundRequestId,
+}: {
+  refundRequestId: string;
+}) {
+  const router = useRouter();
+  const [note, setNote] = useState("");
+  const [loadingAction, setLoadingAction] = useState<ReviewAction | null>(null);
+  const [message, setMessage] = useState("");
+
+  async function submit(action: ReviewAction) {
+    if (action === "REJECT" && !note.trim()) {
+      setMessage("Add a short review note before rejecting this refund request.");
+      return;
+    }
+
+    setLoadingAction(action);
+    setMessage("");
+
+    const res = await fetch(`/api/admin/refunds/${refundRequestId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        action,
+        reviewNote: note.trim() || undefined,
+      }),
+    });
+
+    const raw = await res.text();
+    let parsed: { message?: string; error?: string } = {};
+    try {
+      parsed = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
+    } catch {
+      parsed = { error: "Unexpected server response" };
+    }
+
+    setLoadingAction(null);
+    setMessage(parsed.message || parsed.error || "Updated");
+
+    if (res.ok) {
+      setNote("");
+      router.refresh();
+      emitDashboardLiveRefresh();
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      <Input
+        placeholder="Review note (required for rejection, optional for approval)"
+        value={note}
+        onChange={(event) => setNote(event.target.value)}
+      />
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <Button
+          type="button"
+          onClick={() => void submit("APPROVE")}
+          disabled={loadingAction !== null}
+          className="w-full sm:w-auto"
+        >
+          {loadingAction === "APPROVE" ? "Approving..." : "Approve refund"}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => void submit("REJECT")}
+          disabled={loadingAction !== null}
+          className="w-full sm:w-auto"
+        >
+          {loadingAction === "REJECT" ? "Rejecting..." : "Reject request"}
+        </Button>
+      </div>
+      {message ? <p className="text-xs text-foreground/65">{message}</p> : null}
+    </div>
+  );
+}

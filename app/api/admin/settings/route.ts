@@ -24,6 +24,7 @@ export async function PATCH(req: Request) {
     withdrawalFeeRate?: number;
     minWithdrawalAmount?: number;
     fundingFeeRate?: number;
+    businessRefundFeeRate?: number;
     levelResetHours?: number;
     maintenanceMode?: boolean;
   };

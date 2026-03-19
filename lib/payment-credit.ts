@@ -48,27 +48,32 @@ export async function settleBusinessFunding(params: {
         userId: paymentOrder.userId,
         amount: net,
         type: "CREDIT",
-        note: `Business wallet top-up after ${(feeRate * 100).toFixed(0)}% fee (Razorpay ${params.source})`,
+        note:
+          fee > 0
+            ? `Business wallet top-up after ${(feeRate * 100).toFixed(0)}% fee (Razorpay ${params.source})`
+            : `Business wallet top-up credited (Razorpay ${params.source})`,
       },
     });
 
-    await tx.platformEarning.create({
-      data: {
-        amount: fee,
-        source: `Business deposit fee (${(feeRate * 100).toFixed(0)}%)`,
-      },
-    });
+    if (fee > 0) {
+      await tx.platformEarning.create({
+        data: {
+          amount: fee,
+          source: `Business deposit fee (${(feeRate * 100).toFixed(0)}%)`,
+        },
+      });
 
-    await tx.platformTreasury.upsert({
-      where: { id: "main" },
-      update: {
-        balance: { increment: fee },
-      },
-      create: {
-        id: "main",
-        balance: fee,
-      },
-    });
+      await tx.platformTreasury.upsert({
+        where: { id: "main" },
+        update: {
+          balance: { increment: fee },
+        },
+        create: {
+          id: "main",
+          balance: fee,
+        },
+      });
+    }
 
     await tx.businessWallet.upsert({
       where: { businessId: paymentOrder.userId },

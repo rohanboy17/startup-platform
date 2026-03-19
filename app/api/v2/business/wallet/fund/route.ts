@@ -49,25 +49,30 @@ export async function POST(req: Request) {
       },
     });
 
-    await tx.platformEarning.create({
-      data: {
-        amount: fee,
-        source: `Business deposit fee (${(feeRate * 100).toFixed(2)}%)`,
-      },
-    });
+    if (fee > 0) {
+      await tx.platformEarning.create({
+        data: {
+          amount: fee,
+          source: `Business deposit fee (${(feeRate * 100).toFixed(2)}%)`,
+        },
+      });
 
-    await tx.platformTreasury.upsert({
-      where: { id: "main" },
-      update: { balance: { increment: fee } },
-      create: { id: "main", balance: fee },
-    });
+      await tx.platformTreasury.upsert({
+        where: { id: "main" },
+        update: { balance: { increment: fee } },
+        create: { id: "main", balance: fee },
+      });
+    }
 
     await tx.walletTransaction.create({
       data: {
         userId: context.businessUserId,
         type: "CREDIT",
         amount: net,
-        note: `Business funding credited after ${(feeRate * 100).toFixed(0)}% fee`,
+        note:
+          fee > 0
+            ? `Business funding credited after ${(feeRate * 100).toFixed(0)}% fee`
+            : "Business funding credited",
       },
     });
 
