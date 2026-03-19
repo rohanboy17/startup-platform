@@ -28,6 +28,10 @@ export default function AdminBulkAssignBySkill() {
   const [selectedSkill, setSelectedSkill] = useState<string>("");
   const [selectedCampaign, setSelectedCampaign] = useState<string>("");
   const [excludeSuspicious, setExcludeSuspicious] = useState(true);
+  const [workMode, setWorkMode] = useState("");
+  const [workingPreference, setWorkingPreference] = useState("");
+  const [education, setEducation] = useState("");
+  const [language, setLanguage] = useState("");
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -109,6 +113,10 @@ export default function AdminBulkAssignBySkill() {
         skillSlug: selectedSkill,
         dryRun,
         excludeSuspicious,
+        workMode,
+        workingPreference,
+        education,
+        language,
       }),
     });
 
@@ -154,9 +162,19 @@ export default function AdminBulkAssignBySkill() {
     const campaignTitle = selectedCampaignRow?.title || selectedCampaign;
     const count = selectedSkillRow?.activeUserCount ?? 0;
     const filterLabel = excludeSuspicious ? "excluding suspicious users" : "including suspicious users";
+    const profileFilters = [
+      workMode ? `work mode: ${workMode}` : null,
+      workingPreference ? `preference: ${workingPreference}` : null,
+      education ? `education contains "${education}"` : null,
+      language ? `language contains "${language}"` : null,
+    ]
+      .filter(Boolean)
+      .join(", ");
 
     const ok = confirm(
-      `Assign campaign "${campaignTitle}" to all ACTIVE users with skill "${skillLabel}" (${filterLabel})?\\n\\nEligible users: ${count}`
+      `Assign campaign "${campaignTitle}" to all ACTIVE users with skill "${skillLabel}" (${filterLabel})?` +
+        `${profileFilters ? `\\nProfile filters: ${profileFilters}` : ""}` +
+        `\\n\\nBase eligible users for this skill: ${count}`
     );
     if (!ok) return;
 
@@ -260,6 +278,44 @@ export default function AdminBulkAssignBySkill() {
             </Button>
           </div>
         </div>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <select
+          value={workMode}
+          onChange={(e) => setWorkMode(e.target.value)}
+          className="w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
+        >
+          <option value="">Any work mode</option>
+          <option value="WORK_FROM_HOME">Work from home</option>
+          <option value="WORK_FROM_OFFICE">Work from office</option>
+          <option value="WORK_IN_FIELD">Work in field</option>
+        </select>
+
+        <select
+          value={workingPreference}
+          onChange={(e) => setWorkingPreference(e.target.value)}
+          className="w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
+        >
+          <option value="">Any work preference</option>
+          <option value="SALARIED">Salaried</option>
+          <option value="FREELANCE_CONTRACTUAL">Freelance contractual</option>
+          <option value="DAY_BASIS">Day basis</option>
+        </select>
+
+        <Input
+          value={education}
+          onChange={(e) => setEducation(e.target.value)}
+          placeholder="Education keyword"
+          className="min-h-11"
+        />
+
+        <Input
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          placeholder="Language"
+          className="min-h-11"
+        />
       </div>
     </SectionCard>
   );

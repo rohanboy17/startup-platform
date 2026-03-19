@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { parseProfileDetails } from "@/lib/user-profile";
 import type { Prisma, Role, UserAccountStatus } from "@prisma/client";
 
 function escapeCsv(value: string | number | boolean | null | undefined) {
@@ -25,6 +26,10 @@ export async function GET(req: Request) {
   const roleParam = searchParams.get("role");
   const statusParam = searchParams.get("status");
   const flagged = searchParams.get("flagged") || "ALL";
+  const workMode = searchParams.get("workMode") || "ALL";
+  const workingPreference = searchParams.get("workingPreference") || "ALL";
+  const education = searchParams.get("education")?.trim().toLowerCase() || "";
+  const language = searchParams.get("language")?.trim().toLowerCase() || "";
 
   const where: Prisma.UserWhereInput = {};
 
@@ -69,7 +74,27 @@ export async function GET(req: Request) {
       suspiciousReason: true,
       ipAddress: true,
       createdAt: true,
+      profileDetails: true,
     },
+  });
+
+  const filteredUsers = users.filter((user) => {
+    const profile = parseProfileDetails(user.profileDetails);
+    if (workMode !== "ALL" && profile.workMode !== workMode) return false;
+    if (workingPreference !== "ALL" && profile.workingPreference !== workingPreference) return false;
+    if (
+      education &&
+      !(profile.educationQualification || "").toLowerCase().includes(education)
+    ) {
+      return false;
+    }
+    if (
+      language &&
+      !profile.languages.some((item) => item.toLowerCase().includes(language))
+    ) {
+      return false;
+    }
+    return true;
   });
 
   const lines = [
@@ -84,10 +109,15 @@ export async function GET(req: Request) {
       "isSuspicious",
       "suspiciousReason",
       "ipAddress",
+      "workMode",
+      "workingPreference",
+      "educationQualification",
+      "languages",
       "createdAt",
     ].join(","),
-    ...users.map((user) =>
-      [
+    ...filteredUsers.map((user) => {
+      const profile = parseProfileDetails(user.profileDetails);
+      return [
         escapeCsv(user.id),
         escapeCsv(user.name),
         escapeCsv(user.email),
@@ -98,9 +128,13 @@ export async function GET(req: Request) {
         escapeCsv(user.isSuspicious),
         escapeCsv(user.suspiciousReason),
         escapeCsv(user.ipAddress),
+        escapeCsv(profile.workMode),
+        escapeCsv(profile.workingPreference),
+        escapeCsv(profile.educationQualification),
+        escapeCsv(profile.languages.join(" | ")),
         escapeCsv(user.createdAt.toISOString()),
-      ].join(",")
-    ),
+      ].join(",");
+    }),
   ];
 
   const csv = lines.join("\n");

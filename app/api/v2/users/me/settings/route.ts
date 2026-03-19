@@ -1,32 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-
-type UserProfileDetails = {
-  address: string | null;
-  gender: string | null;
-  religion: string | null;
-  dateOfBirth: string | null;
-  workMode: string | null;
-  educationQualification: string | null;
-  courseAndCertificate: string | null;
-  workTime: string | null;
-  workingPreference: string | null;
-  languages: string[];
-};
-
-const EMPTY_PROFILE_DETAILS: UserProfileDetails = {
-  address: null,
-  gender: null,
-  religion: null,
-  dateOfBirth: null,
-  workMode: null,
-  educationQualification: null,
-  courseAndCertificate: null,
-  workTime: null,
-  workingPreference: null,
-  languages: [],
-};
+import { EMPTY_PROFILE_DETAILS, parseProfileDetails } from "@/lib/user-profile";
 
 const ALLOWED_GENDERS = ["MALE", "FEMALE", "OTHER", "PREFER_NOT_TO_SAY"] as const;
 const ALLOWED_WORK_MODES = ["WORK_FROM_HOME", "WORK_FROM_OFFICE", "WORK_IN_FIELD"] as const;
@@ -76,26 +51,6 @@ function normalizeStringArray(input: unknown, maxItems = 10, maxLength = 40) {
     if (values.length >= maxItems) break;
   }
   return values;
-}
-
-function parseProfileDetails(input: unknown): UserProfileDetails {
-  if (!input || typeof input !== "object" || Array.isArray(input)) {
-    return { ...EMPTY_PROFILE_DETAILS };
-  }
-
-  const source = input as Record<string, unknown>;
-  return {
-    address: normalizeText(source.address, 240) || null,
-    gender: normalizeText(source.gender, 48) || null,
-    religion: normalizeText(source.religion, 80) || null,
-    dateOfBirth: normalizeDate(source.dateOfBirth) || null,
-    workMode: normalizeText(source.workMode, 48) || null,
-    educationQualification: normalizeText(source.educationQualification, 120) || null,
-    courseAndCertificate: normalizeText(source.courseAndCertificate, 240) || null,
-    workTime: normalizeText(source.workTime, 48) || null,
-    workingPreference: normalizeText(source.workingPreference, 64) || null,
-    languages: normalizeStringArray(source.languages, 10, 40),
-  };
 }
 
 export async function GET() {

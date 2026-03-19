@@ -12,14 +12,34 @@ import { formatMoney } from "@/lib/format-money";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { calculateAgeFromDate, parseProfileDetails } from "@/lib/user-profile";
 
 type SearchParams = {
   q?: string;
   role?: "ALL" | "USER" | "BUSINESS" | "MANAGER" | "ADMIN";
   status?: "ALL" | "ACTIVE" | "SUSPENDED" | "BANNED";
   flagged?: "ALL" | "FLAGGED" | "CLEAR";
+  workMode?: "ALL" | "WORK_FROM_HOME" | "WORK_FROM_OFFICE" | "WORK_IN_FIELD";
+  workingPreference?: "ALL" | "SALARIED" | "FREELANCE_CONTRACTUAL" | "DAY_BASIS";
+  education?: string;
+  language?: string;
   limit?: string;
 };
+
+function containsText(source: string | null, query: string) {
+  if (!query) return true;
+  if (!source) return false;
+  return source.toLowerCase().includes(query.toLowerCase());
+}
+
+function formatEnumLabel(value: string | null) {
+  if (!value) return "Not set";
+  return value
+    .toLowerCase()
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
 
 export default async function AdminUsersPage({
   searchParams,
@@ -31,6 +51,10 @@ export default async function AdminUsersPage({
   const roleFilter = params.role || "ALL";
   const statusFilter = params.status || "ALL";
   const flaggedFilter = params.flagged || "ALL";
+  const workModeFilter = params.workMode || "ALL";
+  const workingPreferenceFilter = params.workingPreference || "ALL";
+  const educationQuery = params.education?.trim() || "";
+  const languageQuery = params.language?.trim() || "";
   const limit =
     params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
   const exportQuery = new URLSearchParams({
@@ -38,6 +62,10 @@ export default async function AdminUsersPage({
     role: roleFilter,
     status: statusFilter,
     flagged: flaggedFilter,
+    workMode: workModeFilter,
+    workingPreference: workingPreferenceFilter,
+    education: educationQuery,
+    language: languageQuery,
   }).toString();
 
   let users: Array<{
@@ -75,6 +103,7 @@ export default async function AdminUsersPage({
     flaggedAt: Date | null;
     createdAt: Date;
     deletedAt: Date | null;
+    profileDetails: unknown;
   }> = [];
   const activityMap: Record<string, Array<{ action: string; entity: string; createdAt: Date }>> = {};
   const latestSubmissionMap: Record<string, Date> = {};
@@ -119,7 +148,6 @@ export default async function AdminUsersPage({
     users = await prisma.user.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      ...(limit ? { take: limit } : {}),
       select: {
         id: true,
         name: true,
@@ -155,8 +183,38 @@ export default async function AdminUsersPage({
         flaggedAt: true,
         createdAt: true,
         deletedAt: true,
+        profileDetails: true,
       },
     });
+
+    users = users.filter((user) => {
+      const profile = parseProfileDetails(user.profileDetails);
+      if (workModeFilter !== "ALL" && profile.workMode !== workModeFilter) {
+        return false;
+      }
+      if (
+        workingPreferenceFilter !== "ALL" &&
+        profile.workingPreference !== workingPreferenceFilter
+      ) {
+        return false;
+      }
+      if (!containsText(profile.educationQualification, educationQuery)) {
+        return false;
+      }
+      if (
+        languageQuery &&
+        !profile.languages.some((language) =>
+          language.toLowerCase().includes(languageQuery.toLowerCase())
+        )
+      ) {
+        return false;
+      }
+      return true;
+    });
+
+    if (limit) {
+      users = users.slice(0, limit);
+    }
 
     if (users.length > 0) {
       const userIds = users.map((u) => u.id);
@@ -326,6 +384,40 @@ export default async function AdminUsersPage({
               <option value="CLEAR">Clear</option>
             </select>
             <select
+              name="workMode"
+              defaultValue={workModeFilter}
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
+            >
+              <option value="ALL">All work modes</option>
+              <option value="WORK_FROM_HOME">Work from home</option>
+              <option value="WORK_FROM_OFFICE">Work from office</option>
+              <option value="WORK_IN_FIELD">Work in field</option>
+            </select>
+            <select
+              name="workingPreference"
+              defaultValue={workingPreferenceFilter}
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
+            >
+              <option value="ALL">All work preferences</option>
+              <option value="SALARIED">Salaried</option>
+              <option value="FREELANCE_CONTRACTUAL">Freelance contractual</option>
+              <option value="DAY_BASIS">Day basis</option>
+            </select>
+            <input
+              type="text"
+              name="education"
+              defaultValue={educationQuery}
+              placeholder="Education keyword"
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
+            />
+            <input
+              type="text"
+              name="language"
+              defaultValue={languageQuery}
+              placeholder="Language"
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
+            />
+            <select
               name="limit"
               defaultValue={limit ? String(limit) : "ALL"}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
@@ -387,6 +479,11 @@ export default async function AdminUsersPage({
           {users.map((user) => (
             <Card key={user.id} className="rounded-2xl border-foreground/10 bg-background/60 shadow-sm">
               <CardContent className="space-y-4 p-6">
+                {(() => {
+                  const profile = parseProfileDetails(user.profileDetails);
+                  const age = calculateAgeFromDate(profile.dateOfBirth);
+                  return (
+                    <>
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0">
                     <h3 className="truncate text-lg font-semibold">
@@ -599,6 +696,82 @@ export default async function AdminUsersPage({
                 </div>
 
                 {user.role === "USER" ? (
+                  <div className="rounded-xl border border-foreground/10 bg-background/60 p-3">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+                      Profile details
+                    </p>
+                    <div className="mt-2 grid gap-2 text-sm md:grid-cols-2">
+                      <p className="break-words">
+                        <span className="text-foreground/60">Address:</span>{" "}
+                        <span className="font-medium">{profile.address || "Not set"}</span>
+                      </p>
+                      <p>
+                        <span className="text-foreground/60">Gender:</span>{" "}
+                        <span className="font-medium">{formatEnumLabel(profile.gender)}</span>
+                      </p>
+                      <p>
+                        <span className="text-foreground/60">Religion:</span>{" "}
+                        <span className="font-medium">{profile.religion || "Not set"}</span>
+                      </p>
+                      <p>
+                        <span className="text-foreground/60">Date of birth:</span>{" "}
+                        <span className="font-medium">
+                          {profile.dateOfBirth
+                            ? `${profile.dateOfBirth}${age !== null ? ` (Age ${age})` : ""}`
+                            : "Not set"}
+                        </span>
+                      </p>
+                      <p>
+                        <span className="text-foreground/60">Work mode:</span>{" "}
+                        <span className="font-medium">{formatEnumLabel(profile.workMode)}</span>
+                      </p>
+                      <p>
+                        <span className="text-foreground/60">Work time:</span>{" "}
+                        <span className="font-medium">{formatEnumLabel(profile.workTime)}</span>
+                      </p>
+                      <p>
+                        <span className="text-foreground/60">Work preference:</span>{" "}
+                        <span className="font-medium">
+                          {formatEnumLabel(profile.workingPreference)}
+                        </span>
+                      </p>
+                      <p className="break-words">
+                        <span className="text-foreground/60">Education:</span>{" "}
+                        <span className="font-medium">
+                          {profile.educationQualification || "Not set"}
+                        </span>
+                      </p>
+                      <p className="break-words md:col-span-2">
+                        <span className="text-foreground/60">Course &amp; certificate:</span>{" "}
+                        <span className="font-medium">
+                          {profile.courseAndCertificate || "Not set"}
+                        </span>
+                      </p>
+                    </div>
+
+                    <div className="mt-3">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+                        Languages
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {profile.languages.length === 0 ? (
+                          <p className="text-sm text-foreground/60">No languages added yet.</p>
+                        ) : (
+                          profile.languages.map((language) => (
+                            <span
+                              key={language}
+                              className="rounded-full border border-foreground/10 bg-foreground/[0.04] px-3 py-1 text-xs text-foreground/80"
+                            >
+                              {language}
+                            </span>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+
+                {user.role === "USER" ? (
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div className="rounded-xl border border-foreground/10 bg-background/60 p-3">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
@@ -694,6 +867,9 @@ export default async function AdminUsersPage({
                 {user.role !== "ADMIN" ? (
                   <AdminUserFlagActions userId={user.id} isSuspicious={user.isSuspicious} />
                 ) : null}
+                    </>
+                  );
+                })()}
               </CardContent>
             </Card>
           ))}

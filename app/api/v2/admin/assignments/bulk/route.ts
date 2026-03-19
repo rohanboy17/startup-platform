@@ -1,12 +1,17 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { parseProfileDetails } from "@/lib/user-profile";
 
 type Body = {
   campaignId?: unknown;
   skillSlug?: unknown;
   dryRun?: unknown;
   excludeSuspicious?: unknown;
+  workMode?: unknown;
+  workingPreference?: unknown;
+  education?: unknown;
+  language?: unknown;
 };
 
 export async function POST(req: Request) {
@@ -20,6 +25,11 @@ export async function POST(req: Request) {
   const skillSlug = typeof body?.skillSlug === "string" ? body.skillSlug.trim() : "";
   const dryRun = body?.dryRun === true;
   const excludeSuspicious = body?.excludeSuspicious !== false;
+  const workMode = typeof body?.workMode === "string" ? body.workMode.trim() : "";
+  const workingPreference =
+    typeof body?.workingPreference === "string" ? body.workingPreference.trim() : "";
+  const education = typeof body?.education === "string" ? body.education.trim().toLowerCase() : "";
+  const language = typeof body?.language === "string" ? body.language.trim().toLowerCase() : "";
 
   if (!campaignId) {
     return NextResponse.json({ error: "campaignId is required" }, { status: 400 });
@@ -65,12 +75,42 @@ export async function POST(req: Request) {
         ...(excludeSuspicious ? { isSuspicious: false } : {}),
       },
     },
-    select: { userId: true },
+    select: {
+      userId: true,
+      user: {
+        select: {
+          profileDetails: true,
+        },
+      },
+    },
     orderBy: { createdAt: "asc" },
     take: 20000,
   });
 
-  const eligibleUserIds = Array.from(new Set(userSkillRows.map((r) => r.userId)));
+  const eligibleUserIds = Array.from(
+    new Set(
+      userSkillRows
+        .filter((row) => {
+          const profile = parseProfileDetails(row.user.profileDetails);
+          if (workMode && profile.workMode !== workMode) return false;
+          if (workingPreference && profile.workingPreference !== workingPreference) return false;
+          if (
+            education &&
+            !(profile.educationQualification || "").toLowerCase().includes(education)
+          ) {
+            return false;
+          }
+          if (
+            language &&
+            !profile.languages.some((item) => item.toLowerCase().includes(language))
+          ) {
+            return false;
+          }
+          return true;
+        })
+        .map((r) => r.userId)
+    )
+  );
   if (eligibleUserIds.length === 0) {
     return NextResponse.json({
       message: "No eligible users found for this skill",
@@ -96,7 +136,7 @@ export async function POST(req: Request) {
       message: "Dry run preview (no changes applied)",
       campaignId,
       skill: { slug: skill.slug, label: skill.label },
-      filters: { excludeSuspicious },
+      filters: { excludeSuspicious, workMode, workingPreference, education, language },
       eligible: eligibleUserIds.length,
       alreadyAssigned: assignedSet.size,
       wouldAssign: missingUserIds.length,
@@ -134,7 +174,7 @@ export async function POST(req: Request) {
         actorUserId: session.user.id,
         actorRole: session.user.role,
         action: "ADMIN_BULK_ASSIGN_USERS_BY_SKILL",
-        details: `campaignId=${campaignId}, title=${campaign.title}, skill=${skill.slug}, excludeSuspicious=${excludeSuspicious}, eligible=${eligibleUserIds.length}, missing=${missingUserIds.length}, created=${created}`,
+        details: `campaignId=${campaignId}, title=${campaign.title}, skill=${skill.slug}, excludeSuspicious=${excludeSuspicious}, workMode=${workMode || "-"}, workingPreference=${workingPreference || "-"}, education=${education || "-"}, language=${language || "-"}, eligible=${eligibleUserIds.length}, missing=${missingUserIds.length}, created=${created}`,
       },
     });
 
@@ -145,7 +185,7 @@ export async function POST(req: Request) {
     message: "Bulk assignment complete",
     campaignId,
     skill: { slug: skill.slug, label: skill.label },
-    filters: { excludeSuspicious },
+    filters: { excludeSuspicious, workMode, workingPreference, education, language },
     eligible: eligibleUserIds.length,
     alreadyAssigned: assignedSet.size,
     wouldAssign: missingUserIds.length,
