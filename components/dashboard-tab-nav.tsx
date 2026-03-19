@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import type { ComponentType } from "react";
 import {
   KeyRound,
@@ -118,6 +118,11 @@ export default function DashboardTabNav({
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [mobileOpen, setMobileOpen] = useState(false);
   const [hour, setHour] = useState<number | null>(null);
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   const storagePrefix = `nav_seen:${userId}:`;
 
@@ -161,10 +166,7 @@ export default function DashboardTabNav({
         const Icon = iconMap[item.icon] ?? Circle;
         const label = item.labelKey ? tNav(item.labelKey) : item.label;
         const latest = alerts[item.key] || "";
-        const seenToken =
-          typeof window !== "undefined"
-            ? window.localStorage.getItem(`${storagePrefix}${item.key}`) || ""
-            : "";
+        const seenToken = hydrated ? window.localStorage.getItem(`${storagePrefix}${item.key}`) || "" : "";
         const isCurrent = item.matchPrefix
           ? pathname === item.href || pathname.startsWith(item.matchPrefix)
           : pathname === item.href;
@@ -172,7 +174,7 @@ export default function DashboardTabNav({
         const badgeCount = counts[item.key] ?? 0;
         return { ...item, Icon, showDot, badgeCount, label };
       }),
-    [alerts, counts, items, pathname, storagePrefix, tNav]
+    [alerts, counts, hydrated, items, pathname, storagePrefix, tNav]
   );
 
   const firstName = useMemo(() => {
