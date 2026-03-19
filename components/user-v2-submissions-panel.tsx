@@ -64,6 +64,7 @@ export default function UserV2SubmissionsPanel() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"ALL" | SubmissionStage>("ALL");
   const [search, setSearch] = useState("");
+  const [limit, setLimit] = useState<"5" | "10" | "20" | "ALL">("10");
 
   const filters = useMemo<Array<{ value: "ALL" | SubmissionStage; label: string }>>(
     () => [
@@ -158,6 +159,11 @@ export default function UserV2SubmissionsPanel() {
     });
   }, [filter, proofPreview, search, submissions]);
 
+  const visibleRows = useMemo(
+    () => (limit === "ALL" ? filtered : filtered.slice(0, Number(limit))),
+    [filtered, limit]
+  );
+
   if (loading) return <p className="text-sm text-white/60">{t("loading")}</p>;
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
 
@@ -176,12 +182,27 @@ export default function UserV2SubmissionsPanel() {
               <p className="text-sm text-white/60">{t("eyebrow")}</p>
               <h3 className="text-xl font-semibold text-white">{t("title")}</h3>
             </div>
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={t("searchPlaceholder")}
-              className="min-h-11 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-sm text-white outline-none placeholder:text-white/35 lg:max-w-sm"
-            />
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <label className="flex items-center gap-2 text-sm text-white/60">
+                <span>Show</span>
+                <select
+                  value={limit}
+                  onChange={(e) => setLimit(e.target.value as "5" | "10" | "20" | "ALL")}
+                  className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white"
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="ALL">Show all</option>
+                </select>
+              </label>
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={t("searchPlaceholder")}
+                className="min-h-11 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-sm text-white outline-none placeholder:text-white/35 lg:max-w-sm"
+              />
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -213,7 +234,7 @@ export default function UserV2SubmissionsPanel() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {filtered.map((submission) => {
+          {visibleRows.map((submission) => {
             const reward = submission.rewardAmount || submission.campaign?.rewardPerTask || 0;
             const isRejected =
               submission.stage === "MANAGER_REJECTED" || submission.stage === "ADMIN_REJECTED";

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { getToken } from "firebase/messaging";
 import { BellRing, Send, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionCard } from "@/components/ui/section-card";
@@ -35,17 +34,28 @@ export default function NotificationChannelPreferences() {
   const [message, setMessage] = useState("");
 
   const load = useCallback(async () => {
-    const res = await fetch("/api/notifications/channels", { credentials: "include", cache: "no-store" });
-    const raw = await res.text();
-    let parsed: ChannelState | null = null;
     try {
-      parsed = raw ? (JSON.parse(raw) as ChannelState) : null;
-    } catch {
-      parsed = { error: "Unexpected server response" } as ChannelState;
-    }
+      const res = await fetch("/api/notifications/channels", { credentials: "include", cache: "no-store" });
+      const raw = await res.text();
+      let parsed: ChannelState | null = null;
+      try {
+        parsed = raw ? (JSON.parse(raw) as ChannelState) : null;
+      } catch {
+        parsed = { error: "Unexpected server response" } as ChannelState;
+      }
 
-    setData(parsed);
-    setLoading(false);
+      setData(parsed);
+    } catch (error) {
+      setData({
+        pushConfigured: false,
+        telegramConfigured: false,
+        push: { enabled: false, devices: [] },
+        telegram: { linked: false, chatPreview: null, connectUrl: null },
+        error: error instanceof Error ? error.message : "Unable to load notification channels",
+      });
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useLiveRefresh(load, 30000);
@@ -70,9 +80,9 @@ export default function NotificationChannelPreferences() {
         return;
       }
 
-      const messaging = await getBrowserMessaging();
+      const browserMessaging = await getBrowserMessaging();
       const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
-      if (!messaging || !vapidKey) {
+      if (!browserMessaging || !vapidKey) {
         setMessage("Firebase web push is not configured yet.");
         setActionLoading(null);
         return;
@@ -82,7 +92,7 @@ export default function NotificationChannelPreferences() {
       const registration =
         (await navigator.serviceWorker.getRegistration()) ??
         (await navigator.serviceWorker.register("/firebase-messaging-sw.js", { scope: "/" }));
-      const token = await getToken(messaging, {
+      const token = await browserMessaging.getToken(browserMessaging.messaging, {
         vapidKey,
         serviceWorkerRegistration: registration,
       });
@@ -177,6 +187,10 @@ export default function NotificationChannelPreferences() {
 
   if (loading) {
     return <p className="text-sm text-white/60">Loading delivery channels...</p>;
+  }
+
+  if (data?.error) {
+    return <p className="text-sm text-rose-300">{data.error}</p>;
   }
 
   return (

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import { getToken } from "firebase/messaging";
 import { BellRing } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -84,9 +83,9 @@ export default function EmptyCampaignsPushNudge() {
         return;
       }
 
-      const messaging = await getBrowserMessaging();
+      const browserMessaging = await getBrowserMessaging();
       const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
-      if (!messaging || !vapidKey) {
+      if (!browserMessaging || !vapidKey) {
         setMessage(t("pushNotConfigured"));
         setLoading(false);
         return;
@@ -96,7 +95,10 @@ export default function EmptyCampaignsPushNudge() {
         (await navigator.serviceWorker.getRegistration()) ??
         (await navigator.serviceWorker.register("/firebase-messaging-sw.js", { scope: "/" }));
 
-      const token = await getToken(messaging, { vapidKey, serviceWorkerRegistration: registration });
+      const token = await browserMessaging.getToken(browserMessaging.messaging, {
+        vapidKey,
+        serviceWorkerRegistration: registration,
+      });
       if (!token) {
         setMessage(t("pushRegisterFailed"));
         setLoading(false);

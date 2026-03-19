@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
@@ -15,7 +16,17 @@ function formatDate(value: Date | null | undefined) {
   }).format(value);
 }
 
-export default async function AdminReferralsPage() {
+type SearchParams = {
+  limit?: string;
+};
+
+export default async function AdminReferralsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const params = await searchParams;
+  const limit = params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
   const settings = getReferralSettings();
   const monthStart = new Date();
   monthStart.setDate(1);
@@ -65,7 +76,7 @@ export default async function AdminReferralsPage() {
     }),
     prisma.referralInvite.findMany({
       orderBy: { createdAt: "desc" },
-      take: 20,
+      ...(limit ? { take: limit } : {}),
       include: {
         referrer: {
           select: {
@@ -96,7 +107,7 @@ export default async function AdminReferralsPage() {
     }),
     prisma.coinRedemption.findMany({
       orderBy: { createdAt: "desc" },
-      take: 20,
+      ...(limit ? { take: limit } : {}),
       include: {
         user: {
           select: {
@@ -117,7 +128,7 @@ export default async function AdminReferralsPage() {
           referrerUserId: "desc",
         },
       },
-      take: 10,
+      ...(limit ? { take: limit } : {}),
     }),
   ]);
 
@@ -153,7 +164,26 @@ export default async function AdminReferralsPage() {
             Monitor referral adoption, coin issuance, redemptions, and suspicious reward patterns from one admin view.
           </p>
         </div>
-        <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <form className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <label className="text-sm text-white/65">Show</label>
+            <select
+              name="limit"
+              defaultValue={limit ? String(limit) : "ALL"}
+              className="rounded-md border border-white/15 bg-white/5 px-3 py-2 text-sm text-white"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="ALL">Show all</option>
+            </select>
+            <Button type="submit" variant="outline" className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+              Apply
+            </Button>
+            <Button asChild variant="outline" className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+              <Link href="/dashboard/admin/referrals">Clear</Link>
+            </Button>
+          </form>
           <Button asChild variant="outline" className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white">
             <a href="/api/admin/export/referrals?type=invites">Export invites CSV</a>
           </Button>

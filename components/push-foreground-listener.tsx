@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { onMessage } from "firebase/messaging";
 import { getBrowserMessaging, isFirebaseWebConfigured } from "@/lib/firebase-client";
 
 function normalizeLink(link: unknown) {
@@ -25,10 +24,13 @@ export default function PushForegroundListener() {
       if (!("Notification" in window)) return;
       if (Notification.permission !== "granted") return;
 
-      const messaging = await getBrowserMessaging();
-      if (!messaging || cancelled) return;
+      const browserMessaging = await getBrowserMessaging();
+      if (!browserMessaging || cancelled) return;
 
-      unsub = onMessage(messaging, (payload) => {
+      const { onMessage } = await import("firebase/messaging");
+      if (cancelled) return;
+
+      unsub = onMessage(browserMessaging.messaging, (payload) => {
         try {
           const title = payload.notification?.title || "FreeEarnHub update";
           const body = payload.notification?.body || "You have a new notification.";

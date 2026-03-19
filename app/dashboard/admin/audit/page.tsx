@@ -5,6 +5,7 @@ type SearchParams = {
   q?: string;
   action?: string;
   actorRole?: string;
+  limit?: string;
 };
 
 export default async function AdminAuditPage({
@@ -16,6 +17,8 @@ export default async function AdminAuditPage({
   const q = params.q?.trim() || "";
   const action = params.action?.trim() || "";
   const actorRole = params.actorRole?.trim() || "ALL";
+  const limit =
+    params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
 
   const delegate = (prisma as unknown as {
     auditLog?: {
@@ -81,7 +84,7 @@ export default async function AdminAuditPage({
             : {}),
         },
         orderBy: { createdAt: "desc" },
-        take: 250,
+        ...(limit ? { take: limit } : { take: 1000 }),
       });
     } catch (error: unknown) {
       loadError = error instanceof Error ? error.message : "Failed to load audit logs";
@@ -99,7 +102,7 @@ export default async function AdminAuditPage({
 
       <Card className="rounded-2xl border-foreground/10 bg-background/60">
         <CardContent className="p-4">
-          <form className="grid gap-3 md:grid-cols-4">
+          <form className="grid gap-3 md:grid-cols-5">
             <input
               type="text"
               name="q"
@@ -124,6 +127,16 @@ export default async function AdminAuditPage({
               <option value="MANAGER">MANAGER</option>
               <option value="BUSINESS">BUSINESS</option>
               <option value="USER">USER</option>
+            </select>
+            <select
+              name="limit"
+              defaultValue={limit ? String(limit) : "ALL"}
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
+            >
+              <option value="5">Show 5</option>
+              <option value="10">Show 10</option>
+              <option value="20">Show 20</option>
+              <option value="ALL">Show all</option>
             </select>
             <div className="flex gap-2">
               <button

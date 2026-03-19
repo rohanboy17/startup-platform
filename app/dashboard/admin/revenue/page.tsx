@@ -9,7 +9,17 @@ import { formatMoney } from "@/lib/format-money";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 
-export default async function AdminRevenuePage() {
+type SearchParams = {
+  limit?: string;
+};
+
+export default async function AdminRevenuePage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const params = await searchParams;
+  const limit = params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
   const payoutDailyLimit = Number(process.env.PAYOUT_DAILY_LIMIT ?? 200000);
   const payoutPerRequestLimit = Number(process.env.PAYOUT_MAX_REQUEST ?? 50000);
   const delegates = prisma as unknown as {
@@ -74,7 +84,7 @@ export default async function AdminRevenuePage() {
     delegates.platformPayout
       ? delegates.platformPayout.findMany({
           orderBy: { createdAt: "desc" },
-          take: 50,
+          ...(limit ? { take: limit } : { take: 500 }),
         })
       : Promise.resolve([]),
     delegates.walletAdjustmentRequest
@@ -85,7 +95,7 @@ export default async function AdminRevenuePage() {
             requestedByUser: { select: { name: true, email: true } },
           },
           orderBy: { createdAt: "desc" },
-          take: 30,
+          ...(limit ? { take: limit } : { take: 500 }),
         })
       : Promise.resolve([]),
   ]);
@@ -127,7 +137,34 @@ export default async function AdminRevenuePage() {
       )}
 
       <div className="space-y-4">
-        <h3 className="text-xl font-semibold">Wallet Adjustment Approvals (Immutable)</h3>
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+          <h3 className="text-xl font-semibold">Wallet Adjustment Approvals (Immutable)</h3>
+          <form className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <label className="text-sm text-white/65">Show</label>
+            <select
+              name="limit"
+              defaultValue={limit ? String(limit) : "ALL"}
+              className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-sm text-white"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="ALL">Show all</option>
+            </select>
+            <button
+              type="submit"
+              className="rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/20"
+            >
+              Apply
+            </button>
+            <Link
+              href="/dashboard/admin/revenue"
+              className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-sm text-white hover:bg-white/10"
+            >
+              Clear
+            </Link>
+          </form>
+        </div>
         {pendingAdjustments.length === 0 ? (
           <Card className="rounded-2xl border-white/10 bg-white/5">
             <CardContent className="p-6 text-sm text-white/60">

@@ -42,7 +42,8 @@ export async function GET() {
         flaggedUsers,
         pendingAdjustments,
         openSecurityEvents,
-        failedNotificationLogs,
+        unreadAdminNotifications,
+        latestUnreadAdminNotification,
         legalEvidence,
       ] =
         await Promise.all([
@@ -120,11 +121,13 @@ export async function GET() {
             orderBy: { createdAt: "desc" },
             take: 100,
           }),
-          prisma.notificationDeliveryLog.findMany({
-            where: { status: "FAILED" },
+          prisma.notification.count({
+            where: { userId, isRead: false },
+          }),
+          prisma.notification.findFirst({
+            where: { userId, isRead: false },
             select: { createdAt: true },
             orderBy: { createdAt: "desc" },
-            take: 100,
           }),
           prisma.legalEvidence.findMany({
             select: { createdAt: true },
@@ -162,7 +165,7 @@ export async function GET() {
         ),
         "admin.audit": token(audits.length, audits[0]?.createdAt),
         "admin.cms": token(0, null),
-        "admin.notifications": token(failedNotificationLogs.length, failedNotificationLogs[0]?.createdAt),
+        "admin.notifications": token(unreadAdminNotifications, latestUnreadAdminNotification?.createdAt),
         "admin.settings": token(0, null),
         "admin.compliance": token(legalEvidence.length, legalEvidence[0]?.createdAt),
       };
@@ -177,7 +180,7 @@ export async function GET() {
           "admin.risk":
             escalatedCampaigns.length + riskyWithdrawals.length + flaggedUsers.length + openSecurityEvents.length,
           "admin.revenue": pendingAdjustments.length,
-          "admin.notifications": failedNotificationLogs.length,
+          "admin.notifications": unreadAdminNotifications,
           "admin.compliance": legalEvidence.length,
         },
       });
@@ -323,7 +326,7 @@ export async function GET() {
     }
 
     if (role === "MANAGER") {
-      const [queue, suspiciousQueue, decisions, openSecurityEvents] = await Promise.all([
+      const [queue, suspiciousQueue, decisions, openSecurityEvents, unreadManagerNotifications, latestUnreadManagerNotification] = await Promise.all([
         prisma.submission.findMany({
           where: { managerStatus: "PENDING", managerEscalatedAt: null },
           select: { createdAt: true },
@@ -352,6 +355,14 @@ export async function GET() {
           orderBy: { createdAt: "desc" },
           take: 100,
         }),
+        prisma.notification.count({
+          where: { userId, isRead: false },
+        }),
+        prisma.notification.findFirst({
+          where: { userId, isRead: false },
+          select: { createdAt: true },
+          orderBy: { createdAt: "desc" },
+        }),
       ]);
 
       const tabs = {
@@ -361,10 +372,7 @@ export async function GET() {
           suspiciousQueue.length + openSecurityEvents.length,
           maxDate(suspiciousQueue[0]?.createdAt, openSecurityEvents[0]?.createdAt)
         ),
-        "manager.notifications": token(
-          queue.length + suspiciousQueue.length + openSecurityEvents.length,
-          maxDate(queue[0]?.createdAt, suspiciousQueue[0]?.createdAt, openSecurityEvents[0]?.createdAt)
-        ),
+        "manager.notifications": token(unreadManagerNotifications, latestUnreadManagerNotification?.createdAt),
       };
 
       return NextResponse.json({
@@ -374,7 +382,7 @@ export async function GET() {
           ...tabs,
         },
         counts: {
-          "manager.notifications": queue.length + suspiciousQueue.length + openSecurityEvents.length,
+          "manager.notifications": unreadManagerNotifications,
         },
       });
     }

@@ -15,6 +15,7 @@ type SearchParams = {
   flagged?: "ALL" | "FLAGGED" | "CLEAR";
   dateFrom?: string;
   dateTo?: string;
+  limit?: string;
 };
 
 function fundingTone(status: "PENDING" | "APPROVED" | "REJECTED") {
@@ -34,6 +35,7 @@ export default async function AdminFundingPage({
   const flaggedFilter = params.flagged || "ALL";
   const dateFrom = params.dateFrom?.trim() || "";
   const dateTo = params.dateTo?.trim() || "";
+  const limit = params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
 
   const createdAtFilter = {
     ...(dateFrom ? { gte: new Date(`${dateFrom}T00:00:00.000+05:30`) } : {}),
@@ -103,6 +105,7 @@ export default async function AdminFundingPage({
         },
       },
       orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+      ...(limit ? { take: limit } : {}),
     }),
     prisma.businessFunding.groupBy({
       where: fundingWhere,
@@ -129,6 +132,7 @@ export default async function AdminFundingPage({
         },
       },
       orderBy: [{ status: "asc" }, { createdAt: "desc" }],
+      ...(limit ? { take: limit } : {}),
     }),
     prisma.businessRefundRequest.groupBy({
       where: refundWhere,
@@ -176,7 +180,7 @@ export default async function AdminFundingPage({
           <div className="mb-3 text-xs text-foreground/60">
             These filters apply to both manual funding requests and manual refund requests.
           </div>
-          <form className="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1.3fr)_0.8fr_0.8fr_0.9fr_0.9fr_auto_auto_auto_auto]">
+          <form className="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1.2fr)_0.8fr_0.8fr_0.9fr_0.9fr_0.8fr_auto_auto_auto_auto] xl:items-end">
             <input
               type="text"
               name="q"
@@ -215,6 +219,16 @@ export default async function AdminFundingPage({
               defaultValue={dateTo}
               className="rounded-md border border-foreground/15 bg-background px-3 py-2 text-sm text-foreground"
             />
+            <select
+              name="limit"
+              defaultValue={limit ? String(limit) : "ALL"}
+              className="rounded-md border border-foreground/15 bg-background px-3 py-2 text-sm text-foreground"
+            >
+              <option value="5">Show 5</option>
+              <option value="10">Show 10</option>
+              <option value="20">Show 20</option>
+              <option value="ALL">Show all</option>
+            </select>
             <button
               type="submit"
               className="rounded-md border border-foreground/15 bg-foreground/[0.06] px-3 py-2 text-sm text-foreground transition hover:bg-foreground/[0.1]"

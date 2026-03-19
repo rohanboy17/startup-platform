@@ -30,10 +30,69 @@ function getAuthUserAgent(req: unknown) {
   return pickHeader(headers, "user-agent") || "unknown";
 }
 
+const AUTH_DB_SYNC_INTERVAL_MS = 5 * 60 * 1000;
+
+function serializeAuthLogValue(value: unknown, seen = new WeakSet<object>()): unknown {
+  if (value instanceof Error) {
+    return {
+      name: value.name,
+      message: value.message,
+      stack: value.stack,
+    };
+  }
+
+  if (typeof value !== "object" || value === null) {
+    return value;
+  }
+
+  if (seen.has(value)) {
+    return "[Circular]";
+  }
+  seen.add(value);
+
+  if (typeof Event !== "undefined" && value instanceof Event) {
+    const eventLike = value as Event & { message?: unknown; error?: unknown; filename?: unknown; lineno?: unknown; colno?: unknown };
+    return {
+      type: eventLike.type,
+      message: typeof eventLike.message === "string" ? eventLike.message : undefined,
+      error: eventLike.error ? serializeAuthLogValue(eventLike.error, seen) : undefined,
+      filename: typeof eventLike.filename === "string" ? eventLike.filename : undefined,
+      lineno: typeof eventLike.lineno === "number" ? eventLike.lineno : undefined,
+      colno: typeof eventLike.colno === "number" ? eventLike.colno : undefined,
+    };
+  }
+
+  const output: Record<string, unknown> = {};
+  for (const key of Object.keys(value as Record<string, unknown>)) {
+    try {
+      output[key] = serializeAuthLogValue((value as Record<string, unknown>)[key], seen);
+    } catch {
+      output[key] = "[Unserializable]";
+    }
+  }
+  return output;
+}
+
+const authLogger: NextAuthOptions["logger"] = {
+  error(code, metadata) {
+    const details = serializeAuthLogValue(metadata);
+    console.error(`[next-auth][error][${code}]`, details);
+  },
+  warn(code) {
+    console.warn(`[next-auth][warn][${code}]`);
+  },
+  debug(code, metadata) {
+    if (process.env.NODE_ENV !== "production") {
+      console.debug(`[next-auth][debug][${code}]`, serializeAuthLogValue(metadata));
+    }
+  },
+};
+
 export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  logger: authLogger,
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -250,30 +309,46 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role;
         token.accountStatus = user.accountStatus;
         token.sessionVersion = (user as { sessionVersion?: number }).sessionVersion ?? 0;
+        token.lastDbSyncAt = Date.now();
       }
 
       // Keep role/id in sync with DB so role changes apply without stale JWT behavior.
       if (token.email) {
-        const dbUser = await prisma.user.findUnique({
-          where: { email: token.email },
-          select: { id: true, role: true, accountStatus: true, sessionVersion: true },
-        });
+        const now = Date.now();
+        const lastDbSyncAt = typeof token.lastDbSyncAt === "number" ? token.lastDbSyncAt : 0;
+        if (now - lastDbSyncAt < AUTH_DB_SYNC_INTERVAL_MS) {
+          return token;
+        }
 
-        if (dbUser) {
-          const tokenVersion = typeof token.sessionVersion === "number" ? token.sessionVersion : 0;
-          if (dbUser.sessionVersion !== tokenVersion) {
-            // Session was revoked (e.g. "sign out of all devices"). Clear role/id so app guards redirect to /login.
-            delete token.id;
-            delete token.role;
-            delete token.accountStatus;
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { email: token.email },
+            select: { id: true, role: true, accountStatus: true, sessionVersion: true },
+          });
+
+          if (dbUser) {
+            const tokenVersion = typeof token.sessionVersion === "number" ? token.sessionVersion : 0;
+            if (dbUser.sessionVersion !== tokenVersion) {
+              // Session was revoked (e.g. "sign out of all devices"). Clear role/id so app guards redirect to /login.
+              delete token.id;
+              delete token.role;
+              delete token.accountStatus;
+              token.sessionVersion = dbUser.sessionVersion;
+              token.lastDbSyncAt = now;
+              return token;
+            }
+            token.id = dbUser.id;
+            token.role = dbUser.role;
+            token.accountStatus = dbUser.accountStatus;
             token.sessionVersion = dbUser.sessionVersion;
-            token.error = "SESSION_REVOKED";
-            return token;
+            token.lastDbSyncAt = now;
           }
-          token.id = dbUser.id;
-          token.role = dbUser.role;
-          token.accountStatus = dbUser.accountStatus;
-          token.sessionVersion = dbUser.sessionVersion;
+        } catch (error) {
+          token.lastDbSyncAt = now;
+          console.error("[next-auth][error][JWT_DB_SYNC_ERROR]", serializeAuthLogValue({
+            email: token.email,
+            error,
+          }));
         }
       }
 
@@ -305,4 +380,19 @@ export const authOptions: NextAuthOptions = {
 };
 
 export const handlers = NextAuth(authOptions);
-export const auth = () => getServerSession(authOptions);
+export const auth = async () => {
+  try {
+    return await getServerSession(authOptions);
+  } catch (error) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "digest" in error &&
+      (error as { digest?: string }).digest === "DYNAMIC_SERVER_USAGE"
+    ) {
+      throw error;
+    }
+    console.error("Failed to load server session", error);
+    return null;
+  }
+};

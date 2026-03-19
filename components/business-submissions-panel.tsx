@@ -78,6 +78,7 @@ export default function BusinessSubmissionsPanel() {
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"ALL" | SubmissionStage>("ALL");
+  const [limit, setLimit] = useState<"5" | "10" | "20" | "ALL">("10");
 
   const FILTERS: Array<{ value: "ALL" | SubmissionStage; label: string }> = [
     { value: "ALL", label: t("filters.all") },
@@ -144,6 +145,11 @@ export default function BusinessSubmissionsPanel() {
     });
   }, [data, filter, query]);
 
+  const visibleRows = useMemo(
+    () => (limit === "ALL" ? filtered : filtered.slice(0, Number(limit))),
+    [filtered, limit]
+  );
+
   function exportCsv() {
     const header = [
       "Campaign",
@@ -208,7 +214,7 @@ export default function BusinessSubmissionsPanel() {
             </Button>
           </div>
 
-          <div className="flex flex-col gap-3 lg:flex-row">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
             <div className="relative flex-1">
               <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
               <Input
@@ -218,6 +224,19 @@ export default function BusinessSubmissionsPanel() {
                 className="border-white/10 bg-black/20 pl-10 text-white placeholder:text-white/35"
               />
             </div>
+            <label className="flex items-center gap-2 text-sm text-white/60">
+              <span>Show</span>
+              <select
+                value={limit}
+                onChange={(e) => setLimit(e.target.value as "5" | "10" | "20" | "ALL")}
+                className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white"
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="ALL">Show all</option>
+              </select>
+            </label>
             <div className="flex flex-wrap gap-2">
               {FILTERS.map((item) => (
                 <button
@@ -244,7 +263,7 @@ export default function BusinessSubmissionsPanel() {
             <CardContent className="p-6 text-sm text-white/55">{t("empty")}</CardContent>
           </Card>
         ) : (
-          filtered.map((submission) => (
+          visibleRows.map((submission) => (
             <Card key={submission.id} className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
               <CardContent className="space-y-4 p-4 sm:p-6">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">

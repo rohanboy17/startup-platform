@@ -1,7 +1,26 @@
 import { prisma } from "@/lib/prisma";
 import AdminNotificationCenter from "@/components/admin-notification-center";
+import { auth } from "@/lib/auth";
 
-export default async function AdminNotificationsPage() {
+type SearchParams = {
+  limit?: string;
+  logStatus?: "ALL" | "SENT" | "FAILED" | "SKIPPED";
+};
+
+export default async function AdminNotificationsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const params = await searchParams;
+  const limit =
+    params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
+  const logStatus = ["ALL", "SENT", "FAILED", "SKIPPED"].includes(params.logStatus || "")
+    ? (params.logStatus as "ALL" | "SENT" | "FAILED" | "SKIPPED")
+    : "ALL";
+  const session = await auth();
+  if (!session?.user?.id) return null;
+
   await Promise.all([
     prisma.notificationTemplate.upsert({
       where: { key: "submission.admin_approved" },
@@ -41,20 +60,48 @@ export default async function AdminNotificationsPage() {
     }),
   ]);
 
-  const [templates, logs] = await Promise.all([
+  const [templates, notifications, logs] = await Promise.all([
     prisma.notificationTemplate.findMany({ orderBy: { updatedAt: "desc" } }),
+    prisma.notification.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      ...(limit ? { take: limit } : {}),
+    }),
     prisma.notificationDeliveryLog.findMany({
+      where: logStatus === "ALL" ? undefined : { status: logStatus },
       include: { user: { select: { email: true, role: true, mobile: true } } },
       orderBy: { createdAt: "desc" },
-      take: 120,
+      ...(limit ? { take: limit } : {}),
     }),
   ]);
+
+  const typeCounts = notifications.reduce(
+    (acc, item) => {
+      if (item.type === "SUCCESS") acc.success += 1;
+      else if (item.type === "WARNING") acc.warning += 1;
+      else acc.info += 1;
+      return acc;
+    },
+    { success: 0, warning: 0, info: 0 }
+  );
 
   return (
     <div className="space-y-6">
       <h2 className="text-3xl font-semibold">Notifications Control</h2>
       <AdminNotificationCenter
         templates={templates.map((t) => ({ ...t, subject: t.subject }))}
+        notifications={notifications.map((item) => ({
+          id: item.id,
+          title: item.title,
+          message: item.message,
+          isRead: item.isRead,
+          type: item.type,
+          createdAt: item.createdAt.toISOString(),
+        }))}
+        totalCount={notifications.length}
+        typeCounts={typeCounts}
+        selectedLimit={limit ? String(limit) : "ALL"}
+        selectedLogStatus={logStatus}
         logs={logs.map((l) => ({
           id: l.id,
           status: l.status,
