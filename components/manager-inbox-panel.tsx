@@ -55,7 +55,6 @@ export default function ManagerInboxPanel() {
   const [actionLoading, setActionLoading] = useState<string | "all" | null>(null);
   const [message, setMessage] = useState("");
   const [filter, setFilter] = useState<NotificationFilter>("ALL");
-  const [limit, setLimit] = useState<"5" | "10" | "20" | "ALL">("10");
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/manager/inbox", { credentials: "include" });
@@ -94,11 +93,6 @@ export default function ManagerInboxPanel() {
         return notifications;
     }
   }, [data, filter]);
-
-  const visibleNotifications = useMemo(
-    () => (limit === "ALL" ? filtered : filtered.slice(0, Number(limit))),
-    [filtered, limit]
-  );
 
   async function markRead(notificationId?: string) {
     setActionLoading(notificationId ?? "all");
@@ -149,29 +143,14 @@ export default function ManagerInboxPanel() {
             <p className="text-sm text-foreground/60">Inbox filters</p>
             <h3 className="text-xl font-semibold text-foreground">Broadcasts and important updates</h3>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <label className="flex items-center gap-2 text-sm text-foreground/60">
-              <span>Show</span>
-              <select
-                value={limit}
-                onChange={(event) => setLimit(event.target.value as "5" | "10" | "20" | "ALL")}
-                className="rounded-xl border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground"
-              >
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="ALL">Show all</option>
-              </select>
-            </label>
-            <Button
-              variant="outline"
-              onClick={() => void markRead()}
-              disabled={actionLoading !== null || data.notifications.every((item) => item.isRead)}
-              className="border-foreground/20 bg-transparent text-foreground hover:bg-foreground/[0.04]"
-            >
-              {actionLoading === "all" ? "Updating..." : "Mark all as read"}
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            onClick={() => void markRead()}
+            disabled={actionLoading !== null || data.notifications.every((item) => item.isRead)}
+            className="border-foreground/20 bg-transparent text-foreground hover:bg-foreground/[0.04]"
+          >
+            {actionLoading === "all" ? "Updating..." : "Mark all as read"}
+          </Button>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -201,7 +180,7 @@ export default function ManagerInboxPanel() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {visibleNotifications.map((item) => (
+          {filtered.map((item) => (
             <Card
               key={item.id}
               className={`rounded-3xl border shadow-xl shadow-black/10 dark:shadow-black/20 backdrop-blur-md ${typeTone(item.type, item.isRead)}`}

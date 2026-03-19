@@ -77,7 +77,6 @@ export default function ManagerRiskPanel() {
   const [data, setData] = useState<RiskPayload | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const [limit, setLimit] = useState<"5" | "10" | "20" | "ALL">("10");
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/manager/risk?hours=24", { credentials: "include" });
@@ -119,21 +118,6 @@ export default function ManagerRiskPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <label className="flex items-center gap-2 text-sm text-white/60">
-          <span>Show</span>
-          <select
-            value={limit}
-            onChange={(event) => setLimit(event.target.value as "5" | "10" | "20" | "ALL")}
-            className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white"
-          >
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="ALL">Show all</option>
-          </select>
-        </label>
-      </div>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
         <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
           <CardContent className="space-y-2 p-4 sm:p-6">
@@ -184,7 +168,7 @@ export default function ManagerRiskPanel() {
               <p className="text-sm text-white/60">No flagged users at the moment.</p>
             ) : (
               <div className="space-y-3">
-                {(limit === "ALL" ? data.suspiciousUsers : data.suspiciousUsers.slice(0, Number(limit))).map((user) => (
+                {data.suspiciousUsers.slice(0, 12).map((user) => (
                   <div key={user.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                       <div className="min-w-0">
@@ -217,7 +201,7 @@ export default function ManagerRiskPanel() {
               <p className="text-sm text-white/60">No hotspots detected in the selected window.</p>
             ) : (
               <div className="space-y-3">
-                {(limit === "ALL" ? data.ipHotspots : data.ipHotspots.slice(0, Number(limit))).map((spot) => (
+                {data.ipHotspots.map((spot) => (
                   <div key={spot.ipMasked} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <p className="text-sm font-medium text-white">{spot.ipMasked}</p>
                     <p className="mt-1 text-sm text-white/60">
@@ -242,7 +226,7 @@ export default function ManagerRiskPanel() {
               <p className="text-sm text-white/60">No escalations recorded yet.</p>
             ) : (
               <div className="space-y-3">
-                {(limit === "ALL" ? data.escalations.latest : data.escalations.latest.slice(0, Number(limit))).map((row) => (
+                {data.escalations.latest.map((row) => (
                   <div key={row.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                       <div className="min-w-0">
@@ -275,7 +259,7 @@ export default function ManagerRiskPanel() {
               <p className="text-sm text-white/60">No velocity alerts.</p>
             ) : (
               <div className="space-y-3">
-                {(limit === "ALL" ? data.highVelocity : data.highVelocity.slice(0, Number(limit))).map((user) => (
+                {data.highVelocity.map((user) => (
                   <div key={user.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
@@ -310,7 +294,7 @@ export default function ManagerRiskPanel() {
               <p className="text-sm text-white/60">No outliers found right now.</p>
             ) : (
               <div className="space-y-3">
-                {(limit === "ALL" ? data.rejectionOutliers : data.rejectionOutliers.slice(0, Number(limit))).map((user) => (
+                {data.rejectionOutliers.map((user) => (
                   <div key={user.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <div className="flex items-center justify-between gap-3">
                       <p className="font-medium text-white break-words">{user.name || "Unnamed user"}</p>
@@ -341,7 +325,7 @@ export default function ManagerRiskPanel() {
               <p className="text-sm text-white/60">No pending-admin items.</p>
             ) : (
               <div className="space-y-3">
-                {(limit === "ALL" ? data.adminBacklog.oldest : data.adminBacklog.oldest.slice(0, Number(limit))).map((row) => (
+                {data.adminBacklog.oldest.map((row) => (
                   <div key={row.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                       <div className="min-w-0">
@@ -380,7 +364,7 @@ export default function ManagerRiskPanel() {
             <p className="text-sm text-white/60">No rejection spikes detected.</p>
           ) : (
             <div className="grid gap-3 md:grid-cols-2">
-              {(limit === "ALL" ? data.rejectionSpikes : data.rejectionSpikes.slice(0, Number(limit))).map((campaign) => (
+              {data.rejectionSpikes.map((campaign) => (
                 <div key={campaign.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                   <p className="font-medium text-white break-words">{campaign.title}</p>
                   <p className="mt-1 text-sm text-white/60 break-words">{campaign.category}</p>

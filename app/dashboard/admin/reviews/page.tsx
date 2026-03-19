@@ -11,7 +11,6 @@ import ProofImageDialog from "@/components/proof-image-dialog";
 type SearchParams = {
   q?: string;
   sort?: "newest" | "fraud";
-  limit?: string;
 };
 
 function isLikelyScreenshotUrl(value: string | null | undefined) {
@@ -47,7 +46,6 @@ export default async function AdminReviewsPage({
   const params = await searchParams;
   const q = params.q?.trim() || "";
   const sort = params.sort || "fraud";
-  const limit = [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
   const now = new Date();
   const submissions = await prisma.submission.findMany({
     where: {
@@ -76,7 +74,6 @@ export default async function AdminReviewsPage({
       },
     },
     orderBy: { createdAt: "desc" },
-    take: limit,
   });
 
   const recentlyReviewed = await prisma.submission.findMany({
@@ -94,7 +91,7 @@ export default async function AdminReviewsPage({
       },
     },
     orderBy: { createdAt: "desc" },
-    take: limit,
+    take: 20,
   });
 
   const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -179,7 +176,7 @@ export default async function AdminReviewsPage({
       </div>
 
       <SectionCard elevated className="p-4">
-          <form className="grid gap-3 md:grid-cols-4">
+          <form className="grid gap-3 md:grid-cols-3">
             <input
               type="text"
               name="q"
@@ -194,15 +191,6 @@ export default async function AdminReviewsPage({
             >
               <option value="fraud">Sort by Fraud Score</option>
               <option value="newest">Sort by Newest</option>
-            </select>
-            <select
-              name="limit"
-              defaultValue={String(limit)}
-              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
-            >
-              <option value="5">Show 5</option>
-              <option value="10">Show 10</option>
-              <option value="20">Show 20</option>
             </select>
             <button
               type="submit"
@@ -341,26 +329,6 @@ export default async function AdminReviewsPage({
                 <p className="text-xs text-white/50">
                   Submitted: {new Date(submission.createdAt).toLocaleString()}
                 </p>
-
-                <div className="flex flex-col gap-2 text-sm lg:flex-row lg:flex-wrap lg:items-center">
-                  {submission.proofLink ? (
-                    <a
-                      href={submission.proofLink}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex w-full items-center gap-1 text-emerald-200 underline underline-offset-4 lg:w-auto"
-                    >
-                      View link
-                    </a>
-                  ) : null}
-                  {(() => {
-                    const screenshotUrl =
-                      submission.proofImage || (isLikelyScreenshotUrl(submission.proof) ? submission.proof : null);
-                    return screenshotUrl ? (
-                      <ProofImageDialog url={screenshotUrl} label="Preview screenshot" />
-                    ) : null;
-                  })()}
-                </div>
 
                 <div className="space-y-2 rounded-md border border-white/10 bg-black/20 p-3">
                   <p className="text-xs text-white/70">Undo History</p>

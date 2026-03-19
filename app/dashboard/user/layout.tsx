@@ -31,10 +31,10 @@ export default async function UserLayout({
   }
 
   return (
-    <div className="dashboard-shell min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.12),transparent_30%),radial-gradient(circle_at_top_right,rgba(59,130,246,0.1),transparent_28%)] bg-background text-foreground">
+    <div className="dashboard-shell min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.12),transparent_30%),radial-gradient(circle_at_top_right,rgba(59,130,246,0.1),transparent_28%)] bg-background text-foreground">
       <PresenceHeartbeat />
       <div className="flex flex-col md:flex-row">
-        <aside className="w-full space-y-8 border-b border-foreground/10 bg-foreground/[0.03] p-4 backdrop-blur-xl sm:p-5 md:w-72 md:border-b-0 md:border-r md:p-6">
+        <aside className="w-full space-y-8 border-b border-foreground/10 bg-foreground/[0.03] p-6 backdrop-blur-xl md:w-72 md:border-b-0 md:border-r">
           <DashboardTabNav
             displayName={displayName}
             role="USER"
@@ -55,7 +55,7 @@ export default async function UserLayout({
           />
         </aside>
 
-        <main className="min-w-0 flex-1 p-4 sm:p-5 md:p-10">
+        <main className="min-w-0 flex-1 p-4 sm:p-6 md:p-10">
           <PageTransition>{children}</PageTransition>
         </main>
       </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { KpiCard } from "@/components/ui/kpi-card";
@@ -31,7 +31,6 @@ export default function UserWalletPanel() {
   const t = useTranslations("user.wallet");
   const [data, setData] = useState<WalletResponse | null>(null);
   const [error, setError] = useState("");
-  const [limit, setLimit] = useState<"5" | "10" | "20" | "ALL">("10");
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/users/me/wallet", { credentials: "include" });
@@ -55,11 +54,6 @@ export default function UserWalletPanel() {
   }, [t]);
 
   useLiveRefresh(load, 10000);
-
-  const visibleTransactions = useMemo(
-    () => (limit === "ALL" ? data?.transactions ?? [] : (data?.transactions ?? []).slice(0, Number(limit))),
-    [data?.transactions, limit]
-  );
 
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
   if (!data) return <p className="text-sm text-white/60">{t("loading")}</p>;
@@ -91,27 +85,12 @@ export default function UserWalletPanel() {
       </div>
 
       <SectionCard elevated className="space-y-5 p-4 sm:p-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-white/60">{t("historyEyebrow")}</p>
               <h3 className="text-xl font-semibold text-white">{t("historyTitle")}</h3>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <label className="flex items-center gap-2 text-sm text-white/60">
-                <span>Show</span>
-                <select
-                  value={limit}
-                  onChange={(e) => setLimit(e.target.value as "5" | "10" | "20" | "ALL")}
-                  className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white"
-                >
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                  <option value="ALL">Show all</option>
-                </select>
-              </label>
-              <StatusBadge label={t("latestEntries")} tone="neutral" />
-            </div>
+            <StatusBadge label={t("latestEntries")} tone="neutral" />
           </div>
 
           {data.transactions.length === 0 ? (
@@ -120,7 +99,7 @@ export default function UserWalletPanel() {
             </div>
           ) : (
             <div className="space-y-3">
-              {visibleTransactions.map((tx) => (
+              {data.transactions.map((tx) => (
                 <div key={tx.id} className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-black/20 p-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
                     <p className="font-medium text-white break-words">{tx.note || t("txFallback")}</p>

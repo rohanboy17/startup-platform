@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -38,7 +38,6 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
   const t = useTranslations("user.withdrawals");
   const [data, setData] = useState<WithdrawalsPayload | null>(null);
   const [error, setError] = useState("");
-  const [limit, setLimit] = useState<"5" | "10" | "20" | "ALL">("10");
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/users/me/withdrawals", { cache: "no-store" });
@@ -60,11 +59,6 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
   }, [t]);
 
   useLiveRefresh(load, 8000);
-
-  const visibleWithdrawals = useMemo(
-    () => (limit === "ALL" ? data?.withdrawals ?? [] : (data?.withdrawals ?? []).slice(0, Number(limit))),
-    [data?.withdrawals, limit]
-  );
 
   return (
     <div className="space-y-8">
@@ -108,27 +102,12 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
         </SectionCard>
 
         <SectionCard elevated className="space-y-5 p-4 sm:p-6">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="text-sm text-white/60">Withdrawal history</p>
                 <h3 className="text-xl font-semibold text-white">{t("historyTitle")}</h3>
               </div>
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <label className="flex items-center gap-2 text-sm text-white/60">
-                  <span>Show</span>
-                  <select
-                    value={limit}
-                    onChange={(e) => setLimit(e.target.value as "5" | "10" | "20" | "ALL")}
-                    className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white"
-                  >
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="20">20</option>
-                    <option value="ALL">Show all</option>
-                  </select>
-                </label>
-                <StatusBadge label={t("totalRequests", { count: data?.metrics.totalRequests ?? 0 })} tone="neutral" />
-              </div>
+              <StatusBadge label={t("totalRequests", { count: data?.metrics.totalRequests ?? 0 })} tone="neutral" />
             </div>
 
             {error ? <p className="text-sm text-rose-300">{error}</p> : null}
@@ -143,7 +122,7 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
               </div>
             ) : (
               <div className="space-y-3">
-                {visibleWithdrawals.map((w) => (
+                {data.withdrawals.map((w) => (
                   <div key={w.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                       <div className="min-w-0">

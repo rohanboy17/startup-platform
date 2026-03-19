@@ -33,12 +33,9 @@ export default async function ManagerDashboardPage() {
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
 
-  const [pendingCount, pendingQueue, pendingAdmin, suspiciousQueue, approvedToday, rejectedToday, reviewLogs] = await Promise.all([
-    prisma.submission.count({
-      where: { campaignId: { not: null }, managerStatus: "PENDING", managerEscalatedAt: null },
-    }),
+  const [pendingQueue, pendingAdmin, suspiciousQueue, approvedToday, rejectedToday, reviewLogs] = await Promise.all([
     prisma.submission.findMany({
-      where: { campaignId: { not: null }, managerStatus: "PENDING", managerEscalatedAt: null },
+      where: { campaignId: { not: null }, managerStatus: "PENDING" },
       select: {
         id: true,
         createdAt: true,
@@ -91,6 +88,7 @@ export default async function ManagerDashboardPage() {
     }),
   ]);
 
+  const pendingCount = pendingQueue.length;
   const oldestPending = pendingQueue[0]?.createdAt ?? null;
 
   const reviewSubmissionIds = reviewLogs

@@ -7,7 +7,6 @@ import AdminWithdrawalActions from "@/components/admin-withdrawal-actions";
 import AdminSecurityControlPanel from "@/components/admin-security-control-panel";
 import AdminTwoFactorToggleCard from "@/components/admin-2fa-toggle-card";
 import AdminTwoFactorRecoveryCodesCard from "@/components/admin-2fa-recovery-codes-card";
-import AdminRiskBulkActions from "@/components/admin-risk-bulk-actions";
 import { formatMoney } from "@/lib/format-money";
 import { getRateLimitStats } from "@/lib/rate-limit";
 import { auth } from "@/lib/auth";
@@ -19,22 +18,11 @@ type QueueItem = {
   openedAt: Date;
 };
 
-type SearchParams = {
-  limit?: string;
-};
-
 function hoursSince(date: Date, nowMs: number) {
   return Math.max(0, Math.floor((nowMs - date.getTime()) / (1000 * 60 * 60)));
 }
 
-export default async function AdminRiskCenterPage({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParams>;
-}) {
-  const params = await searchParams;
-  const limit =
-    params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
+export default async function AdminRiskCenterPage() {
   const session = await auth();
   if (!session) return null;
   const riskyWithdrawalThreshold = Number(process.env.RISK_WITHDRAWAL_ALERT_AMOUNT ?? 3000);
@@ -66,7 +54,7 @@ export default async function AdminRiskCenterPage({
         flaggedAt: true,
       },
       orderBy: { flaggedAt: "desc" },
-      ...(limit ? { take: limit } : {}),
+      take: 40,
     }),
     prisma.user.findMany({
       where: {
@@ -82,7 +70,7 @@ export default async function AdminRiskCenterPage({
         statusUpdatedAt: true,
       },
       orderBy: { statusUpdatedAt: "desc" },
-      ...(limit ? { take: limit } : {}),
+      take: 40,
     }),
     prisma.campaign.findMany({
       where: {
@@ -95,7 +83,7 @@ export default async function AdminRiskCenterPage({
         },
       },
       orderBy: { escalatedAt: "desc" },
-      ...(limit ? { take: limit } : {}),
+      take: 40,
     }),
     prisma.withdrawal.findMany({
       where: {
@@ -108,7 +96,7 @@ export default async function AdminRiskCenterPage({
         },
       },
       orderBy: [{ amount: "desc" }, { createdAt: "asc" }],
-      ...(limit ? { take: limit } : {}),
+      take: 50,
     }),
     prisma.ipAccessRule.findMany({
       orderBy: [{ isActive: "desc" }, { updatedAt: "desc" }],
@@ -174,35 +162,7 @@ export default async function AdminRiskCenterPage({
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <h2 className="text-3xl font-semibold">Risk Center</h2>
-          <p className="mt-2 max-w-3xl text-sm text-white/65">
-            Review suspicious accounts, escalated campaigns, and risky withdrawals from one place.
-          </p>
-        </div>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <form className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
-            <select
-              name="limit"
-              defaultValue={limit ? String(limit) : "ALL"}
-              className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white sm:min-w-[120px]"
-            >
-              <option value="5">Show 5</option>
-              <option value="10">Show 10</option>
-              <option value="20">Show 20</option>
-              <option value="ALL">Show all</option>
-            </select>
-            <button
-              type="submit"
-              className="rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white transition hover:bg-white/20"
-            >
-              Apply
-            </button>
-          </form>
-          <AdminRiskBulkActions />
-        </div>
-      </div>
+      <h2 className="text-3xl font-semibold">Risk Center</h2>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Card className="rounded-2xl border-amber-300/20 bg-amber-500/10">
@@ -239,7 +199,7 @@ export default async function AdminRiskCenterPage({
             <p className="text-sm text-emerald-300">No high-priority items right now.</p>
           ) : (
             <div className="space-y-2">
-              {queue.slice(0, limit ?? queue.length).map((item) => (
+              {queue.slice(0, 25).map((item) => (
                 <div
                   key={`${item.kind}-${item.id}`}
                   className="flex flex-col gap-1 rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between"

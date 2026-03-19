@@ -55,7 +55,7 @@ export default function AdminCampaignActions({
   const canResume = currentStatus === "APPROVED";
   const canComplete = currentStatus === "LIVE" || currentStatus === "APPROVED";
   const canEdit = currentStatus !== "COMPLETED";
-  const canDelete = currentStatus !== "COMPLETED";
+  const canDelete = currentStatus !== "LIVE" && currentStatus !== "COMPLETED";
 
   async function update(
     action:

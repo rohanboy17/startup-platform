@@ -13,7 +13,6 @@ type SearchParams = {
   q?: string;
   kyc?: "ALL" | "PENDING" | "VERIFIED" | "REJECTED";
   status?: "ALL" | "ACTIVE" | "SUSPENDED" | "BANNED";
-  limit?: string;
 };
 
 export default async function AdminBusinessesPage({
@@ -25,7 +24,6 @@ export default async function AdminBusinessesPage({
   const q = params.q?.trim() || "";
   const kycFilter = params.kyc || "ALL";
   const statusFilter = params.status || "ALL";
-  const limit = params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
 
   const where = {
     role: "BUSINESS" as const,
@@ -46,7 +44,6 @@ export default async function AdminBusinessesPage({
     prisma.user.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      ...(limit ? { take: limit } : {}),
       select: {
         id: true,
         name: true,
@@ -95,7 +92,7 @@ export default async function AdminBusinessesPage({
       </div>
 
       <SectionCard elevated className="p-4">
-          <form className="grid gap-3 md:grid-cols-5 xl:items-end">
+          <form className="grid gap-3 md:grid-cols-4">
             <input
               type="text"
               name="q"
@@ -123,30 +120,12 @@ export default async function AdminBusinessesPage({
               <option value="SUSPENDED">SUSPENDED</option>
               <option value="BANNED">BANNED</option>
             </select>
-            <select
-              name="limit"
-              defaultValue={limit ? String(limit) : "ALL"}
-              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            <button
+              type="submit"
+              className="rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/20"
             >
-              <option value="5">Show 5</option>
-              <option value="10">Show 10</option>
-              <option value="20">Show 20</option>
-              <option value="ALL">Show all</option>
-            </select>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <button
-                type="submit"
-                className="rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/20"
-              >
-                Apply Filters
-              </button>
-              <a
-                href="/dashboard/admin/businesses"
-                className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-center text-sm text-white hover:bg-white/10"
-              >
-                Clear
-              </a>
-            </div>
+              Apply Filters
+            </button>
           </form>
       </SectionCard>
 

@@ -76,7 +76,6 @@ export default function ManagerSubmissionQueuePanel() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<QueueFilter>("ALL");
   const [search, setSearch] = useState("");
-  const [limit, setLimit] = useState<"5" | "10" | "20" | "ALL">("10");
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/manager/submissions", { credentials: "include" });
@@ -139,11 +138,6 @@ export default function ManagerSubmissionQueuePanel() {
     });
   }, [data, filter, search]);
 
-  const visibleRows = useMemo(
-    () => (limit === "ALL" ? filtered : filtered.slice(0, Number(limit))),
-    [filtered, limit]
-  );
-
   if (loading) return <p className="text-sm text-white/60">Loading submissions...</p>;
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
 
@@ -161,27 +155,12 @@ export default function ManagerSubmissionQueuePanel() {
               <p className="text-sm text-white/60">Filters</p>
               <h3 className="text-xl font-semibold text-white">Sort by risk or find a submission quickly</h3>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <label className="flex items-center gap-2 text-sm text-white/60">
-                <span>Show</span>
-                <select
-                  value={limit}
-                  onChange={(e) => setLimit(e.target.value as "5" | "10" | "20" | "ALL")}
-                  className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white"
-                >
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                  <option value="ALL">Show all</option>
-                </select>
-              </label>
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search campaign, user, or proof"
-                className="min-h-11 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-sm text-white outline-none placeholder:text-white/35 lg:max-w-sm"
-              />
-            </div>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search campaign, user, or proof"
+              className="min-h-11 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-sm text-white outline-none placeholder:text-white/35 lg:max-w-sm"
+            />
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -215,7 +194,7 @@ export default function ManagerSubmissionQueuePanel() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {visibleRows.map((submission) => (
+          {filtered.map((submission) => (
             <Card key={submission.id} className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
               <CardContent className="space-y-4 p-4 sm:p-6">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">

@@ -18,7 +18,6 @@ type SearchParams = {
   role?: "ALL" | "USER" | "BUSINESS" | "MANAGER" | "ADMIN";
   status?: "ALL" | "ACTIVE" | "SUSPENDED" | "BANNED";
   flagged?: "ALL" | "FLAGGED" | "CLEAR";
-  limit?: string;
 };
 
 export default async function AdminUsersPage({
@@ -31,8 +30,6 @@ export default async function AdminUsersPage({
   const roleFilter = params.role || "ALL";
   const statusFilter = params.status || "ALL";
   const flaggedFilter = params.flagged || "ALL";
-  const limit =
-    params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
   const exportQuery = new URLSearchParams({
     q,
     role: roleFilter,
@@ -119,7 +116,6 @@ export default async function AdminUsersPage({
     users = await prisma.user.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      ...(limit ? { take: limit } : {}),
       select: {
         id: true,
         name: true,
@@ -287,7 +283,7 @@ export default async function AdminUsersPage({
       ) : null}
 
       <SectionCard elevated className="p-4">
-          <form className="grid gap-3 md:grid-cols-5">
+          <form className="grid gap-3 md:grid-cols-4">
             <input
               type="text"
               name="q"
@@ -325,17 +321,7 @@ export default async function AdminUsersPage({
               <option value="FLAGGED">Flagged</option>
               <option value="CLEAR">Clear</option>
             </select>
-            <select
-              name="limit"
-              defaultValue={limit ? String(limit) : "ALL"}
-              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
-            >
-              <option value="5">Show 5</option>
-              <option value="10">Show 10</option>
-              <option value="20">Show 20</option>
-              <option value="ALL">Show all</option>
-            </select>
-            <div className="flex flex-col gap-2 sm:flex-row md:col-span-5">
+            <div className="flex flex-col gap-2 sm:flex-row md:col-span-4">
               <button
                 type="submit"
                 className="rounded-md border border-foreground/15 bg-foreground/[0.06] px-3 py-2 text-sm text-foreground shadow-sm transition hover:bg-foreground/[0.10]"

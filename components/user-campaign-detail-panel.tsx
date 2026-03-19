@@ -350,7 +350,7 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
 
               <div className="space-y-2">
                 <label className="text-sm text-white/70">{t("proofImageLabel")}</label>
-                <div className="rounded-md border border-foreground/15 bg-background/70 p-3">
+                <div className="rounded-md border border-white/15 bg-black/20 p-3">
                   <input
                     type="file"
                     accept="image/png,image/jpeg,image/webp"
@@ -358,24 +358,24 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
                       const next = e.target.files?.[0];
                       if (next) uploadProofImage(next);
                     }}
-                    className="block w-full text-sm text-foreground/75 file:mr-4 file:rounded-md file:border-0 file:bg-foreground/10 file:px-3 file:py-2 file:text-sm file:font-medium file:text-foreground file:transition hover:file:bg-foreground/15"
+                    className="block w-full text-sm text-white/70 file:mr-4 file:rounded-md file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-white/20"
                     disabled={uploading}
                   />
-                  <p className="mt-2 text-xs text-foreground/60">{t("proofImageHelp")}</p>
+                  <p className="mt-2 text-xs text-white/55">{t("proofImageHelp")}</p>
                   {uploading ? (
-                    <p className="mt-2 text-xs text-emerald-600 dark:text-emerald-200">{t("proofImageUploading")}</p>
+                    <p className="mt-2 text-xs text-emerald-200">{t("proofImageUploading")}</p>
                   ) : null}
                   {uploadError ? (
-                    <p className="mt-2 text-xs text-rose-600 dark:text-rose-300">{uploadError}</p>
+                    <p className="mt-2 text-xs text-rose-300">{uploadError}</p>
                   ) : null}
                   {proofImageUrl ? (
-                    <div className="mt-3 rounded-lg border border-foreground/10 bg-background/80 p-3">
-                      <p className="text-xs text-foreground/60">{t("proofImageReady")}</p>
+                    <div className="mt-3 rounded-lg border border-white/10 bg-black/30 p-3">
+                      <p className="text-xs text-white/60">{t("proofImageReady")}</p>
                       <a
                         href={proofImageUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="mt-1 block break-all text-xs text-emerald-700 underline underline-offset-4 dark:text-emerald-200"
+                        className="mt-1 block break-all text-xs text-emerald-200 underline underline-offset-4"
                       >
                         {proofImageUrl}
                       </a>
@@ -383,11 +383,11 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
                       <img
                         src={proofImageUrl}
                         alt="Uploaded proof screenshot preview"
-                        className="mt-3 w-full rounded-lg border border-foreground/10 object-contain"
+                        className="mt-3 w-full rounded-lg border border-white/10 object-contain"
                       />
                       <button
                         type="button"
-                        className="mt-3 text-xs text-foreground/70 underline underline-offset-4 hover:text-foreground"
+                        className="mt-3 text-xs text-white/70 underline underline-offset-4 hover:text-white"
                         onClick={() => setProofImageUrl(null)}
                       >
                         {t("proofImageRemove")}

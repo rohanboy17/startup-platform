@@ -1,4 +1,5 @@
 import { getApps, initializeApp } from "firebase/app";
+import { getMessaging, isSupported } from "firebase/messaging";
 
 export function getFirebaseWebConfig() {
   const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
@@ -28,18 +29,10 @@ export function isFirebaseWebConfigured() {
 
 export async function getBrowserMessaging() {
   const config = getFirebaseWebConfig();
-  if (!config || typeof window === "undefined") {
-    return null;
-  }
-
-  const messagingModule = await import("firebase/messaging");
-  if (!(await messagingModule.isSupported())) {
+  if (!config || !(await isSupported())) {
     return null;
   }
 
   const app = getApps()[0] ?? initializeApp(config);
-  return {
-    messaging: messagingModule.getMessaging(app),
-    getToken: messagingModule.getToken,
-  };
+  return getMessaging(app);
 }

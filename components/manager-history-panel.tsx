@@ -65,7 +65,6 @@ export default function ManagerHistoryPanel() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>("ALL");
   const [search, setSearch] = useState("");
-  const [limit, setLimit] = useState<"5" | "10" | "20" | "ALL">("10");
   const hydrated = useHydrated();
 
   const load = useCallback(async () => {
@@ -119,11 +118,6 @@ export default function ManagerHistoryPanel() {
     });
   }, [filter, rows, search]);
 
-  const visibleRows = useMemo(
-    () => (limit === "ALL" ? filtered : filtered.slice(0, Number(limit))),
-    [filtered, limit]
-  );
-
   if (loading) return <p className="text-sm text-foreground/60">Loading history...</p>;
   if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
 
@@ -148,27 +142,12 @@ export default function ManagerHistoryPanel() {
                 </button>
               ))}
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <label className="flex items-center gap-2 text-sm text-foreground/60">
-                <span>Show</span>
-                <select
-                  value={limit}
-                  onChange={(event) => setLimit(event.target.value as "5" | "10" | "20" | "ALL")}
-                  className="rounded-xl border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground"
-                >
-                  <option value="5">5</option>
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                  <option value="ALL">Show all</option>
-                </select>
-              </label>
-              <input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search campaign, user, reason..."
-                className="w-full rounded-xl border border-foreground/20 bg-background/60 px-4 py-2 text-sm text-foreground placeholder:text-foreground/50 outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20 md:w-80"
-              />
-            </div>
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search campaign, user, reason..."
+              className="w-full rounded-xl border border-foreground/20 bg-background/60 px-4 py-2 text-sm text-foreground placeholder:text-foreground/50 outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20 md:w-80"
+            />
           </div>
         </CardContent>
       </Card>
@@ -179,7 +158,7 @@ export default function ManagerHistoryPanel() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {visibleRows.map((row) => {
+          {filtered.map((row) => {
             const status = statusLabel(row.action);
             const statusTone =
               status === "Approved"

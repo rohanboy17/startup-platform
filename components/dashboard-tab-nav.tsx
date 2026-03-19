@@ -186,7 +186,7 @@ export default function DashboardTabNav({
   }, [firstName, hour, tGreeting]);
 
   return (
-    <div className="space-y-3 md:space-y-4">
+    <div className="space-y-4">
       <div className="flex items-center justify-between md:block">
         <div>
           <h1 className="text-lg font-semibold tracking-tight md:text-xl">{greeting}</h1>
@@ -207,20 +207,20 @@ export default function DashboardTabNav({
       </div>
 
       <div
-        className={`${mobileOpen ? "block" : "hidden"} space-y-5 rounded-lg border border-foreground/10 bg-foreground/[0.04] p-4 md:block md:space-y-6 md:rounded-none md:border-0 md:bg-transparent md:p-0`}
+        className={`${mobileOpen ? "block" : "hidden"} space-y-6 rounded-lg border border-foreground/10 bg-foreground/[0.04] p-4 md:block md:rounded-none md:border-0 md:bg-transparent md:p-0`}
       >
         <div className="rounded-lg border border-foreground/10 bg-foreground/[0.04] p-3 md:border md:bg-foreground/[0.04]">
           <p className="text-xs text-foreground/50">Signed in as</p>
           <p className="text-sm font-medium text-foreground/90">{displayName}</p>
         </div>
 
-        <nav className="max-h-[50svh] space-y-2 overflow-y-auto pr-1 text-sm md:max-h-none md:space-y-4 md:overflow-visible md:pr-0">
+        <nav className="max-h-[45vh] space-y-3 overflow-y-auto pr-1 text-sm md:max-h-none md:space-y-4 md:overflow-visible md:pr-0">
           {itemsWithState.map((item) => (
             <Link
               key={item.key}
               href={item.href}
               onClick={() => setMobileOpen(false)}
-              className="flex min-h-11 items-center justify-between rounded-xl border border-foreground/10 bg-background/60 px-3 py-2 text-foreground/75 transition hover:bg-foreground/[0.06] hover:text-foreground md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:px-0 md:py-0"
+              className="flex items-center justify-between rounded-xl border border-foreground/10 bg-background/60 px-3 py-2 text-foreground/75 transition hover:bg-foreground/[0.06] hover:text-foreground md:rounded-none md:border-0 md:bg-transparent md:px-0 md:py-0"
             >
               <span className="flex items-center gap-3">
                 <item.Icon size={18} />
@@ -237,7 +237,7 @@ export default function DashboardTabNav({
           ))}
         </nav>
 
-        <div className="pt-1 md:pt-2">
+        <div className="pt-2">
           <div className="mb-3 md:hidden">
             <ThemeToggle className="w-full justify-center rounded-xl py-2 text-sm" />
           </div>

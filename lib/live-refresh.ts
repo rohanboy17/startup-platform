@@ -10,33 +10,20 @@ export function emitDashboardLiveRefresh() {
 
 export function useLiveRefresh(load: () => Promise<void> | void, intervalMs = 15000) {
   useEffect(() => {
-    const runLoad = () => {
-      try {
-        const result = load();
-        if (result && typeof (result as Promise<void>).catch === "function") {
-          void (result as Promise<void>).catch((error) => {
-            console.error("Live refresh load failed", error);
-          });
-        }
-      } catch (error) {
-        console.error("Live refresh load failed", error);
-      }
-    };
-
-    runLoad();
+    void load();
 
     const onLiveRefresh = () => {
-      runLoad();
+      void load();
     };
 
     const onFocus = () => {
-      runLoad();
+      void load();
     };
 
     window.addEventListener(DASHBOARD_LIVE_REFRESH_EVENT, onLiveRefresh);
     window.addEventListener("focus", onFocus);
     const timer = window.setInterval(() => {
-      runLoad();
+      void load();
     }, intervalMs);
 
     return () => {

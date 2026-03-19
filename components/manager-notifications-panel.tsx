@@ -4,8 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { Bell, AlertTriangle, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
+import { useLiveRefresh } from "@/lib/live-refresh";
 import { useHydrated } from "@/lib/use-hydrated";
 
 type NotificationItem = {
@@ -27,11 +26,7 @@ export default function ManagerNotificationsPanel() {
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
-  const [limit, setLimit] = useState<"5" | "10" | "20" | "ALL">("10");
-  const [message, setMessage] = useState("");
-  const [seenVersion, setSeenVersion] = useState(0);
   const hydrated = useHydrated();
-  const storageKey = "manager_review_alerts_seen";
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/manager/notifications?hours=24", { credentials: "include" });
@@ -55,68 +50,19 @@ export default function ManagerNotificationsPanel() {
 
   useLiveRefresh(load, 10000);
 
-  const seenMap = useMemo(() => {
-    const refreshToken = seenVersion;
-    if (!hydrated || typeof window === "undefined") return {} as Record<string, string>;
-    try {
-      const raw = window.localStorage.getItem(storageKey);
-      if (refreshToken < 0) return {} as Record<string, string>;
-      return raw ? (JSON.parse(raw) as Record<string, string>) : {};
-    } catch {
-      return {} as Record<string, string>;
-    }
-  }, [hydrated, seenVersion, storageKey]);
-
   const hasAlerts = items.length > 0;
 
   const grouped = useMemo(() => {
-    const unreadItems = items.filter((item) => seenMap[item.key] !== item.createdAt);
-    const visibleItems = limit === "ALL" ? unreadItems : unreadItems.slice(0, Number(limit));
-    const warnings = visibleItems.filter((item) => item.severity === "WARNING");
-    const info = visibleItems.filter((item) => item.severity === "INFO");
+    const warnings = items.filter((item) => item.severity === "WARNING");
+    const info = items.filter((item) => item.severity === "INFO");
     return { warnings, info };
-  }, [items, limit, seenMap]);
-
-  function markAllRead() {
-    if (typeof window === "undefined") return;
-    const nextSeen = { ...seenMap };
-    for (const item of items) {
-      nextSeen[item.key] = item.createdAt;
-    }
-    window.localStorage.setItem(storageKey, JSON.stringify(nextSeen));
-    setSeenVersion((value) => value + 1);
-    setMessage("Review alerts marked as read");
-    emitDashboardLiveRefresh();
-  }
+  }, [items]);
 
   if (loading) return <p className="text-sm text-foreground/60">Loading notifications...</p>;
   if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <label className="flex items-center gap-2 text-sm text-foreground/60">
-          <span>Show</span>
-          <select
-            value={limit}
-            onChange={(event) => setLimit(event.target.value as "5" | "10" | "20" | "ALL")}
-            className="rounded-xl border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground"
-          >
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="ALL">Show all</option>
-          </select>
-        </label>
-        <Button
-          variant="outline"
-          onClick={markAllRead}
-          disabled={items.length === 0 || grouped.warnings.length + grouped.info.length === 0}
-          className="border-foreground/20 bg-transparent text-foreground hover:bg-foreground/[0.04]"
-        >
-          Mark all read
-        </Button>
-      </div>
       {!hasAlerts ? (
         <Card className="rounded-3xl border-foreground/10 bg-background/50 shadow-xl shadow-black/10 dark:shadow-black/20 backdrop-blur-md">
           <CardContent className="space-y-2 p-6 text-sm text-foreground/60">
@@ -125,16 +71,6 @@ export default function ManagerNotificationsPanel() {
               <p className="font-medium">No alerts right now</p>
             </div>
             <p>Queue and risk alerts will appear here automatically.</p>
-          </CardContent>
-        </Card>
-      ) : grouped.warnings.length + grouped.info.length === 0 ? (
-        <Card className="rounded-3xl border-foreground/10 bg-background/50 shadow-xl shadow-black/10 dark:shadow-black/20 backdrop-blur-md">
-          <CardContent className="space-y-2 p-6 text-sm text-foreground/60">
-            <div className="flex items-center gap-2 text-foreground/80">
-              <Bell size={18} />
-              <p className="font-medium">No new review alerts</p>
-            </div>
-            <p>Current review alerts have already been marked as read.</p>
           </CardContent>
         </Card>
       ) : null}
@@ -189,8 +125,6 @@ export default function ManagerNotificationsPanel() {
           ))}
         </div>
       ) : null}
-
-      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }
