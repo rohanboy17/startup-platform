@@ -253,8 +253,31 @@
   }
 }
 
+@keyframes floatDockIn {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.public-float-enter {
+  animation: floatDockIn 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.public-social-chip {
+  box-shadow: 0 18px 40px -28px rgba(15, 23, 42, 0.32);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .bg-grid::after {
+    animation: none;
+  }
+
+  .public-float-enter {
     animation: none;
   }
 

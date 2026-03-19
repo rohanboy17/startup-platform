@@ -72,7 +72,10 @@
       "supportEyebrow": "সাপোর্ট",
       "supportTitle": "হেল্প লাগবে?",
       "supportBody": "সাবমিশন, ওয়ালেট বা উইথড্রে কিছু ভুল মনে হলে পাবলিক কন্ট্যাক্ট পেজ বা সেখানে দেওয়া অফিসিয়াল সাপোর্ট চ্যানেল ব্যবহার করুন।"
-    }
+    },
+    "socialTitle": "আমাদের অনুসরণ করুন",
+    "socialDescription": "নতুন লঞ্চ, সাপোর্ট আপডেট এবং কমিউনিটি খবরের সাথে যুক্ত থাকুন।",
+    "creditLine": "Designed, Developed and Maintained by FreeEarnhub"
   },
   "settings": {
     "languageTitle": "ভাষা",
@@ -146,7 +149,7 @@
       "side": {
         "eyebrow": "শুরু করুন",
         "title": "মাত্র কয়েক মিনিটে আপনার অ্যাকাউন্ট তৈরি করুন।",
-        "subtitle": "ইউজার হিসেবে verified task করে আয় করুন, বা বিজনেস হিসেবে বাস্তব campaign শুরু করুন।",
+        "subtitle": "ইউজার হিসেবে ভেরিফায়েড টাস্ক করে আয় করুন, বা বিজনেস হিসেবে বাস্তব ক্যাম্পেইন শুরু করুন।",
         "bullets": {
           "unified": "ইউজার ও ব্যবসা রোলের জন্য একক অ্যাকাউন্ট",
           "mobileIdentity": "মোবাইল নম্বর দিয়ে সহজ সাইন-আপ",
@@ -156,7 +159,7 @@
       "card": {
         "eyebrow": "নতুন অ্যাকাউন্ট তৈরি",
         "title": "FreeEarnHub-এ যোগ দিন",
-        "subtitle": "মোবাইল নম্বর দিয়ে রেজিস্টার করুন এবং আয় বা campaign শুরু করুন।"
+        "subtitle": "মোবাইল নম্বর দিয়ে রেজিস্টার করুন এবং আয় বা ক্যাম্পেইন শুরু করুন।"
       },
       "form": {
         "fullName": "পূর্ণ নাম",
@@ -190,7 +193,7 @@
   "home": {
     "landing": {
       "heroTitle": "যাচাইকৃত কাজ সম্পন্ন করে আয় করুন।",
-      "heroSubtitle": "FreeEarnHub একটি সহজ earning platform যেখানে ইউজার verified task করে আয় করে এবং বিজনেস trackable growth campaign চালায়।"
+      "heroSubtitle": "FreeEarnHub একটি সহজ আয়ের প্ল্যাটফর্ম যেখানে ইউজার ভেরিফায়েড টাস্ক করে আয় করে এবং বিজনেস ট্র্যাক করা যায় এমন গ্রোথ ক্যাম্পেইন চালায়।"
     },
     "announcements": {
       "learnMore": "আরও জানুন"
@@ -281,62 +284,66 @@
       "qrAlt": "FreeEarnHub হোমপেজের জন্য QR কোড"
     },
     "guidedVideos": {
-      "openLabel": "????? ?????",
-      "fallbackLabel": "????? ???? ????? ?????? ???",
+      "openLabel": "ভিডিও খুলুন",
+      "fallbackLabel": "ভিডিও লিংক যোগ হলে এখানে গাইড দেখা যাবে",
       "items": [
         {
           "id": "earn",
-          "tabLabel": "?? ???? ????",
-          "eyebrow": "???? ????",
-          "title": "FreeEarnHub-? ?????? ?? ???? ????? ?????",
-          "body": "???? ???? ??? ???? earning flow ?????? ????? task ???? ?????, proof submit ??? ??? review-?? ?? wallet credit ?????? ??? ??????? ?????? ????",
+          "tabLabel": "আয়ের গাইড",
+          "eyebrow": "শুরু করার ধাপ",
+          "title": "FreeEarnHub থেকে আয় শুরু করবেন যেভাবে",
+          "body": "এই ছোট গাইডে দেখানো হবে কীভাবে সঠিক টাস্ক বাছবেন, প্রুফ সাবমিট করবেন, আর অনুমোদনের পরে ওয়ালেট ক্রেডিট পাবেন।",
           "bullets": [
-            "????? verified task ????? ????? ??? ??? ???? task ?????? ???? ??????",
-            "??? proof ???? approval ????? ????? ??? ?? ??????",
-            "????? ?? wallet-? ?????? ??? ??? withdrawal ??? available ???"
+            "যে ভেরিফায়েড টাস্ক আপনি ঠিকভাবে করতে পারবেন, সেটাই বেছে নিন।",
+            "পরিষ্কার প্রুফ সাবমিট করুন যাতে অনুমোদন দ্রুত হয়।",
+            "অনুমোদনের পরে ওয়ালেট ব্যালান্স ও উইথড্র অপশন দেখে নিন।"
           ]
         },
         {
           "id": "campaign",
-          "tabLabel": "?????????? ?????",
-          "eyebrow": "?????? ????",
-          "title": "?????? ?????? ?????????? ????? ?? ?????",
-          "body": "?? ????? wallet funding ???? task creation, reviewed submissions ??? campaign performance tracking ??????? ???? flow ???????????? ?????? ??????",
+          "tabLabel": "ক্যাম্পেইন গাইড",
+          "eyebrow": "বিজনেসের জন্য",
+          "title": "বিজনেস ক্যাম্পেইন চালু করবেন যেভাবে",
+          "body": "এই গাইডে দেখানো হয় কীভাবে ওয়ালেটে ফান্ড যোগ করবেন, টাস্ক তৈরি করবেন, আর সাবমিশন ও ক্যাম্পেইন পারফরম্যান্স ট্র্যাক করবেন।",
           "bullets": [
-            "wallet funding, budget setup ??? reward planning ?????? ?? ?? ??????",
-            "result approve ????? ??? submissions ?????? review ?? ?? ??????",
-            "dashboard ???? spend, approvals ??? campaign health ?????? track ????? ?? ??????"
+            "ওয়ালেট ফান্ডিং, বাজেট সেটআপ আর প্রতি টাস্ক রিওয়ার্ড আগে ঠিক করুন।",
+            "লঞ্চের পর সাবমিশন রিভিউ ও অনুমোদন ফ্লো নজরে রাখুন।",
+            "ড্যাশবোর্ডে স্পেন্ড, অনুমোদন আর ক্যাম্পেইন হেলথ নিয়মিত ট্র্যাক করুন।"
           ]
         }
       ]
     },
     "testimonials": {
-      "eyebrow": "???????????? ?????",
-      "title": "??? ????? FreeEarnHub-? ???? ???",
-      "subtitle": "???????? review, ??? ??? ??? ???? ???? earnings users ? businesses ??? ??????? ???? ????? ???? ????",
+      "eyebrow": "ইউজার অভিজ্ঞতা",
+      "title": "মানুষ FreeEarnHub সম্পর্কে কী বলছে",
+      "subtitle": "পরিষ্কার রিভিউ, সহজ ধাপ আর নির্ভরযোগ্য আয়ের অভিজ্ঞতা ইউজার ও বিজনেস — দুপক্ষের জন্যই প্ল্যাটফর্মকে বুঝতে সহজ করে।",
       "items": [
         {
-          "quote": "Task flow ???? ???? ?? ???? ???, proof ?????? submit ???? ??? ?? result ????? ????? ???, ?? ???????? ???? ????",
+          "quote": "টাস্ক ফ্লো বোঝা সহজ। প্রুফ সাবমিট করার পর প্রতিটি ফল স্পষ্ট দেখা যায়, তাই পরের ধাপে কী হবে সেটা বুঝতে অসুবিধা হয় না।",
           "name": "Riya S.",
-          "role": "Verified user"
+          "role": "ভেরিফায়েড ইউজার"
         },
         {
-          "quote": "Campaign side ???????? ??? practical? ??? wallet fund ???? ????, ??? launch ???? ???? ??? confusion ????? ?? track ???? ?????",
+          "quote": "ক্যাম্পেইনের দিকটা পরিষ্কার আর ব্যবহারিক। আমি ওয়ালেট ফান্ড করতে পারি, কাজ চালু করতে পারি, আর ঝামেলা ছাড়া সব আপডেট ট্র্যাক করতে পারি।",
           "name": "Arjun K.",
-          "role": "Business owner"
+          "role": "বিজনেস ওনার"
         },
         {
-          "quote": "Review system controlled ?? transparent ????? Checks, status ?? history ???? ???? platform-?? ??? trust ?????",
+          "quote": "রিভিউ সিস্টেমটি নিয়ন্ত্রিত এবং স্বচ্ছ লাগে। চেক, স্ট্যাটাস আর হিস্ট্রি পরিষ্কার দেখা গেলে প্ল্যাটফর্মের উপর বিশ্বাসও বাড়ে।",
           "name": "Nadia R.",
-          "role": "Operations lead"
+          "role": "অপারেশনস লিড"
         }
       ]
+    },
+    "channels": {
+      "whatsapp": "WhatsApp-এ যোগ দিন",
+      "telegram": "Telegram-এ যোগ দিন"
     }
   },
   "about": {
     "eyebrow": "আমাদের সম্পর্কে",
     "title": "FreeEarnHub সম্পর্কে",
-    "description": "FreeEarnHub একটি বিশ্বস্ত earning platform যেখানে বিজনেস campaign চালায় এবং ইউজার verified work থেকে আয় করে।",
+    "description": "FreeEarnHub একটি বিশ্বস্ত আয়ের প্ল্যাটফর্ম যেখানে বিজনেস ক্যাম্পেইন চালায় এবং ইউজার ভেরিফায়েড কাজ থেকে আয় করে।",
     "sections": {
       "build": {
         "title": "আমরা কী তৈরি করি",
@@ -388,7 +395,7 @@
   "contact": {
     "eyebrow": "সাপোর্ট",
     "title": "FreeEarnHub-এ যোগাযোগ",
-    "description": "অ্যাকাউন্ট, পেমেন্ট, KYC বা campaign নিয়ে সাহায্য লাগলে FreeEarnHub সাপোর্ট টিমের সাথে যোগাযোগ করুন।",
+    "description": "অ্যাকাউন্ট, পেমেন্ট, KYC বা ক্যাম্পেইন নিয়ে সাহায্য লাগলে FreeEarnHub সাপোর্ট টিমের সাথে যোগাযোগ করুন।",
     "supportEmailTitle": "সাপোর্ট ইমেইল",
     "supportEmailLead": "প্রধান সাপোর্ট চ্যানেল:",
     "supportResponse": "সাধারণত প্রথম উত্তর: ২৪ থেকে ৪৮ কর্মঘণ্টার মধ্যে।",
@@ -396,7 +403,13 @@
     "hoursDays": "সোমবার থেকে শনিবার",
     "hoursTime": "সকাল ১০:০০ থেকে সন্ধ্যা ৭:০০ (IST)",
     "hoursNote": "জরুরি পেআউট বা সিকিউরিটি ইন্সিডেন্ট অগ্রাধিকার পায়।",
-    "addressTitle": "রেজিস্টার্ড সাপোর্ট ঠিকানা"
+    "addressTitle": "রেজিস্টার্ড সাপোর্ট ঠিকানা",
+    "communityTitle": "কমিউনিটি চ্যানেল",
+    "communityLead": "আপডেট, লঞ্চ খবর এবং সাপোর্ট নোটিস পেতে আমাদের পাবলিক চ্যানেলে যোগ দিন।",
+    "whatsappLabel": "WhatsApp-এ যোগ দিন",
+    "telegramLabel": "Telegram-এ যোগ দিন",
+    "socialTitle": "সোশ্যাল প্রোফাইল",
+    "socialLead": "প্রোডাক্ট আপডেট এবং ঘোষণার জন্য FreeEarnHub-কে সোশ্যাল প্ল্যাটফর্মে ফলো করুন।"
   },
   "user": {
     "overview": {
@@ -458,7 +471,12 @@
       "txFallback": "ওয়ালেট ট্রানজ্যাকশন",
       "loading": "ওয়ালেট লোড হচ্ছে...",
       "failed": "ওয়ালেট লোড করা যায়নি",
-      "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স"
+      "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+      "subtitle": "এক জায়গা থেকে আপনার উপলব্ধ ব্যালেন্স, আয় ইতিহাস এবং পেমেন্টের চলাচল দেখুন।",
+      "controls": {
+        "show": "দেখান",
+        "showAll": "সব দেখান"
+      }
     },
     "withdrawals": {
       "eyebrow": "পেআউট সেন্টার",
@@ -483,7 +501,13 @@
       "emergencyLabel": "ইমার্জেন্সি উইথড্র",
       "adminNote": "অ্যাডমিন নোট: {note}",
       "failed": "উইথড্র লোড করা যায়নি",
-      "unexpected": "অপ্রত্যাশিত রেসপন্স"
+      "unexpected": "অপ্রত্যাশিত রেসপন্স",
+      "subtitle": "পেআউট অনুরোধ করুন, অপেক্ষমান রিভিউ দেখুন, এবং অনুমোদিত বা বাতিল উত্তোলনের অনুরোধ ট্র্যাক করুন।",
+      "controls": {
+        "show": "দেখান",
+        "showAll": "সব দেখান"
+      },
+      "upiFallback": "UPI"
     },
     "withdrawRequest": {
       "title": "উইথড্র রিকোয়েস্ট",
@@ -535,7 +559,11 @@
       "failed": "সাবমিশন লোড করা যায়নি",
       "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
       "openScreenshot": "স্ক্রিনশট খুলুন",
-      "screenshotUploaded": "স্ক্রিনশট প্রুফ আপলোড হয়েছে। দেখতে প্রিভিউ বাটন ব্যবহার করুন।"
+      "screenshotUploaded": "স্ক্রিনশট প্রুফ আপলোড হয়েছে। দেখতে প্রিভিউ বাটন ব্যবহার করুন।",
+      "controls": {
+        "show": "দেখান",
+        "showAll": "সব দেখান"
+      }
     },
     "tasks": {
       "title": "লাইভ ক্যাম্পেইন",
@@ -676,7 +704,7 @@
     "skills": {
       "eyebrow": "ইউজার প্রোফাইল",
       "title": "স্কিলস",
-      "subtitle": "আপনার স্কিলস যোগ করুন যাতে অ্যাডমিন আপনাকে invite-only work campaigns-এর সাথে match করতে পারে।"
+      "subtitle": "আপনার স্কিলস যোগ করুন যাতে অ্যাডমিন আপনাকে শুধু আমন্ত্রণভিত্তিক কাজের ক্যাম্পেইনের সাথে মিলিয়ে নিতে পারে।"
     },
     "settings": {
       "eyebrow": "ইউজার সেটিংস",
@@ -717,6 +745,143 @@
       "supportEyebrow": "সাপোর্ট",
       "supportTitle": "হেল্প লাগবে?",
       "supportBody": "সাবমিশন, ওয়ালেট বা উইথড্রে কিছু ভুল মনে হলে পাবলিক কন্ট্যাক্ট পেজ বা সেখানে দেওয়া অফিসিয়াল সাপোর্ট চ্যানেল ব্যবহার করুন।"
+    },
+    "profilePage": {
+      "eyebrow": "ইউজার প্রোফাইল",
+      "title": "প্রোফাইল",
+      "subtitle": "আপনার ব্যক্তিগত ও কাজের তথ্য যোগ করুন যাতে প্ল্যাটফর্ম আপনাকে সঠিক আয়ের সুযোগের সাথে মিলিয়ে দিতে পারে।"
+    },
+    "profile": {
+      "loading": "প্রোফাইল লোড হচ্ছে...",
+      "basicEyebrow": "বেসিক প্রোফাইল",
+      "basicTitle": "ব্যক্তিগত তথ্য",
+      "basicSubtitle": "আপনার প্রোফাইল সম্পূর্ণ রাখুন যাতে অ্যাডমিন আপনাকে সঠিক ওয়ার্ক-বেসড ক্যাম্পেইনের সাথে মিলাতে পারেন।",
+      "placeholders": {
+        "name": "নাম",
+        "mobile": "মোবাইল নম্বর",
+        "address": "ঠিকানা",
+        "selectGender": "লিঙ্গ নির্বাচন করুন",
+        "religion": "ধর্ম",
+        "educationQualification": "শিক্ষাগত যোগ্যতা",
+        "courseAndCertificate": "কোর্স ও সার্টিফিকেটের বিবরণ",
+        "addSkill": "একটি স্কিল যোগ করুন",
+        "addLanguage": "একটি ভাষা যোগ করুন"
+      },
+      "genderOptions": {
+        "MALE": "পুরুষ",
+        "FEMALE": "মহিলা",
+        "OTHER": "অন্যান্য",
+        "PREFER_NOT_TO_SAY": "না বলতে চাই"
+      },
+      "labels": {
+        "age": "বয়স",
+        "email": "ইমেইল",
+        "role": "রোল",
+        "created": "তৈরি",
+        "workMode": "ওয়ার্ক মোড",
+        "workTime": "কাজের সময়",
+        "workingPreference": "কাজের পছন্দ",
+        "skills": "স্কিলস",
+        "languages": "ভাষা"
+      },
+      "workProfileEyebrow": "ওয়ার্ক প্রোফাইল",
+      "workProfileTitle": "উপস্থিতি ও পছন্দ",
+      "workProfileSubtitle": "এই তথ্যগুলো অ্যাডমিনকে বুঝতে সাহায্য করে আপনি কী ধরনের কাজ নিতে পারবেন।",
+      "workModeOptions": {
+        "default": "ওয়ার্ক মোড",
+        "WORK_FROM_HOME": "বাড়ি থেকে কাজ",
+        "WORK_FROM_OFFICE": "অফিস থেকে কাজ",
+        "WORK_IN_FIELD": "ফিল্ডে কাজ"
+      },
+      "workTimeOptions": {
+        "default": "কাজের সময়",
+        "FULL_TIME": "ফুল টাইম",
+        "PART_TIME": "পার্ট টাইম"
+      },
+      "workingPreferenceOptions": {
+        "default": "কাজের পছন্দ",
+        "SALARIED": "বেতনভিত্তিক",
+        "FREELANCE_CONTRACTUAL": "ফ্রিল্যান্স কন্ট্রাকচুয়াল",
+        "DAY_BASIS": "দিনভিত্তিক"
+      },
+      "skillsTitle": "আপনি কী কাজ করতে পারেন?",
+      "skillsSubtitle": "যে স্কিলগুলো অ্যাডমিন কাজভিত্তিক ক্যাম্পেইনে আপনাকে অ্যাসাইন করার সময় ব্যবহার করবেন, সেগুলো যোগ করুন।",
+      "languagesTitle": "আপনি কোন ভাষায় কাজ করতে পারেন",
+      "languagesSubtitle": "যে ভাষায় আপনি স্বচ্ছন্দে কথা বলতে বা কাজ করতে পারেন, সেগুলো যোগ করুন।",
+      "emptySkills": "এখনও কোনো স্কিল নেই। শুরু করতে ৩ থেকে ৬টি স্কিল যোগ করুন।",
+      "emptyLanguages": "এখনও কোনো ভাষা যোগ করা হয়নি।",
+      "add": "যোগ করুন",
+      "saving": "সেভ হচ্ছে...",
+      "saveProfile": "প্রোফাইল সেভ করুন",
+      "profileUpdated": "প্রোফাইল আপডেট হয়েছে",
+      "errors": {
+        "unexpectedResponse": "অপ্রত্যাশিত রেসপন্স",
+        "unexpectedServerResponse": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+        "failedToLoadProfile": "প্রোফাইল লোড করা যায়নি",
+        "failedToLoadSkills": "স্কিল লোড করা যায়নি",
+        "failedToSaveProfile": "প্রোফাইল সেভ করা যায়নি",
+        "failedToSaveSkills": "স্কিল সেভ করা যায়নি"
+      }
+    },
+    "notificationsPage": {
+      "eyebrow": "ইনবক্স",
+      "title": "নোটিফিকেশন",
+      "subtitle": "অনুমোদন, বাতিল, পেআউট আপডেট এবং সিস্টেম নোটিস এক লাইভ ফিডে দেখুন।"
+    },
+    "notificationsPanel": {
+      "errors": {
+        "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+        "failed": "নোটিফিকেশন লোড করা যায়নি"
+      },
+      "loading": "নোটিফিকেশন লোড হচ্ছে...",
+      "kpis": {
+        "totalNotifications": "মোট নোটিফিকেশন",
+        "unread": "অপঠিত",
+        "successUpdates": "সফল আপডেট",
+        "warnings": "সতর্কতা"
+      },
+      "filtersHeader": {
+        "eyebrow": "ইনবক্স ফিল্টার",
+        "title": "অপঠিত বা নোটিফিকেশন ধরনের ভিত্তিতে সাজান",
+        "show": "দেখান",
+        "showAll": "সব দেখান",
+        "markAllRead": "সবগুলোকে পঠিত হিসেবে চিহ্নিত করুন",
+        "updating": "আপডেট হচ্ছে..."
+      },
+      "filters": {
+        "all": "সব",
+        "unread": "অপঠিত",
+        "success": "সফল",
+        "warning": "সতর্কতা",
+        "info": "তথ্য"
+      },
+      "empty": "বর্তমান ফিল্টারের সাথে মেলে এমন কোনো নোটিফিকেশন নেই।",
+      "actions": {
+        "saving": "সেভ হচ্ছে...",
+        "markRead": "পঠিত চিহ্নিত করুন",
+        "updated": "নোটিফিকেশন আপডেট হয়েছে",
+        "updateFailed": "নোটিফিকেশন আপডেট করা যায়নি"
+      },
+      "unreadBadge": "অপঠিত"
+    },
+    "notificationsList": {
+      "unread": "অপঠিত: {count}",
+      "empty": "এখনও কোনো নোটিফিকেশন নেই।",
+      "controls": {
+        "show": "দেখান",
+        "showAll": "সব দেখান"
+      },
+      "actions": {
+        "updating": "আপডেট হচ্ছে...",
+        "markAllRead": "সবগুলোকে পঠিত হিসেবে চিহ্নিত করুন",
+        "saving": "সেভ হচ্ছে...",
+        "markRead": "পঠিত চিহ্নিত করুন",
+        "updated": "আপডেট হয়েছে"
+      },
+      "errors": {
+        "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+        "updateFailed": "নোটিফিকেশন আপডেট করা যায়নি"
+      }
     }
   },
   "business": {
@@ -815,6 +980,198 @@
         "title": "ওয়ালেট ট্রানজ্যাকশন",
         "empty": "এখনও কোনো ট্রানজ্যাকশন নেই।",
         "fallbackNote": "ওয়ালেট আপডেট"
+      }
+    },
+    "manualFunding": {
+      "loading": "ফান্ডিং ড্যাশবোর্ড লোড হচ্ছে...",
+      "labels": {
+        "notAvailable": "উপলভ্য নয়"
+      },
+      "status": {
+        "pending": "পেন্ডিং",
+        "approved": "অ্যাপ্রুভড",
+        "rejected": "রিজেক্টেড"
+      },
+      "errors": {
+        "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+        "loadUnexpected": "ফান্ডিং ডিটেল লোড করার সময় অপ্রত্যাশিত সার্ভার রেসপন্স পাওয়া গেছে।",
+        "failedToLoad": "ফান্ডিং ডিটেল লোড করা যায়নি।",
+        "copyFailed": "এখন কপি করা যাচ্ছে না। অনুগ্রহ করে ম্যানুয়ালি কপি করুন।",
+        "generateBeforeShare": "QR শেয়ার করার আগে পেমেন্ট ডিটেল জেনারেট করুন।",
+        "shareFailed": "এখন QR শেয়ার করা যাচ্ছে না।",
+        "generateBeforeDownload": "QR ডাউনলোড করার আগে পেমেন্ট ডিটেল জেনারেট করুন।",
+        "downloadFailed": "এখন QR ডাউনলোড করা যাচ্ছে না।",
+        "manualFundingDisabled": "ম্যানুয়াল ফান্ডিং এখনো কনফিগার করা হয়নি। আগে UPI ID বা ফোন নম্বর যোগ করুন।",
+        "minimumFunding": "ন্যূনতম ফান্ডিং অ্যামাউন্ট {amount}।",
+        "imageTooLarge": "কমপ্রেশন করার পর ইমেজ 500 KB-এর নিচে থাকতে হবে।",
+        "uploadUnexpected": "অপ্রত্যাশিত আপলোড রেসপন্স",
+        "uploadFailed": "স্ক্রিনশট আপলোড করা যায়নি।",
+        "generateBeforeSubmit": "ফান্ডিং রিকোয়েস্ট ট্র্যাক করার জন্য আগে পেমেন্ট ডিটেল জেনারেট করুন।",
+        "uploadBeforeVerify": "ভেরিফিকেশনের আগে পেমেন্ট স্ক্রিনশট আপলোড করুন।",
+        "submitFundingFailed": "ফান্ডিং রিকোয়েস্ট সাবমিট করা যায়নি।",
+        "invalidRefundAmount": "অনুগ্রহ করে বৈধ রিফান্ড অ্যামাউন্ট লিখুন।",
+        "refundTooHigh": "রিফান্ড অ্যামাউন্ট আপনার রিফান্ড-যোগ্য ব্যালেন্সের চেয়ে বেশি হতে পারবে না।",
+        "submitRefundFailed": "রিফান্ড রিকোয়েস্ট সাবমিট করা যায়নি।"
+      },
+      "messages": {
+        "copied": "ক্লিপবোর্ডে কপি করা হয়েছে।",
+        "qrShared": "পেমেন্ট QR শেয়ার করা হয়েছে।",
+        "shareFallback": "এই ডিভাইসে শেয়ার অপশন নেই। পেমেন্ট ডিটেল কপি করা হয়েছে।",
+        "qrDownloaded": "QR ডাউনলোড করা হয়েছে।",
+        "fundingSubmitted": "ফান্ডিং রিকোয়েস্ট সাবমিট করা হয়েছে।",
+        "refundSubmitted": "রিফান্ড রিকোয়েস্ট সাবমিট করা হয়েছে।"
+      },
+      "hero": {
+        "eyebrow": "ম্যানুয়াল বিজনেস ফান্ডিং",
+        "title": "QR, UPI বা ফোন পেমেন্ট দিয়ে ফান্ড যোগ করুন",
+        "description": "এখন আমরা ম্যানুয়াল পেমেন্ট রিভিউ ফ্লো ব্যবহার করছি। নিচের ডিটেল দিয়ে পেমেন্ট করুন, রসিদ আপলোড করুন, তারপর ভেরিফিকেশনের পরে আমাদের টিম ওয়ালেটে ক্রেডিট করবে।",
+        "chip1": "ম্যানুয়াল অ্যাডমিন রিভিউ",
+        "chip2": "রেফারেন্স ID ট্র্যাকড",
+        "chip3": "স্ক্রিনশট আবশ্যক",
+        "chip4": "0% অ্যাড-ফান্ড ফি"
+      },
+      "notConfigured": {
+        "title": "ম্যানুয়াল ফান্ডিং এখনো কনফিগার করা হয়নি",
+        "body": "আগে environment-এ ফান্ডিং UPI ID বা ফোন নম্বর যোগ করুন, তারপর এই পেমেন্ট ফ্লো বিজনেসের জন্য উপলভ্য হবে।"
+      },
+      "ownerOnlyBanner": {
+        "title": "বিলিং অ্যাকশন শুধু বিজনেস ওনারের জন্য",
+        "body": "আপনি এখানে ফান্ডিং হিস্ট্রি দেখতে পারবেন, কিন্তু নতুন ওয়ালেট ফান্ডিং রিকোয়েস্ট শুধু বিজনেস ওনার সাবমিট করতে পারবেন।"
+      },
+      "kpis": {
+        "availableWallet": "উপলভ্য ওয়ালেট",
+        "lockedBudget": "লক বাজেট",
+        "approvedFunding": "অ্যাপ্রুভড ফান্ডিং",
+        "waitingReview": "রিভিউ অপেক্ষায়"
+      },
+      "pricing": {
+        "eyebrow": "ওয়ালেট প্রাইসিং",
+        "title": "বিজনেস ওয়ালেট ফি স্ট্রাকচার",
+        "description": "লঞ্চ ফেজে টপ-আপ ফ্রি। রিফান্ডে reviewed refund fee প্রযোজ্য হয় যাতে সাবমিট করার আগে নিয়ম পরিষ্কার থাকে।",
+        "launchModel": "লঞ্চ মডেল",
+        "addFundFeeLabel": "অ্যাড-ফান্ড ফি",
+        "addFundFeeHelp": "ওয়ালেট টপ-আপে প্রযোজ্য। এখন লঞ্চে মওকুফ।",
+        "liveNow": "এখন চালু",
+        "refundFeeLabel": "রিফান্ড ফি",
+        "refundFeeHelp": "শুধু তখন প্রযোজ্য যখন রিফান্ড রিকোয়েস্ট রিভিউয়ের পরে অ্যাপ্রুভ হয়।",
+        "manualReview": "ম্যানুয়াল রিভিউ",
+        "usageTitle": "এই ফিগুলো কীভাবে ব্যবহার করবেন",
+        "usageBody1": "যখন QR বা UPI দিয়ে দ্রুত campaign budget বাড়াতে চান, তখন add-fund ব্যবহার করুন।",
+        "usageBody2": "যখন রিভিউয়ের পরে approved unused wallet balance ফেরত চান, তখন refund ব্যবহার করুন।",
+        "usageNote": "নিচের funding এবং refund card একই pricing model অনুসরণ করে।"
+      },
+      "steps": {
+        "eyebrow": "ফান্ডিং স্টেপ",
+        "title": "5টি পরিষ্কার ধাপে পেমেন্ট সম্পন্ন করুন",
+        "item1": "যত টাকা যোগ করতে চান, তা লিখুন।",
+        "item2": "একটি unique reference ID তৈরির জন্য payment details generate করুন।",
+        "item3": "QR, UPI ID বা ফোন নম্বর দিয়ে পেমেন্ট করুন এবং note-এ reference ID লিখুন।",
+        "item4": "পেমেন্টের স্ক্রিনশট আপলোড করুন এবং থাকলে UTR-ও যোগ করুন।",
+        "item5": "Verify চাপুন, তারপর দ্রুত রিভিউয়ের জন্য রসিদ WhatsApp-এ পাঠান।"
+      },
+      "generator": {
+        "eyebrow": "ফান্ডিং শুরু করুন",
+        "title": "পেমেন্ট ডিটেল জেনারেট করুন",
+        "ownerOnly": "শুধু ওনার",
+        "amountPlaceholder": "অ্যামাউন্ট লিখুন (মিন {amount})",
+        "button": "পেমেন্ট ডিটেল জেনারেট করুন"
+      },
+      "details": {
+        "referenceId": "রেফারেন্স ID",
+        "upiId": "UPI ID",
+        "accountName": "অ্যাকাউন্ট নাম: {name}",
+        "phoneNumber": "ফোন নম্বর",
+        "scanAndPay": "স্ক্যান করুন এবং পে করুন",
+        "scanHelpBefore": "ঠিক পরিমাণ পে করুন এবং note-এ",
+        "scanHelpAfter": "লিখুন।",
+        "qrAlt": "বিজনেস ফান্ডিং QR কোড",
+        "qrPending": "পেমেন্ট ডিটেল জেনারেট হওয়ার পরে QR এখানে দেখা যাবে।",
+        "tip": "স্ক্রিনশট পরিষ্কার এবং পড়ার মতো রাখুন। সম্ভব হলে note-এ reference ID লিখুন যাতে রিভিউ টিম দ্রুত approve করতে পারে।"
+      },
+      "actions": {
+        "copy": "কপি",
+        "openPaytm": "Paytm / UPI app খুলুন",
+        "openUpi": "UPI app খুলুন",
+        "downloadQr": "QR ডাউনলোড করুন",
+        "shareQr": "QR শেয়ার করুন",
+        "openScreenshot": "স্ক্রিনশট খুলুন"
+      },
+      "share": {
+        "title": "FreeEarnHub wallet funding",
+        "sheetTitle": "FreeEarnHub funding QR",
+        "amount": "অ্যামাউন্ট: {amount}",
+        "reference": "Reference ID: {referenceId}",
+        "upi": "UPI ID: {upiId}"
+      },
+      "verification": {
+        "eyebrow": "রসিদ ভেরিফিকেশন",
+        "title": "স্ক্রিনশট আপলোড করুন এবং অ্যাপ্রুভালের জন্য পাঠান",
+        "description": "পেমেন্টের পরে এখানে স্ক্রিনশট আপলোড করুন। প্রতিটি রিকোয়েস্ট ম্যানুয়ালি রিভিউ হয়, তারপর ওয়ালেটে ক্রেডিট করা হয়।",
+        "utrLabel": "UTR / transaction ID (optional)",
+        "utrPlaceholder": "আপনার payment app যদি UTR দেখায়, তাহলে এখানে যোগ করুন",
+        "uploadLabel": "পেমেন্ট স্ক্রিনশট আপলোড করুন",
+        "uploadHelp": "একটি স্ক্রিনশট। JPG, PNG বা WEBP। কমপ্রেশনের পরে সর্বোচ্চ 500 KB।",
+        "uploading": "স্ক্রিনশট আপলোড হচ্ছে...",
+        "previewAlt": "ফান্ডিং প্রুফ প্রিভিউ",
+        "ready": "স্ক্রিনশট ভেরিফিকেশনের জন্য প্রস্তুত।",
+        "remove": "স্ক্রিনশট সরান",
+        "submitting": "সাবমিট হচ্ছে...",
+        "verifyButton": "পেমেন্ট ভেরিফাই করুন"
+      },
+      "whatsapp": {
+        "title": "ফান্ডিং রিকোয়েস্ট রিভিউয়ের জন্য পাঠানো হয়েছে",
+        "description": "দ্রুত ম্যানুয়াল ভেরিফিকেশনের জন্য রসিদ WhatsApp-এ পাঠান।",
+        "button": "রসিদ WhatsApp-এ পাঠান"
+      },
+      "refund": {
+        "eyebrow": "রিফান্ড রিকোয়েস্ট",
+        "title": "unused wallet balance বাইরে তুলুন",
+        "zeroFee": "0% ফি",
+        "feeBadge": "{rate}% ফি",
+        "descriptionBefore": "রিফান্ড রিকোয়েস্টে business refund fee setting প্রযোজ্য। এখন refund fee হলো",
+        "descriptionZeroFee": "আপনার পুরো requested amount ফেরত যাবে।",
+        "descriptionWithFee": "ফি কেটে যাওয়ার পরে কত পাবেন, তা নিচে দেখানো আছে।",
+        "amountPlaceholder": "রিফান্ড অ্যামাউন্ট লিখুন (ম্যাক্স {amount})",
+        "processing": "প্রসেস হচ্ছে...",
+        "button": "রিফান্ড রিকোয়েস্ট করুন",
+        "cards": {
+          "refundFee": "রিফান্ড ফি",
+          "refundFeeHelp": "রিফান্ড রিকোয়েস্ট অ্যাপ্রুভ হওয়ার পরে প্রযোজ্য হয়।",
+          "refundPolicy": "রিফান্ড নীতি",
+          "refundPolicyHelp": "শুধু যতটুকু refundable wallet balance আছে ততটাই রিকোয়েস্ট করুন। net amount preview সাবমিটের আগে দেখা যাবে।"
+        },
+        "breakdown": {
+          "refundableBalance": "রিফান্ড-যোগ্য ব্যালেন্স",
+          "requested": "রিকোয়েস্টেড",
+          "walletFee": "ওয়ালেট ফি",
+          "netRefund": "নেট রিফান্ড"
+        }
+      },
+      "history": {
+        "eyebrow": "সাম্প্রতিক ফান্ডিং রিকোয়েস্ট",
+        "title": "অ্যাপ্রুভাল স্টেটাস ট্র্যাক করুন",
+        "empty": "এখনো কোনো ম্যানুয়াল ফান্ডিং রিকোয়েস্ট নেই।",
+        "referenceId": "Reference ID: {referenceId}",
+        "utr": "UTR: {utr}",
+        "reviewFlag": "Review flag: {reason}",
+        "adminNote": "Admin note: {note}",
+        "reviewed": "Reviewed: {date}",
+        "proofTitle": "ফান্ডিং প্রুফ স্ক্রিনশট"
+      },
+      "walletActivity": {
+        "eyebrow": "ওয়ালেট অ্যাক্টিভিটি",
+        "title": "ফান্ডিং ক্রেডিট ও ডেবিট",
+        "empty": "এখনো কোনো ওয়ালেট অ্যাক্টিভিটি নেই।",
+        "fallbackNote": "বিজনেস ওয়ালেট আপডেট"
+      },
+      "refundHistory": {
+        "eyebrow": "রিফান্ড রিকোয়েস্ট",
+        "title": "রিফান্ড অ্যাপ্রুভাল স্টেটাস ট্র্যাক করুন",
+        "empty": "এখনো কোনো রিফান্ড রিকোয়েস্ট নেই।",
+        "requestNote": "Request note: {note}",
+        "reviewFlag": "Review flag: {reason}",
+        "adminNote": "Admin note: {note}",
+        "reviewed": "Reviewed: {date}"
       }
     },
     "create": {
@@ -1356,7 +1713,807 @@
       "compliance": "কমপ্লায়েন্স",
       "cms": "কনটেন্ট ও CMS",
       "auditLogs": "অডিট লগ",
-      "systemSettings": "সিস্টেম সেটিংস"
+      "systemSettings": "সিস্টেম সেটিংস",
+      "profile": "প্রোফাইল"
+    },
+    "shell": {
+      "signedInAs": "এই নামে সাইন ইন করা আছে",
+      "mainHome": "মূল হোম",
+      "forgotPassword": "পাসওয়ার্ড ভুলে গেছেন",
+      "openMenu": "মেনু খুলুন",
+      "closeMenu": "মেনু বন্ধ করুন"
+    },
+    "loading": {
+      "dashboard": "ড্যাশবোর্ড লোড হচ্ছে...",
+      "admin": "অ্যাডমিন প্যানেল লোড হচ্ছে...",
+      "manager": "ম্যানেজার ড্যাশবোর্ড লোড হচ্ছে...",
+      "user": "আপনার ড্যাশবোর্ড লোড হচ্ছে..."
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "eyebrow": "অ্যাডমিন অপারেশনস",
+      "title": "অ্যাডমিন ওভারভিউ",
+      "subtitle": "প্ল্যাটফর্মের অবস্থা, রিভিউ কিউ, রিস্ক সিগন্যাল এবং জরুরি কাজ এক জায়গা থেকে দেখুন।",
+      "kpis": {
+        "totalUsers": "মোট ইউজার",
+        "businesses": "বিজনেস",
+        "revenue": "রেভিনিউ",
+        "liveCampaigns": "লাইভ ক্যাম্পেইন",
+        "managers": "ম্যানেজার",
+        "pendingCampaigns": "পেন্ডিং ক্যাম্পেইন",
+        "pendingWithdrawals": "পেন্ডিং উইথড্রয়াল",
+        "pendingBusinessKyc": "পেন্ডিং বিজনেস KYC",
+        "totalSubmissions": "মোট সাবমিশন",
+        "pendingFinalReviews": "পেন্ডিং ফাইনাল রিভিউ"
+      },
+      "systemHealth": {
+        "title": "সিস্টেম হেলথ",
+        "database": "ডাটাবেস",
+        "cron": "ক্রন (ডেইলি রিসেট)",
+        "payouts": "পেআউট",
+        "moderationQueue": "মডারেশন কিউ",
+        "statuses": {
+          "healthy": "সুস্থ",
+          "issue": "সমস্যা",
+          "onTime": "সময়মতো",
+          "delayed": "বিলম্বিত",
+          "noFailures": "কোনো ব্যর্থতা নেই",
+          "checkNeeded": "চেক দরকার",
+          "onTrack": "ঠিক চলছে",
+          "attentionNeeded": "মনোযোগ দরকার"
+        }
+      },
+      "actionAlerts": {
+        "title": "অ্যাকশন অ্যালার্ট",
+        "empty": "এখন কোনো গুরুতর অ্যালার্ট নেই।",
+        "items": {
+          "withdrawalsPending": "{count}টি উইথড্রয়াল রিকোয়েস্ট ২৪ ঘণ্টার বেশি সময় ধরে পেন্ডিং আছে।",
+          "adminReviewsPending": "{count}টি ম্যানেজার-অ্যাপ্রুভড সাবমিশন ২৪ ঘণ্টার বেশি সময় ধরে অ্যাডমিন রিভিউর অপেক্ষায় আছে।",
+          "failedPayments": "{count}টি ফেলড পেমেন্ট অর্ডার মিলিয়ে দেখা দরকার।",
+          "suspiciousUsers": "{count}টি সন্দেহজনক ইউজার অ্যাকাউন্ট ফ্ল্যাগ করা আছে।",
+          "staleResets": "{count} জন ইউজারের জন্য ক্রন রিসেটে দেরি ধরা পড়েছে।"
+        }
+      },
+      "trend": {
+        "eyebrow": "প্ল্যাটফর্ম ট্রেন্ড",
+        "title": "রেভিনিউ বনাম পেআউট"
+      }
+    },
+    "notificationsPage": {
+      "title": "নোটিফিকেশন কন্ট্রোল",
+      "subtitle": "অ্যাডমিন ইনবক্স, ব্রডকাস্ট, টেমপ্লেট এবং ডেলিভারি ফলাফল এক জায়গা থেকে ম্যানেজ করুন।"
+    },
+    "notificationsCenter": {
+      "filters": {
+        "show": "দেখান",
+        "showAll": "সব দেখান",
+        "allLogs": "সব লগ",
+        "failedLogs": "ফেলড লগ",
+        "sentLogs": "সেন্ট লগ",
+        "skippedLogs": "স্কিপড লগ",
+        "apply": "প্রয়োগ করুন"
+      },
+      "inbox": {
+        "title": "অ্যাডমিন ইনবক্স",
+        "subtitle": "ডেলিভারি লগ দেখার আগে নিজের অ্যালার্টগুলো এখানে দেখুন।",
+        "totalInboxItems": "মোট ইনবক্স আইটেম",
+        "unread": "অপঠিত",
+        "success": "সফল",
+        "warnings": "সতর্কতা",
+        "notificationsLabel": "নোটিফিকেশন",
+        "notificationsTitle": "এখান থেকেই আপডেট পড়া হয়েছে বলে চিহ্নিত করুন",
+        "markAllRead": "সব পড়া হয়েছে চিহ্নিত করুন",
+        "updating": "আপডেট হচ্ছে...",
+        "filterAll": "সব",
+        "filterUnread": "অপঠিত",
+        "filterSuccess": "সফল",
+        "filterWarnings": "সতর্কতা",
+        "filterInfo": "তথ্য",
+        "empty": "এখনও কোনো অ্যাডমিন নোটিফিকেশন নেই।",
+        "markRead": "পড়া হয়েছে চিহ্নিত করুন",
+        "saving": "সেভ হচ্ছে...",
+        "unreadBadge": "অপঠিত"
+      },
+      "broadcast": {
+        "title": "ব্রডকাস্ট",
+        "titlePlaceholder": "শিরোনাম",
+        "messagePlaceholder": "বার্তা",
+        "templateKeyPlaceholder": "টেমপ্লেট key (ঐচ্ছিক)",
+        "send": "ব্রডকাস্ট পাঠান",
+        "sending": "পাঠানো হচ্ছে...",
+        "segments": {
+          "ALL": "সব",
+          "USER": "ইউজার",
+          "BUSINESS": "বিজনেস",
+          "MANAGER": "ম্যানেজার",
+          "ADMIN": "অ্যাডমিন"
+        },
+        "channels": {
+          "IN_APP": "ইন-অ্যাপ",
+          "EMAIL": "ইমেইল",
+          "SMS": "এসএমএস",
+          "PUSH": "পুশ",
+          "TELEGRAM": "টেলিগ্রাম"
+        }
+      },
+      "templates": {
+        "title": "টেমপ্লেট ম্যানেজার",
+        "keyPlaceholder": "template.key",
+        "namePlaceholder": "টেমপ্লেট নাম",
+        "bodyPlaceholder": "বডি ({{var}} টোকেন সাপোর্টেড)",
+        "save": "টেমপ্লেট সেভ করুন",
+        "channelIN_APP": "IN_APP",
+        "channelEMAIL": "EMAIL",
+        "channelSMS": "SMS",
+        "channelPUSH": "PUSH",
+        "channelTELEGRAM": "TELEGRAM",
+        "enabled": "সক্রিয়",
+        "disabled": "নিষ্ক্রিয়",
+        "disable": "বন্ধ করুন",
+        "enable": "চালু করুন"
+      },
+      "logs": {
+        "title": "ডেলিভারি লগ",
+        "empty": "বর্তমান ফিল্টারে কোনো লগ মেলেনি।",
+        "templateFallback": "-"
+      },
+      "feedback": {
+        "done": "সম্পন্ন",
+        "unexpectedServerResponse": "অপ্রত্যাশিত সার্ভার রেসপন্স"
+      }
+    },
+    "riskBulkActions": {
+      "unexpectedServerResponse": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+      "updated": "আপডেট করা হয়েছে",
+      "dismissing": "সরানো হচ্ছে...",
+      "dismissAll": "সব সরান",
+      "resolving": "সমাধান করা হচ্ছে...",
+      "resolveAll": "সব সমাধান করুন"
+    },
+    "fundingActions": {
+      "notePlaceholder": "রিভিউ নোট (রিজেকশনের জন্য প্রয়োজনীয়, অ্যাপ্রুভালের জন্য ঐচ্ছিক)",
+      "noteRequired": "এই রিকোয়েস্ট রিজেক্ট করার আগে ছোট একটি রিভিউ নোট যোগ করুন।",
+      "approveLoading": "অ্যাপ্রুভ করা হচ্ছে...",
+      "approve": "অ্যাপ্রুভ করুন ও ওয়ালেটে ক্রেডিট দিন",
+      "rejectLoading": "রিজেক্ট করা হচ্ছে...",
+      "reject": "রিকোয়েস্ট রিজেক্ট করুন",
+      "unexpectedServerResponse": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+      "updated": "আপডেট হয়েছে"
+    },
+    "refundActions": {
+      "notePlaceholder": "রিভিউ নোট (রিজেকশনের জন্য প্রয়োজনীয়, অ্যাপ্রুভালের জন্য ঐচ্ছিক)",
+      "noteRequired": "এই রিফান্ড রিকোয়েস্ট রিজেক্ট করার আগে ছোট একটি রিভিউ নোট যোগ করুন।",
+      "approveLoading": "অ্যাপ্রুভ করা হচ্ছে...",
+      "approve": "রিফান্ড অ্যাপ্রুভ করুন",
+      "rejectLoading": "রিজেক্ট করা হচ্ছে...",
+      "reject": "রিকোয়েস্ট রিজেক্ট করুন",
+      "unexpectedServerResponse": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+      "updated": "আপডেট হয়েছে"
+    },
+    "fundingPage": {
+      "title": "ম্যানুয়াল বিজনেস ফান্ডিং",
+      "subtitle": "QR এবং UPI পেমেন্ট রসিদ রিভিউ করুন, স্ক্রিনশট যাচাই করুন, এবং নিশ্চিত হওয়ার পরেই ব্যবসার ওয়ালেটে টাকা যোগ করুন।",
+      "kpis": {
+        "waitingReview": "রিভিউ অপেক্ষমাণ",
+        "pendingAmount": "অপেক্ষমাণ পরিমাণ",
+        "approvedRequests": "অনুমোদিত অনুরোধ",
+        "rejectedRequests": "বাতিল অনুরোধ",
+        "flaggedRequests": "ফ্ল্যাগ করা অনুরোধ"
+      },
+      "filters": {
+        "helper": "এই ফিল্টারগুলো ম্যানুয়াল ফান্ডিং অনুরোধ এবং ম্যানুয়াল রিফান্ড অনুরোধ উভয়ের উপর প্রযোজ্য।",
+        "searchPlaceholder": "বিজনেস, রেফারেন্স আইডি, UTR, ফোন বা নোট দিয়ে খুঁজুন",
+        "statusAll": "সব স্ট্যাটাস",
+        "flaggedAll": "সব রিভিউ ফ্ল্যাগ",
+        "flaggedOnly": "শুধু ফ্ল্যাগ করা",
+        "clearFlags": "কোনো ফ্ল্যাগ নয়",
+        "dateFrom": "তারিখ শুরু",
+        "dateTo": "তারিখ শেষ",
+        "apply": "ফিল্টার প্রয়োগ করুন",
+        "clear": "মুছুন",
+        "exportFunding": "ফান্ডিং CSV এক্সপোর্ট করুন",
+        "exportRefund": "রিফান্ড CSV এক্সপোর্ট করুন"
+      },
+      "status": {
+        "pending": "PENDING",
+        "approved": "APPROVED",
+        "rejected": "REJECTED"
+      },
+      "funding": {
+        "empty": "বর্তমান ফিল্টারের জন্য কোনো ম্যানুয়াল ফান্ডিং অনুরোধ পাওয়া যায়নি।"
+      },
+      "fields": {
+        "unnamedBusiness": "নামহীন ব্যবসা",
+        "phone": "ফোন: {value}",
+        "submitted": "সাবমিট করা হয়েছে: {value}",
+        "referenceId": "রেফারেন্স আইডি",
+        "utr": "UTR",
+        "notProvided": "দেওয়া হয়নি",
+        "proof": "প্রমাণ",
+        "openScreenshot": "স্ক্রিনশট খুলুন",
+        "fundingProofTitle": "ফান্ডিং প্রুফ স্ক্রিনশট",
+        "reviewStatus": "রিভিউ স্ট্যাটাস",
+        "reviewed": "{value} তারিখে রিভিউ করা হয়েছে",
+        "waitingForReview": "এখনও রিভিউর অপেক্ষায়",
+        "reviewedBy": "{value} দ্বারা",
+        "reviewFlag": "রিভিউ ফ্ল্যাগ: {value}",
+        "reviewNote": "রিভিউ নোট: {value}"
+      },
+      "refund": {
+        "title": "ম্যানুয়াল বিজনেস রিফান্ড",
+        "subtitle": "ব্যবসার রিফান্ড অনুরোধ রিভিউ করুন, তারপর ওয়ালেট ব্যালেন্স কমান। অনুমোদনের পরে টাকা ব্যবসার ওয়ালেট থেকে বের হবে।",
+        "kpis": {
+          "waitingReview": "রিভিউ অপেক্ষমাণ রিফান্ড",
+          "pendingAmount": "অপেক্ষমাণ রিফান্ড পরিমাণ",
+          "flaggedRequests": "ফ্ল্যাগ করা রিফান্ড অনুরোধ"
+        },
+        "empty": "এখনও কোনো ম্যানুয়াল রিফান্ড অনুরোধ পাওয়া যায়নি।",
+        "fields": {
+          "requestType": "অনুরোধের ধরন",
+          "walletRefund": "ওয়ালেট রিফান্ড",
+          "requestedAmount": "অনুরোধকৃত পরিমাণ",
+          "requestNote": "অনুরোধ নোট: {value}"
+        }
+      }
+    },
+    "revenuePage": {
+      "title": "প্ল্যাটফর্ম রেভিনিউ",
+      "unavailable": "বর্তমান রানটাইমে রেভিনিউ পেআউট সিস্টেম উপলব্ধ নয়। ডেভ সার্ভার পুনরায় চালু করুন।",
+      "kpis": {
+        "totalCommissionEarned": "মোট কমিশন আয়",
+        "treasuryAvailable": "ট্রেজারি উপলব্ধ (রেকনসাইলড)",
+        "payoutLimits": "পেআউট সীমা: প্রতি অনুরোধ INR {perRequest} | দৈনিক INR {daily}",
+        "todayRequested": "আজ অনুরোধ করা হয়েছে: INR {amount}"
+      },
+      "filters": {
+        "show": "দেখান",
+        "showAll": "সব দেখান",
+        "apply": "প্রয়োগ করুন",
+        "clear": "মুছুন"
+      },
+      "adjustments": {
+        "title": "ওয়ালেট অ্যাডজাস্টমেন্ট অনুমোদন (Immutable)",
+        "empty": "কোনো অপেক্ষমাণ ওয়ালেট অ্যাডজাস্টমেন্ট অনুরোধ নেই।",
+        "target": "টার্গেট: {name} ({email})",
+        "requestedBy": "অনুরোধ করেছেন: {name} ({email})",
+        "reason": "কারণ: {value}"
+      },
+      "payouts": {
+        "title": "পেআউট অনুরোধ",
+        "export": "পেআউট CSV এক্সপোর্ট করুন",
+        "empty": "এখনও কোনো পেআউট অনুরোধ নেই।",
+        "requested": "অনুরোধ করা হয়েছে: {value}",
+        "processed": "প্রসেস করা হয়েছে: {value}"
+      },
+      "fallbacks": {
+        "unnamed": "নামহীন"
+      }
+    },
+    "withdrawalsPage": {
+      "title": "পেআউট অনুরোধ",
+      "subtitle": "উত্তোলনের অনুরোধ রিভিউ করুন, নেট পেআউট পরিমাণ দেখুন, এবং ফান্ড ছাড়ার আগে পরিষ্কার নোট দিন।",
+      "kpis": {
+        "waitingReview": "রিভিউ অপেক্ষমাণ",
+        "approved": "অনুমোদিত",
+        "rejected": "বাতিল",
+        "grossRequested": "মোট অনুরোধকৃত",
+        "platformFeeHeld": "আটকে রাখা প্ল্যাটফর্ম ফি",
+        "netPayoutDue": "প্রাপ্য নেট পেআউট"
+      },
+      "filters": {
+        "searchPlaceholder": "ইউজার, ইমেইল বা UPI দিয়ে খুঁজুন",
+        "statusAll": "সব স্ট্যাটাস",
+        "showFive": "৫ দেখান",
+        "showTen": "১০ দেখান",
+        "showTwenty": "২০ দেখান",
+        "showAll": "সব দেখান",
+        "apply": "প্রয়োগ করুন",
+        "reset": "রিসেট"
+      },
+      "status": {
+        "pending": "PENDING",
+        "approved": "APPROVED",
+        "rejected": "REJECTED"
+      },
+      "empty": "এখনও কোনো পেআউট অনুরোধ নেই।",
+      "fields": {
+        "upi": "UPI: {name} | {id}",
+        "na": "প্রযোজ্য নয়",
+        "feeBreakdown": "প্ল্যাটফর্ম ফি ({rate}%): INR {fee} | নেট পেআউট: INR {payout}",
+        "reviewNote": "রিভিউ নোট: {note}",
+        "processed": "প্রসেস করা হয়েছে: {value}"
+      }
+    },
+    "usersPage": {
+      "title": "মানুষ ও অ্যাকাউন্ট",
+      "subtitle": "এক জায়গা থেকে অ্যাকাউন্টের তথ্য, পেআউট ডিফল্ট, ট্রাস্ট স্ট্যাটাস এবং সাম্প্রতিক কার্যকলাপ দেখুন।",
+      "errors": {
+        "failed": "ইউজার লোড করা যায়নি"
+      },
+      "kpis": {
+        "accountsFound": "অ্যাকাউন্ট পাওয়া গেছে",
+        "needsReview": "রিভিউ প্রয়োজন",
+        "suspendedAccounts": "সাসপেন্ড করা অ্যাকাউন্ট",
+        "bannedAccounts": "ব্যান করা অ্যাকাউন্ট"
+      },
+      "filters": {
+        "searchPlaceholder": "নাম, ইমেইল বা মোবাইল দিয়ে খুঁজুন",
+        "roleAll": "সব অ্যাকাউন্ট ধরন",
+        "statusAll": "সব অ্যাকাউন্ট অবস্থা",
+        "flaggedAll": "সব ট্রাস্ট অবস্থা",
+        "flagged": "ফ্ল্যাগ করা",
+        "clear": "মুছুন",
+        "workModeAll": "সব কাজের মোড",
+        "workModeHome": "বাড়ি থেকে কাজ",
+        "workModeOffice": "অফিস থেকে কাজ",
+        "workModeField": "ফিল্ডে কাজ",
+        "preferenceAll": "সব কাজের পছন্দ",
+        "preferenceSalaried": "বেতনভিত্তিক",
+        "preferenceFreelance": "ফ্রিল্যান্স চুক্তিভিত্তিক",
+        "preferenceDayBasis": "দিনভিত্তিক",
+        "educationPlaceholder": "শিক্ষা কীওয়ার্ড",
+        "languagePlaceholder": "ভাষা",
+        "showFive": "৫ দেখান",
+        "showTen": "১০ দেখান",
+        "showTwenty": "২০ দেখান",
+        "showAll": "সব দেখান",
+        "apply": "প্রয়োগ করুন",
+        "exportCsv": "CSV এক্সপোর্ট করুন",
+        "reset": "রিসেট"
+      },
+      "empty": "বর্তমান ফিল্টারের সাথে মেলে এমন কোনো অ্যাকাউন্ট নেই।",
+      "fallbacks": {
+        "unnamedUser": "নামহীন ইউজার"
+      },
+      "badges": {
+        "role": "ভূমিকা: {value}",
+        "status": "অবস্থা: {value}",
+        "riskFlagged": "ঝুঁকি: ফ্ল্যাগ করা",
+        "riskClear": "ঝুঁকি: পরিষ্কার"
+      },
+      "sections": {
+        "accountDetails": "অ্যাকাউন্টের তথ্য",
+        "earnings": "আয় ও লেভেল"
+      },
+      "fields": {
+        "accountId": "অ্যাকাউন্ট আইডি:",
+        "mobile": "মোবাইল:",
+        "notSet": "সেট করা হয়নি",
+        "timezone": "টাইমজোন:",
+        "joined": "যোগ দিয়েছেন: {value}",
+        "deleted": "মুছে ফেলা হয়েছে: {value}",
+        "balance": "ব্যালেন্স:",
+        "coins": "কয়েন:",
+        "level": "লেভেল:",
+        "submittedToday": "আজ জমা:",
+        "approvedToday": "আজ অনুমোদিত:",
+        "approved": "অনুমোদিত:",
+        "rejected": "বাতিল:",
+        "dailyReset": "দৈনিক লেভেল রিসেট: {value}"
+      }
+    },
+    "withdrawalActions": {
+      "notePlaceholder": "অ্যাডমিন নোট (ঐচ্ছিক)",
+      "approve": "অনুমোদন করুন",
+      "approving": "অনুমোদন করা হচ্ছে...",
+      "reject": "বাতিল করুন",
+      "rejecting": "বাতিল করা হচ্ছে...",
+      "updated": "আপডেট হয়েছে",
+      "errors": {
+        "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+        "actionFailed": "কাজটি ব্যর্থ হয়েছে"
+      }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "eyebrow": "ম্যানেজার ড্যাশবোর্ড",
+      "title": "ম্যানেজার ওভারভিউ",
+      "subtitle": "নতুন সাবমিশন রিভিউ করুন, সন্দেহজনক কার্যকলাপ ধরুন, এবং সঠিক কাজ ফাইনাল অনুমোদনের জন্য অ্যাডমিন টিমে পাঠান।",
+      "notEnoughData": "যথেষ্ট ডেটা নেই",
+      "minAvg": "{count} মিনিট গড়",
+      "hrAvg": "{count} ঘণ্টা গড়",
+      "clear": "ক্লিয়ার",
+      "kpis": {
+        "waitingForReview": "রিভিউর অপেক্ষায়",
+        "approvedToday": "আজ অ্যাপ্রুভড",
+        "rejectedToday": "আজ রিজেক্টেড",
+        "waitingForAdmin": "অ্যাডমিনের জন্য অপেক্ষায়",
+        "flaggedForReview": "রিভিউর জন্য ফ্ল্যাগড"
+      },
+      "snapshot": {
+        "eyebrow": "রিভিউ স্ন্যাপশট",
+        "title": "সবচেয়ে পুরোনো সাবমিশন আগে",
+        "openSubmissions": "সাবমিশন খুলুন",
+        "empty": "এখন রিভিউর জন্য কোনো সাবমিশন অপেক্ষায় নেই।",
+        "fallbackTitle": "ক্যাম্পেইন সাবমিশন",
+        "unnamed": "নামহীন",
+        "level": "লেভেল {level}",
+        "inReview": "{age} ধরে রিভিউতে",
+        "suspicious": "সন্দেহজনক"
+      },
+      "pace": {
+        "eyebrow": "রিভিউ গতি",
+        "title": "রিভিউ কত দ্রুত এগোচ্ছে",
+        "averageTurnaround": "গড় সময়",
+        "averageTurnaroundHelp": "সাবমিশন তৈরি হওয়া থেকে আপনার সিদ্ধান্ত পর্যন্ত মাপা হয়েছে।",
+        "oldestPending": "সবচেয়ে পুরোনো পেন্ডিং আইটেম",
+        "oldestPendingHelp": "ম্যানেজার টিমে সবচেয়ে বেশি সময় ধরে থাকা সাবমিশন।"
+      },
+      "access": {
+        "firstPassOnly": "ম্যানেজার অ্যাক্সেস শুধু প্রথম স্তরের রিভিউ পর্যন্ত সীমিত।",
+        "adminControls": "ফাইন্যান্সিয়াল অনুমোদন, পেআউট নিয়ন্ত্রণ এবং ইউজার-রোল পরিবর্তন অ্যাডমিনের অধীনেই থাকে।"
+      }
+    },
+    "notificationsPage": {
+      "eyebrow": "ইনবক্স",
+      "title": "ম্যানেজার নোটিফিকেশন",
+      "subtitle": "নতুন সাবমিশন, ফ্ল্যাগড কার্যকলাপ এবং গুরুত্বপূর্ণ রিভিউ অ্যালার্টের আপডেট রাখুন।",
+      "inboxEyebrow": "ইন-অ্যাপ ইনবক্স",
+      "alertsEyebrow": "রিভিউ অ্যালার্ট"
+    },
+    "notificationsPanel": {
+      "errors": {
+        "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+        "failed": "নোটিফিকেশন লোড করা যায়নি"
+      },
+      "loading": "নোটিফিকেশন লোড হচ্ছে...",
+      "controls": {
+        "show": "দেখান",
+        "showAll": "সব দেখান",
+        "markAllRead": "সব পড়া হয়েছে চিহ্নিত করুন"
+      },
+      "markAllReadSuccess": "রিভিউ অ্যালার্ট পড়া হয়েছে হিসেবে চিহ্নিত করা হয়েছে",
+      "empty": {
+        "title": "এখন কোনো অ্যালার্ট নেই",
+        "body": "কিউ এবং রিস্ক অ্যালার্ট এখানে স্বয়ংক্রিয়ভাবে দেখাবে।"
+      },
+      "allRead": {
+        "title": "কোনো নতুন রিভিউ অ্যালার্ট নেই",
+        "body": "বর্তমান রিভিউ অ্যালার্টগুলো আগেই পড়া হয়েছে হিসেবে চিহ্নিত করা হয়েছে।"
+      },
+      "warnings": "সতর্কতা",
+      "info": "তথ্য"
+    },
+    "inboxPanel": {
+      "errors": {
+        "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+        "failed": "নোটিফিকেশন লোড করা যায়নি"
+      },
+      "loading": "নোটিফিকেশন লোড হচ্ছে...",
+      "kpis": {
+        "totalNotifications": "মোট নোটিফিকেশন",
+        "unread": "অপঠিত",
+        "successUpdates": "সফল আপডেট",
+        "warnings": "সতর্কতা"
+      },
+      "filtersHeader": {
+        "eyebrow": "ইনবক্স ফিল্টার",
+        "title": "ব্রডকাস্ট ও গুরুত্বপূর্ণ আপডেট",
+        "show": "দেখান",
+        "showAll": "সব দেখান",
+        "markAllRead": "সব পড়া হয়েছে চিহ্নিত করুন",
+        "updating": "আপডেট হচ্ছে..."
+      },
+      "filters": {
+        "all": "সব",
+        "unread": "অপঠিত",
+        "success": "সফল",
+        "warnings": "সতর্কতা",
+        "info": "তথ্য"
+      },
+      "empty": "বর্তমান ফিল্টারে কোনো নোটিফিকেশন নেই।",
+      "actions": {
+        "markRead": "পড়া হয়েছে চিহ্নিত করুন",
+        "saving": "সেভ হচ্ছে...",
+        "updated": "নোটিফিকেশন আপডেট হয়েছে",
+        "updateFailed": "নোটিফিকেশন আপডেট করা যায়নি"
+      },
+      "unreadBadge": "অপঠিত"
+    },
+    "riskPanel": {
+      "errors": {
+        "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+        "failed": "রিস্ক সিগন্যাল লোড করা যায়নি"
+      },
+      "loading": "রিভিউ অ্যালার্ট লোড হচ্ছে...",
+      "empty": "এখন কোনো অ্যালার্ট ডেটা নেই।",
+      "controls": {
+        "show": "দেখান",
+        "showAll": "সব দেখান"
+      },
+      "summary": {
+        "flaggedInReview": "রিভিউতে ফ্ল্যাগড",
+        "flaggedUsers": "ফ্ল্যাগড ইউজার",
+        "ipHotspots": "IP হটস্পট ({hours}h)",
+        "highActivity": "উচ্চ কার্যকলাপ (1h)",
+        "rejectionSpikes": "রিজেকশন স্পাইক",
+        "waitingWithAdmin": "অ্যাডমিনের কাছে অপেক্ষায়"
+      },
+      "sections": {
+        "flaggedUsers": {
+          "title": "ফ্ল্যাগড ইউজার",
+          "subtitle": "যে অ্যাকাউন্টগুলোর জন্য অতিরিক্ত প্রুফ চেক দরকার হতে পারে।",
+          "empty": "এই মুহূর্তে কোনো ফ্ল্যাগড ইউজার নেই।",
+          "unnamed": "নামহীন ইউজার",
+          "approved": "অ্যাপ্রুভড {count}",
+          "rejected": "রিজেক্টেড {count}"
+        },
+        "ipHotspots": {
+          "title": "IP হটস্পট",
+          "subtitle": "একাধিক অ্যাকাউন্টে অস্বাভাবিক কার্যকলাপ দেখানো মাস্কড IP।",
+          "empty": "নির্বাচিত সময়ে কোনো হটস্পট ধরা পড়েনি।",
+          "submissions": "সাবমিশন {count}",
+          "users": "ইউজার {count}",
+          "campaigns": "ক্যাম্পেইন {count}"
+        },
+        "escalations": {
+          "title": "এসকেলেশন",
+          "subtitle": "যে আইটেমগুলো ম্যানেজার অতিরিক্ত রিভিউর জন্য তুলেছেন।",
+          "empty": "এখনও কোনো এসকেলেশন নেই।",
+          "fallbackTitle": "সাবমিশন",
+          "unnamed": "নামহীন ইউজার"
+        },
+        "highVelocity": {
+          "title": "উচ্চ সাবমিশন গতি",
+          "subtitle": "গত এক ঘণ্টায় অস্বাভাবিক দ্রুত সাবমিট করা ইউজার।",
+          "empty": "কোনো স্পিড অ্যালার্ট নেই।",
+          "unnamed": "নামহীন ইউজার",
+          "perHour": "{count}/ঘণ্টা",
+          "alreadyFlagged": "আগেই ফ্ল্যাগড।"
+        },
+        "rejectionOutliers": {
+          "title": "উচ্চ রিজেকশন রেট ইউজার",
+          "subtitle": "যে অ্যাকাউন্টগুলোর রিজেকশন রেট অস্বাভাবিক বেশি।",
+          "empty": "এখন কোনো আউটলায়ার নেই।",
+          "unnamed": "নামহীন ইউজার",
+          "alreadyFlagged": "আগেই ফ্ল্যাগড।"
+        },
+        "adminBacklog": {
+          "title": "পেন্ডিং অ্যাডমিন ব্যাকলগ",
+          "subtitle": "ফাইনাল অ্যাডমিন অনুমোদনের জন্য অপেক্ষায় থাকা পুরোনো আইটেমগুলো।",
+          "empty": "কোনো পেন্ডিং-অ্যাডমিন আইটেম নেই।",
+          "fallbackTitle": "ক্যাম্পেইন",
+          "unnamed": "নামহীন ইউজার",
+          "flaggedHint": "এই ইউজার ফ্ল্যাগড। দরকার হলে আইটেমটি আরও কাছ থেকে রিভিউর জন্য এসকেলেট করুন।"
+        },
+        "rejectionSpikes": {
+          "title": "অস্বাভাবিক রিজেকশন স্পাইক",
+          "subtitle": "গত {hours} ঘণ্টায় যেসব ক্যাম্পেইনের ম্যানেজার রিজেকশন রেট বেশি।",
+          "empty": "কোনো রিজেকশন স্পাইক ধরা পড়েনি।",
+          "decisions": "সিদ্ধান্ত {count}",
+          "rejected": "রিজেক্টেড {count}",
+          "latest": "সর্বশেষ: {date}"
+        },
+        "footer": "এই ভিউ নিরাপত্তার জন্য IP ও যোগাযোগের তথ্য আড়াল করে দেখায়। আরও শক্ত নিয়ন্ত্রণ যেমন ডিভাইস ফিঙ্গারপ্রিন্টিং বা IP ব্ল্যাকলিস্ট দরকার হলে সেগুলো অ্যাডমিন-অনলি টুল হিসেবে যোগ করা যেতে পারে।"
+      }
+    },
+    "settingsPage": {
+      "eyebrow": "ম্যানেজার সেটিংস",
+      "title": "সেটিংস",
+      "subtitle": "আপনার প্রোফাইল, রিভিউ পছন্দ এবং অ্যাকাউন্ট সিকিউরিটি ম্যানেজ করুন।",
+      "securityTitle": "অ্যাকাউন্ট সিকিউরিটি",
+      "securityBody": "পাসওয়ার্ড ভুলে গেছেন? নিরাপদভাবে রিসেট করুন।",
+      "forgotPassword": "পাসওয়ার্ড ভুলে গেছেন"
+    },
+    "settings": {
+      "errors": {
+        "unexpectedResponse": "অপ্রত্যাশিত রেসপন্স",
+        "failedToLoad": "সেটিংস লোড করা যায়নি",
+        "unexpectedServerResponse": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+        "failedToSave": "সেটিংস সেভ করা যায়নি"
+      },
+      "loading": "সেটিংস লোড হচ্ছে...",
+      "profileEyebrow": "প্রোফাইল",
+      "profileTitle": "প্রোফাইলের বিবরণ",
+      "profileSubtitle": "আপনার ডিসপ্লে নাম এবং লোকাল টাইমজোন আপডেট করুন।",
+      "displayNamePlaceholder": "ডিসপ্লে নাম (ঐচ্ছিক)",
+      "timezone": "টাইমজোন",
+      "email": "ইমেইল",
+      "role": "রোল",
+      "created": "তৈরি",
+      "moderationEyebrow": "মডারেশন",
+      "moderationTitle": "রিভিউ পছন্দ",
+      "moderationSubtitle": "কাজ করার সময় নতুন সাবমিশন কীভাবে দেখাবে তা বেছে নিন।",
+      "defaultSort": "ডিফল্ট সাজানো",
+      "sortOptions": {
+        "NEWEST": "সবচেয়ে নতুন আগে",
+        "OLDEST": "সবচেয়ে পুরোনো আগে"
+      },
+      "riskFirstTitle": "রিস্ক-ফার্স্ট মোড",
+      "riskFirstBody": "সন্দেহজনক বা ফ্ল্যাগড সাবমিশন আগে দেখান।",
+      "autoNextTitle": "পরের আইটেম নিজে থেকে খুলুন",
+      "autoNextBody": "একটি সিদ্ধান্তের পর পরের সাবমিশনে নিজে থেকে যান।",
+      "proofPreviewMode": "প্রুফ প্রিভিউ মোড",
+      "proofModeOptions": {
+        "COMPACT": "কমপ্যাক্ট",
+        "EXPANDED": "এক্সপ্যান্ডেড"
+      },
+      "saving": "সেভ হচ্ছে...",
+      "saveProfile": "প্রোফাইল সেভ করুন",
+      "savePreferences": "পছন্দ সেভ করুন",
+      "saved": "সেভ হয়েছে"
+    },
+    "submissionsPage": {
+      "eyebrow": "সাবমিশন রিভিউ",
+      "title": "ম্যানেজার রিভিউ ডেস্ক",
+      "subtitle": "নতুন সাবমিশন রিভিউ করুন, ঝুঁকিপূর্ণ কার্যকলাপ চিহ্নিত করুন, এবং সঠিক কাজ চূড়ান্ত অনুমোদনের জন্য সামনে পাঠান।"
+    },
+    "riskPage": {
+      "eyebrow": "প্রতারণার সংকেত",
+      "title": "ম্যানেজার রিস্ক",
+      "subtitle": "সন্দেহজনক কার্যকলাপ দ্রুত দেখুন: ফ্ল্যাগ করা ইউজার, IP হটস্পট, এবং অপেক্ষমাণ-অ্যাডমিন ব্যাকলগ।"
+    },
+    "historyPage": {
+      "eyebrow": "রিভিউ ইতিহাস",
+      "title": "ম্যানেজার ইতিহাস",
+      "subtitle": "আপনি কী অনুমোদন, বাতিল বা এসকেলেট করেছেন, তার কারণ ও ক্যাম্পেইন প্রেক্ষাপটসহ ফিরে দেখুন।"
+    },
+    "queuePanel": {
+      "errors": {
+        "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+        "failed": "সাবমিশন লোড করা যায়নি"
+      },
+      "loading": "সাবমিশন লোড হচ্ছে...",
+      "kpis": {
+        "totalInReview": "রিভিউতে মোট",
+        "flaggedSubmissions": "ফ্ল্যাগ করা সাবমিশন",
+        "highLevelUsers": "উচ্চ-লেভেল ইউজার"
+      },
+      "filters": {
+        "eyebrow": "ফিল্টার",
+        "title": "ঝুঁকি অনুযায়ী সাজান বা দ্রুত সাবমিশন খুঁজুন",
+        "show": "দেখান",
+        "showAll": "সব দেখান",
+        "searchPlaceholder": "ক্যাম্পেইন, ইউজার বা প্রুফ খুঁজুন",
+        "all": "সব",
+        "suspicious": "সন্দেহজনক",
+        "highLevel": "উচ্চ লেভেল"
+      },
+      "empty": "বর্তমান ফিল্টারের সাথে মেলে এমন কোনো সাবমিশন নেই।",
+      "fallbacks": {
+        "submission": "সাবমিশন",
+        "uncategorized": "শ্রেণিহীন",
+        "unnamedUser": "নামহীন ইউজার"
+      },
+      "reward": "রিওয়ার্ড INR {amount}",
+      "user": {
+        "title": "ইউজার সারাংশ",
+        "approvedRejected": "অনুমোদিত: {approved} | বাতিল: {rejected}",
+        "flaggedFallback": "এই অ্যাকাউন্ট বর্তমানে অতিরিক্ত রিভিউর জন্য ফ্ল্যাগ করা আছে।"
+      },
+      "task": {
+        "title": "টাস্কের তথ্য",
+        "openTaskLink": "টাস্ক লিংক খুলুন",
+        "viewSteps": "ধাপ দেখুন ({count})",
+        "noSteps": "এই ক্যাম্পেইনের জন্য কোনো ধাপ যোগ করা হয়নি।"
+      },
+      "proof": {
+        "title": "প্রুফ প্রিভিউ",
+        "openProof": "প্রুফ খুলুন",
+        "previewScreenshot": "স্ক্রিনশট প্রিভিউ",
+        "screenshotUploaded": "স্ক্রিনশট প্রুফ আপলোড করা আছে। দেখতে প্রিভিউ বোতাম ব্যবহার করুন।",
+        "noContent": "কোনো প্রুফ কনটেন্ট নেই",
+        "onlyTextWarning": "এই আইটেমে শুধু টেক্সট প্রুফ আছে। অনুমোদনের আগে ভালোভাবে যাচাই করুন।"
+      },
+      "wait": {
+        "minutes": "{count}মি অপেক্ষা",
+        "hours": "{count}ঘণ্টা অপেক্ষা",
+        "days": "{count}দিন অপেক্ষা"
+      }
+    },
+    "historyPanel": {
+      "errors": {
+        "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+        "failed": "ম্যানেজার ইতিহাস লোড করা যায়নি"
+      },
+      "loading": "ইতিহাস লোড হচ্ছে...",
+      "filters": {
+        "all": "সব",
+        "approved": "অনুমোদিত",
+        "rejected": "বাতিল",
+        "escalated": "এসকেলেটেড",
+        "show": "দেখান",
+        "showAll": "সব দেখান",
+        "searchPlaceholder": "ক্যাম্পেইন, ইউজার, কারণ..."
+      },
+      "empty": "বর্তমান ফিল্টারের সাথে মেলে এমন কোনো ইতিহাস আইটেম নেই।",
+      "status": {
+        "approved": "অনুমোদিত",
+        "rejected": "বাতিল",
+        "escalated": "এসকেলেটেড",
+        "updated": "আপডেট করা হয়েছে"
+      },
+      "fallbacks": {
+        "submissionReview": "সাবমিশন রিভিউ",
+        "uncategorized": "শ্রেণিহীন",
+        "unnamedUser": "নামহীন ইউজার",
+        "unknown": "অজানা"
+      },
+      "flagged": "ফ্ল্যাগ করা",
+      "user": {
+        "title": "ইউজার",
+        "submissionId": "সাবমিশন আইডি: {value}"
+      },
+      "proof": {
+        "title": "কারণ / প্রুফ",
+        "openLink": "লিংক খুলুন",
+        "previewScreenshot": "স্ক্রিনশট প্রিভিউ",
+        "noProofStored": "কোনো প্রুফ সংরক্ষিত নেই",
+        "screenshotUploaded": "স্ক্রিনশট প্রুফ আপলোড করা আছে।"
+      }
+    },
+    "submissionActions": {
+      "reasonPlaceholder": "কারণ (বাতিল করলে প্রয়োজন, এসকেলেট করলে সুপারিশকৃত)",
+      "approve": "অনুমোদন করুন",
+      "approving": "অনুমোদন করা হচ্ছে...",
+      "reject": "বাতিল করুন",
+      "rejecting": "বাতিল করা হচ্ছে...",
+      "escalate": "এসকেলেট করুন",
+      "escalating": "এসকেলেট করা হচ্ছে...",
+      "updated": "আপডেট হয়েছে",
+      "escalated": "এসকেলেট করা হয়েছে",
+      "errors": {
+        "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+        "actionFailed": "কাজটি ব্যর্থ হয়েছে"
+      }
+    }
+  },
+  "common": {
+    "tutorialVideo": {
+      "youtube": "YouTube টিউটোরিয়াল",
+      "loom": "Loom টিউটোরিয়াল",
+      "hosted": "হোস্টেড টিউটোরিয়াল ভিডিও"
+    }
+  },
+  "notifications": {
+    "channels": {
+      "eyebrow": "ডেলিভারি চ্যানেল",
+      "title": "আপডেট কীভাবে আপনার কাছে পৌঁছাবে তা বেছে নিন",
+      "loading": "ডেলিভারি চ্যানেল লোড হচ্ছে...",
+      "messages": {
+        "pushUpdated": "পুশ আপডেট হয়েছে",
+        "testSent": "টেস্ট পাঠানো হয়েছে",
+        "telegramUpdated": "টেলিগ্রাম আপডেট হয়েছে",
+        "pushDeviceUpdated": "পুশ ডিভাইস আপডেট হয়েছে"
+      },
+      "errors": {
+        "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+        "enablePushFailed": "পুশ নোটিফিকেশন চালু করা যায়নি",
+        "sendTestFailed": "টেস্ট পুশ পাঠানো যায়নি"
+      },
+      "push": {
+        "body": "এই ব্রাউজার বা ইনস্টল করা অ্যাপে সঙ্গে সঙ্গে অ্যালার্ট পাওয়ার জন্য সেরা।",
+        "configWarning": "এই পরিবেশের জন্য Firebase push এখনো পুরোপুরি কনফিগার করা হয়নি।",
+        "unsupportedBrowser": "এই ব্রাউজার ডিভাইস পুশ নোটিফিকেশন সমর্থন করে না।",
+        "permissionDenied": "নোটিফিকেশন অনুমতি দেওয়া হয়নি।",
+        "notConfigured": "Firebase web push এখনো কনফিগার করা হয়নি।",
+        "tokenFailed": "Firebase থেকে ডিভাইস পুশ টোকেন পাওয়া যায়নি।",
+        "registeredDevice": "রেজিস্টার করা ডিভাইস",
+        "lastSeen": "শেষ দেখা গেছে {value}",
+        "removing": "সরানো হচ্ছে...",
+        "remove": "সরান",
+        "enabling": "চালু করা হচ্ছে...",
+        "registerAnother": "আরেকটি ডিভাইস রেজিস্টার করুন",
+        "enableThisDevice": "এই ডিভাইসে চালু করুন",
+        "sending": "পাঠানো হচ্ছে...",
+        "sendTest": "টেস্ট পুশ পাঠান"
+      },
+      "telegram": {
+        "body": "অনুমোদন এবং পেআউট আপডেট সেখানেও পেতে আপনার Telegram চ্যাট সংযুক্ত করুন।",
+        "configWarning": "এই পরিবেশের জন্য Telegram bot কনফিগারেশন নেই।",
+        "connected": "সংযুক্ত {preview}",
+        "help": "বট লিংক একবার খুলে এই অ্যাকাউন্ট যুক্ত করতে Start চাপুন।",
+        "openBot": "Telegram bot খুলুন",
+        "connect": "Telegram যুক্ত করুন",
+        "disconnecting": "সংযোগ বিচ্ছিন্ন করা হচ্ছে...",
+        "disconnect": "সংযোগ বিচ্ছিন্ন করুন"
+      },
+      "benefits": {
+        "title": "এতে কী পাওয়া যাবে",
+        "body": "সংযুক্ত হওয়ার পর, অ্যাডমিন ব্রডকাস্ট এবং গুরুত্বপূর্ণ ওয়ার্কফ্লো ইভেন্ট ইন-অ্যাপ, ইমেইল, SMS, push এবং Telegram-এর মাধ্যমে পাঠানো যাবে, মূল moderation বা payout logic না বদলেই।"
+      }
     }
   }
 }

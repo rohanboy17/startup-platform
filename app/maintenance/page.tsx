@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PublicPageShell, PolicySection } from "@/components/public-page-shell";
 import { getLocale } from "next-intl/server";
+import { SUPPORT_EMAIL } from "@/lib/public-links";
 
 export default async function MaintenancePage() {
   const locale = await getLocale();
@@ -61,8 +62,8 @@ export default async function MaintenancePage() {
         <PolicySection title={meta.helpTitle}>
           <p>
             {meta.helpLead}{" "}
-            <a href="mailto:support@freeearnhub.in" className="underline underline-offset-4">
-              support@freeearnhub.in
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="underline underline-offset-4">
+              {SUPPORT_EMAIL}
             </a>
             .
           </p>

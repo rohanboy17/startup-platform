@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { Bell, AlertTriangle, ChevronRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,8 @@ type NotificationsResponse = {
 };
 
 export default function ManagerNotificationsPanel() {
+  const t = useTranslations("manager.notificationsPanel");
+  const locale = useLocale();
   const [items, setItems] = useState<NotificationItem[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -40,18 +43,18 @@ export default function ManagerNotificationsPanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as NotificationsResponse) : parsed;
     } catch {
-      setError("Unexpected server response");
+      setError(t("errors.unexpected"));
       setLoading(false);
       return;
     }
     if (!res.ok) {
-      setError(parsed.error || "Failed to load notifications");
+      setError(parsed.error || t("errors.failed"));
     } else {
       setError("");
       setItems(parsed.items || []);
     }
     setLoading(false);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 10000);
 
@@ -85,18 +88,18 @@ export default function ManagerNotificationsPanel() {
     }
     window.localStorage.setItem(storageKey, JSON.stringify(nextSeen));
     setSeenVersion((value) => value + 1);
-    setMessage("Review alerts marked as read");
+    setMessage(t("markAllReadSuccess"));
     emitDashboardLiveRefresh();
   }
 
-  if (loading) return <p className="text-sm text-foreground/60">Loading notifications...</p>;
+  if (loading) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
   if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <label className="flex items-center gap-2 text-sm text-foreground/60">
-          <span>Show</span>
+          <span>{t("controls.show")}</span>
           <select
             value={limit}
             onChange={(event) => setLimit(event.target.value as "5" | "10" | "20" | "ALL")}
@@ -105,7 +108,7 @@ export default function ManagerNotificationsPanel() {
             <option value="5">5</option>
             <option value="10">10</option>
             <option value="20">20</option>
-            <option value="ALL">Show all</option>
+            <option value="ALL">{t("controls.showAll")}</option>
           </select>
         </label>
         <Button
@@ -114,7 +117,7 @@ export default function ManagerNotificationsPanel() {
           disabled={items.length === 0 || grouped.warnings.length + grouped.info.length === 0}
           className="border-foreground/20 bg-transparent text-foreground hover:bg-foreground/[0.04]"
         >
-          Mark all read
+          {t("controls.markAllRead")}
         </Button>
       </div>
       {!hasAlerts ? (
@@ -122,9 +125,9 @@ export default function ManagerNotificationsPanel() {
           <CardContent className="space-y-2 p-6 text-sm text-foreground/60">
             <div className="flex items-center gap-2 text-foreground/80">
               <Bell size={18} />
-              <p className="font-medium">No alerts right now</p>
+              <p className="font-medium">{t("empty.title")}</p>
             </div>
-            <p>Queue and risk alerts will appear here automatically.</p>
+            <p>{t("empty.body")}</p>
           </CardContent>
         </Card>
       ) : grouped.warnings.length + grouped.info.length === 0 ? (
@@ -132,16 +135,16 @@ export default function ManagerNotificationsPanel() {
           <CardContent className="space-y-2 p-6 text-sm text-foreground/60">
             <div className="flex items-center gap-2 text-foreground/80">
               <Bell size={18} />
-              <p className="font-medium">No new review alerts</p>
+              <p className="font-medium">{t("allRead.title")}</p>
             </div>
-            <p>Current review alerts have already been marked as read.</p>
+            <p>{t("allRead.body")}</p>
           </CardContent>
         </Card>
       ) : null}
 
       {grouped.warnings.length ? (
         <div className="space-y-3">
-          <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">Warnings</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">{t("warnings")}</p>
           {grouped.warnings.map((item) => (
             <Link key={item.key} href={item.href} className="block">
               <Card className="rounded-3xl border-amber-400/25 bg-amber-500/10 shadow-xl shadow-black/10 dark:shadow-black/20 backdrop-blur-md transition hover:bg-amber-500/15">
@@ -157,7 +160,7 @@ export default function ManagerNotificationsPanel() {
                     <ChevronRight size={18} className="mt-1 shrink-0 text-foreground/50" />
                   </div>
                   <p className="text-xs text-foreground/60" suppressHydrationWarning>
-                    {hydrated ? new Date(item.createdAt).toLocaleString() : ""}
+                    {hydrated ? new Date(item.createdAt).toLocaleString(locale) : ""}
                   </p>
                 </CardContent>
               </Card>
@@ -168,7 +171,7 @@ export default function ManagerNotificationsPanel() {
 
       {grouped.info.length ? (
         <div className="space-y-3">
-          <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">Info</p>
+          <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">{t("info")}</p>
           {grouped.info.map((item) => (
             <Link key={item.key} href={item.href} className="block">
               <Card className="rounded-3xl border-foreground/10 bg-background/50 shadow-xl shadow-black/10 dark:shadow-black/20 backdrop-blur-md transition hover:bg-background/70">
@@ -181,7 +184,7 @@ export default function ManagerNotificationsPanel() {
                     <ChevronRight size={18} className="mt-1 shrink-0 text-foreground/50" />
                   </div>
                   <p className="text-xs text-foreground/60" suppressHydrationWarning>
-                    {hydrated ? new Date(item.createdAt).toLocaleString() : ""}
+                    {hydrated ? new Date(item.createdAt).toLocaleString(locale) : ""}
                   </p>
                 </CardContent>
               </Card>

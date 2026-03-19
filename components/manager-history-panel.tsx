@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { ExternalLink, ShieldAlert } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLiveRefresh } from "@/lib/live-refresh";
@@ -35,21 +36,16 @@ type HistoryRow = {
 type HistoryResponse = { rows?: HistoryRow[]; error?: string };
 type Filter = "ALL" | "APPROVED" | "REJECTED" | "ESCALATED";
 
-const FILTERS: Array<{ value: Filter; label: string }> = [
-  { value: "ALL", label: "All" },
-  { value: "APPROVED", label: "Approved" },
-  { value: "REJECTED", label: "Rejected" },
-  { value: "ESCALATED", label: "Escalated" },
-];
+type Translator = (key: string, values?: Record<string, string | number>) => string;
 
-function statusLabel(action: string) {
+function statusLabel(action: string, t: Translator) {
   return action === "MANAGER_APPROVED_SUBMISSION"
-    ? "Approved"
+    ? t("status.approved")
     : action === "MANAGER_REJECTED_SUBMISSION"
-      ? "Rejected"
+      ? t("status.rejected")
       : action === "MANAGER_ESCALATED_SUBMISSION"
-        ? "Escalated"
-        : "Updated";
+        ? t("status.escalated")
+        : t("status.updated");
 }
 
 function isLikelyScreenshotUrl(value: string | null | undefined) {
@@ -60,6 +56,8 @@ function isLikelyScreenshotUrl(value: string | null | undefined) {
 }
 
 export default function ManagerHistoryPanel() {
+  const t = useTranslations("manager.historyPanel");
+  const locale = useLocale();
   const [rows, setRows] = useState<HistoryRow[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -75,18 +73,18 @@ export default function ManagerHistoryPanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as HistoryResponse) : {};
     } catch {
-      setError("Unexpected server response");
+      setError(t("errors.unexpected"));
       setLoading(false);
       return;
     }
     if (!res.ok) {
-      setError(parsed.error || "Failed to load manager history");
+      setError(parsed.error || t("errors.failed"));
     } else {
       setError("");
       setRows(parsed.rows || []);
     }
     setLoading(false);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 12000);
 
@@ -124,7 +122,14 @@ export default function ManagerHistoryPanel() {
     [filtered, limit]
   );
 
-  if (loading) return <p className="text-sm text-foreground/60">Loading history...</p>;
+  const filters: Array<{ value: Filter; label: string }> = [
+    { value: "ALL", label: t("filters.all") },
+    { value: "APPROVED", label: t("filters.approved") },
+    { value: "REJECTED", label: t("filters.rejected") },
+    { value: "ESCALATED", label: t("filters.escalated") },
+  ];
+
+  if (loading) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
   if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
 
   return (
@@ -133,7 +138,7 @@ export default function ManagerHistoryPanel() {
         <CardContent className="space-y-4 p-4 sm:p-6">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-wrap gap-2">
-              {FILTERS.map((item) => (
+              {filters.map((item) => (
                 <button
                   key={item.value}
                   type="button"
@@ -150,7 +155,7 @@ export default function ManagerHistoryPanel() {
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <label className="flex items-center gap-2 text-sm text-foreground/60">
-                <span>Show</span>
+                <span>{t("filters.show")}</span>
                 <select
                   value={limit}
                   onChange={(event) => setLimit(event.target.value as "5" | "10" | "20" | "ALL")}
@@ -159,13 +164,13 @@ export default function ManagerHistoryPanel() {
                   <option value="5">5</option>
                   <option value="10">10</option>
                   <option value="20">20</option>
-                  <option value="ALL">Show all</option>
+                  <option value="ALL">{t("filters.showAll")}</option>
                 </select>
               </label>
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search campaign, user, reason..."
+                placeholder={t("filters.searchPlaceholder")}
                 className="w-full rounded-xl border border-foreground/20 bg-background/60 px-4 py-2 text-sm text-foreground placeholder:text-foreground/50 outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20 md:w-80"
               />
             </div>
@@ -175,18 +180,18 @@ export default function ManagerHistoryPanel() {
 
       {filtered.length === 0 ? (
         <Card className="rounded-2xl border-foreground/10 bg-background/50">
-          <CardContent className="p-6 text-sm text-foreground/60">No history items match the current filters.</CardContent>
+          <CardContent className="p-6 text-sm text-foreground/60">{t("empty")}</CardContent>
         </Card>
       ) : (
         <div className="space-y-4">
           {visibleRows.map((row) => {
-            const status = statusLabel(row.action);
+            const status = statusLabel(row.action, t);
             const statusTone =
-              status === "Approved"
+              status === t("status.approved")
                 ? "border-emerald-400/25 bg-emerald-500/10 text-emerald-800 dark:text-emerald-100"
-                : status === "Rejected"
+                : status === t("status.rejected")
                   ? "border-rose-400/25 bg-rose-500/10 text-rose-800 dark:text-rose-100"
-                  : status === "Escalated"
+                  : status === t("status.escalated")
                     ? "border-amber-400/25 bg-amber-500/10 text-amber-900 dark:text-amber-100"
                     : "border-foreground/10 bg-background/50 text-foreground/75";
 
@@ -196,18 +201,18 @@ export default function ManagerHistoryPanel() {
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div className="min-w-0">
                       <p className="text-lg font-semibold text-foreground break-words">
-                        {row.submission?.campaign?.title || "Submission review"}
+                        {row.submission?.campaign?.title || t("fallbacks.submissionReview")}
                       </p>
                       <p className="mt-1 text-sm text-foreground/60" suppressHydrationWarning>
-                        {row.submission?.campaign?.category || "Uncategorized"} |{" "}
-                        {hydrated ? new Date(row.createdAt).toLocaleString() : ""}
+                        {row.submission?.campaign?.category || t("fallbacks.uncategorized")} |{" "}
+                        {hydrated ? new Date(row.createdAt).toLocaleString(locale) : ""}
                       </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                       <span className={`rounded-full border px-3 py-1 text-xs ${statusTone}`}>{status}</span>
                       {row.submission?.user?.isSuspicious ? (
                         <span className="rounded-full border border-amber-400/25 bg-amber-500/10 px-3 py-1 text-xs text-amber-900 dark:text-amber-100">
-                          Flagged
+                          {t("flagged")}
                         </span>
                       ) : null}
                     </div>
@@ -215,16 +220,16 @@ export default function ManagerHistoryPanel() {
 
                   <div className="grid gap-4 lg:grid-cols-2">
                     <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
-                      <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">User</p>
+                      <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">{t("user.title")}</p>
                       <p className="text-sm text-foreground/80 break-words">
-                        {row.submission?.user?.name || "Unnamed user"}{" "}
+                        {row.submission?.user?.name || t("fallbacks.unnamedUser")}{" "}
                         <span className="text-foreground/60">({row.submission?.user?.level || "L1"})</span>
                       </p>
-                      <p className="text-xs text-foreground/60 break-all">Submission ID: {row.submissionId || "unknown"}</p>
+                      <p className="text-xs text-foreground/60 break-all">{t("user.submissionId", { value: row.submissionId || t("fallbacks.unknown") })}</p>
                     </div>
                     <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
                       <div className="flex items-center justify-between gap-3">
-                        <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">Reason / Proof</p>
+                        <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">{t("proof.title")}</p>
                         <div className="flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
                           {row.submission?.proofLink ? (
                             <a
@@ -234,7 +239,7 @@ export default function ManagerHistoryPanel() {
                               className="inline-flex w-full items-center gap-1 text-sm text-emerald-700 underline underline-offset-4 dark:text-emerald-200 lg:w-auto"
                             >
                               <ExternalLink size={14} />
-                              Open link
+                              {t("proof.openLink")}
                             </a>
                           ) : null}
                           {(() => {
@@ -243,7 +248,7 @@ export default function ManagerHistoryPanel() {
                               submission?.proofImage ||
                               (isLikelyScreenshotUrl(submission?.proof) ? submission?.proof : null);
                             return screenshotUrl ? (
-                              <ProofImageDialog url={screenshotUrl} label="Preview screenshot" />
+                              <ProofImageDialog url={screenshotUrl} label={t("proof.previewScreenshot")} />
                             ) : null;
                           })()}
                         </div>
@@ -259,15 +264,15 @@ export default function ManagerHistoryPanel() {
                         <p className="text-sm text-foreground/70 break-words">
                           {(() => {
                             const submission = row.submission;
-                            if (!submission) return "No proof stored";
+                            if (!submission) return t("proof.noProofStored");
                             const screenshotUrl =
                               submission.proofImage || (isLikelyScreenshotUrl(submission.proof) ? submission.proof : null);
                             return (
                               submission.proofText ||
                               submission.proofLink ||
-                              (screenshotUrl ? "Screenshot proof uploaded." : null) ||
+                              (screenshotUrl ? t("proof.screenshotUploaded") : null) ||
                               submission.proof ||
-                              "No proof stored"
+                              t("proof.noProofStored")
                             );
                           })()}
                         </p>

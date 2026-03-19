@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import imageCompression from "browser-image-compression";
+import { useLocale, useTranslations } from "next-intl";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -94,6 +95,8 @@ type SubmitFundingResponse = {
   flaggedReason?: string | null;
 };
 
+type FundingTranslations = ReturnType<typeof useTranslations<"business.manualFunding">>;
+
 function fundingTone(status: FundingStatus) {
   if (status === "APPROVED") return "success" as const;
   if (status === "REJECTED") return "danger" as const;
@@ -106,9 +109,19 @@ function fundingTextTone(status: FundingStatus) {
   return "text-amber-200";
 }
 
-function formatDateTime(value: string | null | undefined) {
-  if (!value) return "Not available";
-  return new Date(value).toLocaleString("en-IN", {
+function resolveIntlLocale(locale: string) {
+  if (locale === "hi") return "hi-IN";
+  if (locale === "bn") return "bn-IN";
+  return "en-IN";
+}
+
+function formatDateTime(
+  value: string | null | undefined,
+  locale: string,
+  fallback: string
+) {
+  if (!value) return fallback;
+  return new Date(value).toLocaleString(resolveIntlLocale(locale), {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -117,7 +130,15 @@ function formatDateTime(value: string | null | undefined) {
   });
 }
 
+function fundingStatusLabel(status: FundingStatus, t: FundingTranslations) {
+  if (status === "APPROVED") return t("status.approved");
+  if (status === "REJECTED") return t("status.rejected");
+  return t("status.pending");
+}
+
 export default function BusinessFundingPage() {
+  const t = useTranslations("business.manualFunding");
+  const locale = useLocale();
   const [data, setData] = useState<FundingData | null>(null);
   const [fundAmount, setFundAmount] = useState("");
   const [utr, setUtr] = useState("");
@@ -161,18 +182,18 @@ export default function BusinessFundingPage() {
     try {
       parsed = raw ? (JSON.parse(raw) as FundingData) : parsed;
     } catch {
-      setError("Unexpected server response while loading funding details.");
+      setError(t("errors.loadUnexpected"));
       return;
     }
 
     if (!res.ok) {
-      setError(parsed.error || "Unable to load funding details.");
+      setError(parsed.error || t("errors.failedToLoad"));
       return;
     }
 
     setError("");
     setData(parsed);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 10000);
 
@@ -196,8 +217,18 @@ export default function BusinessFundingPage() {
         })
       : null;
   const openPayLabel = data?.config.upiId?.includes("@paytm")
-    ? "Open Paytm / UPI app"
-    : "Open UPI app";
+    ? t("actions.openPaytm")
+    : t("actions.openUpi");
+  const stepItems = useMemo(
+    () => [
+      t("steps.item1"),
+      t("steps.item2"),
+      t("steps.item3"),
+      t("steps.item4"),
+      t("steps.item5"),
+    ],
+    [t]
+  );
 
   useEffect(() => {
     let active = true;
@@ -239,9 +270,9 @@ export default function BusinessFundingPage() {
   async function copyText(text: string) {
     try {
       await navigator.clipboard.writeText(text);
-      setMessage("Copied to clipboard.");
+      setMessage(t("messages.copied"));
     } catch {
-      setError("Unable to copy right now. Please copy it manually.");
+      setError(t("errors.copyFailed"));
     }
   }
 
@@ -250,11 +281,11 @@ export default function BusinessFundingPage() {
     setError("");
 
     if (!qrDataUrl || !upiLink || !referenceId) {
-      setError("Generate the payment details first so the QR can be shared.");
+      setError(t("errors.generateBeforeShare"));
       return;
     }
 
-    const shareText = `FreeEarnHub wallet funding\nAmount: INR ${formatMoney(fundNumber)}\nReference ID: ${referenceId}\nUPI ID: ${data?.config.upiId ?? ""}`;
+    const shareText = `${t("share.title")}\n${t("share.amount", { amount: `INR ${formatMoney(fundNumber)}` })}\n${t("share.reference", { referenceId })}\n${t("share.upi", { upiId: data?.config.upiId ?? "" })}`;
 
     try {
       const response = await fetch(qrDataUrl);
@@ -264,25 +295,25 @@ export default function BusinessFundingPage() {
       if (navigator.share) {
         if ("canShare" in navigator && navigator.canShare?.({ files: [file] })) {
           await navigator.share({
-            title: "FreeEarnHub funding QR",
+            title: t("share.sheetTitle"),
             text: shareText,
             files: [file],
           });
         } else {
           await navigator.share({
-            title: "FreeEarnHub funding QR",
+            title: t("share.sheetTitle"),
             text: `${shareText}\n${upiLink}`,
             url: upiLink,
           });
         }
-        setMessage("Payment QR shared.");
+        setMessage(t("messages.qrShared"));
         return;
       }
 
       await navigator.clipboard.writeText(`${shareText}\n${upiLink}`);
-      setMessage("Share is not available on this device. Payment details were copied instead.");
+      setMessage(t("messages.shareFallback"));
     } catch {
-      setError("Unable to share the QR right now.");
+      setError(t("errors.shareFailed"));
     }
   }
 
@@ -291,7 +322,7 @@ export default function BusinessFundingPage() {
     setError("");
 
     if (!qrDataUrl || !referenceId) {
-      setError("Generate the payment details first so the QR can be downloaded.");
+      setError(t("errors.generateBeforeDownload"));
       return;
     }
 
@@ -302,9 +333,9 @@ export default function BusinessFundingPage() {
       document.body.appendChild(link);
       link.click();
       link.remove();
-      setMessage("QR downloaded.");
+      setMessage(t("messages.qrDownloaded"));
     } catch {
-      setError("Unable to download the QR right now.");
+      setError(t("errors.downloadFailed"));
     }
   }
 
@@ -314,12 +345,12 @@ export default function BusinessFundingPage() {
     setWhatsappLink(null);
 
     if (!data?.config.manualFundingEnabled) {
-      setError("Manual funding is not configured yet. Add UPI or phone details first.");
+      setError(t("errors.manualFundingDisabled"));
       return;
     }
 
     if (fundNumber < minFundingThreshold) {
-      setError(`Minimum funding amount is INR ${formatMoney(minFundingThreshold)}.`);
+      setError(t("errors.minimumFunding", { amount: `INR ${formatMoney(minFundingThreshold)}` }));
       return;
     }
 
@@ -339,7 +370,7 @@ export default function BusinessFundingPage() {
       });
 
       if (compressed.size > 500 * 1024) {
-        throw new Error("Image must stay under 500 KB after compression.");
+        throw new Error(t("errors.imageTooLarge"));
       }
 
       const formData = new FormData();
@@ -356,18 +387,18 @@ export default function BusinessFundingPage() {
       try {
         parsed = raw ? (JSON.parse(raw) as { url?: string; error?: string }) : {};
       } catch {
-        parsed = { error: "Unexpected upload response" };
+        parsed = { error: t("errors.uploadUnexpected") };
       }
 
       if (!res.ok || !parsed.url) {
-        throw new Error(parsed.error || "Unable to upload the screenshot.");
+        throw new Error(parsed.error || t("errors.uploadFailed"));
       }
 
       setProofImageUrl(parsed.url);
     } catch (uploadError) {
       setProofImageUrl(null);
       setUploadError(
-        uploadError instanceof Error ? uploadError.message : "Unable to upload the screenshot."
+        uploadError instanceof Error ? uploadError.message : t("errors.uploadFailed")
       );
     } finally {
       setUploading(false);
@@ -380,12 +411,12 @@ export default function BusinessFundingPage() {
     setWhatsappLink(null);
 
     if (!referenceId) {
-      setError("Generate the payment details first so we can track this funding request.");
+      setError(t("errors.generateBeforeSubmit"));
       return;
     }
 
     if (!proofImageUrl) {
-      setError("Upload your payment screenshot before verification.");
+      setError(t("errors.uploadBeforeVerify"));
       return;
     }
 
@@ -408,17 +439,17 @@ export default function BusinessFundingPage() {
     try {
       parsed = raw ? (JSON.parse(raw) as SubmitFundingResponse) : {};
     } catch {
-      parsed = { error: "Unexpected server response" };
+      parsed = { error: t("errors.unexpected") };
     }
 
     setLoading(false);
 
     if (!res.ok) {
-      setError(parsed.error || "Funding request could not be submitted.");
+      setError(parsed.error || t("errors.submitFundingFailed"));
       return;
     }
 
-    setMessage(parsed.message || "Funding request submitted.");
+    setMessage(parsed.message || t("messages.fundingSubmitted"));
     setWhatsappLink(parsed.whatsappLink || null);
     setFundAmount("");
     setUtr("");
@@ -434,12 +465,12 @@ export default function BusinessFundingPage() {
     setRefundMessage("");
 
     if (refundNumber <= 0) {
-      setRefundError("Enter a valid refund amount.");
+      setRefundError(t("errors.invalidRefundAmount"));
       return;
     }
 
     if (refundNumber > (data?.refundableBalance ?? 0)) {
-      setRefundError("Refund amount cannot be more than your currently refundable wallet balance.");
+      setRefundError(t("errors.refundTooHigh"));
       return;
     }
 
@@ -457,46 +488,46 @@ export default function BusinessFundingPage() {
     try {
       parsed = raw ? (JSON.parse(raw) as { message?: string; error?: string; fee?: number; netRefund?: number }) : {};
     } catch {
-      parsed = { error: "Unexpected server response" };
+      parsed = { error: t("errors.unexpected") };
     }
 
     setRefundLoading(false);
 
     if (!res.ok) {
-      setRefundError(parsed.error || "Refund request could not be submitted.");
+      setRefundError(parsed.error || t("errors.submitRefundFailed"));
       return;
     }
 
-    setRefundMessage(parsed.message || "Refund request submitted.");
+    setRefundMessage(parsed.message || t("messages.refundSubmitted"));
     setRefundAmount("");
     emitDashboardLiveRefresh();
     void load();
   }
 
   if (error && !data) return <p className="text-sm text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-foreground/60">Loading funding dashboard...</p>;
+  if (!data) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
 
   return (
     <div className="space-y-8">
       <div className="relative overflow-hidden rounded-[2rem] border border-foreground/10 bg-gradient-to-br from-emerald-500/12 via-background to-cyan-500/10 p-6 shadow-[0_30px_90px_-45px_rgba(16,185,129,0.35)] sm:p-8">
         <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.18),transparent_55%)] 2xl:block" />
-        <p className="text-sm uppercase tracking-[0.24em] text-emerald-400/70">Manual business funding</p>
-        <h2 className="mt-2 text-3xl font-semibold md:text-4xl">Add funds using QR, UPI, or phone payment</h2>
+        <p className="text-sm uppercase tracking-[0.24em] text-emerald-400/70">{t("hero.eyebrow")}</p>
+        <h2 className="mt-2 text-3xl font-semibold md:text-4xl">{t("hero.title")}</h2>
         <p className="mt-2 max-w-3xl text-sm text-foreground/70 md:text-base">
-          We are using a manual payment review flow for now. Pay using the details below, upload the receipt, and our team will credit the wallet after verification.
+          {t("hero.description")}
         </p>
         <div className="mt-5 flex flex-wrap gap-3">
           <div className="rounded-full border border-foreground/10 bg-background/70 px-4 py-2 text-sm text-foreground/75 backdrop-blur">
-            Manual admin review
+            {t("hero.chip1")}
           </div>
           <div className="rounded-full border border-foreground/10 bg-background/70 px-4 py-2 text-sm text-foreground/75 backdrop-blur">
-            Reference ID tracked
+            {t("hero.chip2")}
           </div>
           <div className="rounded-full border border-foreground/10 bg-background/70 px-4 py-2 text-sm text-foreground/75 backdrop-blur">
-            Screenshot required
+            {t("hero.chip3")}
           </div>
           <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm font-medium text-emerald-700 backdrop-blur dark:text-emerald-200">
-            0% add-fund fee
+            {t("hero.chip4")}
           </div>
         </div>
       </div>
@@ -506,9 +537,9 @@ export default function BusinessFundingPage() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 text-amber-300" size={18} />
             <div className="space-y-1">
-              <p className="font-medium text-amber-100">Manual funding is not configured yet</p>
+              <p className="font-medium text-amber-100">{t("notConfigured.title")}</p>
               <p className="text-sm text-amber-100/80">
-                Add the funding UPI ID or phone number in the environment first, then this payment flow will be available for businesses.
+                {t("notConfigured.body")}
               </p>
             </div>
           </div>
@@ -520,9 +551,9 @@ export default function BusinessFundingPage() {
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 text-sky-300" size={18} />
             <div className="space-y-1">
-              <p className="font-medium text-sky-100">Billing actions are limited to the business owner</p>
+              <p className="font-medium text-sky-100">{t("ownerOnlyBanner.title")}</p>
               <p className="text-sm text-sky-100/80">
-                You can review the funding history here, but only the business owner can submit a new wallet funding request.
+                {t("ownerOnlyBanner.body")}
               </p>
             </div>
           </div>
@@ -530,56 +561,56 @@ export default function BusinessFundingPage() {
       ) : null}
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="Available wallet" value={`INR ${formatMoney(data.wallet.balance)}`} tone="success" />
-        <KpiCard label="Locked budget" value={`INR ${formatMoney(data.wallet.lockedBudget)}`} tone="warning" />
-        <KpiCard label="Approved funding" value={data.stats.approvedCount} tone="info" />
-        <KpiCard label="Waiting review" value={data.stats.pendingCount} tone="warning" />
+        <KpiCard label={t("kpis.availableWallet")} value={`INR ${formatMoney(data.wallet.balance)}`} tone="success" />
+        <KpiCard label={t("kpis.lockedBudget")} value={`INR ${formatMoney(data.wallet.lockedBudget)}`} tone="warning" />
+        <KpiCard label={t("kpis.approvedFunding")} value={data.stats.approvedCount} tone="info" />
+        <KpiCard label={t("kpis.waitingReview")} value={data.stats.pendingCount} tone="warning" />
       </div>
 
       <SectionCard elevated>
         <CardContent className="space-y-5 p-0">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.22em] text-emerald-400/70">Wallet pricing</p>
-              <h3 className="text-xl font-semibold text-foreground">Business wallet fee structure</h3>
+              <p className="text-sm uppercase tracking-[0.22em] text-emerald-400/70">{t("pricing.eyebrow")}</p>
+              <h3 className="text-xl font-semibold text-foreground">{t("pricing.title")}</h3>
               <p className="mt-2 max-w-3xl text-sm text-foreground/65">
-                Top-ups stay free during launch. Refunds use the reviewed refund fee so the rules stay clear before you submit any wallet movement.
+                {t("pricing.description")}
               </p>
             </div>
             <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
-              Launch model
+              {t("pricing.launchModel")}
             </div>
           </div>
 
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.15fr)]">
             <div className="rounded-3xl border border-emerald-300/15 bg-gradient-to-br from-emerald-500/12 via-background/95 to-background/85 p-5 shadow-inner shadow-emerald-400/5">
-              <p className="text-sm text-foreground/60">Add-fund fee</p>
+              <p className="text-sm text-foreground/60">{t("pricing.addFundFeeLabel")}</p>
               <p className="mt-2 text-3xl font-semibold text-foreground">{(data.config.fundingFeeRate * 100).toFixed(2)}%</p>
-              <p className="mt-2 text-sm text-foreground/60">Applied on wallet top-ups. Currently waived during launch.</p>
+              <p className="mt-2 text-sm text-foreground/60">{t("pricing.addFundFeeHelp")}</p>
               <p className="mt-4 inline-flex rounded-full border border-emerald-400/15 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-200">
-                Live now
+                {t("pricing.liveNow")}
               </p>
             </div>
 
             <div className="rounded-3xl border border-cyan-400/15 bg-gradient-to-br from-cyan-500/12 via-background/95 to-background/85 p-5 shadow-inner shadow-cyan-400/5">
-              <p className="text-sm text-foreground/60">Refund fee</p>
+              <p className="text-sm text-foreground/60">{t("pricing.refundFeeLabel")}</p>
               <p className="mt-2 text-3xl font-semibold text-foreground">
                 {(businessRefundFeeRate * 100).toFixed(2)}%
               </p>
-              <p className="mt-2 text-sm text-foreground/60">Applied only when a refund request is approved after review.</p>
+              <p className="mt-2 text-sm text-foreground/60">{t("pricing.refundFeeHelp")}</p>
               <p className="mt-4 inline-flex rounded-full border border-cyan-400/15 bg-cyan-500/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-cyan-700 dark:text-cyan-200">
-                Manual review
+                {t("pricing.manualReview")}
               </p>
             </div>
 
             <div className="rounded-3xl border border-foreground/10 bg-background/55 p-5">
-              <p className="text-sm font-medium text-foreground">How to use these fees</p>
+              <p className="text-sm font-medium text-foreground">{t("pricing.usageTitle")}</p>
               <div className="mt-3 space-y-3 text-sm text-foreground/65">
-                <p>Use add-fund when you want to increase campaign budget quickly with QR or UPI payment.</p>
-                <p>Use refund when you want approved unused wallet balance moved back out after admin review.</p>
+                <p>{t("pricing.usageBody1")}</p>
+                <p>{t("pricing.usageBody2")}</p>
               </div>
               <div className="mt-4 rounded-2xl border border-foreground/10 bg-background/65 p-3 text-xs text-foreground/55">
-                The funding and refund cards below follow the same pricing model shown here.
+                {t("pricing.usageNote")}
               </div>
             </div>
           </div>
@@ -592,18 +623,12 @@ export default function BusinessFundingPage() {
             <div className="grid gap-6 min-[1800px]:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]">
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-foreground/60">Funding steps</p>
-                  <h3 className="text-xl font-semibold text-foreground">Complete payment in 5 clear steps</h3>
+                  <p className="text-sm text-foreground/60">{t("steps.eyebrow")}</p>
+                  <h3 className="text-xl font-semibold text-foreground">{t("steps.title")}</h3>
                 </div>
 
                 <div className="grid gap-3">
-                  {[
-                    "Enter the amount you want to add.",
-                    "Generate payment details to create a unique reference ID.",
-                    "Pay using the QR code, UPI ID, or phone number and add the reference ID in the note.",
-                    "Upload the payment screenshot and add UTR if available.",
-                    "Click verify, then send the receipt on WhatsApp for faster review.",
-                  ].map((step, index) => (
+                  {stepItems.map((step, index) => (
                     <div
                       key={step}
                       className="flex gap-3 rounded-2xl border border-foreground/10 bg-background/50 p-4"
@@ -620,11 +645,11 @@ export default function BusinessFundingPage() {
               <div className="space-y-5 rounded-[1.75rem] border border-foreground/10 bg-gradient-to-br from-background/80 via-background/70 to-emerald-500/5 p-5 shadow-[0_24px_60px_-40px_rgba(16,185,129,0.45)]">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                  <p className="text-sm text-foreground/60">Start funding</p>
-                  <h3 className="text-xl font-semibold text-foreground">Generate payment details</h3>
+                  <p className="text-sm text-foreground/60">{t("generator.eyebrow")}</p>
+                  <h3 className="text-xl font-semibold text-foreground">{t("generator.title")}</h3>
                   </div>
                   <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-300">
-                    Owner only
+                    {t("generator.ownerOnly")}
                   </div>
                 </div>
 
@@ -647,7 +672,9 @@ export default function BusinessFundingPage() {
                     type="number"
                     min={minFundingThreshold}
                     step="0.01"
-                    placeholder={`Enter amount (min INR ${formatMoney(minFundingThreshold)})`}
+                    placeholder={t("generator.amountPlaceholder", {
+                      amount: `INR ${formatMoney(minFundingThreshold)}`,
+                    })}
                     value={fundAmount}
                     onChange={(event) => setFundAmount(event.target.value)}
                     disabled={!canManageBilling}
@@ -659,7 +686,7 @@ export default function BusinessFundingPage() {
                     disabled={!canGenerateReference}
                     className="w-full lg:w-auto"
                   >
-                    Generate payment details
+                    {t("generator.button")}
                   </Button>
                 </div>
 
@@ -667,33 +694,33 @@ export default function BusinessFundingPage() {
                   <div className="space-y-4 rounded-3xl border border-foreground/10 bg-background/55 p-4 md:p-5">
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div className="rounded-2xl border border-foreground/10 bg-background/65 p-4">
-                        <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">Reference ID</p>
+                        <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">{t("details.referenceId")}</p>
                         <div className="mt-2 flex flex-col gap-3">
                           <p className="break-all text-xl font-semibold text-foreground">{referenceId}</p>
                           <Button type="button" variant="outline" size="sm" className="w-full sm:w-auto" onClick={() => void copyText(referenceId)}>
                             <Copy size={14} />
-                            Copy
+                            {t("actions.copy")}
                           </Button>
                         </div>
                       </div>
 
                       <div className="rounded-2xl border border-foreground/10 bg-background/65 p-4">
-                        <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">UPI ID</p>
+                        <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">{t("details.upiId")}</p>
                         <div className="mt-2 flex flex-col gap-3">
                           <p className="break-all text-base font-medium text-foreground">{data.config.upiId}</p>
                           <Button type="button" variant="outline" size="sm" className="w-full sm:w-auto" onClick={() => void copyText(data.config.upiId)}>
                             <Copy size={14} />
-                            Copy
+                            {t("actions.copy")}
                           </Button>
                         </div>
-                        <p className="mt-2 text-xs text-foreground/55">Account name: {data.config.upiName}</p>
+                        <p className="mt-2 text-xs text-foreground/55">{t("details.accountName", { name: data.config.upiName })}</p>
                       </div>
 
                       {data.config.phoneNumber ? (
                         <div className="rounded-2xl border border-foreground/10 bg-background/65 p-4 sm:col-span-2">
                           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                             <div className="space-y-2">
-                              <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">Phone number</p>
+                              <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">{t("details.phoneNumber")}</p>
                               <p className="text-base font-medium text-foreground">{data.config.phoneNumber}</p>
                             </div>
                             <Button
@@ -704,7 +731,7 @@ export default function BusinessFundingPage() {
                               onClick={() => void copyText(data.config.phoneNumber)}
                             >
                               <Phone size={14} />
-                              Copy
+                              {t("actions.copy")}
                             </Button>
                           </div>
                         </div>
@@ -713,9 +740,9 @@ export default function BusinessFundingPage() {
 
                     <div className="rounded-[1.75rem] border border-foreground/10 bg-gradient-to-b from-background/90 to-background/70 p-5 shadow-[0_24px_70px_-45px_rgba(16,185,129,0.35)]">
                       <div className="text-center">
-                        <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">Scan and pay</p>
+                        <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">{t("details.scanAndPay")}</p>
                         <p className="mx-auto mt-2 max-w-[34ch] text-sm leading-6 text-foreground/70">
-                          Pay the exact amount and add <span className="font-semibold text-foreground">{referenceId}</span> in the note.
+                          {t("details.scanHelpBefore")} <span className="font-semibold text-foreground">{referenceId}</span> {t("details.scanHelpAfter")}
                         </p>
                       </div>
 
@@ -724,12 +751,12 @@ export default function BusinessFundingPage() {
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
                             src={qrDataUrl}
-                            alt="Business funding QR code"
+                            alt={t("details.qrAlt")}
                             className="h-60 w-60 rounded-[1.75rem] bg-white p-4 shadow-xl shadow-black/15"
                           />
                         ) : (
                           <div className="flex h-60 w-60 items-center justify-center rounded-[1.75rem] border border-dashed border-foreground/15 bg-background/60 px-4 text-center text-sm text-foreground/55">
-                            QR code will appear after payment details are generated.
+                            {t("details.qrPending")}
                           </div>
                         )}
                       </div>
@@ -752,7 +779,7 @@ export default function BusinessFundingPage() {
                           onClick={downloadQrCode}
                           disabled={!qrDataUrl}
                         >
-                          Download QR
+                          {t("actions.downloadQr")}
                         </Button>
                         <Button
                           type="button"
@@ -762,13 +789,13 @@ export default function BusinessFundingPage() {
                           disabled={!qrDataUrl}
                         >
                           <Share2 size={16} />
-                          Share QR
+                          {t("actions.shareQr")}
                         </Button>
                       </div>
                     </div>
 
                     <div className="rounded-2xl border border-amber-400/20 bg-amber-500/10 p-4 text-sm leading-7 text-amber-800 dark:text-amber-100">
-                      Keep the screenshot clear and readable. If possible, write the reference ID in the note so our review team can approve it faster.
+                      {t("details.tip")}
                     </div>
                   </div>
                 ) : null}
@@ -780,19 +807,19 @@ export default function BusinessFundingPage() {
         <SectionCard elevated>
           <CardContent className="space-y-5 p-0">
             <div>
-              <p className="text-sm text-foreground/60">Receipt verification</p>
-              <h3 className="text-xl font-semibold text-foreground">Upload screenshot and send for approval</h3>
+              <p className="text-sm text-foreground/60">{t("verification.eyebrow")}</p>
+              <h3 className="text-xl font-semibold text-foreground">{t("verification.title")}</h3>
             </div>
 
             <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4 text-sm text-foreground/70">
-              After payment, upload the screenshot here. We review each request manually before the wallet is credited.
+              {t("verification.description")}
             </div>
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm text-foreground/70">UTR / transaction ID (optional)</label>
+                <label className="text-sm text-foreground/70">{t("verification.utrLabel")}</label>
                 <Input
-                  placeholder="Add the UTR if your payment app shows it"
+                  placeholder={t("verification.utrPlaceholder")}
                   value={utr}
                   onChange={(event) => setUtr(event.target.value)}
                   disabled={!canManageBilling}
@@ -800,7 +827,7 @@ export default function BusinessFundingPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm text-foreground/70">Upload payment screenshot</label>
+                <label className="text-sm text-foreground/70">{t("verification.uploadLabel")}</label>
                 <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
                   <input
                     type="file"
@@ -815,26 +842,26 @@ export default function BusinessFundingPage() {
                     disabled={uploading || !canManageBilling}
                   />
                   <p className="mt-2 text-xs text-foreground/55">
-                    One screenshot only. JPG, PNG, or WEBP. Max 500 KB after compression.
+                    {t("verification.uploadHelp")}
                   </p>
-                  {uploading ? <p className="mt-2 text-xs text-emerald-300">Uploading screenshot...</p> : null}
+                  {uploading ? <p className="mt-2 text-xs text-emerald-300">{t("verification.uploading")}</p> : null}
                   {uploadError ? <p className="mt-2 text-xs text-rose-300">{uploadError}</p> : null}
                   {proofImageUrl ? (
                     <div className="mt-3 rounded-2xl border border-foreground/10 bg-background/65 p-3">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={proofImageUrl}
-                        alt="Funding proof preview"
+                        alt={t("verification.previewAlt")}
                         className="w-full rounded-xl border border-foreground/10 object-contain"
                       />
                       <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                        <p className="text-xs text-foreground/60">Screenshot ready for verification.</p>
+                        <p className="text-xs text-foreground/60">{t("verification.ready")}</p>
                         <button
                           type="button"
                           className="text-xs font-medium text-foreground/70 underline underline-offset-4 hover:text-foreground"
                           onClick={() => setProofImageUrl(null)}
                         >
-                          Remove screenshot
+                          {t("verification.remove")}
                         </button>
                       </div>
                     </div>
@@ -850,7 +877,7 @@ export default function BusinessFundingPage() {
               onClick={() => void submitFundingRequest()}
             >
               <Upload size={16} />
-              {loading ? "Submitting..." : "Verify payment"}
+              {loading ? t("verification.submitting") : t("verification.verifyButton")}
             </Button>
 
             {error ? <p className="text-sm text-rose-300">{error}</p> : null}
@@ -862,9 +889,9 @@ export default function BusinessFundingPage() {
                   <CheckCircle2 className="mt-0.5 text-emerald-300" size={18} />
                   <div className="space-y-3">
                     <div>
-                      <p className="font-medium text-emerald-100">Funding request sent for review</p>
+                      <p className="font-medium text-emerald-100">{t("whatsapp.title")}</p>
                       <p className="mt-1 text-sm text-emerald-100/80">
-                        Send the receipt on WhatsApp for faster manual verification.
+                        {t("whatsapp.description")}
                       </p>
                     </div>
                     <a
@@ -874,7 +901,7 @@ export default function BusinessFundingPage() {
                       className="inline-flex items-center gap-2 rounded-xl border border-emerald-400/25 bg-emerald-400/10 px-4 py-2 text-sm font-medium text-emerald-100 transition hover:bg-emerald-400/15"
                     >
                       <MessageCircle size={16} />
-                      Send receipt to WhatsApp
+                      {t("whatsapp.button")}
                     </a>
                   </div>
                 </div>
@@ -885,34 +912,36 @@ export default function BusinessFundingPage() {
               <div className="rounded-[1.75rem] border border-foreground/10 bg-gradient-to-br from-background/80 via-background/70 to-cyan-500/5 p-5 shadow-[0_24px_60px_-40px_rgba(6,182,212,0.35)]">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <p className="text-sm text-foreground/60">Request refund</p>
-                    <h3 className="text-xl font-semibold text-foreground">Move unused wallet balance out</h3>
+                    <p className="text-sm text-foreground/60">{t("refund.eyebrow")}</p>
+                    <h3 className="text-xl font-semibold text-foreground">{t("refund.title")}</h3>
                   </div>
                   <div className="rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-700 dark:text-cyan-300">
-                    {businessRefundFeeRate === 0 ? "0% fee" : `${(businessRefundFeeRate * 100).toFixed(2)}% fee`}
+                    {businessRefundFeeRate === 0
+                      ? t("refund.zeroFee")
+                      : t("refund.feeBadge", { rate: (businessRefundFeeRate * 100).toFixed(2) })}
                   </div>
                 </div>
 
                 <div className="mt-3 rounded-2xl border border-foreground/10 bg-background/55 p-4 text-sm text-foreground/70">
-                  Refund requests use the business refund fee setting. Right now the refund fee is{" "}
+                  {t("refund.descriptionBefore")}{" "}
                   <span className="font-semibold text-foreground">{(businessRefundFeeRate * 100).toFixed(2)}%</span>.
                   {businessRefundFeeRate === 0
-                    ? " Your full requested amount is returned."
-                    : " The amount after the fee is shown below before you submit."}
+                    ? ` ${t("refund.descriptionZeroFee")}`
+                    : ` ${t("refund.descriptionWithFee")}`}
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="rounded-2xl border border-cyan-400/15 bg-cyan-500/10 p-4">
-                    <p className="text-xs uppercase tracking-[0.22em] text-cyan-700/80 dark:text-cyan-100/80">Refund fee</p>
+                    <p className="text-xs uppercase tracking-[0.22em] text-cyan-700/80 dark:text-cyan-100/80">{t("refund.cards.refundFee")}</p>
                     <p className="mt-2 text-2xl font-semibold text-foreground">
                       {(businessRefundFeeRate * 100).toFixed(2)}%
                     </p>
-                    <p className="mt-1 text-xs text-foreground/60">Applied after admin approval of the refund request.</p>
+                    <p className="mt-1 text-xs text-foreground/60">{t("refund.cards.refundFeeHelp")}</p>
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
-                    <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">Refund policy</p>
+                    <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">{t("refund.cards.refundPolicy")}</p>
                     <p className="mt-2 text-sm leading-6 text-foreground/65">
-                      Request only from currently refundable wallet balance. The net amount preview stays visible before you submit.
+                      {t("refund.cards.refundPolicyHelp")}
                     </p>
                   </div>
                 </div>
@@ -922,7 +951,9 @@ export default function BusinessFundingPage() {
                     type="number"
                     min="0"
                     step="0.01"
-                    placeholder={`Enter refund amount (max INR ${formatMoney(data.refundableBalance)})`}
+                    placeholder={t("refund.amountPlaceholder", {
+                      amount: `INR ${formatMoney(data.refundableBalance)}`,
+                    })}
                     value={refundAmount}
                     onChange={(event) => setRefundAmount(event.target.value)}
                     disabled={!canManageBilling || refundLoading}
@@ -935,25 +966,25 @@ export default function BusinessFundingPage() {
                     className="w-full lg:w-auto"
                     variant="outline"
                   >
-                    {refundLoading ? "Processing..." : "Request refund"}
+                    {refundLoading ? t("refund.processing") : t("refund.button")}
                   </Button>
                 </div>
 
                 <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
-                    <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">Refundable balance</p>
+                    <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">{t("refund.breakdown.refundableBalance")}</p>
                     <p className="mt-2 text-xl font-semibold text-foreground">INR {formatMoney(data.refundableBalance)}</p>
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
-                    <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">Requested</p>
+                    <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">{t("refund.breakdown.requested")}</p>
                     <p className="mt-2 text-xl font-semibold text-foreground">INR {formatMoney(refundNumber || 0)}</p>
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
-                    <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">Wallet fee</p>
+                    <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">{t("refund.breakdown.walletFee")}</p>
                     <p className="mt-2 text-xl font-semibold text-foreground">INR {formatMoney(refundFee)}</p>
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
-                    <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">Net refund</p>
+                    <p className="text-xs uppercase tracking-[0.22em] text-foreground/55">{t("refund.breakdown.netRefund")}</p>
                     <p className="mt-2 text-xl font-semibold text-foreground">INR {formatMoney(refundNet > 0 ? refundNet : 0)}</p>
                   </div>
                 </div>
@@ -972,14 +1003,14 @@ export default function BusinessFundingPage() {
             <div className="flex items-center gap-3">
               <ReceiptText size={18} className="text-foreground/70" />
               <div>
-                <p className="text-sm text-foreground/60">Recent funding requests</p>
-                <h3 className="text-xl font-semibold text-foreground">Track approval status</h3>
+                <p className="text-sm text-foreground/60">{t("history.eyebrow")}</p>
+                <h3 className="text-xl font-semibold text-foreground">{t("history.title")}</h3>
               </div>
             </div>
 
             {data.requests.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-foreground/10 bg-background/55 p-5 text-sm text-foreground/60">
-                No manual funding request yet.
+                {t("history.empty")}
               </div>
             ) : (
               <div className="space-y-4">
@@ -988,30 +1019,37 @@ export default function BusinessFundingPage() {
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div className="space-y-1">
                         <p className="text-base font-semibold text-foreground">INR {formatMoney(request.amount)}</p>
-                        <p className="text-sm text-foreground/65">Reference ID: {request.referenceId}</p>
+                        <p className="text-sm text-foreground/65">{t("history.referenceId", { referenceId: request.referenceId })}</p>
                         {request.utr ? (
-                          <p className="text-xs text-foreground/55">UTR: {request.utr}</p>
+                          <p className="text-xs text-foreground/55">{t("history.utr", { utr: request.utr })}</p>
                         ) : null}
-                        <p className="text-xs text-foreground/55">{formatDateTime(request.createdAt)}</p>
+                        <p className="text-xs text-foreground/55">
+                          {formatDateTime(request.createdAt, locale, t("labels.notAvailable"))}
+                        </p>
                       </div>
-                      <StatusBadge label={request.status} tone={fundingTone(request.status)} />
+                      <StatusBadge
+                        label={fundingStatusLabel(request.status, t)}
+                        tone={fundingTone(request.status)}
+                      />
                     </div>
 
                     <div className="mt-4 grid gap-4 lg:grid-cols-[1fr_auto]">
                       <div className="space-y-2">
                         {request.flaggedReason ? (
                           <div className="rounded-2xl border border-amber-400/20 bg-amber-500/10 p-3 text-xs text-amber-800 dark:text-amber-100">
-                            Review flag: {request.flaggedReason}
+                            {t("history.reviewFlag", { reason: request.flaggedReason })}
                           </div>
                         ) : null}
                         {request.reviewNote ? (
                           <div className="rounded-2xl border border-foreground/10 bg-background/65 p-3 text-xs text-foreground/70">
-                            Admin note: {request.reviewNote}
+                            {t("history.adminNote", { note: request.reviewNote })}
                           </div>
                         ) : null}
                         {request.reviewedAt ? (
                           <p className={`text-xs ${fundingTextTone(request.status)}`}>
-                            Reviewed: {formatDateTime(request.reviewedAt)}
+                            {t("history.reviewed", {
+                              date: formatDateTime(request.reviewedAt, locale, t("labels.notAvailable")),
+                            })}
                           </p>
                         ) : null}
                       </div>
@@ -1019,8 +1057,8 @@ export default function BusinessFundingPage() {
                       <div className="flex flex-col gap-2">
                         <ProofImageDialog
                           url={request.proofImage}
-                          label="Open screenshot"
-                          title="Funding proof screenshot"
+                          label={t("actions.openScreenshot")}
+                          title={t("history.proofTitle")}
                         />
                       </div>
                     </div>
@@ -1036,14 +1074,14 @@ export default function BusinessFundingPage() {
             <div className="flex items-center gap-3">
               <Wallet size={18} className="text-foreground/70" />
               <div>
-                <p className="text-sm text-foreground/60">Wallet activity</p>
-                <h3 className="text-xl font-semibold text-foreground">Funding credits and debits</h3>
+                <p className="text-sm text-foreground/60">{t("walletActivity.eyebrow")}</p>
+                <h3 className="text-xl font-semibold text-foreground">{t("walletActivity.title")}</h3>
               </div>
             </div>
 
             {data.transactions.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-foreground/10 bg-background/55 p-5 text-sm text-foreground/60">
-                No wallet activity yet.
+                {t("walletActivity.empty")}
               </div>
             ) : (
               <div className="space-y-3">
@@ -1052,9 +1090,11 @@ export default function BusinessFundingPage() {
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                       <div>
                         <p className="font-medium text-foreground break-words">
-                          {transaction.note || "Business wallet update"}
+                          {transaction.note || t("walletActivity.fallbackNote")}
                         </p>
-                        <p className="mt-1 text-xs text-foreground/55">{formatDateTime(transaction.createdAt)}</p>
+                        <p className="mt-1 text-xs text-foreground/55">
+                          {formatDateTime(transaction.createdAt, locale, t("labels.notAvailable"))}
+                        </p>
                       </div>
                       <p
                         className={
@@ -1079,14 +1119,14 @@ export default function BusinessFundingPage() {
           <div className="flex items-center gap-3">
             <Wallet size={18} className="text-foreground/70" />
             <div>
-              <p className="text-sm text-foreground/60">Refund requests</p>
-              <h3 className="text-xl font-semibold text-foreground">Track refund approval status</h3>
+              <p className="text-sm text-foreground/60">{t("refundHistory.eyebrow")}</p>
+              <h3 className="text-xl font-semibold text-foreground">{t("refundHistory.title")}</h3>
             </div>
           </div>
 
           {data.refundRequests.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-foreground/10 bg-background/55 p-5 text-sm text-foreground/60">
-              No refund request yet.
+              {t("refundHistory.empty")}
             </div>
           ) : (
             <div className="space-y-4">
@@ -1095,32 +1135,39 @@ export default function BusinessFundingPage() {
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div className="space-y-1">
                       <p className="text-base font-semibold text-foreground">INR {formatMoney(request.amount)}</p>
-                      <p className="text-xs text-foreground/55">{formatDateTime(request.createdAt)}</p>
+                      <p className="text-xs text-foreground/55">
+                        {formatDateTime(request.createdAt, locale, t("labels.notAvailable"))}
+                      </p>
                     </div>
-                    <StatusBadge label={request.status} tone={fundingTone(request.status)} />
+                    <StatusBadge
+                      label={fundingStatusLabel(request.status, t)}
+                      tone={fundingTone(request.status)}
+                    />
                   </div>
 
                   {request.requestNote ? (
                     <div className="mt-4 rounded-2xl border border-foreground/10 bg-background/65 p-3 text-xs text-foreground/70">
-                      Request note: {request.requestNote}
+                      {t("refundHistory.requestNote", { note: request.requestNote })}
                     </div>
                   ) : null}
 
                   {request.flaggedReason ? (
                     <div className="mt-4 rounded-2xl border border-amber-400/20 bg-amber-500/10 p-3 text-xs text-amber-800 dark:text-amber-100">
-                      Review flag: {request.flaggedReason}
+                      {t("refundHistory.reviewFlag", { reason: request.flaggedReason })}
                     </div>
                   ) : null}
 
                   {request.reviewNote ? (
                     <div className="mt-4 rounded-2xl border border-foreground/10 bg-background/65 p-3 text-xs text-foreground/70">
-                      Admin note: {request.reviewNote}
+                      {t("refundHistory.adminNote", { note: request.reviewNote })}
                     </div>
                   ) : null}
 
                   {request.reviewedAt ? (
                     <p className={`mt-4 text-xs ${fundingTextTone(request.status)}`}>
-                      Reviewed: {formatDateTime(request.reviewedAt)}
+                      {t("refundHistory.reviewed", {
+                        date: formatDateTime(request.reviewedAt, locale, t("labels.notAvailable")),
+                      })}
                     </p>
                   ) : null}
                 </div>

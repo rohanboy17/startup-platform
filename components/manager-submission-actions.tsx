@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
 export default function ManagerSubmissionActions({ submissionId }: { submissionId: string }) {
+  const t = useTranslations("manager.submissionActions");
   const router = useRouter();
   const [loading, setLoading] = useState<"APPROVE" | "REJECT" | "ESCALATE" | null>(null);
   const [message, setMessage] = useState("");
@@ -27,18 +29,18 @@ export default function ManagerSubmissionActions({ submissionId }: { submissionI
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("errors.unexpected") };
     }
 
     setLoading(null);
 
     if (!res.ok) {
-      setMessage(data.error || "Action failed");
+      setMessage(data.error || t("errors.actionFailed"));
       return;
     }
 
     setReason("");
-    setMessage(data.message || "Updated");
+    setMessage(data.message || t("updated"));
     router.refresh();
     emitDashboardLiveRefresh();
   }
@@ -59,18 +61,18 @@ export default function ManagerSubmissionActions({ submissionId }: { submissionI
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("errors.unexpected") };
     }
 
     setLoading(null);
 
     if (!res.ok) {
-      setMessage(data.error || "Action failed");
+      setMessage(data.error || t("errors.actionFailed"));
       return;
     }
 
     setReason("");
-    setMessage(data.message || "Escalated");
+    setMessage(data.message || t("escalated"));
     router.refresh();
     emitDashboardLiveRefresh();
   }
@@ -81,7 +83,7 @@ export default function ManagerSubmissionActions({ submissionId }: { submissionI
         <textarea
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          placeholder="Reason (required when rejecting, recommended when escalating)"
+          placeholder={t("reasonPlaceholder")}
           rows={3}
           className="w-full resize-none rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35 md:bg-black/20"
         />
@@ -91,7 +93,7 @@ export default function ManagerSubmissionActions({ submissionId }: { submissionI
             disabled={loading !== null}
             className="min-h-11 w-full px-5 sm:w-auto"
           >
-            {loading === "APPROVE" ? "Approving..." : "Approve"}
+            {loading === "APPROVE" ? t("approving") : t("approve")}
           </Button>
           <Button
             variant="destructive"
@@ -99,7 +101,7 @@ export default function ManagerSubmissionActions({ submissionId }: { submissionI
             disabled={loading !== null}
             className="min-h-11 w-full px-5 sm:w-auto"
           >
-            {loading === "REJECT" ? "Rejecting..." : "Reject"}
+            {loading === "REJECT" ? t("rejecting") : t("reject")}
           </Button>
           <Button
             variant="secondary"
@@ -107,7 +109,7 @@ export default function ManagerSubmissionActions({ submissionId }: { submissionI
             disabled={loading !== null}
             className="min-h-11 w-full px-5 sm:w-auto"
           >
-            {loading === "ESCALATE" ? "Escalating..." : "Escalate"}
+            {loading === "ESCALATE" ? t("escalating") : t("escalate")}
           </Button>
         </div>
         {message ? <p className="text-xs text-white/70">{message}</p> : null}

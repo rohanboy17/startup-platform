@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
@@ -22,6 +23,7 @@ export default function UserNotificationsList({
   notifications: NotificationItem[];
   showLimitSelector?: boolean;
 }) {
+  const t = useTranslations("user.notificationsList");
   const [loading, setLoading] = useState<string | "all" | null>(null);
   const [message, setMessage] = useState("");
   const [limit, setLimit] = useState<"5" | "10" | "20" | "ALL">("10");
@@ -47,17 +49,17 @@ export default function UserNotificationsList({
     try {
       data = raw ? (JSON.parse(raw) as { error?: string; message?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("errors.unexpected") };
     }
 
     setLoading(null);
 
     if (!res.ok) {
-      setMessage(data.error || "Failed to update notifications");
+      setMessage(data.error || t("errors.updateFailed"));
       return;
     }
 
-    setMessage(data.message || "Updated");
+    setMessage(data.message || t("actions.updated"));
     emitDashboardLiveRefresh();
     window.location.reload();
   }
@@ -65,11 +67,13 @@ export default function UserNotificationsList({
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-foreground/60">Unread: {notifications.filter((n) => !n.isRead).length}</p>
+        <p className="text-sm text-foreground/60">
+          {t("unread", { count: notifications.filter((n) => !n.isRead).length })}
+        </p>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           {showLimitSelector ? (
             <label className="flex items-center gap-2 text-sm text-foreground/60">
-              <span>Show</span>
+              <span>{t("controls.show")}</span>
               <select
                 value={limit}
                 onChange={(e) => setLimit(e.target.value as "5" | "10" | "20" | "ALL")}
@@ -78,7 +82,7 @@ export default function UserNotificationsList({
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="20">20</option>
-                <option value="ALL">Show all</option>
+                <option value="ALL">{t("controls.showAll")}</option>
               </select>
             </label>
           ) : null}
@@ -88,14 +92,14 @@ export default function UserNotificationsList({
             disabled={loading !== null || notifications.every((n) => n.isRead)}
             className="border-foreground/20 bg-transparent text-foreground hover:bg-foreground/[0.04]"
           >
-            {loading === "all" ? "Updating..." : "Mark all as read"}
+            {loading === "all" ? t("actions.updating") : t("actions.markAllRead")}
           </Button>
         </div>
       </div>
 
       {notifications.length === 0 ? (
         <Card className="rounded-2xl border-foreground/10 bg-background/50">
-          <CardContent className="p-6 text-sm text-foreground/60">No notifications yet.</CardContent>
+          <CardContent className="p-6 text-sm text-foreground/60">{t("empty")}</CardContent>
         </Card>
       ) : (
         visibleNotifications.map((n) => (
@@ -118,7 +122,7 @@ export default function UserNotificationsList({
                     onClick={() => void markRead(n.id)}
                     disabled={loading !== null}
                   >
-                    {loading === n.id ? "Saving..." : "Mark read"}
+                    {loading === n.id ? t("actions.saving") : t("actions.markRead")}
                   </Button>
                 ) : null}
               </div>

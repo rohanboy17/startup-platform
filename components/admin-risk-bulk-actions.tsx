@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
 type BulkRiskAction = "DISMISS_ALL_FLAGS" | "RESOLVE_ALL_ESCALATIONS";
 
 export default function AdminRiskBulkActions() {
+  const t = useTranslations("admin.riskBulkActions");
   const router = useRouter();
   const [loading, setLoading] = useState<BulkRiskAction | null>(null);
   const [message, setMessage] = useState("");
@@ -28,11 +30,11 @@ export default function AdminRiskBulkActions() {
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
 
     setLoading(null);
-    setMessage(data.message || data.error || "Updated");
+    setMessage(data.message || data.error || t("updated"));
 
     if (res.ok) {
       router.refresh();
@@ -50,7 +52,7 @@ export default function AdminRiskBulkActions() {
           disabled={loading !== null}
           className="w-full sm:w-auto"
         >
-          {loading === "DISMISS_ALL_FLAGS" ? "Dismissing..." : "Dismiss all"}
+          {loading === "DISMISS_ALL_FLAGS" ? t("dismissing") : t("dismissAll")}
         </Button>
         <Button
           type="button"
@@ -59,7 +61,7 @@ export default function AdminRiskBulkActions() {
           disabled={loading !== null}
           className="w-full sm:w-auto"
         >
-          {loading === "RESOLVE_ALL_ESCALATIONS" ? "Resolving..." : "Resolve all"}
+          {loading === "RESOLVE_ALL_ESCALATIONS" ? t("resolving") : t("resolveAll")}
         </Button>
       </div>
       {message ? <p className="text-xs text-amber-200 dark:text-foreground/60">{message}</p> : null}

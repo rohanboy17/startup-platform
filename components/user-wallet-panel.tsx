@@ -71,7 +71,7 @@ export default function UserWalletPanel() {
           <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">{t("eyebrow")}</p>
           <h2 className="mt-2 text-3xl font-semibold md:text-4xl">{t("title")}</h2>
           <p className="mt-2 max-w-2xl text-sm text-white/65 md:text-base">
-            Review your available balance, earning history, and payout movement in one place.
+            {t("subtitle")}
           </p>
         </div>
         <Link
@@ -98,7 +98,7 @@ export default function UserWalletPanel() {
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <label className="flex items-center gap-2 text-sm text-white/60">
-                <span>Show</span>
+                <span>{t("controls.show")}</span>
                 <select
                   value={limit}
                   onChange={(e) => setLimit(e.target.value as "5" | "10" | "20" | "ALL")}
@@ -107,7 +107,7 @@ export default function UserWalletPanel() {
                   <option value="5">5</option>
                   <option value="10">10</option>
                   <option value="20">20</option>
-                  <option value="ALL">Show all</option>
+                  <option value="ALL">{t("controls.showAll")}</option>
                 </select>
               </label>
               <StatusBadge label={t("latestEntries")} tone="neutral" />

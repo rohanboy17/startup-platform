@@ -112,6 +112,7 @@ export default function DashboardTabNav({
 }) {
   const tGreeting = useTranslations("dashboard.greeting");
   const tNav = useTranslations("dashboard.nav");
+  const tShell = useTranslations("dashboard.shell");
   const pathname = usePathname();
   const [alerts, setAlerts] = useState<Record<string, string>>({});
   const [counts, setCounts] = useState<Record<string, number>>({});
@@ -201,7 +202,7 @@ export default function DashboardTabNav({
             type="button"
             onClick={() => setMobileOpen((prev) => !prev)}
             className="inline-flex items-center justify-center rounded-lg border border-foreground/15 bg-foreground/[0.04] p-2 text-foreground/90 md:hidden"
-            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-label={mobileOpen ? tShell("closeMenu") : tShell("openMenu")}
           >
             {mobileOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -212,7 +213,7 @@ export default function DashboardTabNav({
         className={`${mobileOpen ? "block" : "hidden"} space-y-5 rounded-lg border border-foreground/10 bg-foreground/[0.04] p-4 md:block md:space-y-6 md:rounded-none md:border-0 md:bg-transparent md:p-0`}
       >
         <div className="rounded-lg border border-foreground/10 bg-foreground/[0.04] p-3 md:border md:bg-foreground/[0.04]">
-          <p className="text-xs text-foreground/50">Signed in as</p>
+          <p className="text-xs text-foreground/50">{tShell("signedInAs")}</p>
           <p className="text-sm font-medium text-foreground/90">{displayName}</p>
         </div>
 
@@ -249,7 +250,7 @@ export default function DashboardTabNav({
             className="mb-3 flex items-center gap-3 text-sm text-foreground/70 transition hover:text-foreground"
           >
             <House size={18} />
-            Main Home
+            {tShell("mainHome")}
           </Link>
           {showForgotPasswordInNav ? (
             <Link
@@ -258,7 +259,7 @@ export default function DashboardTabNav({
               className="mb-3 flex items-center gap-3 text-sm text-foreground/70 transition hover:text-foreground"
             >
               <KeyRound size={18} />
-              Forgot Password
+              {tShell("forgotPassword")}
             </Link>
           ) : null}
           <LogoutButton />
@@ -269,10 +270,11 @@ export default function DashboardTabNav({
 }
 
 export function HomeNavLink() {
+  const tShell = useTranslations("dashboard.shell");
   return (
     <Link href="/" className="mb-3 flex items-center gap-3 text-sm text-foreground/70 transition hover:text-foreground">
       <House size={18} />
-      Main Home
+      {tShell("mainHome")}
     </Link>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { KpiCard } from "@/components/ui/kpi-card";
@@ -32,14 +33,6 @@ type InboxResponse = {
   error?: string;
 };
 
-const FILTERS: Array<{ value: NotificationFilter; label: string }> = [
-  { value: "ALL", label: "All" },
-  { value: "UNREAD", label: "Unread" },
-  { value: "SUCCESS", label: "Success" },
-  { value: "WARNING", label: "Warnings" },
-  { value: "INFO", label: "Info" },
-];
-
 function typeTone(type: string, isRead: boolean) {
   if (isRead) return "border-foreground/10 bg-background/50 text-foreground";
   if (type === "SUCCESS") return "border-emerald-400/25 bg-emerald-500/10 text-foreground";
@@ -48,6 +41,8 @@ function typeTone(type: string, isRead: boolean) {
 }
 
 export default function ManagerInboxPanel() {
+  const t = useTranslations("manager.inboxPanel");
+  const locale = useLocale();
   const hydrated = useHydrated();
   const [data, setData] = useState<InboxResponse | null>(null);
   const [error, setError] = useState("");
@@ -65,19 +60,19 @@ export default function ManagerInboxPanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as InboxResponse) : null;
     } catch {
-      setError("Unexpected server response");
+      setError(t("errors.unexpected"));
       setLoading(false);
       return;
     }
 
     if (!res.ok) {
-      setError(parsed?.error || "Failed to load notifications");
+      setError(parsed?.error || t("errors.failed"));
     } else {
       setError("");
       setData(parsed);
     }
     setLoading(false);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 10000);
 
@@ -116,42 +111,42 @@ export default function ManagerInboxPanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as { error?: string; message?: string }) : {};
     } catch {
-      parsed = { error: "Unexpected server response" };
+      parsed = { error: t("errors.unexpected") };
     }
 
     setActionLoading(null);
     if (!res.ok) {
-      setMessage(parsed.error || "Failed to update notifications");
+      setMessage(parsed.error || t("actions.updateFailed"));
       return;
     }
 
-    setMessage(parsed.message || "Notifications updated");
+    setMessage(parsed.message || t("actions.updated"));
     emitDashboardLiveRefresh();
     await load();
   }
 
-  if (loading) return <p className="text-sm text-foreground/60">Loading notifications...</p>;
+  if (loading) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
   if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-foreground/60">Loading notifications...</p>;
+  if (!data) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="Total notifications" value={data.totalCount} />
-        <KpiCard label="Unread" value={data.unreadCount} tone="success" />
-        <KpiCard label="Success Updates" value={data.typeCounts.success} tone="info" />
-        <KpiCard label="Warnings" value={data.typeCounts.warning} tone="warning" />
+        <KpiCard label={t("kpis.totalNotifications")} value={data.totalCount} />
+        <KpiCard label={t("kpis.unread")} value={data.unreadCount} tone="success" />
+        <KpiCard label={t("kpis.successUpdates")} value={data.typeCounts.success} tone="info" />
+        <KpiCard label={t("kpis.warnings")} value={data.typeCounts.warning} tone="warning" />
       </div>
 
       <SectionCard elevated className="space-y-4 p-4 sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-sm text-foreground/60">Inbox filters</p>
-            <h3 className="text-xl font-semibold text-foreground">Broadcasts and important updates</h3>
+            <p className="text-sm text-foreground/60">{t("filtersHeader.eyebrow")}</p>
+            <h3 className="text-xl font-semibold text-foreground">{t("filtersHeader.title")}</h3>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <label className="flex items-center gap-2 text-sm text-foreground/60">
-              <span>Show</span>
+              <span>{t("filtersHeader.show")}</span>
               <select
                 value={limit}
                 onChange={(event) => setLimit(event.target.value as "5" | "10" | "20" | "ALL")}
@@ -160,7 +155,7 @@ export default function ManagerInboxPanel() {
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="20">20</option>
-                <option value="ALL">Show all</option>
+                <option value="ALL">{t("filtersHeader.showAll")}</option>
               </select>
             </label>
             <Button
@@ -169,13 +164,19 @@ export default function ManagerInboxPanel() {
               disabled={actionLoading !== null || data.notifications.every((item) => item.isRead)}
               className="border-foreground/20 bg-transparent text-foreground hover:bg-foreground/[0.04]"
             >
-              {actionLoading === "all" ? "Updating..." : "Mark all as read"}
+              {actionLoading === "all" ? t("filtersHeader.updating") : t("filtersHeader.markAllRead")}
             </Button>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {FILTERS.map((item) => {
+          {([
+            { value: "ALL", label: t("filters.all") },
+            { value: "UNREAD", label: t("filters.unread") },
+            { value: "SUCCESS", label: t("filters.success") },
+            { value: "WARNING", label: t("filters.warnings") },
+            { value: "INFO", label: t("filters.info") },
+          ] as Array<{ value: NotificationFilter; label: string }>).map((item) => {
             const active = filter === item.value;
             return (
               <button
@@ -197,7 +198,7 @@ export default function ManagerInboxPanel() {
 
       {filtered.length === 0 ? (
         <Card className="rounded-2xl border-foreground/10 bg-background/50">
-          <CardContent className="p-6 text-sm text-foreground/60">No notifications match the current filter.</CardContent>
+          <CardContent className="p-6 text-sm text-foreground/60">{t("empty")}</CardContent>
         </Card>
       ) : (
         <div className="space-y-4">
@@ -214,17 +215,17 @@ export default function ManagerInboxPanel() {
                   </div>
                   {!item.isRead ? (
                     <Button size="sm" variant="secondary" onClick={() => void markRead(item.id)} disabled={actionLoading !== null}>
-                      {actionLoading === item.id ? "Saving..." : "Mark read"}
+                      {actionLoading === item.id ? t("actions.saving") : t("actions.markRead")}
                     </Button>
                   ) : null}
                 </div>
                 <div className="flex flex-wrap items-center gap-3 text-xs opacity-70">
-                  <span suppressHydrationWarning>{hydrated ? new Date(item.createdAt).toLocaleString() : ""}</span>
+                  <span suppressHydrationWarning>{hydrated ? new Date(item.createdAt).toLocaleString(locale) : ""}</span>
                   <StatusBadge
                     label={item.type}
                     tone={item.type === "SUCCESS" ? "success" : item.type === "WARNING" ? "warning" : "info"}
                   />
-                  {!item.isRead ? <StatusBadge label="Unread" tone="neutral" /> : null}
+                  {!item.isRead ? <StatusBadge label={t("unreadBadge")} tone="neutral" /> : null}
                 </div>
               </CardContent>
             </Card>

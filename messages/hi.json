@@ -72,7 +72,10 @@
       "supportEyebrow": "सपोर्ट",
       "supportTitle": "हेल्प चाहिए?",
       "supportBody": "अगर आपके सबमिशन, वॉलेट या विथड्रॉ में कुछ गलत लगे, तो पब्लिक कॉन्टैक्ट पेज या वहाँ दिए गए ऑफिशियल सपोर्ट चैनल का उपयोग करें।"
-    }
+    },
+    "socialTitle": "हमसे जुड़ें",
+    "socialDescription": "नए लॉन्च, सपोर्ट अपडेट और कम्युनिटी खबरों के साथ जुड़े रहें।",
+    "creditLine": "Designed, Developed and Maintained by FreeEarnhub"
   },
   "settings": {
     "languageTitle": "भाषा",
@@ -146,7 +149,7 @@
       "side": {
         "eyebrow": "शुरू करें",
         "title": "कुछ ही मिनटों में अपना अकाउंट बनाएं।",
-        "subtitle": "यूज़र बनकर verified task से कमाएं, या बिज़नेस बनकर असली campaign शुरू करें।",
+        "subtitle": "यूज़र बनकर वेरिफाइड टास्क से कमाएं, या बिज़नेस बनकर असली कैंपेन शुरू करें।",
         "bullets": {
           "unified": "यूज़र और बिजनेस रोल्स के लिए एक यूनिफाइड अकाउंट",
           "mobileIdentity": "मोबाइल नंबर से आसान साइन-अप",
@@ -156,7 +159,7 @@
       "card": {
         "eyebrow": "नया अकाउंट बनाएं",
         "title": "FreeEarnHub जॉइन करें",
-        "subtitle": "मोबाइल नंबर से रजिस्टर करें और कमाई या campaign शुरू करें।"
+        "subtitle": "मोबाइल नंबर से रजिस्टर करें और कमाई या कैंपेन शुरू करें।"
       },
       "form": {
         "fullName": "पूरा नाम",
@@ -190,7 +193,7 @@
   "home": {
     "landing": {
       "heroTitle": "सत्यापित टास्क पूरा करके कमाएं।",
-      "heroSubtitle": "FreeEarnHub एक आसान earning platform है जहाँ यूज़र verified task पूरा करके कमाते हैं और बिज़नेस trackable growth campaign चलाते हैं।"
+      "heroSubtitle": "FreeEarnHub एक आसान कमाई प्लेटफॉर्म है जहाँ यूज़र वेरिफाइड टास्क पूरा करके कमाते हैं और बिज़नेस ट्रैक करने योग्य ग्रोथ कैंपेन चलाते हैं।"
     },
     "announcements": {
       "learnMore": "और जानें"
@@ -281,62 +284,66 @@
       "qrAlt": "FreeEarnHub होमपेज के लिए QR कोड"
     },
     "guidedVideos": {
-      "openLabel": "?????? ?????",
-      "fallbackLabel": "?????? ???? ???? ????? ????",
+      "openLabel": "वीडियो खोलें",
+      "fallbackLabel": "वीडियो लिंक जोड़ने पर यहाँ गाइड दिखेगी",
       "items": [
         {
           "id": "earn",
-          "tabLabel": "???? ???? ????",
-          "eyebrow": "???? ????",
-          "title": "FreeEarnHub ?? ???? ???? ???? ?????",
-          "body": "???? ???? ?? ???? ???? earning flow ?????? ????? task ?????, proof submit ???? ?? review ?? ??? wallet credit ????? ???? ???? ??? ?????? ??? ???",
+          "tabLabel": "कमाई गाइड",
+          "eyebrow": "शुरू कैसे करें",
+          "title": "FreeEarnHub पर कमाई कैसे शुरू करें",
+          "body": "इस छोटे गाइड में आप देखेंगे कि सही टास्क कैसे चुनना है, प्रूफ कैसे सबमिट करना है, और अप्रूवल के बाद वॉलेट क्रेडिट कैसे मिलता है।",
           "bullets": [
-            "????? verified task ???? ????? ??? ?? ??? task ???? ??????",
-            "????? ??? ?? proof ???? ?? ???? approval ????? ?????",
-            "????? ???? wallet ??? ???? ??? ?? ?? withdrawal ?? available ???? ???"
+            "ऐसे वेरिफाइड टास्क चुनें जिन्हें आप सही तरीके से पूरा कर सकें।",
+            "स्पष्ट प्रूफ सबमिट करें ताकि अप्रूवल तेज़ और आसान हो।",
+            "अप्रूवल के बाद वॉलेट बैलेंस और विथड्रॉ विकल्प चेक करें।"
           ]
         },
         {
           "id": "campaign",
-          "tabLabel": "?????? ?????",
-          "eyebrow": "?????? ????",
-          "title": "?????? ?????? ???? ????? ???? ???, ?? ?????",
-          "body": "?? ???? wallet funding ?? ???? task creation, reviewed submissions ?? campaign performance tracking ?? ???? flow ???? ????? ?? ?????? ???",
+          "tabLabel": "कैंपेन गाइड",
+          "eyebrow": "बिज़नेस के लिए",
+          "title": "बिज़नेस कैंपेन कैसे लॉन्च करें",
+          "body": "यह गाइड दिखाती है कि वॉलेट में फंड कैसे जोड़ना है, टास्क कैसे बनाना है, और सबमिशन व कैंपेन परफॉर्मेंस को कैसे ट्रैक करना है।",
           "bullets": [
-            "????? wallet funding, budget setup ?? reward planning ???? ???? ???",
-            "????? result approve ???? ?? ???? submissions ???? review ???? ????",
-            "????? dashboard ?? spend, approvals ?? campaign health ???? track ?????"
+            "वॉलेट फंडिंग, बजट सेटअप और प्रति टास्क रिवॉर्ड पहले तय करें।",
+            "लॉन्च के बाद सबमिशन रिव्यू और अप्रूवल फ्लो को ध्यान से देखें।",
+            "डैशबोर्ड में स्पेंड, अप्रूवल और कैंपेन हेल्थ ट्रैक करते रहें।"
           ]
         }
       ]
     },
     "testimonials": {
-      "eyebrow": "????? ?????",
-      "title": "??? FreeEarnHub ?? ??? ????? ????? ???? ???",
-      "subtitle": "???? review, ???? steps ?? ????? ???? ???? earnings users ?? businesses ????? ?? ???? ??? ?? ????? ???? ????",
+      "eyebrow": "यूज़र अनुभव",
+      "title": "लोग FreeEarnHub के बारे में क्या कहते हैं",
+      "subtitle": "साफ़ रिव्यू, आसान स्टेप्स और भरोसेमंद कमाई का अनुभव यूज़र्स और बिज़नेस दोनों के लिए प्लेटफॉर्म को समझना आसान बनाता है।",
       "items": [
         {
-          "quote": "Task flow ????? ???? ??? ???? ???? ??, proof ???? submit ???? ?? ?? result ???? ????? ??, ?? ???? ????? ???",
+          "quote": "टास्क फ्लो समझना आसान है। प्रूफ सबमिट करने के बाद हर रिज़ल्ट साफ़ दिखता है, इसलिए मुझे हमेशा पता रहता है कि आगे क्या होगा।",
           "name": "Riya S.",
-          "role": "Verified user"
+          "role": "वेरिफाइड यूज़र"
         },
         {
-          "quote": "Campaign side ???? ?? practical ??? ??? wallet fund ?? ???? ???, ??? launch ?? ???? ??? ?? ???? confusion ?? ?? track ?? ???? ????",
+          "quote": "कैंपेन वाला हिस्सा साफ़ और प्रैक्टिकल है। मैं वॉलेट फंड कर सकता हूँ, काम लॉन्च कर सकता हूँ और बिना उलझन के हर अपडेट ट्रैक कर सकता हूँ।",
           "name": "Arjun K.",
-          "role": "Business owner"
+          "role": "बिज़नेस ओनर"
         },
         {
-          "quote": "Review system controlled ?? transparent ???? ??? Checks, status ?? history ????? ?? platform ?? trust ????? ???",
+          "quote": "रिव्यू सिस्टम कंट्रोल्ड और पारदर्शी लगता है। जब चेक्स, स्टेटस और हिस्ट्री साफ़ दिखते हैं, तो प्लेटफॉर्म पर भरोसा बढ़ता है।",
           "name": "Nadia R.",
-          "role": "Operations lead"
+          "role": "ऑपरेशंस लीड"
         }
       ]
+    },
+    "channels": {
+      "whatsapp": "WhatsApp जॉइन करें",
+      "telegram": "Telegram जॉइन करें"
     }
   },
   "about": {
     "eyebrow": "हमारे बारे में",
     "title": "FreeEarnHub के बारे में",
-    "description": "FreeEarnHub एक भरोसेमंद earning platform है जहाँ बिज़नेस campaign चलाते हैं और यूज़र verified work से कमाते हैं।",
+    "description": "FreeEarnHub एक भरोसेमंद कमाई प्लेटफॉर्म है जहाँ बिज़नेस कैंपेन चलाते हैं और यूज़र वेरिफाइड काम से कमाते हैं।",
     "sections": {
       "build": {
         "title": "हम क्या बनाते हैं",
@@ -388,7 +395,7 @@
   "contact": {
     "eyebrow": "सपोर्ट",
     "title": "FreeEarnHub से संपर्क करें",
-    "description": "अकाउंट, पेमेंट, KYC या campaign में मदद चाहिए? FreeEarnHub सपोर्ट टीम से संपर्क करें।",
+    "description": "अकाउंट, पेमेंट, KYC या कैंपेन में मदद चाहिए? FreeEarnHub सपोर्ट टीम से संपर्क करें।",
     "supportEmailTitle": "सपोर्ट ईमेल",
     "supportEmailLead": "मुख्य सपोर्ट चैनल:",
     "supportResponse": "आम तौर पर पहली प्रतिक्रिया: 24 से 48 बिज़नेस घंटे।",
@@ -396,7 +403,13 @@
     "hoursDays": "सोमवार से शनिवार",
     "hoursTime": "10:00 AM से 7:00 PM (IST)",
     "hoursNote": "क्रिटिकल पेआउट या सुरक्षा घटनाओं को प्राथमिकता दी जाती है।",
-    "addressTitle": "रजिस्टर्ड सपोर्ट पता"
+    "addressTitle": "रजिस्टर्ड सपोर्ट पता",
+    "communityTitle": "कम्युनिटी चैनल",
+    "communityLead": "अपडेट, लॉन्च खबर और सपोर्ट नोटिस पाने के लिए हमारे पब्लिक चैनल जॉइन करें।",
+    "whatsappLabel": "WhatsApp जॉइन करें",
+    "telegramLabel": "Telegram जॉइन करें",
+    "socialTitle": "सोशल प्रोफाइल",
+    "socialLead": "प्रोडक्ट अपडेट और घोषणाओं के लिए FreeEarnHub को सोशल प्लेटफॉर्म पर फॉलो करें।"
   },
   "user": {
     "overview": {
@@ -458,7 +471,12 @@
       "txFallback": "वॉलेट ट्रांज़ैक्शन",
       "loading": "वॉलेट लोड हो रहा है...",
       "failed": "वॉलेट लोड नहीं हो पाया",
-      "unexpected": "अनपेक्षित सर्वर रिस्पॉन्स"
+      "unexpected": "अनपेक्षित सर्वर रिस्पॉन्स",
+      "subtitle": "अपना उपलब्ध बैलेंस, कमाई का इतिहास और भुगतान की गतिविधि एक ही जगह देखें।",
+      "controls": {
+        "show": "दिखाएं",
+        "showAll": "सभी दिखाएं"
+      }
     },
     "withdrawals": {
       "eyebrow": "पेआउट सेंटर",
@@ -483,7 +501,13 @@
       "emergencyLabel": "इमरजेंसी विथड्रॉ",
       "adminNote": "एडमिन नोट: {note}",
       "failed": "विथड्रॉ लोड नहीं हो पाए",
-      "unexpected": "अनपेक्षित रिस्पॉन्स"
+      "unexpected": "अनपेक्षित रिस्पॉन्स",
+      "subtitle": "भुगतान अनुरोध भेजें, लंबित समीक्षा देखें, और स्वीकृत या अस्वीकृत निकासी अनुरोध ट्रैक करें।",
+      "controls": {
+        "show": "दिखाएं",
+        "showAll": "सभी दिखाएं"
+      },
+      "upiFallback": "UPI"
     },
     "withdrawRequest": {
       "title": "विथड्रॉ रिक्वेस्ट",
@@ -535,7 +559,11 @@
       "failed": "सबमिशन लोड नहीं हो पाए",
       "unexpected": "अनपेक्षित सर्वर रिस्पॉन्स",
       "openScreenshot": "स्क्रीनशॉट खोलें",
-      "screenshotUploaded": "स्क्रीनशॉट प्रूफ अपलोड हो चुका है। देखने के लिए प्रीव्यू बटन इस्तेमाल करें।"
+      "screenshotUploaded": "स्क्रीनशॉट प्रूफ अपलोड हो चुका है। देखने के लिए प्रीव्यू बटन इस्तेमाल करें।",
+      "controls": {
+        "show": "दिखाएं",
+        "showAll": "सभी दिखाएं"
+      }
     },
     "tasks": {
       "title": "लाइव कैंपेन",
@@ -676,7 +704,7 @@
     "skills": {
       "eyebrow": "यूज़र प्रोफ़ाइल",
       "title": "स्किल्स",
-      "subtitle": "अपनी स्किल्स जोड़ें ताकि एडमिन आपको invite-only work campaigns से match कर सके।"
+      "subtitle": "अपनी स्किल्स जोड़ें ताकि एडमिन आपको केवल निमंत्रण वाले वर्क कैंपेन से मैच कर सके।"
     },
     "settings": {
       "eyebrow": "यूज़र सेटिंग्स",
@@ -717,6 +745,143 @@
       "supportEyebrow": "सपोर्ट",
       "supportTitle": "हेल्प चाहिए?",
       "supportBody": "अगर आपके सबमिशन, वॉलेट या विथड्रॉ में कुछ गलत लगे, तो पब्लिक कॉन्टैक्ट पेज या वहाँ दिए गए ऑफिशियल सपोर्ट चैनल का उपयोग करें।"
+    },
+    "profilePage": {
+      "eyebrow": "यूज़र प्रोफ़ाइल",
+      "title": "प्रोफ़ाइल",
+      "subtitle": "अपनी व्यक्तिगत और काम से जुड़ी जानकारी जोड़ें ताकि प्लेटफ़ॉर्म आपको सही कमाई के अवसरों से जोड़ सके।"
+    },
+    "profile": {
+      "loading": "प्रोफ़ाइल लोड हो रही है...",
+      "basicEyebrow": "बेसिक प्रोफ़ाइल",
+      "basicTitle": "व्यक्तिगत जानकारी",
+      "basicSubtitle": "अपनी प्रोफ़ाइल पूरी रखें ताकि एडमिन आपको सही वर्क-बेस्ड कैंपेन से मैच कर सकें।",
+      "placeholders": {
+        "name": "नाम",
+        "mobile": "मोबाइल नंबर",
+        "address": "पता",
+        "selectGender": "लिंग चुनें",
+        "religion": "धर्म",
+        "educationQualification": "शैक्षणिक योग्यता",
+        "courseAndCertificate": "कोर्स और सर्टिफिकेट विवरण",
+        "addSkill": "एक स्किल जोड़ें",
+        "addLanguage": "एक भाषा जोड़ें"
+      },
+      "genderOptions": {
+        "MALE": "पुरुष",
+        "FEMALE": "महिला",
+        "OTHER": "अन्य",
+        "PREFER_NOT_TO_SAY": "न बताना पसंद है"
+      },
+      "labels": {
+        "age": "उम्र",
+        "email": "ईमेल",
+        "role": "रोल",
+        "created": "बनाया गया",
+        "workMode": "वर्क मोड",
+        "workTime": "काम का समय",
+        "workingPreference": "काम की पसंद",
+        "skills": "स्किल्स",
+        "languages": "भाषाएँ"
+      },
+      "workProfileEyebrow": "वर्क प्रोफ़ाइल",
+      "workProfileTitle": "उपलब्धता और पसंद",
+      "workProfileSubtitle": "ये विवरण एडमिन को समझने में मदद करते हैं कि आप किस तरह का काम ले सकते हैं।",
+      "workModeOptions": {
+        "default": "वर्क मोड",
+        "WORK_FROM_HOME": "घर से काम",
+        "WORK_FROM_OFFICE": "ऑफिस से काम",
+        "WORK_IN_FIELD": "फील्ड में काम"
+      },
+      "workTimeOptions": {
+        "default": "काम का समय",
+        "FULL_TIME": "फुल टाइम",
+        "PART_TIME": "पार्ट टाइम"
+      },
+      "workingPreferenceOptions": {
+        "default": "काम की पसंद",
+        "SALARIED": "सैलरी आधारित",
+        "FREELANCE_CONTRACTUAL": "फ्रीलांस कॉन्ट्रैक्ट",
+        "DAY_BASIS": "डे बेसिस"
+      },
+      "skillsTitle": "आप कौन सा काम कर सकते हैं?",
+      "skillsSubtitle": "वे स्किल्स जोड़ें जिन्हें एडमिन वर्क-बेस्ड कैंपेन असाइन करते समय उपयोग कर सकें।",
+      "languagesTitle": "आप किन भाषाओं में काम कर सकते हैं",
+      "languagesSubtitle": "वे भाषाएँ जोड़ें जिनमें आप सहजता से बात या काम कर सकते हैं।",
+      "emptySkills": "अभी कोई स्किल नहीं है। शुरुआत के लिए 3 से 6 स्किल जोड़ें।",
+      "emptyLanguages": "अभी कोई भाषा नहीं जोड़ी गई है।",
+      "add": "जोड़ें",
+      "saving": "सेव हो रहा है...",
+      "saveProfile": "प्रोफ़ाइल सेव करें",
+      "profileUpdated": "प्रोफ़ाइल अपडेट हो गई",
+      "errors": {
+        "unexpectedResponse": "अनपेक्षित रिस्पॉन्स",
+        "unexpectedServerResponse": "अनपेक्षित सर्वर रिस्पॉन्स",
+        "failedToLoadProfile": "प्रोफ़ाइल लोड नहीं हो सकी",
+        "failedToLoadSkills": "स्किल्स लोड नहीं हो सकीं",
+        "failedToSaveProfile": "प्रोफ़ाइल सेव नहीं हो सकी",
+        "failedToSaveSkills": "स्किल्स सेव नहीं हो सकीं"
+      }
+    },
+    "notificationsPage": {
+      "eyebrow": "इनबॉक्स",
+      "title": "नोटिफिकेशन",
+      "subtitle": "स्वीकृति, अस्वीकृति, भुगतान अपडेट और सिस्टम सूचनाएं एक ही लाइव फ़ीड में देखें।"
+    },
+    "notificationsPanel": {
+      "errors": {
+        "unexpected": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "failed": "नोटिफिकेशन लोड नहीं हो सके"
+      },
+      "loading": "नोटिफिकेशन लोड हो रहे हैं...",
+      "kpis": {
+        "totalNotifications": "कुल नोटिफिकेशन",
+        "unread": "अपठित",
+        "successUpdates": "सफल अपडेट",
+        "warnings": "चेतावनियां"
+      },
+      "filtersHeader": {
+        "eyebrow": "इनबॉक्स फ़िल्टर",
+        "title": "अपठित या नोटिफिकेशन प्रकार से छांटें",
+        "show": "दिखाएं",
+        "showAll": "सभी दिखाएं",
+        "markAllRead": "सबको पढ़ा हुआ चिह्नित करें",
+        "updating": "अपडेट हो रहा है..."
+      },
+      "filters": {
+        "all": "सभी",
+        "unread": "अपठित",
+        "success": "सफल",
+        "warning": "चेतावनियां",
+        "info": "जानकारी"
+      },
+      "empty": "मौजूदा फ़िल्टर से मेल खाने वाला कोई नोटिफिकेशन नहीं है।",
+      "actions": {
+        "saving": "सेव हो रहा है...",
+        "markRead": "पढ़ा हुआ चिह्नित करें",
+        "updated": "नोटिफिकेशन अपडेट हो गए",
+        "updateFailed": "नोटिफिकेशन अपडेट नहीं हो सके"
+      },
+      "unreadBadge": "अपठित"
+    },
+    "notificationsList": {
+      "unread": "अपठित: {count}",
+      "empty": "अभी तक कोई नोटिफिकेशन नहीं है।",
+      "controls": {
+        "show": "दिखाएं",
+        "showAll": "सभी दिखाएं"
+      },
+      "actions": {
+        "updating": "अपडेट हो रहा है...",
+        "markAllRead": "सबको पढ़ा हुआ चिह्नित करें",
+        "saving": "सेव हो रहा है...",
+        "markRead": "पढ़ा हुआ चिह्नित करें",
+        "updated": "अपडेट हो गया"
+      },
+      "errors": {
+        "unexpected": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "updateFailed": "नोटिफिकेशन अपडेट नहीं हो सके"
+      }
     }
   },
   "business": {
@@ -815,6 +980,198 @@
         "title": "वॉलेट ट्रांज़ैक्शन",
         "empty": "अभी कोई ट्रांज़ैक्शन नहीं।",
         "fallbackNote": "वॉलेट अपडेट"
+      }
+    },
+    "manualFunding": {
+      "loading": "फंडिंग डैशबोर्ड लोड हो रहा है...",
+      "labels": {
+        "notAvailable": "उपलब्ध नहीं"
+      },
+      "status": {
+        "pending": "पेंडिंग",
+        "approved": "अप्रूव्ड",
+        "rejected": "रिजेक्टेड"
+      },
+      "errors": {
+        "unexpected": "अप्रत्याशित सर्वर रिस्पॉन्स",
+        "loadUnexpected": "फंडिंग डिटेल लोड करते समय अप्रत्याशित सर्वर रिस्पॉन्स मिला।",
+        "failedToLoad": "फंडिंग डिटेल लोड नहीं हो सकीं।",
+        "copyFailed": "अभी कॉपी नहीं हो सका। कृपया मैनुअल कॉपी करें।",
+        "generateBeforeShare": "QR शेयर करने से पहले पेमेंट डिटेल जेनरेट करें।",
+        "shareFailed": "अभी QR शेयर नहीं हो सका।",
+        "generateBeforeDownload": "QR डाउनलोड करने से पहले पेमेंट डिटेल जेनरेट करें।",
+        "downloadFailed": "अभी QR डाउनलोड नहीं हो सका।",
+        "manualFundingDisabled": "मैनुअल फंडिंग अभी कॉन्फ़िगर नहीं है। पहले UPI ID या फोन नंबर जोड़ें।",
+        "minimumFunding": "न्यूनतम फंडिंग राशि {amount} है।",
+        "imageTooLarge": "कम्प्रेशन के बाद इमेज 500 KB से कम रहनी चाहिए।",
+        "uploadUnexpected": "अप्रत्याशित अपलोड रिस्पॉन्स",
+        "uploadFailed": "स्क्रीनशॉट अपलोड नहीं हो सका।",
+        "generateBeforeSubmit": "फंडिंग रिक्वेस्ट ट्रैक करने के लिए पहले पेमेंट डिटेल जेनरेट करें।",
+        "uploadBeforeVerify": "वेरिफिकेशन से पहले पेमेंट स्क्रीनशॉट अपलोड करें।",
+        "submitFundingFailed": "फंडिंग रिक्वेस्ट सबमिट नहीं हो सकी।",
+        "invalidRefundAmount": "कृपया वैध रिफंड राशि दर्ज करें।",
+        "refundTooHigh": "रिफंड राशि आपके रिफंड-योग्य बैलेंस से ज़्यादा नहीं हो सकती।",
+        "submitRefundFailed": "रिफंड रिक्वेस्ट सबमिट नहीं हो सकी।"
+      },
+      "messages": {
+        "copied": "क्लिपबोर्ड पर कॉपी कर दिया गया।",
+        "qrShared": "पेमेंट QR शेयर कर दिया गया।",
+        "shareFallback": "इस डिवाइस में शेयर उपलब्ध नहीं है। पेमेंट डिटेल कॉपी कर दी गई हैं।",
+        "qrDownloaded": "QR डाउनलोड कर लिया गया।",
+        "fundingSubmitted": "फंडिंग रिक्वेस्ट सबमिट कर दी गई है।",
+        "refundSubmitted": "रिफंड रिक्वेस्ट सबमिट कर दी गई है।"
+      },
+      "hero": {
+        "eyebrow": "मैनुअल बिज़नेस फंडिंग",
+        "title": "QR, UPI या फोन पेमेंट से फंड जोड़ें",
+        "description": "अभी हम मैनुअल पेमेंट रिव्यू फ्लो उपयोग कर रहे हैं। नीचे दिए गए डिटेल से पेमेंट करें, रसीद अपलोड करें, फिर वेरिफिकेशन के बाद हमारी टीम वॉलेट क्रेडिट करेगी।",
+        "chip1": "मैनुअल एडमिन रिव्यू",
+        "chip2": "रेफ़रेंस ID ट्रैक्ड",
+        "chip3": "स्क्रीनशॉट ज़रूरी",
+        "chip4": "0% ऐड-फंड फीस"
+      },
+      "notConfigured": {
+        "title": "मैनुअल फंडिंग अभी कॉन्फ़िगर नहीं है",
+        "body": "पहले environment में फंडिंग UPI ID या फोन नंबर जोड़ें, फिर यह पेमेंट फ्लो बिज़नेस के लिए उपलब्ध हो जाएगा।"
+      },
+      "ownerOnlyBanner": {
+        "title": "बिलिंग ऐक्शन केवल बिज़नेस ओनर के लिए हैं",
+        "body": "आप यहाँ फंडिंग हिस्ट्री देख सकते हैं, लेकिन नई वॉलेट फंडिंग रिक्वेस्ट केवल बिज़नेस ओनर ही सबमिट कर सकता है।"
+      },
+      "kpis": {
+        "availableWallet": "उपलब्ध वॉलेट",
+        "lockedBudget": "लॉक बजट",
+        "approvedFunding": "अप्रूव्ड फंडिंग",
+        "waitingReview": "रिव्यू का इंतज़ार"
+      },
+      "pricing": {
+        "eyebrow": "वॉलेट प्राइसिंग",
+        "title": "बिज़नेस वॉलेट फीस स्ट्रक्चर",
+        "description": "लॉन्च फेज़ में टॉप-अप फ्री है। रिफंड के लिए reviewed refund fee लागू होती है ताकि सबमिट करने से पहले नियम साफ रहें।",
+        "launchModel": "लॉन्च मॉडल",
+        "addFundFeeLabel": "ऐड-फंड फीस",
+        "addFundFeeHelp": "वॉलेट टॉप-अप पर लागू। अभी लॉन्च में माफ है।",
+        "liveNow": "अभी लागू",
+        "refundFeeLabel": "रिफंड फीस",
+        "refundFeeHelp": "केवल तब लागू होती है जब रिफंड रिक्वेस्ट रिव्यू के बाद अप्रूव हो।",
+        "manualReview": "मैनुअल रिव्यू",
+        "usageTitle": "इन फीस का उपयोग कैसे करें",
+        "usageBody1": "जब आप QR या UPI से कैंपेन बजट जल्दी बढ़ाना चाहते हैं, तब add-fund उपयोग करें।",
+        "usageBody2": "जब आप रिव्यू के बाद approved unused wallet balance बाहर मंगवाना चाहते हैं, तब refund उपयोग करें।",
+        "usageNote": "नीचे दिए funding और refund cards इसी pricing model को follow करते हैं।"
+      },
+      "steps": {
+        "eyebrow": "फंडिंग स्टेप्स",
+        "title": "5 साफ स्टेप में पेमेंट पूरा करें",
+        "item1": "जितनी राशि जोड़नी है, वह दर्ज करें।",
+        "item2": "एक unique reference ID बनाने के लिए payment details generate करें।",
+        "item3": "QR, UPI ID या फोन नंबर से पेमेंट करें और note में reference ID लिखें।",
+        "item4": "पेमेंट स्क्रीनशॉट अपलोड करें और अगर available हो तो UTR भी जोड़ें।",
+        "item5": "Verify क्लिक करें, फिर तेज रिव्यू के लिए रसीद WhatsApp पर भेजें।"
+      },
+      "generator": {
+        "eyebrow": "फंडिंग शुरू करें",
+        "title": "पेमेंट डिटेल जेनरेट करें",
+        "ownerOnly": "केवल ओनर",
+        "amountPlaceholder": "राशि दर्ज करें (मिन {amount})",
+        "button": "पेमेंट डिटेल जेनरेट करें"
+      },
+      "details": {
+        "referenceId": "रेफ़रेंस ID",
+        "upiId": "UPI ID",
+        "accountName": "अकाउंट नाम: {name}",
+        "phoneNumber": "फोन नंबर",
+        "scanAndPay": "Scan करें और पे करें",
+        "scanHelpBefore": "सही राशि पे करें और note में",
+        "scanHelpAfter": "लिखें।",
+        "qrAlt": "बिज़नेस फंडिंग QR कोड",
+        "qrPending": "पेमेंट डिटेल जेनरेट होने के बाद QR यहाँ दिखेगा।",
+        "tip": "स्क्रीनशॉट साफ और पढ़ने लायक रखें। अगर संभव हो तो note में reference ID लिखें ताकि रिव्यू टीम जल्दी approve कर सके।"
+      },
+      "actions": {
+        "copy": "कॉपी",
+        "openPaytm": "Paytm / UPI app खोलें",
+        "openUpi": "UPI app खोलें",
+        "downloadQr": "QR डाउनलोड करें",
+        "shareQr": "QR शेयर करें",
+        "openScreenshot": "स्क्रीनशॉट खोलें"
+      },
+      "share": {
+        "title": "FreeEarnHub wallet funding",
+        "sheetTitle": "FreeEarnHub funding QR",
+        "amount": "राशि: {amount}",
+        "reference": "Reference ID: {referenceId}",
+        "upi": "UPI ID: {upiId}"
+      },
+      "verification": {
+        "eyebrow": "रसीद वेरिफिकेशन",
+        "title": "स्क्रीनशॉट अपलोड करें और अप्रूवल के लिए भेजें",
+        "description": "पेमेंट के बाद यहाँ स्क्रीनशॉट अपलोड करें। हर रिक्वेस्ट का मैनुअल रिव्यू होता है, फिर वॉलेट क्रेडिट किया जाता है।",
+        "utrLabel": "UTR / transaction ID (optional)",
+        "utrPlaceholder": "अगर आपकी payment app UTR दिखाती है तो यहाँ जोड़ें",
+        "uploadLabel": "पेमेंट स्क्रीनशॉट अपलोड करें",
+        "uploadHelp": "एक ही स्क्रीनशॉट। JPG, PNG या WEBP। कम्प्रेशन के बाद मैक्स 500 KB।",
+        "uploading": "स्क्रीनशॉट अपलोड हो रहा है...",
+        "previewAlt": "फंडिंग प्रूफ प्रीव्यू",
+        "ready": "स्क्रीनशॉट वेरिफिकेशन के लिए तैयार है।",
+        "remove": "स्क्रीनशॉट हटाएँ",
+        "submitting": "सबमिट हो रहा है...",
+        "verifyButton": "पेमेंट वेरिफ़ाइ करें"
+      },
+      "whatsapp": {
+        "title": "फंडिंग रिक्वेस्ट रिव्यू के लिए भेज दी गई है",
+        "description": "तेज मैनुअल वेरिफिकेशन के लिए रसीद WhatsApp पर भेजें।",
+        "button": "रसीद WhatsApp पर भेजें"
+      },
+      "refund": {
+        "eyebrow": "रिफंड रिक्वेस्ट",
+        "title": "unused wallet balance बाहर मंगवाएँ",
+        "zeroFee": "0% फीस",
+        "feeBadge": "{rate}% फीस",
+        "descriptionBefore": "रिफंड रिक्वेस्ट में business refund fee setting लागू होती है। अभी refund fee है",
+        "descriptionZeroFee": "आपकी पूरी requested राशि लौटाई जाएगी।",
+        "descriptionWithFee": "फीस काटने के बाद मिलने वाली राशि नीचे दिखाई जा रही है।",
+        "amountPlaceholder": "रिफंड राशि दर्ज करें (मैक्स {amount})",
+        "processing": "प्रोसेस हो रहा है...",
+        "button": "रिफंड रिक्वेस्ट करें",
+        "cards": {
+          "refundFee": "रिफंड फीस",
+          "refundFeeHelp": "रिफंड रिक्वेस्ट अप्रूव होने के बाद लागू होती है।",
+          "refundPolicy": "रिफंड पॉलिसी",
+          "refundPolicyHelp": "केवल उतनी ही राशि रिक्वेस्ट करें जितनी refundable wallet balance में उपलब्ध है। net amount preview सबमिट से पहले दिखता रहेगा।"
+        },
+        "breakdown": {
+          "refundableBalance": "रिफंड-योग्य बैलेंस",
+          "requested": "रिक्वेस्टेड",
+          "walletFee": "वॉलेट फीस",
+          "netRefund": "नेट रिफंड"
+        }
+      },
+      "history": {
+        "eyebrow": "हाल की फंडिंग रिक्वेस्ट",
+        "title": "अप्रूवल स्टेटस ट्रैक करें",
+        "empty": "अभी कोई मैनुअल फंडिंग रिक्वेस्ट नहीं है।",
+        "referenceId": "Reference ID: {referenceId}",
+        "utr": "UTR: {utr}",
+        "reviewFlag": "Review flag: {reason}",
+        "adminNote": "Admin note: {note}",
+        "reviewed": "Reviewed: {date}",
+        "proofTitle": "फंडिंग प्रूफ स्क्रीनशॉट"
+      },
+      "walletActivity": {
+        "eyebrow": "वॉलेट ऐक्टिविटी",
+        "title": "फंडिंग क्रेडिट और डेबिट",
+        "empty": "अभी कोई वॉलेट ऐक्टिविटी नहीं है।",
+        "fallbackNote": "बिज़नेस वॉलेट अपडेट"
+      },
+      "refundHistory": {
+        "eyebrow": "रिफंड रिक्वेस्ट",
+        "title": "रिफंड अप्रूवल स्टेटस ट्रैक करें",
+        "empty": "अभी कोई रिफंड रिक्वेस्ट नहीं है।",
+        "requestNote": "Request note: {note}",
+        "reviewFlag": "Review flag: {reason}",
+        "adminNote": "Admin note: {note}",
+        "reviewed": "Reviewed: {date}"
       }
     },
     "create": {
@@ -1356,7 +1713,807 @@
       "compliance": "अनुपालन",
       "cms": "कंटेंट और CMS",
       "auditLogs": "ऑडिट लॉग",
-      "systemSettings": "सिस्टम सेटिंग्स"
+      "systemSettings": "सिस्टम सेटिंग्स",
+      "profile": "प्रोफ़ाइल"
+    },
+    "shell": {
+      "signedInAs": "इस रूप में साइन इन है",
+      "mainHome": "मुख्य होम",
+      "forgotPassword": "पासवर्ड भूल गए",
+      "openMenu": "मेनू खोलें",
+      "closeMenu": "मेनू बंद करें"
+    },
+    "loading": {
+      "dashboard": "डैशबोर्ड लोड हो रहा है...",
+      "admin": "एडमिन पैनल लोड हो रहा है...",
+      "manager": "मैनेजर डैशबोर्ड लोड हो रहा है...",
+      "user": "आपका डैशबोर्ड लोड हो रहा है..."
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "eyebrow": "एडमिन ऑपरेशंस",
+      "title": "एडमिन ओवरव्यू",
+      "subtitle": "प्लेटफ़ॉर्म की स्थिति, रिव्यू कतारें, रिस्क संकेत और ज़रूरी कार्य एक ही जगह से देखें।",
+      "kpis": {
+        "totalUsers": "कुल यूज़र",
+        "businesses": "बिज़नेस",
+        "revenue": "रेवेन्यू",
+        "liveCampaigns": "लाइव कैंपेन",
+        "managers": "मैनेजर",
+        "pendingCampaigns": "पेंडिंग कैंपेन",
+        "pendingWithdrawals": "पेंडिंग विथड्रॉअल",
+        "pendingBusinessKyc": "पेंडिंग बिज़नेस KYC",
+        "totalSubmissions": "कुल सबमिशन",
+        "pendingFinalReviews": "पेंडिंग फ़ाइनल रिव्यू"
+      },
+      "systemHealth": {
+        "title": "सिस्टम हेल्थ",
+        "database": "डेटाबेस",
+        "cron": "क्रॉन (डेली रीसेट)",
+        "payouts": "पेआउट्स",
+        "moderationQueue": "मॉडरेशन क्यू",
+        "statuses": {
+          "healthy": "सही",
+          "issue": "समस्या",
+          "onTime": "समय पर",
+          "delayed": "देरी",
+          "noFailures": "कोई विफलता नहीं",
+          "checkNeeded": "जांच ज़रूरी",
+          "onTrack": "सही चल रहा",
+          "attentionNeeded": "ध्यान ज़रूरी"
+        }
+      },
+      "actionAlerts": {
+        "title": "ज़रूरी अलर्ट",
+        "empty": "अभी कोई गंभीर अलर्ट नहीं है।",
+        "items": {
+          "withdrawalsPending": "{count} विथड्रॉअल रिक्वेस्ट 24 घंटे से ज़्यादा समय से पेंडिंग है।",
+          "adminReviewsPending": "{count} मैनेजर-अप्रूव्ड सबमिशन 24 घंटे से ज़्यादा समय से एडमिन रिव्यू का इंतज़ार कर रहे हैं।",
+          "failedPayments": "{count} फ़ेल पेमेंट ऑर्डर की जाँच ज़रूरी है।",
+          "suspiciousUsers": "{count} संदिग्ध यूज़र अकाउंट फ़्लैग किए गए हैं।",
+          "staleResets": "{count} यूज़र के लिए क्रॉन रीसेट में देरी मिली।"
+        }
+      },
+      "trend": {
+        "eyebrow": "प्लेटफ़ॉर्म ट्रेंड",
+        "title": "रेवेन्यू बनाम पेआउट"
+      }
+    },
+    "notificationsPage": {
+      "title": "नोटिफिकेशन कंट्रोल",
+      "subtitle": "एडमिन इनबॉक्स, ब्रॉडकास्ट, टेम्पलेट्स और डिलीवरी हिस्ट्री एक ही जगह से मैनेज करें।"
+    },
+    "notificationsCenter": {
+      "filters": {
+        "show": "दिखाएँ",
+        "showAll": "सभी दिखाएँ",
+        "allLogs": "सभी लॉग",
+        "failedLogs": "फ़ेल लॉग",
+        "sentLogs": "सेंड लॉग",
+        "skippedLogs": "स्किप्ड लॉग",
+        "apply": "लागू करें"
+      },
+      "inbox": {
+        "title": "एडमिन इनबॉक्स",
+        "subtitle": "डिलीवरी लॉग देखने से पहले अपने अलर्ट यहाँ देखें।",
+        "totalInboxItems": "कुल इनबॉक्स आइटम",
+        "unread": "अनरीड",
+        "success": "सक्सेस",
+        "warnings": "चेतावनी",
+        "notificationsLabel": "नोटिफिकेशन",
+        "notificationsTitle": "यहीं से अपडेट पढ़े हुए मार्क करें",
+        "markAllRead": "सभी को पढ़ा हुआ मार्क करें",
+        "updating": "अपडेट हो रहा है...",
+        "filterAll": "सभी",
+        "filterUnread": "अनरीड",
+        "filterSuccess": "सक्सेस",
+        "filterWarnings": "चेतावनी",
+        "filterInfo": "जानकारी",
+        "empty": "अभी कोई एडमिन नोटिफिकेशन नहीं है।",
+        "markRead": "पढ़ा हुआ मार्क करें",
+        "saving": "सेव हो रहा है...",
+        "unreadBadge": "अनरीड"
+      },
+      "broadcast": {
+        "title": "ब्रॉडकास्ट",
+        "titlePlaceholder": "टाइटल",
+        "messagePlaceholder": "मैसेज",
+        "templateKeyPlaceholder": "टेम्पलेट key (वैकल्पिक)",
+        "send": "ब्रॉडकास्ट भेजें",
+        "sending": "भेजा जा रहा है...",
+        "segments": {
+          "ALL": "सभी",
+          "USER": "यूज़र",
+          "BUSINESS": "बिज़नेस",
+          "MANAGER": "मैनेजर",
+          "ADMIN": "एडमिन"
+        },
+        "channels": {
+          "IN_APP": "इन-ऐप",
+          "EMAIL": "ईमेल",
+          "SMS": "एसएमएस",
+          "PUSH": "पुश",
+          "TELEGRAM": "टेलीग्राम"
+        }
+      },
+      "templates": {
+        "title": "टेम्पलेट मैनेजर",
+        "keyPlaceholder": "template.key",
+        "namePlaceholder": "टेम्पलेट नाम",
+        "bodyPlaceholder": "बॉडी ({{var}} टोकन सपोर्टेड)",
+        "save": "टेम्पलेट सेव करें",
+        "channelIN_APP": "IN_APP",
+        "channelEMAIL": "EMAIL",
+        "channelSMS": "SMS",
+        "channelPUSH": "PUSH",
+        "channelTELEGRAM": "TELEGRAM",
+        "enabled": "सक्रिय",
+        "disabled": "निष्क्रिय",
+        "disable": "बंद करें",
+        "enable": "चालू करें"
+      },
+      "logs": {
+        "title": "डिलीवरी लॉग",
+        "empty": "वर्तमान फ़िल्टर के लिए कोई लॉग नहीं मिला।",
+        "templateFallback": "-"
+      },
+      "feedback": {
+        "done": "पूरा हुआ",
+        "unexpectedServerResponse": "अनपेक्षित सर्वर रिस्पॉन्स"
+      }
+    },
+    "riskBulkActions": {
+      "unexpectedServerResponse": "अनपेक्षित सर्वर रिस्पॉन्स",
+      "updated": "अपडेट किया गया",
+      "dismissing": "हटाया जा रहा है...",
+      "dismissAll": "सभी हटाएँ",
+      "resolving": "सुलझाया जा रहा है...",
+      "resolveAll": "सभी सुलझाएँ"
+    },
+    "fundingActions": {
+      "notePlaceholder": "रिव्यू नोट (रिजेक्शन के लिए आवश्यक, अप्रूवल के लिए वैकल्पिक)",
+      "noteRequired": "इस रिक्वेस्ट को रिजेक्ट करने से पहले छोटा रिव्यू नोट जोड़ें।",
+      "approveLoading": "अप्रूव किया जा रहा है...",
+      "approve": "अप्रूव करें और वॉलेट क्रेडिट करें",
+      "rejectLoading": "रिजेक्ट किया जा रहा है...",
+      "reject": "रिक्वेस्ट रिजेक्ट करें",
+      "unexpectedServerResponse": "अनपेक्षित सर्वर रिस्पॉन्स",
+      "updated": "अपडेट हो गया"
+    },
+    "refundActions": {
+      "notePlaceholder": "रिव्यू नोट (रिजेक्शन के लिए आवश्यक, अप्रूवल के लिए वैकल्पिक)",
+      "noteRequired": "इस रिफंड रिक्वेस्ट को रिजेक्ट करने से पहले छोटा रिव्यू नोट जोड़ें।",
+      "approveLoading": "अप्रूव किया जा रहा है...",
+      "approve": "रिफंड अप्रूव करें",
+      "rejectLoading": "रिजेक्ट किया जा रहा है...",
+      "reject": "रिक्वेस्ट रिजेक्ट करें",
+      "unexpectedServerResponse": "अनपेक्षित सर्वर रिस्पॉन्स",
+      "updated": "अपडेट हो गया"
+    },
+    "fundingPage": {
+      "title": "मैनुअल बिजनेस फंडिंग",
+      "subtitle": "QR और UPI भुगतान रसीदों की समीक्षा करें, स्क्रीनशॉट सत्यापित करें, और पुष्टि के बाद ही बिजनेस वॉलेट में राशि जोड़ें।",
+      "kpis": {
+        "waitingReview": "समीक्षा की प्रतीक्षा",
+        "pendingAmount": "लंबित राशि",
+        "approvedRequests": "स्वीकृत अनुरोध",
+        "rejectedRequests": "अस्वीकृत अनुरोध",
+        "flaggedRequests": "फ्लैग किए गए अनुरोध"
+      },
+      "filters": {
+        "helper": "ये फ़िल्टर मैनुअल फंडिंग अनुरोधों और मैनुअल रिफंड अनुरोधों दोनों पर लागू होते हैं।",
+        "searchPlaceholder": "बिजनेस, रेफरेंस आईडी, UTR, फोन या नोट्स से खोजें",
+        "statusAll": "सभी स्टेटस",
+        "flaggedAll": "सभी रिव्यू फ्लैग",
+        "flaggedOnly": "केवल फ्लैग किए गए",
+        "clearFlags": "कोई फ्लैग नहीं",
+        "dateFrom": "कब से",
+        "dateTo": "कब तक",
+        "apply": "फ़िल्टर लागू करें",
+        "clear": "साफ करें",
+        "exportFunding": "फंडिंग CSV एक्सपोर्ट करें",
+        "exportRefund": "रिफंड CSV एक्सपोर्ट करें"
+      },
+      "status": {
+        "pending": "PENDING",
+        "approved": "APPROVED",
+        "rejected": "REJECTED"
+      },
+      "funding": {
+        "empty": "मौजूदा फ़िल्टर के लिए कोई मैनुअल फंडिंग अनुरोध नहीं मिला।"
+      },
+      "fields": {
+        "unnamedBusiness": "नामहीन बिजनेस",
+        "phone": "फोन: {value}",
+        "submitted": "सबमिट किया गया: {value}",
+        "referenceId": "रेफरेंस आईडी",
+        "utr": "UTR",
+        "notProvided": "प्रदान नहीं किया गया",
+        "proof": "प्रमाण",
+        "openScreenshot": "स्क्रीनशॉट खोलें",
+        "fundingProofTitle": "फंडिंग प्रूफ स्क्रीनशॉट",
+        "reviewStatus": "रिव्यू स्थिति",
+        "reviewed": "{value} पर रिव्यू किया गया",
+        "waitingForReview": "अभी भी समीक्षा की प्रतीक्षा में",
+        "reviewedBy": "{value} द्वारा",
+        "reviewFlag": "रिव्यू फ्लैग: {value}",
+        "reviewNote": "रिव्यू नोट: {value}"
+      },
+      "refund": {
+        "title": "मैनुअल बिजनेस रिफंड",
+        "subtitle": "बिजनेस रिफंड अनुरोधों की समीक्षा करें, फिर वॉलेट बैलेंस कम करें। स्वीकृति के बाद राशि बिजनेस वॉलेट से बाहर जाएगी।",
+        "kpis": {
+          "waitingReview": "समीक्षा की प्रतीक्षा में रिफंड",
+          "pendingAmount": "लंबित रिफंड राशि",
+          "flaggedRequests": "फ्लैग किए गए रिफंड अनुरोध"
+        },
+        "empty": "अभी तक कोई मैनुअल रिफंड अनुरोध नहीं मिला।",
+        "fields": {
+          "requestType": "अनुरोध प्रकार",
+          "walletRefund": "वॉलेट रिफंड",
+          "requestedAmount": "अनुरोधित राशि",
+          "requestNote": "अनुरोध नोट: {value}"
+        }
+      }
+    },
+    "revenuePage": {
+      "title": "प्लेटफ़ॉर्म रेवेन्यू",
+      "unavailable": "मौजूदा रनटाइम में रेवेन्यू पेआउट सिस्टम उपलब्ध नहीं है। डेवलपमेंट सर्वर फिर से शुरू करें।",
+      "kpis": {
+        "totalCommissionEarned": "कुल कमीशन आय",
+        "treasuryAvailable": "उपलब्ध ट्रेजरी (मिलान की गई)",
+        "payoutLimits": "पेआउट सीमा: प्रति अनुरोध INR {perRequest} | दैनिक INR {daily}",
+        "todayRequested": "आज अनुरोधित: INR {amount}"
+      },
+      "filters": {
+        "show": "दिखाएं",
+        "showAll": "सभी दिखाएं",
+        "apply": "लागू करें",
+        "clear": "साफ करें"
+      },
+      "adjustments": {
+        "title": "वॉलेट एडजस्टमेंट अप्रूवल (Immutable)",
+        "empty": "कोई लंबित वॉलेट एडजस्टमेंट अनुरोध नहीं है।",
+        "target": "लक्ष्य: {name} ({email})",
+        "requestedBy": "अनुरोध किया: {name} ({email})",
+        "reason": "कारण: {value}"
+      },
+      "payouts": {
+        "title": "पेआउट अनुरोध",
+        "export": "पेआउट CSV एक्सपोर्ट करें",
+        "empty": "अभी तक कोई पेआउट अनुरोध नहीं है।",
+        "requested": "अनुरोधित: {value}",
+        "processed": "प्रोसेस्ड: {value}"
+      },
+      "fallbacks": {
+        "unnamed": "बिना नाम"
+      }
+    },
+    "withdrawalsPage": {
+      "title": "पेआउट अनुरोध",
+      "subtitle": "निकासी अनुरोधों की समीक्षा करें, नेट पेआउट राशि देखें, और फंड जारी करने से पहले स्पष्ट नोट जोड़ें।",
+      "kpis": {
+        "waitingReview": "समीक्षा की प्रतीक्षा",
+        "approved": "स्वीकृत",
+        "rejected": "अस्वीकृत",
+        "grossRequested": "कुल अनुरोधित",
+        "platformFeeHeld": "रोक कर रखी गई प्लेटफ़ॉर्म फीस",
+        "netPayoutDue": "देय नेट पेआउट"
+      },
+      "filters": {
+        "searchPlaceholder": "यूज़र, ईमेल या UPI से खोजें",
+        "statusAll": "सभी स्टेटस",
+        "showFive": "5 दिखाएं",
+        "showTen": "10 दिखाएं",
+        "showTwenty": "20 दिखाएं",
+        "showAll": "सभी दिखाएं",
+        "apply": "लागू करें",
+        "reset": "रीसेट"
+      },
+      "status": {
+        "pending": "PENDING",
+        "approved": "APPROVED",
+        "rejected": "REJECTED"
+      },
+      "empty": "अभी तक कोई पेआउट अनुरोध नहीं है।",
+      "fields": {
+        "upi": "UPI: {name} | {id}",
+        "na": "उपलब्ध नहीं",
+        "feeBreakdown": "प्लेटफ़ॉर्म फीस ({rate}%): INR {fee} | नेट पेआउट: INR {payout}",
+        "reviewNote": "रिव्यू नोट: {note}",
+        "processed": "प्रोसेस्ड: {value}"
+      }
+    },
+    "usersPage": {
+      "title": "लोग और अकाउंट",
+      "subtitle": "अकाउंट विवरण, पेआउट डिफॉल्ट, ट्रस्ट स्थिति और हाल की गतिविधि एक ही जगह से देखें।",
+      "errors": {
+        "failed": "यूज़र लोड नहीं हो सके"
+      },
+      "kpis": {
+        "accountsFound": "मिले अकाउंट",
+        "needsReview": "समीक्षा आवश्यक",
+        "suspendedAccounts": "निलंबित अकाउंट",
+        "bannedAccounts": "बंद अकाउंट"
+      },
+      "filters": {
+        "searchPlaceholder": "नाम, ईमेल या मोबाइल से खोजें",
+        "roleAll": "सभी अकाउंट प्रकार",
+        "statusAll": "सभी अकाउंट स्थितियां",
+        "flaggedAll": "सभी ट्रस्ट स्थितियां",
+        "flagged": "फ्लैग्ड",
+        "clear": "साफ",
+        "workModeAll": "सभी कार्य मोड",
+        "workModeHome": "घर से काम",
+        "workModeOffice": "ऑफिस से काम",
+        "workModeField": "फील्ड में काम",
+        "preferenceAll": "सभी कार्य प्राथमिकताएं",
+        "preferenceSalaried": "वेतनभोगी",
+        "preferenceFreelance": "फ्रीलांस कॉन्ट्रैक्चुअल",
+        "preferenceDayBasis": "दैनिक आधार",
+        "educationPlaceholder": "शिक्षा कीवर्ड",
+        "languagePlaceholder": "भाषा",
+        "showFive": "5 दिखाएं",
+        "showTen": "10 दिखाएं",
+        "showTwenty": "20 दिखाएं",
+        "showAll": "सभी दिखाएं",
+        "apply": "लागू करें",
+        "exportCsv": "CSV एक्सपोर्ट करें",
+        "reset": "रीसेट"
+      },
+      "empty": "मौजूदा फ़िल्टर से मेल खाने वाला कोई अकाउंट नहीं है।",
+      "fallbacks": {
+        "unnamedUser": "बिना नाम का यूज़र"
+      },
+      "badges": {
+        "role": "भूमिका: {value}",
+        "status": "स्थिति: {value}",
+        "riskFlagged": "जोखिम: फ्लैग्ड",
+        "riskClear": "जोखिम: सामान्य"
+      },
+      "sections": {
+        "accountDetails": "अकाउंट विवरण",
+        "earnings": "कमाई और लेवल"
+      },
+      "fields": {
+        "accountId": "अकाउंट आईडी:",
+        "mobile": "मोबाइल:",
+        "notSet": "सेट नहीं",
+        "timezone": "टाइमज़ोन:",
+        "joined": "जुड़ा: {value}",
+        "deleted": "हटाया गया: {value}",
+        "balance": "बैलेंस:",
+        "coins": "कॉइन:",
+        "level": "लेवल:",
+        "submittedToday": "आज सबमिट:",
+        "approvedToday": "आज स्वीकृत:",
+        "approved": "स्वीकृत:",
+        "rejected": "अस्वीकृत:",
+        "dailyReset": "दैनिक लेवल रीसेट: {value}"
+      }
+    },
+    "withdrawalActions": {
+      "notePlaceholder": "एडमिन नोट (वैकल्पिक)",
+      "approve": "स्वीकृत करें",
+      "approving": "स्वीकृत किया जा रहा है...",
+      "reject": "अस्वीकृत करें",
+      "rejecting": "अस्वीकृत किया जा रहा है...",
+      "updated": "अपडेट हो गया",
+      "errors": {
+        "unexpected": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "actionFailed": "कार्रवाई विफल रही"
+      }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "eyebrow": "मैनेजर डैशबोर्ड",
+      "title": "मैनेजर ओवरव्यू",
+      "subtitle": "नए सबमिशन रिव्यू करें, संदिग्ध गतिविधि पहचानें, और सही काम को फ़ाइनल अप्रूवल के लिए एडमिन टीम तक भेजें।",
+      "notEnoughData": "पर्याप्त डेटा नहीं",
+      "minAvg": "{count} मिनट औसत",
+      "hrAvg": "{count} घंटे औसत",
+      "clear": "क्लियर",
+      "kpis": {
+        "waitingForReview": "रिव्यू के लिए इंतज़ार",
+        "approvedToday": "आज अप्रूव्ड",
+        "rejectedToday": "आज रिजेक्टेड",
+        "waitingForAdmin": "एडमिन के लिए पेंडिंग",
+        "flaggedForReview": "रिव्यू के लिए फ़्लैग्ड"
+      },
+      "snapshot": {
+        "eyebrow": "रिव्यू स्नैपशॉट",
+        "title": "सबसे पुराने सबमिशन पहले",
+        "openSubmissions": "सबमिशन खोलें",
+        "empty": "अभी रिव्यू के लिए कोई सबमिशन पेंडिंग नहीं है।",
+        "fallbackTitle": "कैंपेन सबमिशन",
+        "unnamed": "अनाम",
+        "level": "लेवल {level}",
+        "inReview": "{age} से रिव्यू में",
+        "suspicious": "संदिग्ध"
+      },
+      "pace": {
+        "eyebrow": "रिव्यू गति",
+        "title": "रिव्यू कितनी तेज़ी से आगे बढ़ रहे हैं",
+        "averageTurnaround": "औसत समय",
+        "averageTurnaroundHelp": "सबमिशन बनने से लेकर आपके निर्णय तक मापा गया।",
+        "oldestPending": "सबसे पुराना पेंडिंग आइटम",
+        "oldestPendingHelp": "मैनेजर टीम में सबसे लंबे समय से रुका हुआ सबमिशन।"
+      },
+      "access": {
+        "firstPassOnly": "मैनेजर एक्सेस केवल पहली समीक्षा तक सीमित है।",
+        "adminControls": "फ़ाइनेंशियल अप्रूवल, पेआउट कंट्रोल और रोल बदलाव एडमिन के पास ही रहते हैं।"
+      }
+    },
+    "notificationsPage": {
+      "eyebrow": "इनबॉक्स",
+      "title": "मैनेजर नोटिफिकेशन",
+      "subtitle": "नए सबमिशन, फ़्लैग्ड गतिविधि और ज़रूरी रिव्यू अलर्ट पर नज़र रखें।",
+      "inboxEyebrow": "इन-ऐप इनबॉक्स",
+      "alertsEyebrow": "रिव्यू अलर्ट"
+    },
+    "notificationsPanel": {
+      "errors": {
+        "unexpected": "अनपेक्षित सर्वर रिस्पॉन्स",
+        "failed": "नोटिफिकेशन लोड नहीं हो सके"
+      },
+      "loading": "नोटिफिकेशन लोड हो रहे हैं...",
+      "controls": {
+        "show": "दिखाएँ",
+        "showAll": "सभी दिखाएँ",
+        "markAllRead": "सभी को पढ़ा हुआ मार्क करें"
+      },
+      "markAllReadSuccess": "रिव्यू अलर्ट पढ़े हुए मार्क कर दिए गए",
+      "empty": {
+        "title": "अभी कोई अलर्ट नहीं",
+        "body": "क्यू और रिस्क अलर्ट यहाँ अपने-आप दिखेंगे।"
+      },
+      "allRead": {
+        "title": "कोई नया रिव्यू अलर्ट नहीं",
+        "body": "मौजूदा रिव्यू अलर्ट पहले ही पढ़े हुए मार्क किए जा चुके हैं।"
+      },
+      "warnings": "चेतावनी",
+      "info": "जानकारी"
+    },
+    "inboxPanel": {
+      "errors": {
+        "unexpected": "अनपेक्षित सर्वर रिस्पॉन्स",
+        "failed": "नोटिफिकेशन लोड नहीं हो सके"
+      },
+      "loading": "नोटिफिकेशन लोड हो रहे हैं...",
+      "kpis": {
+        "totalNotifications": "कुल नोटिफिकेशन",
+        "unread": "अनरीड",
+        "successUpdates": "सक्सेस अपडेट",
+        "warnings": "चेतावनी"
+      },
+      "filtersHeader": {
+        "eyebrow": "इनबॉक्स फ़िल्टर",
+        "title": "ब्रॉडकास्ट और ज़रूरी अपडेट",
+        "show": "दिखाएँ",
+        "showAll": "सभी दिखाएँ",
+        "markAllRead": "सभी को पढ़ा हुआ मार्क करें",
+        "updating": "अपडेट हो रहा है..."
+      },
+      "filters": {
+        "all": "सभी",
+        "unread": "अनरीड",
+        "success": "सक्सेस",
+        "warnings": "चेतावनी",
+        "info": "जानकारी"
+      },
+      "empty": "वर्तमान फ़िल्टर के लिए कोई नोटिफिकेशन नहीं मिला।",
+      "actions": {
+        "markRead": "पढ़ा हुआ मार्क करें",
+        "saving": "सेव हो रहा है...",
+        "updated": "नोटिफिकेशन अपडेट हो गए",
+        "updateFailed": "नोटिफिकेशन अपडेट नहीं हो सके"
+      },
+      "unreadBadge": "अनरीड"
+    },
+    "riskPanel": {
+      "errors": {
+        "unexpected": "अनपेक्षित सर्वर रिस्पॉन्स",
+        "failed": "रिस्क सिग्नल लोड नहीं हो सके"
+      },
+      "loading": "रिव्यू अलर्ट लोड हो रहे हैं...",
+      "empty": "अभी कोई अलर्ट डेटा उपलब्ध नहीं है।",
+      "controls": {
+        "show": "दिखाएँ",
+        "showAll": "सभी दिखाएँ"
+      },
+      "summary": {
+        "flaggedInReview": "रिव्यू में फ़्लैग्ड",
+        "flaggedUsers": "फ़्लैग्ड यूज़र",
+        "ipHotspots": "IP हॉटस्पॉट ({hours}h)",
+        "highActivity": "उच्च गतिविधि (1h)",
+        "rejectionSpikes": "रिजेक्शन स्पाइक",
+        "waitingWithAdmin": "एडमिन के पास पेंडिंग"
+      },
+      "sections": {
+        "flaggedUsers": {
+          "title": "फ़्लैग्ड यूज़र",
+          "subtitle": "ऐसे अकाउंट जिन्हें अतिरिक्त प्रूफ़ जाँच की ज़रूरत हो सकती है।",
+          "empty": "इस समय कोई फ़्लैग्ड यूज़र नहीं है।",
+          "unnamed": "अनाम यूज़र",
+          "approved": "अप्रूव्ड {count}",
+          "rejected": "रिजेक्टेड {count}"
+        },
+        "ipHotspots": {
+          "title": "IP हॉटस्पॉट",
+          "subtitle": "एक ही समय में कई अकाउंट में असामान्य गतिविधि दिखाने वाले मास्क्ड IP।",
+          "empty": "चुनी गई विंडो में कोई हॉटस्पॉट नहीं मिला।",
+          "submissions": "सबमिशन {count}",
+          "users": "यूज़र {count}",
+          "campaigns": "कैंपेन {count}"
+        },
+        "escalations": {
+          "title": "एस्केलेशन",
+          "subtitle": "ऐसे आइटम जिन्हें मैनेजर ने अतिरिक्त समीक्षा के लिए बढ़ाया है।",
+          "empty": "अभी कोई एस्केलेशन दर्ज नहीं है।",
+          "fallbackTitle": "सबमिशन",
+          "unnamed": "अनाम यूज़र"
+        },
+        "highVelocity": {
+          "title": "उच्च सबमिशन गति",
+          "subtitle": "पिछले एक घंटे में बहुत तेज़ी से सबमिट करने वाले यूज़र।",
+          "empty": "कोई स्पीड अलर्ट नहीं।",
+          "unnamed": "अनाम यूज़र",
+          "perHour": "{count}/घंटा",
+          "alreadyFlagged": "पहले से फ़्लैग्ड।"
+        },
+        "rejectionOutliers": {
+          "title": "उच्च रिजेक्शन रेट वाले यूज़र",
+          "subtitle": "ऐसे अकाउंट जिनका रिजेक्शन रेट असामान्य रूप से ज़्यादा है।",
+          "empty": "अभी कोई आउट्लायर नहीं मिला।",
+          "unnamed": "अनाम यूज़र",
+          "alreadyFlagged": "पहले से फ़्लैग्ड।"
+        },
+        "adminBacklog": {
+          "title": "पेंडिंग एडमिन बैकलॉग",
+          "subtitle": "फ़ाइनल एडमिन अप्रूवल के लिए रुके सबसे पुराने आइटम।",
+          "empty": "कोई पेंडिंग-एडमिन आइटम नहीं।",
+          "fallbackTitle": "कैंपेन",
+          "unnamed": "अनाम यूज़र",
+          "flaggedHint": "यह यूज़र फ़्लैग्ड है। ज़रूरत हो तो इस आइटम को अतिरिक्त समीक्षा के लिए एस्केलेट करें।"
+        },
+        "rejectionSpikes": {
+          "title": "असामान्य रिजेक्शन स्पाइक",
+          "subtitle": "पिछले {hours} घंटों में मैनेजर रिजेक्शन रेट ज़्यादा वाले कैंपेन।",
+          "empty": "कोई रिजेक्शन स्पाइक नहीं मिला।",
+          "decisions": "निर्णय {count}",
+          "rejected": "रिजेक्टेड {count}",
+          "latest": "आख़िरी: {date}"
+        },
+        "footer": "यह दृश्य सुरक्षा के लिए IP और कॉन्टैक्ट डिटेल्स छुपाकर दिखाता है। अगर आपको डिवाइस फ़िंगरप्रिंटिंग या IP ब्लैकलिस्ट जैसे मजबूत कंट्रोल चाहिए हों, तो उन्हें केवल एडमिन टूल के रूप में जोड़ा जा सकता है।"
+      }
+    },
+    "settingsPage": {
+      "eyebrow": "मैनेजर सेटिंग्स",
+      "title": "सेटिंग्स",
+      "subtitle": "अपनी प्रोफ़ाइल, रिव्यू पसंद और अकाउंट सुरक्षा मैनेज करें।",
+      "securityTitle": "अकाउंट सुरक्षा",
+      "securityBody": "पासवर्ड भूल गए? उसे सुरक्षित तरीके से रीसेट करें।",
+      "forgotPassword": "पासवर्ड भूल गए"
+    },
+    "settings": {
+      "errors": {
+        "unexpectedResponse": "अनपेक्षित रिस्पॉन्स",
+        "failedToLoad": "सेटिंग्स लोड नहीं हो सकीं",
+        "unexpectedServerResponse": "अनपेक्षित सर्वर रिस्पॉन्स",
+        "failedToSave": "सेटिंग्स सेव नहीं हो सकीं"
+      },
+      "loading": "सेटिंग्स लोड हो रही हैं...",
+      "profileEyebrow": "प्रोफ़ाइल",
+      "profileTitle": "प्रोफ़ाइल विवरण",
+      "profileSubtitle": "अपना डिस्प्ले नाम और लोकल टाइमज़ोन अपडेट करें।",
+      "displayNamePlaceholder": "डिस्प्ले नाम (वैकल्पिक)",
+      "timezone": "टाइमज़ोन",
+      "email": "ईमेल",
+      "role": "रोल",
+      "created": "बनाया गया",
+      "moderationEyebrow": "मॉडरेशन",
+      "moderationTitle": "रिव्यू पसंद",
+      "moderationSubtitle": "नए सबमिशन आपके काम करते समय कैसे दिखें, यह चुनें।",
+      "defaultSort": "डिफ़ॉल्ट क्रम",
+      "sortOptions": {
+        "NEWEST": "सबसे नया पहले",
+        "OLDEST": "सबसे पुराना पहले"
+      },
+      "riskFirstTitle": "रिस्क-फर्स्ट मोड",
+      "riskFirstBody": "संदिग्ध या फ़्लैग्ड सबमिशन पहले दिखाएँ।",
+      "autoNextTitle": "अगला आइटम अपने-आप खोलें",
+      "autoNextBody": "निर्णय के बाद अगला सबमिशन अपने-आप खोलें।",
+      "proofPreviewMode": "प्रूफ़ प्रीव्यू मोड",
+      "proofModeOptions": {
+        "COMPACT": "कम्पैक्ट",
+        "EXPANDED": "विस्तृत"
+      },
+      "saving": "सेव हो रहा है...",
+      "saveProfile": "प्रोफ़ाइल सेव करें",
+      "savePreferences": "पसंद सेव करें",
+      "saved": "सेव हो गया"
+    },
+    "submissionsPage": {
+      "eyebrow": "सबमिशन समीक्षा",
+      "title": "मैनेजर रिव्यू डेस्क",
+      "subtitle": "नए सबमिशन की समीक्षा करें, जोखिमपूर्ण गतिविधि पहचानें, और सही काम को अंतिम स्वीकृति के लिए आगे भेजें।"
+    },
+    "riskPage": {
+      "eyebrow": "फ्रॉड संकेत",
+      "title": "मैनेजर रिस्क",
+      "subtitle": "संदिग्ध गतिविधि जल्दी देखें: फ्लैग किए गए यूज़र, IP हॉटस्पॉट और लंबित-एडमिन बैकलॉग।"
+    },
+    "historyPage": {
+      "eyebrow": "रिव्यू इतिहास",
+      "title": "मैनेजर इतिहास",
+      "subtitle": "आपने क्या स्वीकृत, अस्वीकृत या एस्केलेट किया, उसका कारण और कैंपेन संदर्भ सहित रिकॉर्ड देखें।"
+    },
+    "queuePanel": {
+      "errors": {
+        "unexpected": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "failed": "सबमिशन लोड नहीं हो सके"
+      },
+      "loading": "सबमिशन लोड हो रहे हैं...",
+      "kpis": {
+        "totalInReview": "समीक्षा में कुल",
+        "flaggedSubmissions": "फ्लैग किए गए सबमिशन",
+        "highLevelUsers": "उच्च-स्तर यूज़र"
+      },
+      "filters": {
+        "eyebrow": "फ़िल्टर",
+        "title": "जोखिम के अनुसार छांटें या सबमिशन जल्दी खोजें",
+        "show": "दिखाएं",
+        "showAll": "सभी दिखाएं",
+        "searchPlaceholder": "कैंपेन, यूज़र या प्रूफ खोजें",
+        "all": "सभी",
+        "suspicious": "संदिग्ध",
+        "highLevel": "उच्च स्तर"
+      },
+      "empty": "मौजूदा फ़िल्टर से मेल खाने वाला कोई सबमिशन नहीं है।",
+      "fallbacks": {
+        "submission": "सबमिशन",
+        "uncategorized": "बिना श्रेणी",
+        "unnamedUser": "बिना नाम का यूज़र"
+      },
+      "reward": "रिवॉर्ड INR {amount}",
+      "user": {
+        "title": "यूज़र सारांश",
+        "approvedRejected": "स्वीकृत: {approved} | अस्वीकृत: {rejected}",
+        "flaggedFallback": "यह अकाउंट फिलहाल अतिरिक्त समीक्षा के लिए फ्लैग किया गया है।"
+      },
+      "task": {
+        "title": "टास्क विवरण",
+        "openTaskLink": "टास्क लिंक खोलें",
+        "viewSteps": "स्टेप्स देखें ({count})",
+        "noSteps": "इस कैंपेन के लिए कोई स्टेप नहीं जोड़े गए।"
+      },
+      "proof": {
+        "title": "प्रूफ प्रीव्यू",
+        "openProof": "प्रूफ खोलें",
+        "previewScreenshot": "स्क्रीनशॉट प्रीव्यू",
+        "screenshotUploaded": "स्क्रीनशॉट प्रूफ अपलोड है। देखने के लिए प्रीव्यू बटन इस्तेमाल करें।",
+        "noContent": "कोई प्रूफ सामग्री नहीं",
+        "onlyTextWarning": "इस आइटम के लिए केवल टेक्स्ट प्रूफ उपलब्ध है। स्वीकृत करने से पहले ध्यान से जांचें।"
+      },
+      "wait": {
+        "minutes": "{count}मि से प्रतीक्षा",
+        "hours": "{count}घं से प्रतीक्षा",
+        "days": "{count}दिन से प्रतीक्षा"
+      }
+    },
+    "historyPanel": {
+      "errors": {
+        "unexpected": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "failed": "मैनेजर इतिहास लोड नहीं हो सका"
+      },
+      "loading": "इतिहास लोड हो रहा है...",
+      "filters": {
+        "all": "सभी",
+        "approved": "स्वीकृत",
+        "rejected": "अस्वीकृत",
+        "escalated": "एस्केलेटेड",
+        "show": "दिखाएं",
+        "showAll": "सभी दिखाएं",
+        "searchPlaceholder": "कैंपेन, यूज़र, कारण..."
+      },
+      "empty": "मौजूदा फ़िल्टर से मेल खाने वाला कोई इतिहास आइटम नहीं है।",
+      "status": {
+        "approved": "स्वीकृत",
+        "rejected": "अस्वीकृत",
+        "escalated": "एस्केलेटेड",
+        "updated": "अपडेट किया गया"
+      },
+      "fallbacks": {
+        "submissionReview": "सबमिशन समीक्षा",
+        "uncategorized": "बिना श्रेणी",
+        "unnamedUser": "बिना नाम का यूज़र",
+        "unknown": "अज्ञात"
+      },
+      "flagged": "फ्लैग्ड",
+      "user": {
+        "title": "यूज़र",
+        "submissionId": "सबमिशन आईडी: {value}"
+      },
+      "proof": {
+        "title": "कारण / प्रूफ",
+        "openLink": "लिंक खोलें",
+        "previewScreenshot": "स्क्रीनशॉट प्रीव्यू",
+        "noProofStored": "कोई प्रूफ स्टोर नहीं है",
+        "screenshotUploaded": "स्क्रीनशॉट प्रूफ अपलोड है।"
+      }
+    },
+    "submissionActions": {
+      "reasonPlaceholder": "कारण (अस्वीकृति पर आवश्यक, एस्केलेट करने पर अनुशंसित)",
+      "approve": "स्वीकृत करें",
+      "approving": "स्वीकृत किया जा रहा है...",
+      "reject": "अस्वीकृत करें",
+      "rejecting": "अस्वीकृत किया जा रहा है...",
+      "escalate": "एस्केलेट करें",
+      "escalating": "एस्केलेट किया जा रहा है...",
+      "updated": "अपडेट हो गया",
+      "escalated": "एस्केलेट किया गया",
+      "errors": {
+        "unexpected": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "actionFailed": "कार्रवाई विफल रही"
+      }
+    }
+  },
+  "common": {
+    "tutorialVideo": {
+      "youtube": "YouTube ट्यूटोरियल",
+      "loom": "Loom ट्यूटोरियल",
+      "hosted": "होस्टेड ट्यूटोरियल वीडियो"
+    }
+  },
+  "notifications": {
+    "channels": {
+      "eyebrow": "डिलीवरी चैनल",
+      "title": "अपडेट आप तक कैसे पहुंचें, यह चुनें",
+      "loading": "डिलीवरी चैनल लोड हो रहे हैं...",
+      "messages": {
+        "pushUpdated": "पुश अपडेट हो गया",
+        "testSent": "टेस्ट भेज दिया गया",
+        "telegramUpdated": "टेलीग्राम अपडेट हो गया",
+        "pushDeviceUpdated": "पुश डिवाइस अपडेट हो गया"
+      },
+      "errors": {
+        "unexpected": "अप्रत्याशित सर्वर प्रतिक्रिया",
+        "enablePushFailed": "पुश नोटिफिकेशन सक्षम नहीं हो सके",
+        "sendTestFailed": "टेस्ट पुश भेजा नहीं जा सका"
+      },
+      "push": {
+        "body": "इस ब्राउज़र या इंस्टॉल किए गए ऐप पर तुरंत अलर्ट पाने के लिए सबसे अच्छा विकल्प।",
+        "configWarning": "इस वातावरण के लिए Firebase push अभी पूरी तरह कॉन्फ़िगर नहीं है।",
+        "unsupportedBrowser": "यह ब्राउज़र डिवाइस पुश नोटिफिकेशन सपोर्ट नहीं करता।",
+        "permissionDenied": "नोटिफिकेशन की अनुमति नहीं मिली।",
+        "notConfigured": "Firebase web push अभी कॉन्फ़िगर नहीं है।",
+        "tokenFailed": "Firebase से डिवाइस पुश टोकन नहीं मिल सका।",
+        "registeredDevice": "रजिस्टर्ड डिवाइस",
+        "lastSeen": "आखिरी बार देखा गया {value}",
+        "removing": "हटाया जा रहा है...",
+        "remove": "हटाएं",
+        "enabling": "सक्षम किया जा रहा है...",
+        "registerAnother": "एक और डिवाइस रजिस्टर करें",
+        "enableThisDevice": "इस डिवाइस पर सक्षम करें",
+        "sending": "भेजा जा रहा है...",
+        "sendTest": "टेस्ट पुश भेजें"
+      },
+      "telegram": {
+        "body": "अनुमोदन और भुगतान अपडेट वहां भी पाने के लिए अपना Telegram चैट कनेक्ट करें।",
+        "configWarning": "इस वातावरण के लिए Telegram bot कॉन्फ़िगरेशन मौजूद नहीं है।",
+        "connected": "कनेक्टेड {preview}",
+        "help": "बॉट लिंक एक बार खोलें और इस अकाउंट को जोड़ने के लिए Start दबाएं।",
+        "openBot": "Telegram bot खोलें",
+        "connect": "Telegram कनेक्ट करें",
+        "disconnecting": "डिस्कनेक्ट किया जा रहा है...",
+        "disconnect": "डिस्कनेक्ट करें"
+      },
+      "benefits": {
+        "title": "इससे क्या मिलेगा",
+        "body": "कनेक्ट होने के बाद, एडमिन ब्रॉडकास्ट और ज़रूरी वर्कफ़्लो इवेंट इन-ऐप, ईमेल, SMS, push और Telegram से भेजे जा सकते हैं, बिना आपकी मुख्य मॉडरेशन या पेआउट लॉजिक बदले।"
+      }
     }
   }
 }

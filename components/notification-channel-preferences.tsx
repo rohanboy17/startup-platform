@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { getToken } from "firebase/messaging";
+import { useTranslations } from "next-intl";
 import { BellRing, Send, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionCard } from "@/components/ui/section-card";
@@ -29,6 +30,7 @@ type ChannelState = {
 };
 
 export default function NotificationChannelPreferences() {
+  const t = useTranslations("notifications.channels");
   const [data, setData] = useState<ChannelState | null>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
@@ -41,12 +43,12 @@ export default function NotificationChannelPreferences() {
     try {
       parsed = raw ? (JSON.parse(raw) as ChannelState) : null;
     } catch {
-      parsed = { error: "Unexpected server response" } as ChannelState;
+      parsed = { error: t("errors.unexpected") } as ChannelState;
     }
 
     setData(parsed);
     setLoading(false);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 30000);
 
@@ -59,13 +61,14 @@ export default function NotificationChannelPreferences() {
     try {
       if (!("Notification" in window) || !("serviceWorker" in navigator)) {
         setMessage("This browser does not support device push notifications.");
+        setMessage(t("push.unsupportedBrowser"));
         setActionLoading(null);
         return;
       }
 
       const permission = await Notification.requestPermission();
       if (permission !== "granted") {
-        setMessage("Notification permission was not granted.");
+        setMessage(t("push.permissionDenied"));
         setActionLoading(null);
         return;
       }
@@ -73,7 +76,7 @@ export default function NotificationChannelPreferences() {
       const messaging = await getBrowserMessaging();
       const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
       if (!messaging || !vapidKey) {
-        setMessage("Firebase web push is not configured yet.");
+        setMessage(t("push.notConfigured"));
         setActionLoading(null);
         return;
       }
@@ -88,7 +91,7 @@ export default function NotificationChannelPreferences() {
       });
 
       if (!token) {
-        setMessage("Could not get a device push token from Firebase.");
+        setMessage(t("push.tokenFailed"));
         setActionLoading(null);
         return;
       }
@@ -107,12 +110,12 @@ export default function NotificationChannelPreferences() {
 
       const raw = await res.text();
       const parsed = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
-      setMessage(parsed.message || parsed.error || "Push updated");
+      setMessage(parsed.message || parsed.error || t("messages.pushUpdated"));
       if (res.ok) {
         await load();
       }
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to enable push notifications");
+      setMessage(error instanceof Error ? error.message : t("errors.enablePushFailed"));
     }
 
     setActionLoading(null);
@@ -130,10 +133,10 @@ export default function NotificationChannelPreferences() {
 
       const raw = await res.text();
       const parsed = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
-      setMessage(parsed.message || parsed.error || "Test sent");
+      setMessage(parsed.message || parsed.error || t("messages.testSent"));
       if (res.ok) await load();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Unable to send test push");
+      setMessage(error instanceof Error ? error.message : t("errors.sendTestFailed"));
     }
 
     setActionLoading(null);
@@ -150,7 +153,7 @@ export default function NotificationChannelPreferences() {
     });
     const raw = await res.text();
     const parsed = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
-    setMessage(parsed.message || parsed.error || "Telegram updated");
+    setMessage(parsed.message || parsed.error || t("messages.telegramUpdated"));
     setActionLoading(null);
     if (res.ok) {
       await load();
@@ -168,7 +171,7 @@ export default function NotificationChannelPreferences() {
     });
     const raw = await res.text();
     const parsed = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
-    setMessage(parsed.message || parsed.error || "Push device updated");
+    setMessage(parsed.message || parsed.error || t("messages.pushDeviceUpdated"));
     setActionLoading(null);
     if (res.ok) {
       await load();
@@ -176,14 +179,14 @@ export default function NotificationChannelPreferences() {
   }
 
   if (loading) {
-    return <p className="text-sm text-white/60">Loading delivery channels...</p>;
+    return <p className="text-sm text-white/60">{t("loading")}</p>;
   }
 
   return (
     <SectionCard elevated className="space-y-4 p-4 sm:p-6">
       <div>
-        <p className="text-sm text-white/60">Delivery channels</p>
-        <h3 className="text-xl font-semibold text-white">Choose how updates reach you</h3>
+        <p className="text-sm text-white/60">{t("eyebrow")}</p>
+        <h3 className="text-xl font-semibold text-white">{t("title")}</h3>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-2">
@@ -192,13 +195,9 @@ export default function NotificationChannelPreferences() {
             <Smartphone className="mt-0.5 text-emerald-200" size={18} />
             <div className="space-y-2">
               <p className="font-medium text-white">Device push notifications</p>
-              <p className="text-sm text-white/65">
-                Best for instant alerts on this browser or installed app.
-              </p>
+              <p className="text-sm text-white/65">{t("push.body")}</p>
               {!data?.pushConfigured || !pushReadyInBrowser ? (
-                <p className="text-xs text-amber-200/80">
-                  Firebase push is not fully configured yet for this environment.
-                </p>
+                <p className="text-xs text-amber-200/80">{t("push.configWarning")}</p>
               ) : null}
               {data?.push.devices.length ? (
                 <div className="space-y-2">
@@ -209,10 +208,10 @@ export default function NotificationChannelPreferences() {
                     >
                       <div className="min-w-0">
                         <p className="truncate text-sm text-white">
-                          {device.deviceLabel || "Registered device"}
+                          {device.deviceLabel || t("push.registeredDevice")}
                         </p>
                         <p className="text-xs text-white/50">
-                          Last seen {new Date(device.lastSeenAt).toLocaleString()}
+                          {t("push.lastSeen", { value: new Date(device.lastSeenAt).toLocaleString() })}
                         </p>
                       </div>
                       <Button
@@ -221,7 +220,7 @@ export default function NotificationChannelPreferences() {
                         disabled={actionLoading !== null}
                         onClick={() => void removePushDevice(device.id)}
                       >
-                        {actionLoading === device.id ? "Removing..." : "Remove"}
+                        {actionLoading === device.id ? t("push.removing") : t("push.remove")}
                       </Button>
                     </div>
                   ))}
@@ -234,10 +233,10 @@ export default function NotificationChannelPreferences() {
                   className="w-full sm:w-auto"
                 >
                   {actionLoading === "push"
-                    ? "Enabling..."
+                    ? t("push.enabling")
                     : data?.push.enabled
-                      ? "Register another device"
-                      : "Enable on this device"}
+                      ? t("push.registerAnother")
+                      : t("push.enableThisDevice")}
                 </Button>
 
                 <Button
@@ -251,7 +250,7 @@ export default function NotificationChannelPreferences() {
                   }
                   className="w-full border-white/15 bg-transparent text-white hover:bg-white/10 sm:w-auto"
                 >
-                  {actionLoading === "push:test" ? "Sending..." : "Send test push"}
+                  {actionLoading === "push:test" ? t("push.sending") : t("push.sendTest")}
                 </Button>
               </div>
             </div>
@@ -263,21 +262,17 @@ export default function NotificationChannelPreferences() {
             <Send className="mt-0.5 text-sky-200" size={18} />
             <div className="space-y-2">
               <p className="font-medium text-white">Telegram alerts</p>
-              <p className="text-sm text-white/65">
-                Connect your Telegram chat to receive approval and payout updates there too.
-              </p>
+              <p className="text-sm text-white/65">{t("telegram.body")}</p>
               {!data?.telegramConfigured ? (
-                <p className="text-xs text-amber-200/80">
-                  Telegram bot configuration is missing for this environment.
-                </p>
+                <p className="text-xs text-amber-200/80">{t("telegram.configWarning")}</p>
               ) : data?.telegram.linked ? (
                 <p className="text-xs text-emerald-200/80">
-                  Connected {data.telegram.chatPreview ? `(${data.telegram.chatPreview})` : ""}
+                  {t("telegram.connected", {
+                    preview: data.telegram.chatPreview ? `(${data.telegram.chatPreview})` : "",
+                  })}
                 </p>
               ) : (
-                <p className="text-xs text-white/55">
-                  Open the bot link once and press start to connect this account.
-                </p>
+                <p className="text-xs text-white/55">{t("telegram.help")}</p>
               )}
 
               <div className="flex flex-wrap gap-3">
@@ -288,7 +283,7 @@ export default function NotificationChannelPreferences() {
                     rel="noreferrer"
                     className="inline-flex items-center justify-center rounded-xl bg-white px-4 py-2 text-sm font-medium text-black transition hover:scale-[1.02]"
                   >
-                    {data.telegram.linked ? "Open Telegram bot" : "Connect Telegram"}
+                    {data.telegram.linked ? t("telegram.openBot") : t("telegram.connect")}
                   </a>
                 ) : null}
 
@@ -299,7 +294,7 @@ export default function NotificationChannelPreferences() {
                     disabled={actionLoading !== null}
                     onClick={() => void disconnectTelegram()}
                   >
-                    {actionLoading === "telegram" ? "Disconnecting..." : "Disconnect"}
+                    {actionLoading === "telegram" ? t("telegram.disconnecting") : t("telegram.disconnect")}
                   </Button>
                 ) : null}
               </div>
@@ -311,12 +306,9 @@ export default function NotificationChannelPreferences() {
       <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/65">
         <div className="flex items-center gap-2 text-white">
           <BellRing size={16} className="text-emerald-200" />
-          <span className="font-medium">What this unlocks</span>
+          <span className="font-medium">{t("benefits.title")}</span>
         </div>
-        <p className="mt-2">
-          Once connected, admin broadcasts and important workflow events can be delivered through in-app, email,
-          SMS, push, and Telegram without changing your core moderation or payout logic.
-        </p>
+        <p className="mt-2">{t("benefits.body")}</p>
       </div>
 
       {message ? <p className="text-xs text-white/60">{message}</p> : null}

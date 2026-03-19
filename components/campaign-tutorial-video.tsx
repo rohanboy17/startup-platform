@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { ExternalLink, PlayCircle } from "lucide-react";
 import { getTutorialVideoEmbed } from "@/lib/tutorial-video";
 
@@ -16,6 +17,7 @@ export default function CampaignTutorialVideo({
   body: string;
   openLabel: string;
 }) {
+  const t = useTranslations("common.tutorialVideo");
   const embed = getTutorialVideoEmbed(videoUrl);
   if (!embed) return null;
 
@@ -64,10 +66,10 @@ export default function CampaignTutorialVideo({
         <PlayCircle size={14} />
         <span>
           {embed.provider === "youtube"
-            ? "YouTube tutorial"
+            ? t("youtube")
             : embed.provider === "loom"
-              ? "Loom tutorial"
-              : "Hosted tutorial video"}
+              ? t("loom")
+              : t("hosted")}
         </span>
       </div>
     </div>

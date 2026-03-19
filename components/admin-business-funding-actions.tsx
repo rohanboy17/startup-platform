@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
@@ -13,6 +14,7 @@ export default function AdminBusinessFundingActions({
 }: {
   fundingId: string;
 }) {
+  const t = useTranslations("admin.fundingActions");
   const router = useRouter();
   const [note, setNote] = useState("");
   const [loadingAction, setLoadingAction] = useState<ReviewAction | null>(null);
@@ -20,7 +22,7 @@ export default function AdminBusinessFundingActions({
 
   async function submit(action: ReviewAction) {
     if (action === "REJECT" && !note.trim()) {
-      setMessage("Add a short review note before rejecting this request.");
+      setMessage(t("noteRequired"));
       return;
     }
 
@@ -42,11 +44,11 @@ export default function AdminBusinessFundingActions({
     try {
       parsed = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      parsed = { error: "Unexpected server response" };
+      parsed = { error: t("unexpectedServerResponse") };
     }
 
     setLoadingAction(null);
-    setMessage(parsed.message || parsed.error || "Updated");
+    setMessage(parsed.message || parsed.error || t("updated"));
 
     if (res.ok) {
       setNote("");
@@ -58,7 +60,7 @@ export default function AdminBusinessFundingActions({
   return (
     <div className="space-y-3">
       <Input
-        placeholder="Review note (required for rejection, optional for approval)"
+        placeholder={t("notePlaceholder")}
         value={note}
         onChange={(event) => setNote(event.target.value)}
       />
@@ -69,7 +71,7 @@ export default function AdminBusinessFundingActions({
           disabled={loadingAction !== null}
           className="w-full sm:w-auto"
         >
-          {loadingAction === "APPROVE" ? "Approving..." : "Approve and credit wallet"}
+          {loadingAction === "APPROVE" ? t("approveLoading") : t("approve")}
         </Button>
         <Button
           type="button"
@@ -78,7 +80,7 @@ export default function AdminBusinessFundingActions({
           disabled={loadingAction !== null}
           className="w-full sm:w-auto"
         >
-          {loadingAction === "REJECT" ? "Rejecting..." : "Reject request"}
+          {loadingAction === "REJECT" ? t("rejectLoading") : t("reject")}
         </Button>
       </div>
       {message ? <p className="text-xs text-foreground/65">{message}</p> : null}

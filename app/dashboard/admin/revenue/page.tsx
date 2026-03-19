@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
+import { getLocale, getTranslations } from "next-intl/server";
 import PlatformPayoutRequest from "@/components/platform-payout-request";
 import PlatformPayoutActions from "@/components/platform-payout-actions";
 import AdminWalletAdjustmentReviewActions from "@/components/admin-wallet-adjustment-review-actions";
@@ -13,11 +14,28 @@ type SearchParams = {
   limit?: string;
 };
 
+function resolveIntlLocale(locale: string) {
+  if (locale === "hi") return "hi-IN";
+  if (locale === "bn") return "bn-IN";
+  return "en-IN";
+}
+
+function formatDateTime(value: Date | string, locale: string) {
+  return new Intl.DateTimeFormat(resolveIntlLocale(locale), {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
+}
+
 export default async function AdminRevenuePage({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  const [t, locale] = await Promise.all([
+    getTranslations("admin.revenuePage"),
+    getLocale(),
+  ]);
   const params = await searchParams;
   const limit = params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
   const payoutDailyLimit = Number(process.env.PAYOUT_DAILY_LIMIT ?? 200000);
@@ -112,24 +130,27 @@ export default async function AdminRevenuePage({
 
   return (
     <div className="space-y-8">
-      <h2 className="text-3xl font-semibold">Platform Revenue</h2>
+      <h2 className="text-3xl font-semibold">{t("title")}</h2>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <KpiCard label="Total Commission Earned" value={`INR ${formatMoney(platformRevenue._sum.amount)}`} tone="success" />
+        <KpiCard label={t("kpis.totalCommissionEarned")} value={`INR ${formatMoney(platformRevenue._sum.amount)}`} tone="success" />
         <div className="surface-card premium-ring-hover rounded-2xl p-6">
-          <p className="text-xs font-medium uppercase tracking-wide text-foreground/60">Treasury Available (Reconciled)</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-foreground/60">{t("kpis.treasuryAvailable")}</p>
           <p className="kpi-value mt-2 text-2xl font-semibold text-foreground">INR {formatMoney(reconciledBalance)}</p>
           <p className="mt-2 text-xs text-white/50">
-            Payout limits: per request INR {formatMoney(payoutPerRequestLimit)} | daily INR {formatMoney(payoutDailyLimit)}
+            {t("kpis.payoutLimits", {
+              perRequest: formatMoney(payoutPerRequestLimit),
+              daily: formatMoney(payoutDailyLimit),
+            })}
           </p>
-          <StatusBadge label={`Today requested: INR ${formatMoney(todayRequestedAmount)}`} tone="neutral" className="mt-2" />
+          <StatusBadge label={t("kpis.todayRequested", { amount: formatMoney(todayRequestedAmount) })} tone="neutral" className="mt-2" />
         </div>
       </div>
 
       {!delegates.platformTreasury || !delegates.platformPayout ? (
         <Card className="rounded-2xl border-amber-300/20 bg-amber-500/10">
           <CardContent className="p-6 text-sm text-amber-200">
-            Revenue payout system is unavailable in current runtime. Restart the dev server.
+            {t("unavailable")}
           </CardContent>
         </Card>
       ) : (
@@ -138,9 +159,9 @@ export default async function AdminRevenuePage({
 
       <div className="space-y-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-          <h3 className="text-xl font-semibold">Wallet Adjustment Approvals (Immutable)</h3>
+          <h3 className="text-xl font-semibold">{t("adjustments.title")}</h3>
           <form className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <label className="text-sm text-white/65">Show</label>
+            <label className="text-sm text-white/65">{t("filters.show")}</label>
             <select
               name="limit"
               defaultValue={limit ? String(limit) : "ALL"}
@@ -149,26 +170,26 @@ export default async function AdminRevenuePage({
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="20">20</option>
-              <option value="ALL">Show all</option>
+              <option value="ALL">{t("filters.showAll")}</option>
             </select>
             <button
               type="submit"
               className="rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/20"
             >
-              Apply
+              {t("filters.apply")}
             </button>
             <Link
               href="/dashboard/admin/revenue"
               className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-sm text-white hover:bg-white/10"
             >
-              Clear
+              {t("filters.clear")}
             </Link>
           </form>
         </div>
         {pendingAdjustments.length === 0 ? (
           <Card className="rounded-2xl border-white/10 bg-white/5">
             <CardContent className="p-6 text-sm text-white/60">
-              No pending wallet adjustment requests.
+              {t("adjustments.empty")}
             </CardContent>
           </Card>
         ) : (
@@ -179,15 +200,15 @@ export default async function AdminRevenuePage({
                   <p className="font-medium">
                     {item.type} INR {formatMoney(item.amount)}
                   </p>
-                  <p className="text-sm text-white/70">{new Date(item.createdAt).toLocaleString()}</p>
+                  <p className="text-sm text-white/70">{formatDateTime(item.createdAt, locale)}</p>
                 </div>
                 <p className="text-sm text-white/70">
-                  Target: {item.targetUser.name || "Unnamed"} ({item.targetUser.email})
+                  {t("adjustments.target", { name: item.targetUser.name || t("fallbacks.unnamed"), email: item.targetUser.email })}
                 </p>
                 <p className="text-sm text-white/70">
-                  Requested by: {item.requestedByUser.name || "Unnamed"} ({item.requestedByUser.email})
+                  {t("adjustments.requestedBy", { name: item.requestedByUser.name || t("fallbacks.unnamed"), email: item.requestedByUser.email })}
                 </p>
-                <p className="text-sm text-white/70">Reason: {item.reason}</p>
+                <p className="text-sm text-white/70">{t("adjustments.reason", { value: item.reason })}</p>
                 <AdminWalletAdjustmentReviewActions requestId={item.id} />
               </CardContent>
             </Card>
@@ -197,18 +218,18 @@ export default async function AdminRevenuePage({
 
       <div className="space-y-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-          <h3 className="text-xl font-semibold">Payout Requests</h3>
+          <h3 className="text-xl font-semibold">{t("payouts.title")}</h3>
           <Link
             href="/api/admin/revenue/payouts/export?status=ALL"
             className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-center text-sm text-white hover:bg-white/10"
           >
-            Export Payout CSV
+            {t("payouts.export")}
           </Link>
         </div>
         {payouts.length === 0 ? (
           <Card className="rounded-2xl border-white/10 bg-white/5">
             <CardContent className="p-6 text-sm text-white/60">
-              No payout requests yet.
+              {t("payouts.empty")}
             </CardContent>
           </Card>
         ) : (
@@ -221,11 +242,11 @@ export default async function AdminRevenuePage({
                 </div>
                 {payout.note ? <p className="text-sm text-white/70">{payout.note}</p> : null}
                 <p className="text-xs text-white/50">
-                  Requested: {new Date(payout.createdAt).toLocaleString()}
+                  {t("payouts.requested", { value: formatDateTime(payout.createdAt, locale) })}
                 </p>
                 {payout.processedAt ? (
                   <p className="text-xs text-white/50">
-                    Processed: {new Date(payout.processedAt).toLocaleString()}
+                    {t("payouts.processed", { value: formatDateTime(payout.processedAt, locale) })}
                   </p>
                 ) : null}
                 {payout.status !== "APPROVED" ? (

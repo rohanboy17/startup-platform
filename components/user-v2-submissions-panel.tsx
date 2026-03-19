@@ -184,7 +184,7 @@ export default function UserV2SubmissionsPanel() {
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <label className="flex items-center gap-2 text-sm text-white/60">
-                <span>Show</span>
+                <span>{t("controls.show")}</span>
                 <select
                   value={limit}
                   onChange={(e) => setLimit(e.target.value as "5" | "10" | "20" | "ALL")}
@@ -193,7 +193,7 @@ export default function UserV2SubmissionsPanel() {
                   <option value="5">5</option>
                   <option value="10">10</option>
                   <option value="20">20</option>
-                  <option value="ALL">Show all</option>
+                  <option value="ALL">{t("controls.showAll")}</option>
                 </select>
               </label>
               <input

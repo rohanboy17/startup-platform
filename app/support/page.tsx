@@ -1,7 +1,6 @@
 import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
 import { getLocale } from "next-intl/server";
-
-const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@freeearnhub.in";
+import { SUPPORT_EMAIL } from "@/lib/public-links";
 
 export default async function SupportPage() {
   const locale = await getLocale();

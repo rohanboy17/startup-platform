@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SectionCard } from "@/components/ui/section-card";
@@ -35,6 +36,8 @@ const timezoneOptions = [
 ];
 
 export default function ManagerSettingsPanel() {
+  const t = useTranslations("manager.settings");
+  const locale = useLocale();
   const [data, setData] = useState<SettingsPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -52,15 +55,15 @@ export default function ManagerSettingsPanel() {
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/users/me/settings", { cache: "no-store" });
     const raw = await res.text();
-    let parsed: SettingsPayload | { error?: string } = { error: "Unexpected response" };
+    let parsed: SettingsPayload | { error?: string } = { error: t("errors.unexpectedResponse") };
     try {
       parsed = raw ? (JSON.parse(raw) as SettingsPayload) : parsed;
     } catch {
-      parsed = { error: "Unexpected response" };
+      parsed = { error: t("errors.unexpectedResponse") };
     }
 
     if (!res.ok) {
-      setError((parsed as { error?: string }).error || "Failed to load settings");
+      setError((parsed as { error?: string }).error || t("errors.failedToLoad"));
       setLoading(false);
       return;
     }
@@ -81,15 +84,15 @@ export default function ManagerSettingsPanel() {
       }
       setInitialized(true);
     }
-  }, [initialized]);
+  }, [initialized, t]);
 
   useLiveRefresh(load, 60000);
 
   const createdAtValue = data?.profile.createdAt ?? "";
   const createdAtLabel = useMemo(() => {
     if (!createdAtValue) return "";
-    return new Date(createdAtValue).toLocaleString();
-  }, [createdAtValue]);
+    return new Date(createdAtValue).toLocaleString(locale);
+  }, [createdAtValue, locale]);
 
   async function saveSettings() {
     setSaving(true);
@@ -111,17 +114,17 @@ export default function ManagerSettingsPanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as { error?: string; message?: string }) : {};
     } catch {
-      parsed = { error: "Unexpected server response" };
+      parsed = { error: t("errors.unexpectedServerResponse") };
     }
 
     setSaving(false);
 
     if (!res.ok) {
-      setError(parsed.error || "Failed to save settings");
+      setError(parsed.error || t("errors.failedToSave"));
       return;
     }
 
-    setMessage(parsed.message || "Saved");
+    setMessage(parsed.message || t("saved"));
     await load();
   }
 
@@ -134,27 +137,27 @@ export default function ManagerSettingsPanel() {
       ) : null}
 
       {loading ? (
-        <SectionCard className="text-sm text-foreground/70">Loading settings...</SectionCard>
+        <SectionCard className="text-sm text-foreground/70">{t("loading")}</SectionCard>
       ) : null}
 
       <div className="grid gap-6 lg:grid-cols-2">
         <SectionCard elevated className="space-y-5">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">Profile</p>
-            <h3 className="mt-2 text-xl font-semibold tracking-tight">Profile details</h3>
-            <p className="mt-1 text-sm text-foreground/70">Update your display name and local timezone.</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">{t("profileEyebrow")}</p>
+            <h3 className="mt-2 text-xl font-semibold tracking-tight">{t("profileTitle")}</h3>
+            <p className="mt-1 text-sm text-foreground/70">{t("profileSubtitle")}</p>
           </div>
 
           <div className="grid gap-3">
             <Input
-              placeholder="Display name (optional)"
+              placeholder={t("displayNamePlaceholder")}
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               className="min-h-11"
             />
 
             <div className="grid gap-2">
-              <label className="text-sm text-foreground/70">Timezone</label>
+              <label className="text-sm text-foreground/70">{t("timezone")}</label>
               <select
                 value={timezone}
                 onChange={(e) => setTimezone(e.target.value)}
@@ -171,19 +174,19 @@ export default function ManagerSettingsPanel() {
 
           <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4 text-sm text-foreground/70">
             <p className="break-all">
-              <span className="text-foreground/50">Email:</span> {data?.profile.email}
+              <span className="text-foreground/50">{t("email")}:</span> {data?.profile.email}
             </p>
             <p className="mt-2">
-              <span className="text-foreground/50">Role:</span> {data?.profile.role}
+              <span className="text-foreground/50">{t("role")}:</span> {data?.profile.role}
             </p>
             <p className="mt-2">
-              <span className="text-foreground/50">Created:</span> {createdAtLabel}
+              <span className="text-foreground/50">{t("created")}:</span> {createdAtLabel}
             </p>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <Button onClick={saveSettings} disabled={saving} className="w-full sm:w-auto">
-              {saving ? "Saving..." : "Save profile"}
+              {saving ? t("saving") : t("saveProfile")}
             </Button>
             {message ? <p className="text-sm text-foreground/70">{message}</p> : null}
           </div>
@@ -191,21 +194,21 @@ export default function ManagerSettingsPanel() {
 
         <SectionCard elevated className="space-y-5">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">Moderation</p>
-            <h3 className="mt-2 text-xl font-semibold tracking-tight">Review preferences</h3>
-            <p className="mt-1 text-sm text-foreground/70">Choose how new submissions are shown while you work.</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">{t("moderationEyebrow")}</p>
+            <h3 className="mt-2 text-xl font-semibold tracking-tight">{t("moderationTitle")}</h3>
+            <p className="mt-1 text-sm text-foreground/70">{t("moderationSubtitle")}</p>
           </div>
 
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <label className="text-sm text-foreground/70">Default sort</label>
+              <label className="text-sm text-foreground/70">{t("defaultSort")}</label>
               <select
                 value={queueSort}
                 onChange={(e) => setQueueSort(e.target.value === "OLDEST" ? "OLDEST" : "NEWEST")}
                 className="min-h-11 w-full rounded-xl border border-foreground/15 bg-background px-3 text-sm text-foreground outline-none transition focus:border-emerald-400/50"
               >
-                <option value="NEWEST">Newest first</option>
-                <option value="OLDEST">Oldest first</option>
+                <option value="NEWEST">{t("sortOptions.NEWEST")}</option>
+                <option value="OLDEST">{t("sortOptions.OLDEST")}</option>
               </select>
             </div>
 
@@ -217,8 +220,8 @@ export default function ManagerSettingsPanel() {
                 className="mt-1 h-4 w-4 accent-emerald-400"
               />
               <span className="space-y-1">
-                <span className="block text-sm font-medium text-foreground">Risk-first mode</span>
-                <span className="block text-sm text-foreground/70">Show suspicious or flagged submissions first.</span>
+                <span className="block text-sm font-medium text-foreground">{t("riskFirstTitle")}</span>
+                <span className="block text-sm text-foreground/70">{t("riskFirstBody")}</span>
               </span>
             </label>
 
@@ -230,26 +233,26 @@ export default function ManagerSettingsPanel() {
                 className="mt-1 h-4 w-4 accent-emerald-400"
               />
               <span className="space-y-1">
-                <span className="block text-sm font-medium text-foreground">Auto-open next item</span>
-                <span className="block text-sm text-foreground/70">After a decision, jump to the next submission automatically.</span>
+                <span className="block text-sm font-medium text-foreground">{t("autoNextTitle")}</span>
+                <span className="block text-sm text-foreground/70">{t("autoNextBody")}</span>
               </span>
             </label>
 
             <div className="grid gap-2">
-              <label className="text-sm text-foreground/70">Proof preview mode</label>
+              <label className="text-sm text-foreground/70">{t("proofPreviewMode")}</label>
               <select
                 value={proofMode}
                 onChange={(e) => setProofMode(e.target.value === "EXPANDED" ? "EXPANDED" : "COMPACT")}
                 className="min-h-11 w-full rounded-xl border border-foreground/15 bg-background px-3 text-sm text-foreground outline-none transition focus:border-emerald-400/50"
               >
-                <option value="COMPACT">Compact</option>
-                <option value="EXPANDED">Expanded</option>
+                <option value="COMPACT">{t("proofModeOptions.COMPACT")}</option>
+                <option value="EXPANDED">{t("proofModeOptions.EXPANDED")}</option>
               </select>
             </div>
           </div>
 
           <Button onClick={saveSettings} disabled={saving} className="w-full sm:w-auto">
-            {saving ? "Saving..." : "Save preferences"}
+            {saving ? t("saving") : t("savePreferences")}
           </Button>
         </SectionCard>
       </div>

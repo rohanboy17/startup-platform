@@ -1,10 +1,8 @@
 import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
 import { getTranslations } from "next-intl/server";
-
-const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@freeearnhub.in";
-const SUPPORT_ADDRESS =
-  process.env.NEXT_PUBLIC_SUPPORT_ADDRESS ||
-  "FreeEarnHub Support Desk, Bengaluru, Karnataka, India";
+import PublicSocialLinks from "@/components/public-social-links";
+import PublicChannelLinks from "@/components/public-channel-links";
+import { SUPPORT_ADDRESS, SUPPORT_EMAIL } from "@/lib/public-links";
 
 export default async function ContactPage() {
   const t = await getTranslations("contact");
@@ -36,6 +34,23 @@ export default async function ContactPage() {
       <div className="mt-4">
         <PolicySection title={t("addressTitle")}>
           <p>{SUPPORT_ADDRESS}</p>
+        </PolicySection>
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <PolicySection title={t("communityTitle")}>
+          <p>{t("communityLead")}</p>
+          <div className="mt-4">
+            <PublicChannelLinks
+              whatsappLabel={t("whatsappLabel")}
+              telegramLabel={t("telegramLabel")}
+            />
+          </div>
+        </PolicySection>
+
+        <PolicySection title={t("socialTitle")}>
+          <p>{t("socialLead")}</p>
+          <PublicSocialLinks className="mt-4" />
         </PolicySection>
       </div>
     </PublicPageShell>

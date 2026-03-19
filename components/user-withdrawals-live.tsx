@@ -72,7 +72,7 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
         <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">{t("eyebrow")}</p>
         <h2 className="mt-2 text-3xl font-semibold md:text-4xl">{t("title")}</h2>
         <p className="mt-2 max-w-2xl text-sm text-white/65 md:text-base">
-          Request payouts, monitor pending review, and track approved or rejected withdrawal requests.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -87,7 +87,7 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
       <div className="grid gap-6 min-[1500px]:grid-cols-[0.9fr_1.1fr]">
         <SectionCard elevated className="space-y-5 p-4 sm:p-6">
             <div>
-              <p className="text-sm text-white/60">Request payout</p>
+              <p className="text-sm text-white/60">{t("requestEyebrow")}</p>
               <h3 className="text-xl font-semibold text-white">{t("requestTitle")}</h3>
             </div>
 
@@ -110,12 +110,12 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
         <SectionCard elevated className="space-y-5 p-4 sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm text-white/60">Withdrawal history</p>
+                <p className="text-sm text-white/60">{t("historyEyebrow")}</p>
                 <h3 className="text-xl font-semibold text-white">{t("historyTitle")}</h3>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <label className="flex items-center gap-2 text-sm text-white/60">
-                  <span>Show</span>
+                  <span>{t("controls.show")}</span>
                   <select
                     value={limit}
                     onChange={(e) => setLimit(e.target.value as "5" | "10" | "20" | "ALL")}
@@ -124,7 +124,7 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="20">20</option>
-                    <option value="ALL">Show all</option>
+                    <option value="ALL">{t("controls.showAll")}</option>
                   </select>
                 </label>
                 <StatusBadge label={t("totalRequests", { count: data?.metrics.totalRequests ?? 0 })} tone="neutral" />
@@ -147,11 +147,11 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
                   <div key={w.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                       <div className="min-w-0">
-                        <p className="font-medium text-white">Withdrawal request</p>
+                        <p className="font-medium text-white">{t("requestLabel")}</p>
                         <p className="text-sm text-white/50">{new Date(w.createdAt).toLocaleString()}</p>
                         {(w.upiId || w.upiName) ? (
                           <p className="mt-2 break-all text-xs text-white/40">
-                            {w.upiName || "UPI"} | {w.upiId || "-"}
+                            {w.upiName || t("upiFallback")} | {w.upiId || "-"}
                           </p>
                         ) : null}
                         {w.isEmergency ? (

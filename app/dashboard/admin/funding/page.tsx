@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
+import { getLocale, getTranslations } from "next-intl/server";
 import { formatMoney } from "@/lib/format-money";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { Card, CardContent } from "@/components/ui/card";
@@ -17,10 +18,25 @@ type SearchParams = {
   dateTo?: string;
 };
 
-function fundingTone(status: "PENDING" | "APPROVED" | "REJECTED") {
+type FundingStatus = "PENDING" | "APPROVED" | "REJECTED";
+
+function fundingTone(status: FundingStatus) {
   if (status === "APPROVED") return "success" as const;
   if (status === "REJECTED") return "danger" as const;
   return "warning" as const;
+}
+
+function resolveIntlLocale(locale: string) {
+  if (locale === "hi") return "hi-IN";
+  if (locale === "bn") return "bn-IN";
+  return "en-IN";
+}
+
+function formatDateTime(value: Date | string, locale: string) {
+  return new Intl.DateTimeFormat(resolveIntlLocale(locale), {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
 }
 
 export default async function AdminFundingPage({
@@ -28,6 +44,10 @@ export default async function AdminFundingPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  const [t, locale] = await Promise.all([
+    getTranslations("admin.fundingPage"),
+    getLocale(),
+  ]);
   const params = await searchParams;
   const q = params.q?.trim() || "";
   const statusFilter = params.status || "ALL";
@@ -157,31 +177,31 @@ export default async function AdminFundingPage({
   return (
     <div className="space-y-8">
       <div className="space-y-2">
-        <h2 className="text-3xl font-semibold">Manual Business Funding</h2>
+        <h2 className="text-3xl font-semibold">{t("title")}</h2>
         <p className="max-w-3xl text-sm text-foreground/70">
-          Review QR and UPI payment receipts, verify the screenshot, and credit the business wallet only after confirmation.
+          {t("subtitle")}
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-        <KpiCard label="Waiting review" value={pendingCount} tone="warning" />
-        <KpiCard label="Pending amount" value={`INR ${formatMoney(pendingAmount)}`} tone="info" />
-        <KpiCard label="Approved requests" value={approvedCount} tone="success" />
-        <KpiCard label="Rejected requests" value={rejectedCount} tone="danger" />
-        <KpiCard label="Flagged requests" value={flaggedCount} tone="danger" />
+        <KpiCard label={t("kpis.waitingReview")} value={pendingCount} tone="warning" />
+        <KpiCard label={t("kpis.pendingAmount")} value={`INR ${formatMoney(pendingAmount)}`} tone="info" />
+        <KpiCard label={t("kpis.approvedRequests")} value={approvedCount} tone="success" />
+        <KpiCard label={t("kpis.rejectedRequests")} value={rejectedCount} tone="danger" />
+        <KpiCard label={t("kpis.flaggedRequests")} value={flaggedCount} tone="danger" />
       </div>
 
       <Card className="rounded-2xl border-foreground/10 bg-background/60">
         <CardContent className="p-4">
           <div className="mb-3 text-xs text-foreground/60">
-            These filters apply to both manual funding requests and manual refund requests.
+            {t("filters.helper")}
           </div>
           <form className="grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(0,1.3fr)_0.8fr_0.8fr_0.9fr_0.9fr_auto_auto_auto_auto]">
             <input
               type="text"
               name="q"
               defaultValue={q}
-              placeholder="Search by business, reference ID, UTR, phone, or notes"
+              placeholder={t("filters.searchPlaceholder")}
               className="rounded-md border border-foreground/15 bg-background px-3 py-2 text-sm text-foreground"
             />
             <select
@@ -189,55 +209,57 @@ export default async function AdminFundingPage({
               defaultValue={statusFilter}
               className="rounded-md border border-foreground/15 bg-background px-3 py-2 text-sm text-foreground"
             >
-              <option value="ALL">All status</option>
-              <option value="PENDING">PENDING</option>
-              <option value="APPROVED">APPROVED</option>
-              <option value="REJECTED">REJECTED</option>
+              <option value="ALL">{t("filters.statusAll")}</option>
+              <option value="PENDING">{t("status.pending")}</option>
+              <option value="APPROVED">{t("status.approved")}</option>
+              <option value="REJECTED">{t("status.rejected")}</option>
             </select>
             <select
               name="flagged"
               defaultValue={flaggedFilter}
               className="rounded-md border border-foreground/15 bg-background px-3 py-2 text-sm text-foreground"
             >
-              <option value="ALL">All review flags</option>
-              <option value="FLAGGED">Flagged only</option>
-              <option value="CLEAR">No flags</option>
+              <option value="ALL">{t("filters.flaggedAll")}</option>
+              <option value="FLAGGED">{t("filters.flaggedOnly")}</option>
+              <option value="CLEAR">{t("filters.clearFlags")}</option>
             </select>
             <input
               type="date"
               name="dateFrom"
               defaultValue={dateFrom}
+              aria-label={t("filters.dateFrom")}
               className="rounded-md border border-foreground/15 bg-background px-3 py-2 text-sm text-foreground"
             />
             <input
               type="date"
               name="dateTo"
               defaultValue={dateTo}
+              aria-label={t("filters.dateTo")}
               className="rounded-md border border-foreground/15 bg-background px-3 py-2 text-sm text-foreground"
             />
             <button
               type="submit"
               className="rounded-md border border-foreground/15 bg-foreground/[0.06] px-3 py-2 text-sm text-foreground transition hover:bg-foreground/[0.1]"
             >
-              Apply filters
+              {t("filters.apply")}
             </button>
             <Link
               href="/dashboard/admin/funding"
               className="rounded-md border border-foreground/15 bg-background px-3 py-2 text-center text-sm text-foreground transition hover:bg-foreground/[0.04]"
             >
-              Clear
+              {t("filters.clear")}
             </Link>
             <Link
               href={`/api/admin/funding/export${exportParams.toString() ? `?${exportParams.toString()}` : ""}`}
               className="rounded-md border border-foreground/15 bg-foreground/[0.06] px-3 py-2 text-center text-sm text-foreground transition hover:bg-foreground/[0.1]"
             >
-              Export funding CSV
+              {t("filters.exportFunding")}
             </Link>
             <Link
               href={`/api/admin/refunds/export${exportParams.toString() ? `?${exportParams.toString()}` : ""}`}
               className="rounded-md border border-foreground/15 bg-foreground/[0.06] px-3 py-2 text-center text-sm text-foreground transition hover:bg-foreground/[0.1]"
             >
-              Export refund CSV
+              {t("filters.exportRefund")}
             </Link>
           </form>
         </CardContent>
@@ -247,7 +269,7 @@ export default async function AdminFundingPage({
         {requests.length === 0 ? (
           <Card className="rounded-2xl border-foreground/10 bg-background/60">
             <CardContent className="p-6 text-sm text-foreground/70">
-              No manual funding requests found for the current filters.
+              {t("funding.empty")}
             </CardContent>
           </Card>
         ) : (
@@ -257,52 +279,52 @@ export default async function AdminFundingPage({
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="space-y-1">
                     <p className="font-semibold text-foreground">
-                      {request.business.name || "Unnamed business"}
+                      {request.business.name || t("fields.unnamedBusiness")}
                     </p>
                     <p className="text-sm text-foreground/70 break-all">{request.business.email}</p>
                     {request.business.mobile ? (
-                      <p className="text-xs text-foreground/55">Phone: {request.business.mobile}</p>
+                      <p className="text-xs text-foreground/55">{t("fields.phone", { value: request.business.mobile })}</p>
                     ) : null}
                     <p className="text-xs text-foreground/55">
-                      Submitted: {new Date(request.createdAt).toLocaleString("en-IN")}
+                      {t("fields.submitted", { value: formatDateTime(request.createdAt, locale) })}
                     </p>
                   </div>
 
                   <div className="space-y-2 sm:text-right">
                     <p className="text-xl font-semibold text-foreground">INR {formatMoney(request.amount)}</p>
-                    <StatusBadge label={request.status} tone={fundingTone(request.status)} />
+                    <StatusBadge label={t(`status.${request.status.toLowerCase()}`)} tone={fundingTone(request.status)} />
                   </div>
                 </div>
 
                 <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">Reference ID</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">{t("fields.referenceId")}</p>
                     <p className="mt-2 break-all text-sm font-medium text-foreground">{request.referenceId}</p>
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">UTR</p>
-                    <p className="mt-2 break-all text-sm font-medium text-foreground">{request.utr || "Not provided"}</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">{t("fields.utr")}</p>
+                    <p className="mt-2 break-all text-sm font-medium text-foreground">{request.utr || t("fields.notProvided")}</p>
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">Proof</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">{t("fields.proof")}</p>
                     <div className="mt-2">
                       <ProofImageDialog
                         url={request.proofImage}
-                        label="Open screenshot"
-                        title="Funding proof screenshot"
+                        label={t("fields.openScreenshot")}
+                        title={t("fields.fundingProofTitle")}
                       />
                     </div>
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">Review status</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">{t("fields.reviewStatus")}</p>
                     <p className="mt-2 text-sm text-foreground/70">
                       {request.reviewedAt
-                        ? `Reviewed ${new Date(request.reviewedAt).toLocaleString("en-IN")}`
-                        : "Still waiting for review"}
+                        ? t("fields.reviewed", { value: formatDateTime(request.reviewedAt, locale) })
+                        : t("fields.waitingForReview")}
                     </p>
                     {request.reviewedBy ? (
                       <p className="mt-1 text-xs text-foreground/55">
-                        By {request.reviewedBy.name || request.reviewedBy.email}
+                        {t("fields.reviewedBy", { value: request.reviewedBy.name || request.reviewedBy.email })}
                       </p>
                     ) : null}
                   </div>
@@ -310,13 +332,13 @@ export default async function AdminFundingPage({
 
                 {request.flaggedReason ? (
                   <div className="rounded-2xl border border-amber-400/20 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-100">
-                    Review flag: {request.flaggedReason}
+                    {t("fields.reviewFlag", { value: request.flaggedReason })}
                   </div>
                 ) : null}
 
                 {request.reviewNote ? (
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4 text-sm text-foreground/75">
-                    Review note: {request.reviewNote}
+                    {t("fields.reviewNote", { value: request.reviewNote })}
                   </div>
                 ) : null}
 
@@ -330,23 +352,23 @@ export default async function AdminFundingPage({
       </div>
 
       <div className="space-y-2">
-        <h3 className="text-2xl font-semibold">Manual Business Refunds</h3>
+        <h3 className="text-2xl font-semibold">{t("refund.title")}</h3>
         <p className="max-w-3xl text-sm text-foreground/70">
-          Review business refund requests before wallet balances are reduced. Approval now moves funds out of the business wallet.
+          {t("refund.subtitle")}
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <KpiCard label="Refunds waiting review" value={pendingRefundCount} tone="warning" />
-        <KpiCard label="Pending refund amount" value={`INR ${formatMoney(pendingRefundAmount)}`} tone="info" />
-        <KpiCard label="Flagged refund requests" value={flaggedRefundCount} tone="danger" />
+        <KpiCard label={t("refund.kpis.waitingReview")} value={pendingRefundCount} tone="warning" />
+        <KpiCard label={t("refund.kpis.pendingAmount")} value={`INR ${formatMoney(pendingRefundAmount)}`} tone="info" />
+        <KpiCard label={t("refund.kpis.flaggedRequests")} value={flaggedRefundCount} tone="danger" />
       </div>
 
       <div className="space-y-4">
         {refundRequests.length === 0 ? (
           <Card className="rounded-2xl border-foreground/10 bg-background/60">
             <CardContent className="p-6 text-sm text-foreground/70">
-              No manual refund requests found yet.
+              {t("refund.empty")}
             </CardContent>
           </Card>
         ) : (
@@ -356,62 +378,62 @@ export default async function AdminFundingPage({
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div className="space-y-1">
                     <p className="font-semibold text-foreground">
-                      {request.business.name || "Unnamed business"}
+                      {request.business.name || t("fields.unnamedBusiness")}
                     </p>
                     <p className="text-sm text-foreground/70 break-all">{request.business.email}</p>
                     {request.business.mobile ? (
-                      <p className="text-xs text-foreground/55">Phone: {request.business.mobile}</p>
+                      <p className="text-xs text-foreground/55">{t("fields.phone", { value: request.business.mobile })}</p>
                     ) : null}
                     <p className="text-xs text-foreground/55">
-                      Submitted: {new Date(request.createdAt).toLocaleString("en-IN")}
+                      {t("fields.submitted", { value: formatDateTime(request.createdAt, locale) })}
                     </p>
                   </div>
 
                   <div className="space-y-2 sm:text-right">
                     <p className="text-xl font-semibold text-foreground">INR {formatMoney(request.amount)}</p>
-                    <StatusBadge label={request.status} tone={fundingTone(request.status)} />
+                    <StatusBadge label={t(`status.${request.status.toLowerCase()}`)} tone={fundingTone(request.status)} />
                   </div>
                 </div>
 
                 <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">Request type</p>
-                    <p className="mt-2 text-sm font-medium text-foreground">Wallet refund</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">{t("refund.fields.requestType")}</p>
+                    <p className="mt-2 text-sm font-medium text-foreground">{t("refund.fields.walletRefund")}</p>
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">Review status</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">{t("fields.reviewStatus")}</p>
                     <p className="mt-2 text-sm text-foreground/70">
                       {request.reviewedAt
-                        ? `Reviewed ${new Date(request.reviewedAt).toLocaleString("en-IN")}`
-                        : "Still waiting for review"}
+                        ? t("fields.reviewed", { value: formatDateTime(request.reviewedAt, locale) })
+                        : t("fields.waitingForReview")}
                     </p>
                     {request.reviewedBy ? (
                       <p className="mt-1 text-xs text-foreground/55">
-                        By {request.reviewedBy.name || request.reviewedBy.email}
+                        {t("fields.reviewedBy", { value: request.reviewedBy.name || request.reviewedBy.email })}
                       </p>
                     ) : null}
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">Requested amount</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">{t("refund.fields.requestedAmount")}</p>
                     <p className="mt-2 text-sm font-medium text-foreground">INR {formatMoney(request.amount)}</p>
                   </div>
                 </div>
 
                 {request.requestNote ? (
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4 text-sm text-foreground/75">
-                    Request note: {request.requestNote}
+                    {t("refund.fields.requestNote", { value: request.requestNote })}
                   </div>
                 ) : null}
 
                 {request.flaggedReason ? (
                   <div className="rounded-2xl border border-amber-400/20 bg-amber-500/10 p-4 text-sm text-amber-800 dark:text-amber-100">
-                    Review flag: {request.flaggedReason}
+                    {t("fields.reviewFlag", { value: request.flaggedReason })}
                   </div>
                 ) : null}
 
                 {request.reviewNote ? (
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4 text-sm text-foreground/75">
-                    Review note: {request.reviewNote}
+                    {t("fields.reviewNote", { value: request.reviewNote })}
                   </div>
                 ) : null}
 

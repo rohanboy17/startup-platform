@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
+import { getLocale, getTranslations } from "next-intl/server";
 import AdminUserFlagActions from "@/components/admin-user-flag-actions";
 import AdminUserRoleActions from "@/components/admin-user-role-actions";
 import AdminUserStatusActions from "@/components/admin-user-status-actions";
@@ -41,11 +42,28 @@ function formatEnumLabel(value: string | null) {
     .join(" ");
 }
 
+function resolveIntlLocale(locale: string) {
+  if (locale === "hi") return "hi-IN";
+  if (locale === "bn") return "bn-IN";
+  return "en-IN";
+}
+
+function formatDateTime(value: Date | string, locale: string) {
+  return new Intl.DateTimeFormat(resolveIntlLocale(locale), {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
+}
+
 export default async function AdminUsersPage({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  const [t, locale] = await Promise.all([
+    getTranslations("admin.usersPage"),
+    getLocale(),
+  ]);
   const params = await searchParams;
   const q = params.q?.trim() || "";
   const roleFilter = params.role || "ALL";
@@ -323,24 +341,24 @@ export default async function AdminUsersPage({
       }
     }
   } catch (error: unknown) {
-    loadError = error instanceof Error ? error.message : "Failed to load users";
+    loadError = error instanceof Error ? error.message : t("errors.failed");
   }
 
   return (
     <div className="space-y-8">
       <div className="space-y-2">
-        <h2 className="text-3xl font-semibold">People &amp; Accounts</h2>
+        <h2 className="text-3xl font-semibold">{t("title")}</h2>
         <p className="max-w-3xl text-sm text-foreground/70">
-          Review account details, payout defaults, trust status, and recent activity from one place.
+          {t("subtitle")}
         </p>
       </div>
 
       {!loadError ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <KpiCard label="Accounts found" value={users.length} />
-          <KpiCard label="Needs review" value={users.filter((user) => user.isSuspicious).length} tone="warning" />
-          <KpiCard label="Suspended accounts" value={users.filter((user) => user.accountStatus === "SUSPENDED").length} tone="warning" />
-          <KpiCard label="Banned accounts" value={users.filter((user) => user.accountStatus === "BANNED").length} tone="danger" />
+          <KpiCard label={t("kpis.accountsFound")} value={users.length} />
+          <KpiCard label={t("kpis.needsReview")} value={users.filter((user) => user.isSuspicious).length} tone="warning" />
+          <KpiCard label={t("kpis.suspendedAccounts")} value={users.filter((user) => user.accountStatus === "SUSPENDED").length} tone="warning" />
+          <KpiCard label={t("kpis.bannedAccounts")} value={users.filter((user) => user.accountStatus === "BANNED").length} tone="danger" />
         </div>
       ) : null}
 
@@ -350,7 +368,7 @@ export default async function AdminUsersPage({
               type="text"
               name="q"
               defaultValue={q}
-              placeholder="Search by name, email, or mobile"
+              placeholder={t("filters.searchPlaceholder")}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             />
             <select
@@ -358,7 +376,7 @@ export default async function AdminUsersPage({
               defaultValue={roleFilter}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             >
-              <option value="ALL">All account types</option>
+              <option value="ALL">{t("filters.roleAll")}</option>
               <option value="USER">USER</option>
               <option value="BUSINESS">BUSINESS</option>
               <option value="MANAGER">MANAGER</option>
@@ -369,7 +387,7 @@ export default async function AdminUsersPage({
               defaultValue={statusFilter}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             >
-              <option value="ALL">All account states</option>
+              <option value="ALL">{t("filters.statusAll")}</option>
               <option value="ACTIVE">ACTIVE</option>
               <option value="SUSPENDED">SUSPENDED</option>
               <option value="BANNED">BANNED</option>
@@ -379,42 +397,42 @@ export default async function AdminUsersPage({
               defaultValue={flaggedFilter}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             >
-              <option value="ALL">All trust states</option>
-              <option value="FLAGGED">Flagged</option>
-              <option value="CLEAR">Clear</option>
+              <option value="ALL">{t("filters.flaggedAll")}</option>
+              <option value="FLAGGED">{t("filters.flagged")}</option>
+              <option value="CLEAR">{t("filters.clear")}</option>
             </select>
             <select
               name="workMode"
               defaultValue={workModeFilter}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             >
-              <option value="ALL">All work modes</option>
-              <option value="WORK_FROM_HOME">Work from home</option>
-              <option value="WORK_FROM_OFFICE">Work from office</option>
-              <option value="WORK_IN_FIELD">Work in field</option>
+              <option value="ALL">{t("filters.workModeAll")}</option>
+              <option value="WORK_FROM_HOME">{t("filters.workModeHome")}</option>
+              <option value="WORK_FROM_OFFICE">{t("filters.workModeOffice")}</option>
+              <option value="WORK_IN_FIELD">{t("filters.workModeField")}</option>
             </select>
             <select
               name="workingPreference"
               defaultValue={workingPreferenceFilter}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             >
-              <option value="ALL">All work preferences</option>
-              <option value="SALARIED">Salaried</option>
-              <option value="FREELANCE_CONTRACTUAL">Freelance contractual</option>
-              <option value="DAY_BASIS">Day basis</option>
+              <option value="ALL">{t("filters.preferenceAll")}</option>
+              <option value="SALARIED">{t("filters.preferenceSalaried")}</option>
+              <option value="FREELANCE_CONTRACTUAL">{t("filters.preferenceFreelance")}</option>
+              <option value="DAY_BASIS">{t("filters.preferenceDayBasis")}</option>
             </select>
             <input
               type="text"
               name="education"
               defaultValue={educationQuery}
-              placeholder="Education keyword"
+              placeholder={t("filters.educationPlaceholder")}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             />
             <input
               type="text"
               name="language"
               defaultValue={languageQuery}
-              placeholder="Language"
+              placeholder={t("filters.languagePlaceholder")}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             />
             <select
@@ -422,29 +440,29 @@ export default async function AdminUsersPage({
               defaultValue={limit ? String(limit) : "ALL"}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             >
-              <option value="5">Show 5</option>
-              <option value="10">Show 10</option>
-              <option value="20">Show 20</option>
-              <option value="ALL">Show all</option>
+              <option value="5">{t("filters.showFive")}</option>
+              <option value="10">{t("filters.showTen")}</option>
+              <option value="20">{t("filters.showTwenty")}</option>
+              <option value="ALL">{t("filters.showAll")}</option>
             </select>
             <div className="flex flex-col gap-2 sm:flex-row md:col-span-5">
               <button
                 type="submit"
                 className="rounded-md border border-foreground/15 bg-foreground/[0.06] px-3 py-2 text-sm text-foreground shadow-sm transition hover:bg-foreground/[0.10]"
               >
-                Apply
+                {t("filters.apply")}
               </button>
               <a
                 href={`/api/admin/export/users?${exportQuery}`}
                 className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm transition hover:bg-foreground/[0.06]"
               >
-                Export CSV
+                {t("filters.exportCsv")}
               </a>
               <a
                 href="/dashboard/admin/users"
                 className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm transition hover:bg-foreground/[0.06]"
               >
-                Reset
+                {t("filters.reset")}
               </a>
             </div>
           </form>
@@ -472,7 +490,7 @@ export default async function AdminUsersPage({
           {users.length === 0 ? (
             <Card className="rounded-2xl border-foreground/10 bg-background/60 md:col-span-2">
               <CardContent className="p-6 text-sm text-foreground/70">
-                No accounts match the current filters.
+                {t("empty")}
               </CardContent>
             </Card>
           ) : null}
@@ -487,14 +505,14 @@ export default async function AdminUsersPage({
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div className="min-w-0">
                     <h3 className="truncate text-lg font-semibold">
-                      {user.name || "Unnamed User"}
+                      {user.name || t("fallbacks.unnamedUser")}
                     </h3>
                     <p className="break-all text-sm text-foreground/70">{user.email}</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <StatusBadge label={`Role: ${user.role}`} tone="info" />
+                    <StatusBadge label={t("badges.role", { value: user.role })} tone="info" />
                     <StatusBadge
-                      label={`Status: ${user.accountStatus}`}
+                      label={t("badges.status", { value: user.accountStatus })}
                       tone={
                         user.accountStatus === "ACTIVE"
                           ? "success"
@@ -504,7 +522,7 @@ export default async function AdminUsersPage({
                       }
                     />
                     <StatusBadge
-                      label={user.isSuspicious ? "Risk: Flagged" : "Risk: Clear"}
+                      label={user.isSuspicious ? t("badges.riskFlagged") : t("badges.riskClear")}
                       tone={user.isSuspicious ? "warning" : "success"}
                     />
                   </div>
@@ -513,27 +531,27 @@ export default async function AdminUsersPage({
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="rounded-xl border border-foreground/10 bg-background/60 p-3">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
-                      Account details
+                      {t("sections.accountDetails")}
                     </p>
                     <div className="mt-2 grid gap-2 text-sm">
                       <p className="break-all">
-                        <span className="text-foreground/60">Account ID:</span>{" "}
+                        <span className="text-foreground/60">{t("fields.accountId")}</span>{" "}
                         <span className="font-medium">{user.id}</span>
                       </p>
                       <p className="break-all">
-                        <span className="text-foreground/60">Mobile:</span>{" "}
-                        <span className="font-medium">{user.mobile || "Not set"}</span>
+                        <span className="text-foreground/60">{t("fields.mobile")}</span>{" "}
+                        <span className="font-medium">{user.mobile || t("fields.notSet")}</span>
                       </p>
                       <p>
-                        <span className="text-foreground/60">Timezone:</span>{" "}
+                        <span className="text-foreground/60">{t("fields.timezone")}</span>{" "}
                         <span className="font-medium">{user.timezone}</span>
                       </p>
                       <p className="text-xs text-foreground/55">
-                        Joined: {new Date(user.createdAt).toLocaleString()}
+                        {t("fields.joined", { value: formatDateTime(user.createdAt, locale) })}
                       </p>
                       {user.deletedAt ? (
                         <p className="text-xs text-rose-500/90">
-                          Deleted: {new Date(user.deletedAt).toLocaleString()}
+                          {t("fields.deleted", { value: formatDateTime(user.deletedAt, locale) })}
                         </p>
                       ) : null}
                     </div>
@@ -541,38 +559,38 @@ export default async function AdminUsersPage({
 
                   <div className="rounded-xl border border-foreground/10 bg-background/60 p-3">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
-                      Earnings &amp; level
+                      {t("sections.earnings")}
                     </p>
                     <div className="mt-2 grid gap-2 text-sm">
                       <p>
-                        <span className="text-foreground/60">Balance:</span>{" "}
+                        <span className="text-foreground/60">{t("fields.balance")}</span>{" "}
                         <span className="font-semibold">INR {formatMoney(user.balance)}</span>
                       </p>
                       <p>
-                        <span className="text-foreground/60">Coins:</span>{" "}
+                        <span className="text-foreground/60">{t("fields.coins")}</span>{" "}
                         <span className="font-medium">{user.coinBalance}</span>
                       </p>
                       <p>
-                        <span className="text-foreground/60">Level:</span>{" "}
+                        <span className="text-foreground/60">{t("fields.level")}</span>{" "}
                         <span className="font-medium">{user.level}</span>
                       </p>
                       <p>
-                        <span className="text-foreground/60">Submitted today:</span>{" "}
+                        <span className="text-foreground/60">{t("fields.submittedToday")}</span>{" "}
                         <span className="font-medium">{user.dailySubmits}</span>
                       </p>
                       <p>
-                        <span className="text-foreground/60">Approved today:</span>{" "}
+                        <span className="text-foreground/60">{t("fields.approvedToday")}</span>{" "}
                         <span className="font-medium">{user.dailyApproved}</span>
                       </p>
                       <p>
-                        <span className="text-foreground/60">Approved:</span>{" "}
+                        <span className="text-foreground/60">{t("fields.approved")}</span>{" "}
                         <span className="font-medium">{user.totalApproved}</span>{" "}
                         <span className="text-foreground/50">|</span>{" "}
-                        <span className="text-foreground/60">Rejected:</span>{" "}
+                        <span className="text-foreground/60">{t("fields.rejected")}</span>{" "}
                         <span className="font-medium">{user.totalRejected}</span>
                       </p>
                       <p className="text-xs text-foreground/55">
-                        Daily level reset: {new Date(user.lastLevelResetAt).toLocaleString()}
+                        {t("fields.dailyReset", { value: formatDateTime(user.lastLevelResetAt, locale) })}
                       </p>
                     </div>
                   </div>

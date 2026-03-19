@@ -32,7 +32,10 @@
       "cookie": "Cookie Policy",
       "disclaimer": "Disclaimer",
       "kyc": "KYC Policy"
-    }
+    },
+    "socialTitle": "Follow us",
+    "socialDescription": "Stay close to new launches, support updates, and community news.",
+    "creditLine": "Designed, Developed and Maintained by FreeEarnhub"
   },
   "settings": {
     "languageTitle": "Language",
@@ -291,6 +294,10 @@
           "role": "Operations lead"
         }
       ]
+    },
+    "channels": {
+      "whatsapp": "Join WhatsApp",
+      "telegram": "Join Telegram"
     }
   },
   "about": {
@@ -356,7 +363,13 @@
     "hoursDays": "Monday to Saturday",
     "hoursTime": "10:00 AM to 7:00 PM (IST)",
     "hoursNote": "Critical payout or security incidents are prioritized.",
-    "addressTitle": "Registered Support Address"
+    "addressTitle": "Registered Support Address",
+    "communityTitle": "Community Channels",
+    "communityLead": "Join our public channels for updates, launch news, and support notices.",
+    "whatsappLabel": "Join WhatsApp",
+    "telegramLabel": "Join Telegram",
+    "socialTitle": "Social Profiles",
+    "socialLead": "Follow FreeEarnHub on social platforms for product updates and announcements."
   },
   "user": {
     "overview": {
@@ -418,7 +431,12 @@
       "txFallback": "Wallet transaction",
       "loading": "Loading wallet...",
       "failed": "Failed to load wallet",
-      "unexpected": "Unexpected server response"
+      "unexpected": "Unexpected server response",
+      "subtitle": "Review your available balance, earning history, and payout movement in one place.",
+      "controls": {
+        "show": "Show",
+        "showAll": "Show all"
+      }
     },
     "withdrawals": {
       "eyebrow": "Payout center",
@@ -443,7 +461,13 @@
       "emergencyLabel": "Emergency withdrawal",
       "adminNote": "Admin note: {note}",
       "failed": "Failed to load withdrawals",
-      "unexpected": "Unexpected response"
+      "unexpected": "Unexpected response",
+      "subtitle": "Request payouts, monitor pending review, and track approved or rejected withdrawal requests.",
+      "controls": {
+        "show": "Show",
+        "showAll": "Show all"
+      },
+      "upiFallback": "UPI"
     },
     "withdrawRequest": {
       "title": "Request Withdrawal",
@@ -495,7 +519,11 @@
       "noReason": "No structured rejection reason is stored yet for this submission. Only rejection status is available.",
       "failed": "Failed to load submissions",
       "unexpected": "Unexpected server response",
-      "screenshotUploaded": "Screenshot proof uploaded. Use the preview button to view it."
+      "screenshotUploaded": "Screenshot proof uploaded. Use the preview button to view it.",
+      "controls": {
+        "show": "Show",
+        "showAll": "Show all"
+      }
     },
     "tasks": {
       "title": "Live Campaigns",
@@ -677,6 +705,143 @@
       "supportEyebrow": "Support",
       "supportTitle": "Need help?",
       "supportBody": "If something looks wrong in your submissions, wallet, or withdrawals, use the public contact page or the official support channel listed there."
+    },
+    "profilePage": {
+      "eyebrow": "User profile",
+      "title": "Profile",
+      "subtitle": "Add your personal and work details so the platform can match you to the right earning opportunities."
+    },
+    "profile": {
+      "loading": "Loading profile...",
+      "basicEyebrow": "Basic profile",
+      "basicTitle": "Personal details",
+      "basicSubtitle": "Keep your profile complete so admins can match you with the right work-based campaigns.",
+      "placeholders": {
+        "name": "Name",
+        "mobile": "Mobile number",
+        "address": "Address",
+        "selectGender": "Select gender",
+        "religion": "Religion",
+        "educationQualification": "Education qualification",
+        "courseAndCertificate": "Course and certificate details",
+        "addSkill": "Add a skill",
+        "addLanguage": "Add a language"
+      },
+      "genderOptions": {
+        "MALE": "Male",
+        "FEMALE": "Female",
+        "OTHER": "Other",
+        "PREFER_NOT_TO_SAY": "Prefer not to say"
+      },
+      "labels": {
+        "age": "Age",
+        "email": "Email",
+        "role": "Role",
+        "created": "Created",
+        "workMode": "Work mode",
+        "workTime": "Work time",
+        "workingPreference": "Working preference",
+        "skills": "Skills",
+        "languages": "Languages"
+      },
+      "workProfileEyebrow": "Work profile",
+      "workProfileTitle": "Availability and preferences",
+      "workProfileSubtitle": "These details help the admin side understand what kind of work you can take.",
+      "workModeOptions": {
+        "default": "Work mode",
+        "WORK_FROM_HOME": "Work from home",
+        "WORK_FROM_OFFICE": "Work from office",
+        "WORK_IN_FIELD": "Work in field"
+      },
+      "workTimeOptions": {
+        "default": "Work time",
+        "FULL_TIME": "Full time",
+        "PART_TIME": "Part time"
+      },
+      "workingPreferenceOptions": {
+        "default": "Working preference",
+        "SALARIED": "Salaried",
+        "FREELANCE_CONTRACTUAL": "Freelance Contractual",
+        "DAY_BASIS": "Day Basis"
+      },
+      "skillsTitle": "What work can you do?",
+      "skillsSubtitle": "Add the skills you want admins to use when assigning you to work-based campaigns.",
+      "languagesTitle": "Languages you can work in",
+      "languagesSubtitle": "Add the languages you can speak or work with comfortably.",
+      "emptySkills": "No skills yet. Add 3 to 6 to get started.",
+      "emptyLanguages": "No languages added yet.",
+      "add": "Add",
+      "saving": "Saving...",
+      "saveProfile": "Save profile",
+      "profileUpdated": "Profile updated",
+      "errors": {
+        "unexpectedResponse": "Unexpected response",
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoadProfile": "Failed to load profile",
+        "failedToLoadSkills": "Failed to load skills",
+        "failedToSaveProfile": "Failed to save profile",
+        "failedToSaveSkills": "Failed to save skills"
+      }
+    },
+    "notificationsPage": {
+      "eyebrow": "Inbox",
+      "title": "Notifications",
+      "subtitle": "Review approvals, rejections, payout updates, and system notices in one live feed."
+    },
+    "notificationsPanel": {
+      "errors": {
+        "unexpected": "Unexpected server response",
+        "failed": "Failed to load notifications"
+      },
+      "loading": "Loading notifications...",
+      "kpis": {
+        "totalNotifications": "Total notifications",
+        "unread": "Unread",
+        "successUpdates": "Success updates",
+        "warnings": "Warnings"
+      },
+      "filtersHeader": {
+        "eyebrow": "Inbox filters",
+        "title": "Sort by unread or notification type",
+        "show": "Show",
+        "showAll": "Show all",
+        "markAllRead": "Mark all as read",
+        "updating": "Updating..."
+      },
+      "filters": {
+        "all": "All",
+        "unread": "Unread",
+        "success": "Success",
+        "warning": "Warnings",
+        "info": "Info"
+      },
+      "empty": "No notifications match the current filter.",
+      "actions": {
+        "saving": "Saving...",
+        "markRead": "Mark read",
+        "updated": "Notifications updated",
+        "updateFailed": "Failed to update notifications"
+      },
+      "unreadBadge": "Unread"
+    },
+    "notificationsList": {
+      "unread": "Unread: {count}",
+      "empty": "No notifications yet.",
+      "controls": {
+        "show": "Show",
+        "showAll": "Show all"
+      },
+      "actions": {
+        "updating": "Updating...",
+        "markAllRead": "Mark all as read",
+        "saving": "Saving...",
+        "markRead": "Mark read",
+        "updated": "Updated"
+      },
+      "errors": {
+        "unexpected": "Unexpected server response",
+        "updateFailed": "Failed to update notifications"
+      }
     }
   },
   "business": {
@@ -775,6 +940,198 @@
         "title": "Recent funding and spend activity",
         "empty": "No wallet activity yet.",
         "fallbackNote": "Wallet transaction"
+      }
+    },
+    "manualFunding": {
+      "loading": "Loading funding dashboard...",
+      "labels": {
+        "notAvailable": "Not available"
+      },
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "errors": {
+        "unexpected": "Unexpected server response",
+        "loadUnexpected": "Unexpected server response while loading funding details.",
+        "failedToLoad": "Unable to load funding details.",
+        "copyFailed": "Unable to copy right now. Please copy it manually.",
+        "generateBeforeShare": "Generate the payment details first so the QR can be shared.",
+        "shareFailed": "Unable to share the QR right now.",
+        "generateBeforeDownload": "Generate the payment details first so the QR can be downloaded.",
+        "downloadFailed": "Unable to download the QR right now.",
+        "manualFundingDisabled": "Manual funding is not configured yet. Add UPI or phone details first.",
+        "minimumFunding": "Minimum funding amount is {amount}.",
+        "imageTooLarge": "Image must stay under 500 KB after compression.",
+        "uploadUnexpected": "Unexpected upload response",
+        "uploadFailed": "Unable to upload the screenshot.",
+        "generateBeforeSubmit": "Generate the payment details first so we can track this funding request.",
+        "uploadBeforeVerify": "Upload your payment screenshot before verification.",
+        "submitFundingFailed": "Funding request could not be submitted.",
+        "invalidRefundAmount": "Enter a valid refund amount.",
+        "refundTooHigh": "Refund amount cannot be more than your currently refundable wallet balance.",
+        "submitRefundFailed": "Refund request could not be submitted."
+      },
+      "messages": {
+        "copied": "Copied to clipboard.",
+        "qrShared": "Payment QR shared.",
+        "shareFallback": "Share is not available on this device. Payment details were copied instead.",
+        "qrDownloaded": "QR downloaded.",
+        "fundingSubmitted": "Funding request submitted.",
+        "refundSubmitted": "Refund request submitted."
+      },
+      "hero": {
+        "eyebrow": "Manual business funding",
+        "title": "Add funds using QR, UPI, or phone payment",
+        "description": "We are using a manual payment review flow for now. Pay using the details below, upload the receipt, and our team will credit the wallet after verification.",
+        "chip1": "Manual admin review",
+        "chip2": "Reference ID tracked",
+        "chip3": "Screenshot required",
+        "chip4": "0% add-fund fee"
+      },
+      "notConfigured": {
+        "title": "Manual funding is not configured yet",
+        "body": "Add the funding UPI ID or phone number in the environment first, then this payment flow will be available for businesses."
+      },
+      "ownerOnlyBanner": {
+        "title": "Billing actions are limited to the business owner",
+        "body": "You can review the funding history here, but only the business owner can submit a new wallet funding request."
+      },
+      "kpis": {
+        "availableWallet": "Available wallet",
+        "lockedBudget": "Locked budget",
+        "approvedFunding": "Approved funding",
+        "waitingReview": "Waiting review"
+      },
+      "pricing": {
+        "eyebrow": "Wallet pricing",
+        "title": "Business wallet fee structure",
+        "description": "Top-ups stay free during launch. Refunds use the reviewed refund fee so the rules stay clear before you submit any wallet movement.",
+        "launchModel": "Launch model",
+        "addFundFeeLabel": "Add-fund fee",
+        "addFundFeeHelp": "Applied on wallet top-ups. Currently waived during launch.",
+        "liveNow": "Live now",
+        "refundFeeLabel": "Refund fee",
+        "refundFeeHelp": "Applied only when a refund request is approved after review.",
+        "manualReview": "Manual review",
+        "usageTitle": "How to use these fees",
+        "usageBody1": "Use add-fund when you want to increase campaign budget quickly with QR or UPI payment.",
+        "usageBody2": "Use refund when you want approved unused wallet balance moved back out after admin review.",
+        "usageNote": "The funding and refund cards below follow the same pricing model shown here."
+      },
+      "steps": {
+        "eyebrow": "Funding steps",
+        "title": "Complete payment in 5 clear steps",
+        "item1": "Enter the amount you want to add.",
+        "item2": "Generate payment details to create a unique reference ID.",
+        "item3": "Pay using the QR code, UPI ID, or phone number and add the reference ID in the note.",
+        "item4": "Upload the payment screenshot and add UTR if available.",
+        "item5": "Click verify, then send the receipt on WhatsApp for faster review."
+      },
+      "generator": {
+        "eyebrow": "Start funding",
+        "title": "Generate payment details",
+        "ownerOnly": "Owner only",
+        "amountPlaceholder": "Enter amount (min {amount})",
+        "button": "Generate payment details"
+      },
+      "details": {
+        "referenceId": "Reference ID",
+        "upiId": "UPI ID",
+        "accountName": "Account name: {name}",
+        "phoneNumber": "Phone number",
+        "scanAndPay": "Scan and pay",
+        "scanHelpBefore": "Pay the exact amount and add",
+        "scanHelpAfter": "in the note.",
+        "qrAlt": "Business funding QR code",
+        "qrPending": "QR code will appear after payment details are generated.",
+        "tip": "Keep the screenshot clear and readable. If possible, write the reference ID in the note so our review team can approve it faster."
+      },
+      "actions": {
+        "copy": "Copy",
+        "openPaytm": "Open Paytm / UPI app",
+        "openUpi": "Open UPI app",
+        "downloadQr": "Download QR",
+        "shareQr": "Share QR",
+        "openScreenshot": "Open screenshot"
+      },
+      "share": {
+        "title": "FreeEarnHub wallet funding",
+        "sheetTitle": "FreeEarnHub funding QR",
+        "amount": "Amount: {amount}",
+        "reference": "Reference ID: {referenceId}",
+        "upi": "UPI ID: {upiId}"
+      },
+      "verification": {
+        "eyebrow": "Receipt verification",
+        "title": "Upload screenshot and send for approval",
+        "description": "After payment, upload the screenshot here. We review each request manually before the wallet is credited.",
+        "utrLabel": "UTR / transaction ID (optional)",
+        "utrPlaceholder": "Add the UTR if your payment app shows it",
+        "uploadLabel": "Upload payment screenshot",
+        "uploadHelp": "One screenshot only. JPG, PNG, or WEBP. Max 500 KB after compression.",
+        "uploading": "Uploading screenshot...",
+        "previewAlt": "Funding proof preview",
+        "ready": "Screenshot ready for verification.",
+        "remove": "Remove screenshot",
+        "submitting": "Submitting...",
+        "verifyButton": "Verify payment"
+      },
+      "whatsapp": {
+        "title": "Funding request sent for review",
+        "description": "Send the receipt on WhatsApp for faster manual verification.",
+        "button": "Send receipt to WhatsApp"
+      },
+      "refund": {
+        "eyebrow": "Request refund",
+        "title": "Move unused wallet balance out",
+        "zeroFee": "0% fee",
+        "feeBadge": "{rate}% fee",
+        "descriptionBefore": "Refund requests use the business refund fee setting. Right now the refund fee is",
+        "descriptionZeroFee": "Your full requested amount is returned.",
+        "descriptionWithFee": "The amount after the fee is shown below before you submit.",
+        "amountPlaceholder": "Enter refund amount (max {amount})",
+        "processing": "Processing...",
+        "button": "Request refund",
+        "cards": {
+          "refundFee": "Refund fee",
+          "refundFeeHelp": "Applied after admin approval of the refund request.",
+          "refundPolicy": "Refund policy",
+          "refundPolicyHelp": "Request only from currently refundable wallet balance. The net amount preview stays visible before you submit."
+        },
+        "breakdown": {
+          "refundableBalance": "Refundable balance",
+          "requested": "Requested",
+          "walletFee": "Wallet fee",
+          "netRefund": "Net refund"
+        }
+      },
+      "history": {
+        "eyebrow": "Recent funding requests",
+        "title": "Track approval status",
+        "empty": "No manual funding request yet.",
+        "referenceId": "Reference ID: {referenceId}",
+        "utr": "UTR: {utr}",
+        "reviewFlag": "Review flag: {reason}",
+        "adminNote": "Admin note: {note}",
+        "reviewed": "Reviewed: {date}",
+        "proofTitle": "Funding proof screenshot"
+      },
+      "walletActivity": {
+        "eyebrow": "Wallet activity",
+        "title": "Funding credits and debits",
+        "empty": "No wallet activity yet.",
+        "fallbackNote": "Business wallet update"
+      },
+      "refundHistory": {
+        "eyebrow": "Refund requests",
+        "title": "Track refund approval status",
+        "empty": "No refund request yet.",
+        "requestNote": "Request note: {note}",
+        "reviewFlag": "Review flag: {reason}",
+        "adminNote": "Admin note: {note}",
+        "reviewed": "Reviewed: {date}"
       }
     },
     "create": {
@@ -1316,7 +1673,807 @@
       "compliance": "Compliance",
       "cms": "Content & CMS",
       "auditLogs": "Audit Logs",
-      "systemSettings": "System Settings"
+      "systemSettings": "System Settings",
+      "profile": "Profile"
+    },
+    "shell": {
+      "signedInAs": "Signed in as",
+      "mainHome": "Main Home",
+      "forgotPassword": "Forgot Password",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
+    },
+    "loading": {
+      "dashboard": "Loading dashboard...",
+      "admin": "Loading admin panel...",
+      "manager": "Loading manager dashboard...",
+      "user": "Loading your dashboard..."
+    }
+  },
+  "admin": {
+    "dashboard": {
+      "eyebrow": "Admin operations",
+      "title": "Admin Overview",
+      "subtitle": "Track platform health, review queues, risk signals, and urgent actions from one control center.",
+      "kpis": {
+        "totalUsers": "Total Users",
+        "businesses": "Businesses",
+        "revenue": "Revenue",
+        "liveCampaigns": "Live Campaigns",
+        "managers": "Managers",
+        "pendingCampaigns": "Pending Campaigns",
+        "pendingWithdrawals": "Pending Withdrawals",
+        "pendingBusinessKyc": "Pending Business KYC",
+        "totalSubmissions": "Total Submissions",
+        "pendingFinalReviews": "Pending Final Reviews"
+      },
+      "systemHealth": {
+        "title": "System health",
+        "database": "Database",
+        "cron": "Cron (Daily Reset)",
+        "payouts": "Payouts",
+        "moderationQueue": "Moderation Queue",
+        "statuses": {
+          "healthy": "HEALTHY",
+          "issue": "ISSUE",
+          "onTime": "ON TIME",
+          "delayed": "DELAYED",
+          "noFailures": "NO FAILURES",
+          "checkNeeded": "CHECK NEEDED",
+          "onTrack": "ON TRACK",
+          "attentionNeeded": "ATTENTION NEEDED"
+        }
+      },
+      "actionAlerts": {
+        "title": "Action alerts",
+        "empty": "No critical alerts right now.",
+        "items": {
+          "withdrawalsPending": "{count} withdrawal request(s) pending for more than 24 hours.",
+          "adminReviewsPending": "{count} manager-approved submission(s) waiting admin review for over 24 hours.",
+          "failedPayments": "{count} failed payment order(s) need reconciliation.",
+          "suspiciousUsers": "{count} suspicious user account(s) flagged.",
+          "staleResets": "Cron reset lag detected for {count} user(s)."
+        }
+      },
+      "trend": {
+        "eyebrow": "Platform trend",
+        "title": "Revenue vs payout"
+      }
+    },
+    "notificationsPage": {
+      "title": "Notifications Control",
+      "subtitle": "Manage your admin inbox, send broadcasts, review templates, and audit delivery results."
+    },
+    "notificationsCenter": {
+      "filters": {
+        "show": "Show",
+        "showAll": "Show all",
+        "allLogs": "All logs",
+        "failedLogs": "Failed logs",
+        "sentLogs": "Sent logs",
+        "skippedLogs": "Skipped logs",
+        "apply": "Apply"
+      },
+      "inbox": {
+        "title": "Admin Inbox",
+        "subtitle": "Review your own alerts before checking delivery logs and broadcast history.",
+        "totalInboxItems": "Total inbox items",
+        "unread": "Unread",
+        "success": "Success",
+        "warnings": "Warnings",
+        "notificationsLabel": "Notifications",
+        "notificationsTitle": "Mark updates as read from here",
+        "markAllRead": "Mark all read",
+        "updating": "Updating...",
+        "filterAll": "All",
+        "filterUnread": "Unread",
+        "filterSuccess": "Success",
+        "filterWarnings": "Warnings",
+        "filterInfo": "Info",
+        "empty": "No admin notifications yet.",
+        "markRead": "Mark read",
+        "saving": "Saving...",
+        "unreadBadge": "Unread"
+      },
+      "broadcast": {
+        "title": "Broadcast",
+        "titlePlaceholder": "Title",
+        "messagePlaceholder": "Message",
+        "templateKeyPlaceholder": "Template key (optional)",
+        "send": "Send Broadcast",
+        "sending": "Sending...",
+        "segments": {
+          "ALL": "ALL",
+          "USER": "USER",
+          "BUSINESS": "BUSINESS",
+          "MANAGER": "MANAGER",
+          "ADMIN": "ADMIN"
+        },
+        "channels": {
+          "IN_APP": "In-app",
+          "EMAIL": "Email",
+          "SMS": "SMS",
+          "PUSH": "Push",
+          "TELEGRAM": "Telegram"
+        }
+      },
+      "templates": {
+        "title": "Template Manager",
+        "keyPlaceholder": "template.key",
+        "namePlaceholder": "Template name",
+        "bodyPlaceholder": "Body (supports {{var}} tokens)",
+        "save": "Save Template",
+        "channelIN_APP": "IN_APP",
+        "channelEMAIL": "EMAIL",
+        "channelSMS": "SMS",
+        "channelPUSH": "PUSH",
+        "channelTELEGRAM": "TELEGRAM",
+        "enabled": "enabled",
+        "disabled": "disabled",
+        "disable": "Disable",
+        "enable": "Enable"
+      },
+      "logs": {
+        "title": "Delivery Logs",
+        "empty": "No delivery logs match the current filter.",
+        "templateFallback": "-"
+      },
+      "feedback": {
+        "done": "Done",
+        "unexpectedServerResponse": "Unexpected server response"
+      }
+    },
+    "riskBulkActions": {
+      "unexpectedServerResponse": "Unexpected server response",
+      "updated": "Updated",
+      "dismissing": "Dismissing...",
+      "dismissAll": "Dismiss all",
+      "resolving": "Resolving...",
+      "resolveAll": "Resolve all"
+    },
+    "fundingActions": {
+      "notePlaceholder": "Review note (required for rejection, optional for approval)",
+      "noteRequired": "Add a short review note before rejecting this request.",
+      "approveLoading": "Approving...",
+      "approve": "Approve and credit wallet",
+      "rejectLoading": "Rejecting...",
+      "reject": "Reject request",
+      "unexpectedServerResponse": "Unexpected server response",
+      "updated": "Updated"
+    },
+    "refundActions": {
+      "notePlaceholder": "Review note (required for rejection, optional for approval)",
+      "noteRequired": "Add a short review note before rejecting this refund request.",
+      "approveLoading": "Approving...",
+      "approve": "Approve refund",
+      "rejectLoading": "Rejecting...",
+      "reject": "Reject request",
+      "unexpectedServerResponse": "Unexpected server response",
+      "updated": "Updated"
+    },
+    "fundingPage": {
+      "title": "Manual Business Funding",
+      "subtitle": "Review QR and UPI payment receipts, verify the screenshot, and credit the business wallet only after confirmation.",
+      "kpis": {
+        "waitingReview": "Waiting review",
+        "pendingAmount": "Pending amount",
+        "approvedRequests": "Approved requests",
+        "rejectedRequests": "Rejected requests",
+        "flaggedRequests": "Flagged requests"
+      },
+      "filters": {
+        "helper": "These filters apply to both manual funding requests and manual refund requests.",
+        "searchPlaceholder": "Search by business, reference ID, UTR, phone, or notes",
+        "statusAll": "All status",
+        "flaggedAll": "All review flags",
+        "flaggedOnly": "Flagged only",
+        "clearFlags": "No flags",
+        "dateFrom": "Date from",
+        "dateTo": "Date to",
+        "apply": "Apply filters",
+        "clear": "Clear",
+        "exportFunding": "Export funding CSV",
+        "exportRefund": "Export refund CSV"
+      },
+      "status": {
+        "pending": "PENDING",
+        "approved": "APPROVED",
+        "rejected": "REJECTED"
+      },
+      "funding": {
+        "empty": "No manual funding requests found for the current filters."
+      },
+      "fields": {
+        "unnamedBusiness": "Unnamed business",
+        "phone": "Phone: {value}",
+        "submitted": "Submitted: {value}",
+        "referenceId": "Reference ID",
+        "utr": "UTR",
+        "notProvided": "Not provided",
+        "proof": "Proof",
+        "openScreenshot": "Open screenshot",
+        "fundingProofTitle": "Funding proof screenshot",
+        "reviewStatus": "Review status",
+        "reviewed": "Reviewed {value}",
+        "waitingForReview": "Still waiting for review",
+        "reviewedBy": "By {value}",
+        "reviewFlag": "Review flag: {value}",
+        "reviewNote": "Review note: {value}"
+      },
+      "refund": {
+        "title": "Manual Business Refunds",
+        "subtitle": "Review business refund requests before wallet balances are reduced. Approval now moves funds out of the business wallet.",
+        "kpis": {
+          "waitingReview": "Refunds waiting review",
+          "pendingAmount": "Pending refund amount",
+          "flaggedRequests": "Flagged refund requests"
+        },
+        "empty": "No manual refund requests found yet.",
+        "fields": {
+          "requestType": "Request type",
+          "walletRefund": "Wallet refund",
+          "requestedAmount": "Requested amount",
+          "requestNote": "Request note: {value}"
+        }
+      }
+    },
+    "revenuePage": {
+      "title": "Platform Revenue",
+      "unavailable": "Revenue payout system is unavailable in current runtime. Restart the dev server.",
+      "kpis": {
+        "totalCommissionEarned": "Total Commission Earned",
+        "treasuryAvailable": "Treasury Available (Reconciled)",
+        "payoutLimits": "Payout limits: per request INR {perRequest} | daily INR {daily}",
+        "todayRequested": "Today requested: INR {amount}"
+      },
+      "filters": {
+        "show": "Show",
+        "showAll": "Show all",
+        "apply": "Apply",
+        "clear": "Clear"
+      },
+      "adjustments": {
+        "title": "Wallet Adjustment Approvals (Immutable)",
+        "empty": "No pending wallet adjustment requests.",
+        "target": "Target: {name} ({email})",
+        "requestedBy": "Requested by: {name} ({email})",
+        "reason": "Reason: {value}"
+      },
+      "payouts": {
+        "title": "Payout Requests",
+        "export": "Export Payout CSV",
+        "empty": "No payout requests yet.",
+        "requested": "Requested: {value}",
+        "processed": "Processed: {value}"
+      },
+      "fallbacks": {
+        "unnamed": "Unnamed"
+      }
+    },
+    "withdrawalsPage": {
+      "title": "Payout Requests",
+      "subtitle": "Review withdrawal requests, check the net payout amount, and leave clear notes before releasing funds.",
+      "kpis": {
+        "waitingReview": "Waiting review",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "grossRequested": "Gross requested",
+        "platformFeeHeld": "Platform fee held",
+        "netPayoutDue": "Net payout due"
+      },
+      "filters": {
+        "searchPlaceholder": "Search user, email, or UPI",
+        "statusAll": "All statuses",
+        "showFive": "Show 5",
+        "showTen": "Show 10",
+        "showTwenty": "Show 20",
+        "showAll": "Show all",
+        "apply": "Apply",
+        "reset": "Reset"
+      },
+      "status": {
+        "pending": "PENDING",
+        "approved": "APPROVED",
+        "rejected": "REJECTED"
+      },
+      "empty": "No payout requests yet.",
+      "fields": {
+        "upi": "UPI: {name} | {id}",
+        "na": "N/A",
+        "feeBreakdown": "Platform fee ({rate}%): INR {fee} | Net payout: INR {payout}",
+        "reviewNote": "Review note: {note}",
+        "processed": "Processed: {value}"
+      }
+    },
+    "usersPage": {
+      "title": "People & Accounts",
+      "subtitle": "Review account details, payout defaults, trust status, and recent activity from one place.",
+      "errors": {
+        "failed": "Failed to load users"
+      },
+      "kpis": {
+        "accountsFound": "Accounts found",
+        "needsReview": "Needs review",
+        "suspendedAccounts": "Suspended accounts",
+        "bannedAccounts": "Banned accounts"
+      },
+      "filters": {
+        "searchPlaceholder": "Search by name, email, or mobile",
+        "roleAll": "All account types",
+        "statusAll": "All account states",
+        "flaggedAll": "All trust states",
+        "flagged": "Flagged",
+        "clear": "Clear",
+        "workModeAll": "All work modes",
+        "workModeHome": "Work from home",
+        "workModeOffice": "Work from office",
+        "workModeField": "Work in field",
+        "preferenceAll": "All work preferences",
+        "preferenceSalaried": "Salaried",
+        "preferenceFreelance": "Freelance contractual",
+        "preferenceDayBasis": "Day basis",
+        "educationPlaceholder": "Education keyword",
+        "languagePlaceholder": "Language",
+        "showFive": "Show 5",
+        "showTen": "Show 10",
+        "showTwenty": "Show 20",
+        "showAll": "Show all",
+        "apply": "Apply",
+        "exportCsv": "Export CSV",
+        "reset": "Reset"
+      },
+      "empty": "No accounts match the current filters.",
+      "fallbacks": {
+        "unnamedUser": "Unnamed User"
+      },
+      "badges": {
+        "role": "Role: {value}",
+        "status": "Status: {value}",
+        "riskFlagged": "Risk: Flagged",
+        "riskClear": "Risk: Clear"
+      },
+      "sections": {
+        "accountDetails": "Account details",
+        "earnings": "Earnings & level"
+      },
+      "fields": {
+        "accountId": "Account ID:",
+        "mobile": "Mobile:",
+        "notSet": "Not set",
+        "timezone": "Timezone:",
+        "joined": "Joined: {value}",
+        "deleted": "Deleted: {value}",
+        "balance": "Balance:",
+        "coins": "Coins:",
+        "level": "Level:",
+        "submittedToday": "Submitted today:",
+        "approvedToday": "Approved today:",
+        "approved": "Approved:",
+        "rejected": "Rejected:",
+        "dailyReset": "Daily level reset: {value}"
+      }
+    },
+    "withdrawalActions": {
+      "notePlaceholder": "Admin note (optional)",
+      "approve": "Approve",
+      "approving": "Approving...",
+      "reject": "Reject",
+      "rejecting": "Rejecting...",
+      "updated": "Updated",
+      "errors": {
+        "unexpected": "Unexpected server response",
+        "actionFailed": "Action failed"
+      }
+    }
+  },
+  "manager": {
+    "dashboard": {
+      "eyebrow": "Manager dashboard",
+      "title": "Manager Overview",
+      "subtitle": "Review incoming submissions, flag suspicious activity, and pass valid work to the admin team for final approval.",
+      "notEnoughData": "Not enough data",
+      "minAvg": "{count} min avg",
+      "hrAvg": "{count} hr avg",
+      "clear": "Clear",
+      "kpis": {
+        "waitingForReview": "Waiting for review",
+        "approvedToday": "Approved today",
+        "rejectedToday": "Rejected today",
+        "waitingForAdmin": "Waiting for admin",
+        "flaggedForReview": "Flagged for review"
+      },
+      "snapshot": {
+        "eyebrow": "Review snapshot",
+        "title": "Oldest submissions first",
+        "openSubmissions": "Open submissions",
+        "empty": "No submissions are waiting for review right now.",
+        "fallbackTitle": "Campaign submission",
+        "unnamed": "Unnamed",
+        "level": "Level {level}",
+        "inReview": "{age} in review",
+        "suspicious": "Suspicious"
+      },
+      "pace": {
+        "eyebrow": "Review pace",
+        "title": "How quickly reviews are moving",
+        "averageTurnaround": "Average turnaround",
+        "averageTurnaroundHelp": "Measured from submission creation to your manager decision.",
+        "oldestPending": "Oldest pending item",
+        "oldestPendingHelp": "Longest wait among submissions still with the manager team."
+      },
+      "access": {
+        "firstPassOnly": "Manager access covers first-pass review only.",
+        "adminControls": "Financial approval, payout control, and user-role changes remain with admin."
+      }
+    },
+    "notificationsPage": {
+      "eyebrow": "Inbox",
+      "title": "Manager Notifications",
+      "subtitle": "Stay updated on new submissions, flagged activity, and important review alerts.",
+      "inboxEyebrow": "In-app inbox",
+      "alertsEyebrow": "Review alerts"
+    },
+    "notificationsPanel": {
+      "errors": {
+        "unexpected": "Unexpected server response",
+        "failed": "Failed to load notifications"
+      },
+      "loading": "Loading notifications...",
+      "controls": {
+        "show": "Show",
+        "showAll": "Show all",
+        "markAllRead": "Mark all read"
+      },
+      "markAllReadSuccess": "Review alerts marked as read",
+      "empty": {
+        "title": "No alerts right now",
+        "body": "Queue and risk alerts will appear here automatically."
+      },
+      "allRead": {
+        "title": "No new review alerts",
+        "body": "Current review alerts have already been marked as read."
+      },
+      "warnings": "Warnings",
+      "info": "Info"
+    },
+    "inboxPanel": {
+      "errors": {
+        "unexpected": "Unexpected server response",
+        "failed": "Failed to load notifications"
+      },
+      "loading": "Loading notifications...",
+      "kpis": {
+        "totalNotifications": "Total notifications",
+        "unread": "Unread",
+        "successUpdates": "Success Updates",
+        "warnings": "Warnings"
+      },
+      "filtersHeader": {
+        "eyebrow": "Inbox filters",
+        "title": "Broadcasts and important updates",
+        "show": "Show",
+        "showAll": "Show all",
+        "markAllRead": "Mark all as read",
+        "updating": "Updating..."
+      },
+      "filters": {
+        "all": "All",
+        "unread": "Unread",
+        "success": "Success",
+        "warnings": "Warnings",
+        "info": "Info"
+      },
+      "empty": "No notifications match the current filter.",
+      "actions": {
+        "markRead": "Mark read",
+        "saving": "Saving...",
+        "updated": "Notifications updated",
+        "updateFailed": "Failed to update notifications"
+      },
+      "unreadBadge": "Unread"
+    },
+    "riskPanel": {
+      "errors": {
+        "unexpected": "Unexpected server response",
+        "failed": "Failed to load risk signals"
+      },
+      "loading": "Loading review alerts...",
+      "empty": "No alert data available.",
+      "controls": {
+        "show": "Show",
+        "showAll": "Show all"
+      },
+      "summary": {
+        "flaggedInReview": "Flagged in review",
+        "flaggedUsers": "Flagged users",
+        "ipHotspots": "IP hotspots ({hours}h)",
+        "highActivity": "High activity (1h)",
+        "rejectionSpikes": "Rejection spikes",
+        "waitingWithAdmin": "Waiting with admin"
+      },
+      "sections": {
+        "flaggedUsers": {
+          "title": "Flagged users",
+          "subtitle": "Accounts that may need extra proof checks.",
+          "empty": "No flagged users at the moment.",
+          "unnamed": "Unnamed user",
+          "approved": "Approved {count}",
+          "rejected": "Rejected {count}"
+        },
+        "ipHotspots": {
+          "title": "IP hotspots",
+          "subtitle": "Masked IPs with unusually high activity across multiple accounts.",
+          "empty": "No hotspots detected in the selected window.",
+          "submissions": "Submissions {count}",
+          "users": "Users {count}",
+          "campaigns": "Campaigns {count}"
+        },
+        "escalations": {
+          "title": "Escalations",
+          "subtitle": "Items escalated by managers for extra review.",
+          "empty": "No escalations recorded yet.",
+          "fallbackTitle": "Submission",
+          "unnamed": "Unnamed user"
+        },
+        "highVelocity": {
+          "title": "High submission velocity",
+          "subtitle": "Users submitting unusually fast in the last hour.",
+          "empty": "No velocity alerts.",
+          "unnamed": "Unnamed user",
+          "perHour": "{count}/h",
+          "alreadyFlagged": "Already flagged."
+        },
+        "rejectionOutliers": {
+          "title": "High rejection rate users",
+          "subtitle": "Accounts with an unusually high rejection rate.",
+          "empty": "No outliers found right now.",
+          "unnamed": "Unnamed user",
+          "alreadyFlagged": "Already flagged."
+        },
+        "adminBacklog": {
+          "title": "Pending admin backlog",
+          "subtitle": "Oldest items still waiting for final admin approval.",
+          "empty": "No pending-admin items.",
+          "fallbackTitle": "Campaign",
+          "unnamed": "Unnamed user",
+          "flaggedHint": "This user is flagged. Consider escalating this item for closer review."
+        },
+        "rejectionSpikes": {
+          "title": "Unusual rejection spikes",
+          "subtitle": "Campaigns with high manager rejection rate in the last {hours} hours.",
+          "empty": "No rejection spikes detected.",
+          "decisions": "Decisions {count}",
+          "rejected": "Rejected {count}",
+          "latest": "Latest: {date}"
+        },
+        "footer": "This view masks IPs and hides contact details by design. If you need stronger controls such as device fingerprinting or IP blacklists, those can be added as admin-only tools."
+      }
+    },
+    "settingsPage": {
+      "eyebrow": "Manager settings",
+      "title": "Settings",
+      "subtitle": "Manage your profile, review preferences, and account security.",
+      "securityTitle": "Account Security",
+      "securityBody": "Forgot your password? Reset it securely.",
+      "forgotPassword": "Forgot password"
+    },
+    "settings": {
+      "errors": {
+        "unexpectedResponse": "Unexpected response",
+        "failedToLoad": "Failed to load settings",
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToSave": "Failed to save settings"
+      },
+      "loading": "Loading settings...",
+      "profileEyebrow": "Profile",
+      "profileTitle": "Profile details",
+      "profileSubtitle": "Update your display name and local timezone.",
+      "displayNamePlaceholder": "Display name (optional)",
+      "timezone": "Timezone",
+      "email": "Email",
+      "role": "Role",
+      "created": "Created",
+      "moderationEyebrow": "Moderation",
+      "moderationTitle": "Review preferences",
+      "moderationSubtitle": "Choose how new submissions are shown while you work.",
+      "defaultSort": "Default sort",
+      "sortOptions": {
+        "NEWEST": "Newest first",
+        "OLDEST": "Oldest first"
+      },
+      "riskFirstTitle": "Risk-first mode",
+      "riskFirstBody": "Show suspicious or flagged submissions first.",
+      "autoNextTitle": "Auto-open next item",
+      "autoNextBody": "After a decision, jump to the next submission automatically.",
+      "proofPreviewMode": "Proof preview mode",
+      "proofModeOptions": {
+        "COMPACT": "Compact",
+        "EXPANDED": "Expanded"
+      },
+      "saving": "Saving...",
+      "saveProfile": "Save profile",
+      "savePreferences": "Save preferences",
+      "saved": "Saved"
+    },
+    "submissionsPage": {
+      "eyebrow": "Submission review",
+      "title": "Manager Review Desk",
+      "subtitle": "Review new submissions, identify risky activity, and send valid work forward for final approval."
+    },
+    "riskPage": {
+      "eyebrow": "Fraud signals",
+      "title": "Manager Risk",
+      "subtitle": "Triage suspicious activity quickly: flagged users, IP hotspots, and pending-admin backlog."
+    },
+    "historyPage": {
+      "eyebrow": "Review history",
+      "title": "Manager History",
+      "subtitle": "Look back at what you approved, rejected, or escalated, along with the reason and campaign context."
+    },
+    "queuePanel": {
+      "errors": {
+        "unexpected": "Unexpected server response",
+        "failed": "Failed to load submissions"
+      },
+      "loading": "Loading submissions...",
+      "kpis": {
+        "totalInReview": "Total in review",
+        "flaggedSubmissions": "Flagged submissions",
+        "highLevelUsers": "High-level users"
+      },
+      "filters": {
+        "eyebrow": "Filters",
+        "title": "Sort by risk or find a submission quickly",
+        "show": "Show",
+        "showAll": "Show all",
+        "searchPlaceholder": "Search campaign, user, or proof",
+        "all": "All",
+        "suspicious": "Suspicious",
+        "highLevel": "High level"
+      },
+      "empty": "No submissions match the current filters.",
+      "fallbacks": {
+        "submission": "Submission",
+        "uncategorized": "Uncategorized",
+        "unnamedUser": "Unnamed user"
+      },
+      "reward": "Reward INR {amount}",
+      "user": {
+        "title": "User summary",
+        "approvedRejected": "Approved: {approved} | Rejected: {rejected}",
+        "flaggedFallback": "This account is currently flagged for closer review."
+      },
+      "task": {
+        "title": "Task details",
+        "openTaskLink": "Open task link",
+        "viewSteps": "View steps ({count})",
+        "noSteps": "No task steps were added for this campaign."
+      },
+      "proof": {
+        "title": "Proof preview",
+        "openProof": "Open proof",
+        "previewScreenshot": "Preview screenshot",
+        "screenshotUploaded": "Screenshot proof uploaded. Use the preview button to view it.",
+        "noContent": "No proof content",
+        "onlyTextWarning": "Only text proof is available for this item. Review carefully before approving."
+      },
+      "wait": {
+        "minutes": "{count}m waiting",
+        "hours": "{count}h waiting",
+        "days": "{count}d waiting"
+      }
+    },
+    "historyPanel": {
+      "errors": {
+        "unexpected": "Unexpected server response",
+        "failed": "Failed to load manager history"
+      },
+      "loading": "Loading history...",
+      "filters": {
+        "all": "All",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "escalated": "Escalated",
+        "show": "Show",
+        "showAll": "Show all",
+        "searchPlaceholder": "Search campaign, user, reason..."
+      },
+      "empty": "No history items match the current filters.",
+      "status": {
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "escalated": "Escalated",
+        "updated": "Updated"
+      },
+      "fallbacks": {
+        "submissionReview": "Submission review",
+        "uncategorized": "Uncategorized",
+        "unnamedUser": "Unnamed user",
+        "unknown": "unknown"
+      },
+      "flagged": "Flagged",
+      "user": {
+        "title": "User",
+        "submissionId": "Submission ID: {value}"
+      },
+      "proof": {
+        "title": "Reason / Proof",
+        "openLink": "Open link",
+        "previewScreenshot": "Preview screenshot",
+        "noProofStored": "No proof stored",
+        "screenshotUploaded": "Screenshot proof uploaded."
+      }
+    },
+    "submissionActions": {
+      "reasonPlaceholder": "Reason (required when rejecting, recommended when escalating)",
+      "approve": "Approve",
+      "approving": "Approving...",
+      "reject": "Reject",
+      "rejecting": "Rejecting...",
+      "escalate": "Escalate",
+      "escalating": "Escalating...",
+      "updated": "Updated",
+      "escalated": "Escalated",
+      "errors": {
+        "unexpected": "Unexpected server response",
+        "actionFailed": "Action failed"
+      }
+    }
+  },
+  "common": {
+    "tutorialVideo": {
+      "youtube": "YouTube tutorial",
+      "loom": "Loom tutorial",
+      "hosted": "Hosted tutorial video"
+    }
+  },
+  "notifications": {
+    "channels": {
+      "eyebrow": "Delivery channels",
+      "title": "Choose how updates reach you",
+      "loading": "Loading delivery channels...",
+      "messages": {
+        "pushUpdated": "Push updated",
+        "testSent": "Test sent",
+        "telegramUpdated": "Telegram updated",
+        "pushDeviceUpdated": "Push device updated"
+      },
+      "errors": {
+        "unexpected": "Unexpected server response",
+        "enablePushFailed": "Unable to enable push notifications",
+        "sendTestFailed": "Unable to send test push"
+      },
+      "push": {
+        "body": "Best for instant alerts on this browser or installed app.",
+        "configWarning": "Firebase push is not fully configured yet for this environment.",
+        "unsupportedBrowser": "This browser does not support device push notifications.",
+        "permissionDenied": "Notification permission was not granted.",
+        "notConfigured": "Firebase web push is not configured yet.",
+        "tokenFailed": "Could not get a device push token from Firebase.",
+        "registeredDevice": "Registered device",
+        "lastSeen": "Last seen {value}",
+        "removing": "Removing...",
+        "remove": "Remove",
+        "enabling": "Enabling...",
+        "registerAnother": "Register another device",
+        "enableThisDevice": "Enable on this device",
+        "sending": "Sending...",
+        "sendTest": "Send test push"
+      },
+      "telegram": {
+        "body": "Connect your Telegram chat to receive approval and payout updates there too.",
+        "configWarning": "Telegram bot configuration is missing for this environment.",
+        "connected": "Connected {preview}",
+        "help": "Open the bot link once and press start to connect this account.",
+        "openBot": "Open Telegram bot",
+        "connect": "Connect Telegram",
+        "disconnecting": "Disconnecting...",
+        "disconnect": "Disconnect"
+      },
+      "benefits": {
+        "title": "What this unlocks",
+        "body": "Once connected, admin broadcasts and important workflow events can be delivered through in-app, email, SMS, push, and Telegram without changing your core moderation or payout logic."
+      }
     }
   }
 }

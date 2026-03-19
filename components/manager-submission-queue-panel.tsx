@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { AlertTriangle, ExternalLink, ShieldAlert } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { KpiCard } from "@/components/ui/kpi-card";
@@ -46,31 +47,28 @@ type QueueResponse = {
 
 type QueueFilter = "ALL" | "SUSPICIOUS" | "HIGH_LEVEL";
 
-const FILTERS: Array<{ value: QueueFilter; label: string }> = [
-  { value: "ALL", label: "All" },
-  { value: "SUSPICIOUS", label: "Suspicious" },
-  { value: "HIGH_LEVEL", label: "High level" },
-];
+type Translator = (key: string, values?: Record<string, string | number>) => string;
 
-function waitLabel(value: string) {
+function waitLabel(value: string, t: Translator) {
   const createdAt = new Date(value);
   const diffMs = Date.now() - createdAt.getTime();
   const diffMinutes = Math.max(1, Math.floor(diffMs / (1000 * 60)));
-  if (diffMinutes < 60) return `${diffMinutes}m waiting`;
+  if (diffMinutes < 60) return t("wait.minutes", { count: diffMinutes });
   const diffHours = Math.floor(diffMinutes / 60);
-  if (diffHours < 24) return `${diffHours}h waiting`;
+  if (diffHours < 24) return t("wait.hours", { count: diffHours });
   const diffDays = Math.floor(diffHours / 24);
-  return `${diffDays}d waiting`;
+  return t("wait.days", { count: diffDays });
 }
 
-function proofPreview(item: QueueItem) {
+function proofPreview(item: QueueItem, t: Translator) {
   if (item.proofText) return item.proofText;
   if (item.proofLink) return item.proofLink;
-  if (item.proofImage) return "Screenshot proof uploaded. Use the preview button to view it.";
-  return item.proof || "No proof content";
+  if (item.proofImage) return t("proof.screenshotUploaded");
+  return item.proof || t("proof.noContent");
 }
 
 export default function ManagerSubmissionQueuePanel() {
+  const t = useTranslations("manager.queuePanel");
   const [data, setData] = useState<QueueItem[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -86,19 +84,19 @@ export default function ManagerSubmissionQueuePanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as QueueResponse) : {};
     } catch {
-      setError("Unexpected server response");
+      setError(t("errors.unexpected"));
       setLoading(false);
       return;
     }
 
     if (!res.ok) {
-      setError(parsed.error || "Failed to load submissions");
+      setError(parsed.error || t("errors.failed"));
     } else {
       setError("");
       setData(parsed.submissions || []);
     }
     setLoading(false);
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 10000);
 
@@ -129,7 +127,7 @@ export default function ManagerSubmissionQueuePanel() {
             item.campaign?.description,
             item.campaign?.instructions?.map((row) => row.instructionText).join(" "),
             item.user.name,
-            proofPreview(item),
+            proofPreview(item, t),
           ]
             .filter(Boolean)
             .some((value) => String(value).toLowerCase().includes(query))
@@ -137,33 +135,39 @@ export default function ManagerSubmissionQueuePanel() {
 
       return matchesFilter && matchesSearch;
     });
-  }, [data, filter, search]);
+  }, [data, filter, search, t]);
 
   const visibleRows = useMemo(
     () => (limit === "ALL" ? filtered : filtered.slice(0, Number(limit))),
     [filtered, limit]
   );
 
-  if (loading) return <p className="text-sm text-white/60">Loading submissions...</p>;
+  const filters: Array<{ value: QueueFilter; label: string }> = [
+    { value: "ALL", label: t("filters.all") },
+    { value: "SUSPICIOUS", label: t("filters.suspicious") },
+    { value: "HIGH_LEVEL", label: t("filters.highLevel") },
+  ];
+
+  if (loading) return <p className="text-sm text-white/60">{t("loading")}</p>;
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        <KpiCard label="Total in review" value={stats.total} />
-        <KpiCard label="Flagged submissions" value={stats.suspicious} tone="warning" />
-        <KpiCard label="High-level users" value={stats.highLevel} tone="info" />
+        <KpiCard label={t("kpis.totalInReview")} value={stats.total} />
+        <KpiCard label={t("kpis.flaggedSubmissions")} value={stats.suspicious} tone="warning" />
+        <KpiCard label={t("kpis.highLevelUsers")} value={stats.highLevel} tone="info" />
       </div>
 
       <SectionCard elevated className="space-y-4 p-4 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm text-white/60">Filters</p>
-              <h3 className="text-xl font-semibold text-white">Sort by risk or find a submission quickly</h3>
+              <p className="text-sm text-white/60">{t("filters.eyebrow")}</p>
+              <h3 className="text-xl font-semibold text-white">{t("filters.title")}</h3>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <label className="flex items-center gap-2 text-sm text-white/60">
-                <span>Show</span>
+                <span>{t("filters.show")}</span>
                 <select
                   value={limit}
                   onChange={(e) => setLimit(e.target.value as "5" | "10" | "20" | "ALL")}
@@ -172,13 +176,13 @@ export default function ManagerSubmissionQueuePanel() {
                   <option value="5">5</option>
                   <option value="10">10</option>
                   <option value="20">20</option>
-                  <option value="ALL">Show all</option>
+                  <option value="ALL">{t("filters.showAll")}</option>
                 </select>
               </label>
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search campaign, user, or proof"
+                placeholder={t("filters.searchPlaceholder")}
                 className="min-h-11 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-sm text-white outline-none placeholder:text-white/35 lg:max-w-sm"
               />
             </div>
@@ -186,7 +190,7 @@ export default function ManagerSubmissionQueuePanel() {
 
           <div className="flex flex-wrap gap-2">
             <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 md:mx-0 md:flex-wrap md:overflow-visible md:px-0">
-              {FILTERS.map((item) => {
+              {filters.map((item) => {
                 const active = filter === item.value;
                 return (
                   <button
@@ -210,7 +214,7 @@ export default function ManagerSubmissionQueuePanel() {
       {filtered.length === 0 ? (
         <Card className="rounded-2xl border-white/10 bg-white/5">
           <CardContent className="p-6 text-sm text-white/60">
-            No submissions match the current filters.
+            {t("empty")}
           </CardContent>
         </Card>
       ) : (
@@ -221,36 +225,39 @@ export default function ManagerSubmissionQueuePanel() {
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                   <div>
                     <p className="text-lg font-semibold text-white break-words">
-                      {submission.campaign?.title || "Submission"}
+                      {submission.campaign?.title || t("fallbacks.submission")}
                     </p>
                     <p className="mt-1 text-sm text-white/60">
-                      {submission.campaign?.category || "Uncategorized"} | Reward INR {formatMoney(submission.campaign?.rewardPerTask)}
+                      {submission.campaign?.category || t("fallbacks.uncategorized")} | {t("reward", { amount: formatMoney(submission.campaign?.rewardPerTask) })}
                     </p>
                   </div>
                     <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
-                      <span>{waitLabel(submission.createdAt)}</span>
+                      <span>{waitLabel(submission.createdAt, t)}</span>
                     <StatusBadge label={submission.user.level} tone="neutral" />
                     {submission.user.isSuspicious ? (
-                      <StatusBadge label="Suspicious" tone="warning" />
+                      <StatusBadge label={t("filters.suspicious")} tone="warning" />
                     ) : null}
                   </div>
                 </div>
 
                 <div className="grid gap-4 min-[1450px]:grid-cols-[0.72fr_1.28fr]">
                   <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
-                      <p className="text-xs uppercase tracking-[0.16em] text-white/35">User summary</p>
+                      <p className="text-xs uppercase tracking-[0.16em] text-white/35">{t("user.title")}</p>
                     <p className="text-sm text-white/80 break-words">
-                      {submission.user.name || "Unnamed user"}
+                      {submission.user.name || t("fallbacks.unnamedUser")}
                     </p>
                     <p className="text-sm text-white/60">
-                      Approved: {submission.user.totalApproved} | Rejected: {submission.user.totalRejected}
+                      {t("user.approvedRejected", {
+                        approved: submission.user.totalApproved,
+                        rejected: submission.user.totalRejected,
+                      })}
                     </p>
                     {submission.user.isSuspicious ? (
                       <div className="rounded-xl border border-amber-400/20 bg-amber-500/10 p-3 text-sm text-amber-100/85">
                         <div className="flex items-start gap-2">
                           <ShieldAlert size={16} className="mt-0.5 shrink-0" />
                           <p className="break-words">
-                            {submission.user.suspiciousReason || "This account is currently flagged for closer review."}
+                            {submission.user.suspiciousReason || t("user.flaggedFallback")}
                           </p>
                         </div>
                       </div>
@@ -261,7 +268,7 @@ export default function ManagerSubmissionQueuePanel() {
                     {submission.campaign ? (
                       <div className="space-y-3">
                         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                          <p className="text-xs uppercase tracking-[0.16em] text-white/35">Task details</p>
+                          <p className="text-xs uppercase tracking-[0.16em] text-white/35">{t("task.title")}</p>
                           {submission.campaign.taskLink ? (
                             <a
                               href={normalizeExternalUrl(submission.campaign.taskLink) ?? "#"}
@@ -270,7 +277,7 @@ export default function ManagerSubmissionQueuePanel() {
                               className="inline-flex items-center gap-1 text-sm text-emerald-200 underline underline-offset-4"
                             >
                               <ExternalLink size={14} />
-                              Open task link
+                              {t("task.openTaskLink")}
                             </a>
                           ) : null}
                         </div>
@@ -280,7 +287,7 @@ export default function ManagerSubmissionQueuePanel() {
                         {submission.campaign.instructions?.length ? (
                           <details className="rounded-2xl border border-white/10 bg-white/5 p-3">
                             <summary className="cursor-pointer text-sm text-white/70">
-                              View steps ({submission.campaign.instructions.length})
+                              {t("task.viewSteps", { count: submission.campaign.instructions.length })}
                             </summary>
                             <div className="mt-3 space-y-2 text-sm text-white/75">
                               {submission.campaign.instructions.map((row) => (
@@ -294,13 +301,13 @@ export default function ManagerSubmissionQueuePanel() {
                             </div>
                           </details>
                         ) : (
-                          <p className="text-sm text-white/55">No task steps were added for this campaign.</p>
+                          <p className="text-sm text-white/55">{t("task.noSteps")}</p>
                         )}
                       </div>
                     ) : null}
 
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      <p className="text-xs uppercase tracking-[0.16em] text-white/35">Proof preview</p>
+                      <p className="text-xs uppercase tracking-[0.16em] text-white/35">{t("proof.title")}</p>
                       <div className="flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
                         {submission.proofLink ? (
                           <a
@@ -310,24 +317,24 @@ export default function ManagerSubmissionQueuePanel() {
                             className="inline-flex w-full items-center gap-1 text-sm text-emerald-200 underline underline-offset-4 lg:w-auto"
                           >
                             <ExternalLink size={14} />
-                            Open proof
+                            {t("proof.openProof")}
                           </a>
                         ) : null}
                         {submission.proofImage ? (
-                          <ProofImageDialog url={submission.proofImage} label="Preview screenshot" />
+                          <ProofImageDialog url={submission.proofImage} label={t("proof.previewScreenshot")} />
                         ) : null}
                       </div>
                     </div>
                     <div className="max-h-56 overflow-auto rounded-2xl border border-white/10 bg-white/5 p-3">
                       <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-white/80">
-                        {proofPreview(submission)}
+                        {proofPreview(submission, t)}
                       </p>
                     </div>
                     {!submission.proofLink && !submission.proofText && !submission.proofImage ? (
                       <div className="rounded-xl border border-amber-400/20 bg-amber-500/10 p-3 text-sm text-amber-100/85">
                         <div className="flex items-start gap-2">
                           <AlertTriangle size={16} className="mt-0.5 shrink-0" />
-                          <p>Only text proof is available for this item. Review carefully before approving.</p>
+                          <p>{t("proof.onlyTextWarning")}</p>
                         </div>
                       </div>
                     ) : null}

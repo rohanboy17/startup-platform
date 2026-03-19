@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import AdminNotificationCenter from "@/components/admin-notification-center";
 import { auth } from "@/lib/auth";
+import { getLocale, getTranslations } from "next-intl/server";
 
 type SearchParams = {
   limit?: string;
@@ -13,6 +14,8 @@ export default async function AdminNotificationsPage({
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
+  const t = await getTranslations("admin.notificationsPage");
+  const locale = await getLocale();
   const limit =
     params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
   const logStatus = ["ALL", "SENT", "FAILED", "SKIPPED"].includes(params.logStatus || "")
@@ -87,7 +90,10 @@ export default async function AdminNotificationsPage({
 
   return (
     <div className="space-y-6">
-      <h2 className="text-3xl font-semibold">Notifications Control</h2>
+      <div>
+        <h2 className="text-3xl font-semibold">{t("title")}</h2>
+        <p className="mt-2 max-w-3xl text-sm text-foreground/65 md:text-base">{t("subtitle")}</p>
+      </div>
       <AdminNotificationCenter
         templates={templates.map((t) => ({ ...t, subject: t.subject }))}
         notifications={notifications.map((item) => ({
@@ -108,7 +114,7 @@ export default async function AdminNotificationsPage({
           channel: l.channel,
           templateKey: l.templateKey,
           error: l.error,
-          createdAtLabel: new Intl.DateTimeFormat("en-IN", {
+          createdAtLabel: new Intl.DateTimeFormat(locale, {
             dateStyle: "medium",
             timeStyle: "short",
             timeZone: "Asia/Calcutta",

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState, type Dispatch, type SetStateAction } from "react";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SectionCard } from "@/components/ui/section-card";
@@ -52,6 +53,8 @@ function normalizeChip(value: string, max = 40) {
 }
 
 export default function UserProfilePanel() {
+  const t = useTranslations("user.profile");
+  const locale = useLocale();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
@@ -86,29 +89,29 @@ export default function UserProfilePanel() {
 
     const [settingsRaw, skillsRaw] = await Promise.all([settingsRes.text(), skillsRes.text()]);
 
-    let settingsParsed: SettingsPayload | { error?: string } = { error: "Unexpected response" };
+    let settingsParsed: SettingsPayload | { error?: string } = { error: t("errors.unexpectedResponse") };
     let skillsParsed: SkillsResponse | { error?: string } = { skills: [] };
 
     try {
       settingsParsed = settingsRaw ? (JSON.parse(settingsRaw) as SettingsPayload) : settingsParsed;
     } catch {
-      settingsParsed = { error: "Unexpected response" };
+      settingsParsed = { error: t("errors.unexpectedResponse") };
     }
 
     try {
       skillsParsed = skillsRaw ? (JSON.parse(skillsRaw) as SkillsResponse) : (skillsParsed as SkillsResponse);
     } catch {
-      skillsParsed = { error: "Unexpected response" };
+      skillsParsed = { error: t("errors.unexpectedResponse") };
     }
 
     if (!settingsRes.ok) {
-      setError((settingsParsed as { error?: string }).error || "Failed to load profile");
+      setError((settingsParsed as { error?: string }).error || t("errors.failedToLoadProfile"));
       setLoading(false);
       return;
     }
 
     if (!skillsRes.ok) {
-      setError((skillsParsed as { error?: string }).error || "Failed to load skills");
+      setError((skillsParsed as { error?: string }).error || t("errors.failedToLoadSkills"));
       setLoading(false);
       return;
     }
@@ -120,7 +123,7 @@ export default function UserProfilePanel() {
     if (!initialized) {
       setEmail(settingsPayload.profile.email);
       setRole(settingsPayload.profile.role);
-      setCreatedAt(new Date(settingsPayload.profile.createdAt).toLocaleString());
+      setCreatedAt(new Date(settingsPayload.profile.createdAt).toLocaleString(locale));
       setName(settingsPayload.profile.name || "");
       setMobile(settingsPayload.profile.mobile || "");
       setAddress(settingsPayload.profile.address || "");
@@ -138,7 +141,7 @@ export default function UserProfilePanel() {
     }
 
     setLoading(false);
-  }, [initialized]);
+  }, [initialized, locale, t]);
 
   useLiveRefresh(load, 60000);
 
@@ -191,12 +194,12 @@ export default function UserProfilePanel() {
     try {
       settingsParsed = settingsRaw ? (JSON.parse(settingsRaw) as { error?: string; message?: string }) : {};
     } catch {
-      settingsParsed = { error: "Unexpected server response" };
+      settingsParsed = { error: t("errors.unexpectedServerResponse") };
     }
 
     if (!settingsRes.ok) {
       setSaving(false);
-      setError(settingsParsed.error || "Failed to save profile");
+      setError(settingsParsed.error || t("errors.failedToSaveProfile"));
       return;
     }
 
@@ -212,22 +215,22 @@ export default function UserProfilePanel() {
     try {
       skillsParsed = skillsRaw ? (JSON.parse(skillsRaw) as { error?: string; message?: string }) : {};
     } catch {
-      skillsParsed = { error: "Unexpected server response" };
+      skillsParsed = { error: t("errors.unexpectedServerResponse") };
     }
 
     setSaving(false);
 
     if (!skillsRes.ok) {
-      setError(skillsParsed.error || "Failed to save skills");
+      setError(skillsParsed.error || t("errors.failedToSaveSkills"));
       return;
     }
 
-    setMessage("Profile updated");
+    setMessage(t("profileUpdated"));
     await load();
   }
 
   if (loading) {
-    return <SectionCard className="text-sm text-foreground/70">Loading profile...</SectionCard>;
+    return <SectionCard className="text-sm text-foreground/70">{t("loading")}</SectionCard>;
   }
 
   return (
@@ -241,17 +244,17 @@ export default function UserProfilePanel() {
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
         <SectionCard elevated className="space-y-5">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">Basic profile</p>
-            <h3 className="mt-2 text-xl font-semibold tracking-tight">Personal details</h3>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">{t("basicEyebrow")}</p>
+            <h3 className="mt-2 text-xl font-semibold tracking-tight">{t("basicTitle")}</h3>
             <p className="mt-1 text-sm text-foreground/70">
-              Keep your profile complete so admins can match you with the right work-based campaigns.
+              {t("basicSubtitle")}
             </p>
           </div>
 
           <div className="grid gap-3 md:grid-cols-2">
-            <Input placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} className="min-h-11" />
+            <Input placeholder={t("placeholders.name")} value={name} onChange={(e) => setName(e.target.value)} className="min-h-11" />
             <Input
-              placeholder="Mobile number"
+              placeholder={t("placeholders.mobile")}
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
               className="min-h-11"
@@ -261,7 +264,7 @@ export default function UserProfilePanel() {
           <textarea
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            placeholder="Address"
+            placeholder={t("placeholders.address")}
             className="min-h-[110px] w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none transition focus:border-foreground/30"
           />
 
@@ -271,14 +274,14 @@ export default function UserProfilePanel() {
               onChange={(e) => setGender(e.target.value)}
               className="min-h-11 rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground"
             >
-              <option value="">Select gender</option>
-              <option value="MALE">Male</option>
-              <option value="FEMALE">Female</option>
-              <option value="OTHER">Other</option>
-              <option value="PREFER_NOT_TO_SAY">Prefer not to say</option>
+              <option value="">{t("placeholders.selectGender")}</option>
+              <option value="MALE">{t("genderOptions.MALE")}</option>
+              <option value="FEMALE">{t("genderOptions.FEMALE")}</option>
+              <option value="OTHER">{t("genderOptions.OTHER")}</option>
+              <option value="PREFER_NOT_TO_SAY">{t("genderOptions.PREFER_NOT_TO_SAY")}</option>
             </select>
             <Input
-              placeholder="Religion"
+              placeholder={t("placeholders.religion")}
               value={religion}
               onChange={(e) => setReligion(e.target.value)}
               className="min-h-11"
@@ -293,29 +296,29 @@ export default function UserProfilePanel() {
               className="min-h-11"
             />
             <div className="rounded-xl border border-foreground/10 bg-foreground/[0.03] px-4 py-3 text-sm text-foreground/70">
-              Age: <span className="font-semibold text-foreground">{age ?? "-"}</span>
+              {t("labels.age")}: <span className="font-semibold text-foreground">{age ?? "-"}</span>
             </div>
           </div>
 
           <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4 text-sm text-foreground/70">
             <p className="break-all">
-              <span className="text-foreground/50">Email:</span> {email}
+              <span className="text-foreground/50">{t("labels.email")}:</span> {email}
             </p>
             <p className="mt-2">
-              <span className="text-foreground/50">Role:</span> {role}
+              <span className="text-foreground/50">{t("labels.role")}:</span> {role}
             </p>
             <p className="mt-2">
-              <span className="text-foreground/50">Created:</span> {createdAt}
+              <span className="text-foreground/50">{t("labels.created")}:</span> {createdAt}
             </p>
           </div>
         </SectionCard>
 
         <SectionCard elevated className="space-y-5">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">Work profile</p>
-            <h3 className="mt-2 text-xl font-semibold tracking-tight">Availability and preferences</h3>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">{t("workProfileEyebrow")}</p>
+            <h3 className="mt-2 text-xl font-semibold tracking-tight">{t("workProfileTitle")}</h3>
             <p className="mt-1 text-sm text-foreground/70">
-              These details help the admin side understand what kind of work you can take.
+              {t("workProfileSubtitle")}
             </p>
           </div>
 
@@ -325,19 +328,19 @@ export default function UserProfilePanel() {
               onChange={(e) => setWorkMode(e.target.value)}
               className="min-h-11 rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground"
             >
-              <option value="">Work mode</option>
-              <option value="WORK_FROM_HOME">Work from home</option>
-              <option value="WORK_FROM_OFFICE">Work from office</option>
-              <option value="WORK_IN_FIELD">Work in field</option>
+              <option value="">{t("workModeOptions.default")}</option>
+              <option value="WORK_FROM_HOME">{t("workModeOptions.WORK_FROM_HOME")}</option>
+              <option value="WORK_FROM_OFFICE">{t("workModeOptions.WORK_FROM_OFFICE")}</option>
+              <option value="WORK_IN_FIELD">{t("workModeOptions.WORK_IN_FIELD")}</option>
             </select>
             <select
               value={workTime}
               onChange={(e) => setWorkTime(e.target.value)}
               className="min-h-11 rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground"
             >
-              <option value="">Work time</option>
-              <option value="FULL_TIME">Full time</option>
-              <option value="PART_TIME">Part time</option>
+              <option value="">{t("workTimeOptions.default")}</option>
+              <option value="FULL_TIME">{t("workTimeOptions.FULL_TIME")}</option>
+              <option value="PART_TIME">{t("workTimeOptions.PART_TIME")}</option>
             </select>
           </div>
 
@@ -346,14 +349,14 @@ export default function UserProfilePanel() {
             onChange={(e) => setWorkingPreference(e.target.value)}
             className="min-h-11 w-full rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground"
           >
-            <option value="">Working preference</option>
-            <option value="SALARIED">Salaried</option>
-            <option value="FREELANCE_CONTRACTUAL">Freelance Contractual</option>
-            <option value="DAY_BASIS">Day Basis</option>
+            <option value="">{t("workingPreferenceOptions.default")}</option>
+            <option value="SALARIED">{t("workingPreferenceOptions.SALARIED")}</option>
+            <option value="FREELANCE_CONTRACTUAL">{t("workingPreferenceOptions.FREELANCE_CONTRACTUAL")}</option>
+            <option value="DAY_BASIS">{t("workingPreferenceOptions.DAY_BASIS")}</option>
           </select>
 
           <Input
-            placeholder="Education qualification"
+            placeholder={t("placeholders.educationQualification")}
             value={educationQualification}
             onChange={(e) => setEducationQualification(e.target.value)}
             className="min-h-11"
@@ -362,7 +365,7 @@ export default function UserProfilePanel() {
           <textarea
             value={courseAndCertificate}
             onChange={(e) => setCourseAndCertificate(e.target.value)}
-            placeholder="Course and certificate details"
+            placeholder={t("placeholders.courseAndCertificate")}
             className="min-h-[110px] w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none transition focus:border-foreground/30"
           />
         </SectionCard>
@@ -371,10 +374,10 @@ export default function UserProfilePanel() {
       <div className="grid gap-6 xl:grid-cols-2">
         <SectionCard elevated className="space-y-5">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">Skills</p>
-            <h3 className="mt-2 text-xl font-semibold tracking-tight">What work can you do?</h3>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">{t("labels.skills")}</p>
+            <h3 className="mt-2 text-xl font-semibold tracking-tight">{t("skillsTitle")}</h3>
             <p className="mt-1 text-sm text-foreground/70">
-              Add the skills you want admins to use when assigning you to work-based campaigns.
+              {t("skillsSubtitle")}
             </p>
           </div>
 
@@ -382,7 +385,7 @@ export default function UserProfilePanel() {
             <Input
               value={skillInput}
               onChange={(e) => setSkillInput(e.target.value)}
-              placeholder="Add a skill"
+              placeholder={t("placeholders.addSkill")}
               className="min-h-11"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
@@ -404,13 +407,13 @@ export default function UserProfilePanel() {
                 }
               }}
             >
-              Add
+              {t("add")}
             </Button>
           </div>
 
           <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
             {skills.length === 0 ? (
-              <p className="text-sm text-foreground/70">No skills yet. Add 3 to 6 to get started.</p>
+              <p className="text-sm text-foreground/70">{t("emptySkills")}</p>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {skills.map((skill) => (
@@ -431,10 +434,10 @@ export default function UserProfilePanel() {
 
         <SectionCard elevated className="space-y-5">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">Languages</p>
-            <h3 className="mt-2 text-xl font-semibold tracking-tight">Languages you can work in</h3>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">{t("labels.languages")}</p>
+            <h3 className="mt-2 text-xl font-semibold tracking-tight">{t("languagesTitle")}</h3>
             <p className="mt-1 text-sm text-foreground/70">
-              Add the languages you can speak or work with comfortably.
+              {t("languagesSubtitle")}
             </p>
           </div>
 
@@ -442,7 +445,7 @@ export default function UserProfilePanel() {
             <Input
               value={languageInput}
               onChange={(e) => setLanguageInput(e.target.value)}
-              placeholder="Add a language"
+              placeholder={t("placeholders.addLanguage")}
               className="min-h-11"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
@@ -464,13 +467,13 @@ export default function UserProfilePanel() {
                 }
               }}
             >
-              Add
+              {t("add")}
             </Button>
           </div>
 
           <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
             {languages.length === 0 ? (
-              <p className="text-sm text-foreground/70">No languages added yet.</p>
+              <p className="text-sm text-foreground/70">{t("emptyLanguages")}</p>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {languages.map((language) => (
@@ -492,7 +495,7 @@ export default function UserProfilePanel() {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Button onClick={saveProfile} disabled={saving} className="w-full sm:w-auto">
-          {saving ? "Saving..." : "Save profile"}
+          {saving ? t("saving") : t("saveProfile")}
         </Button>
         {message ? <p className="text-sm text-foreground/70">{message}</p> : null}
       </div>

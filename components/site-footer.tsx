@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import PublicSocialLinks from "@/components/public-social-links";
 
 export default function SiteFooter({ year }: { year: number }) {
   const tFooter = useTranslations("footer");
@@ -26,6 +27,12 @@ export default function SiteFooter({ year }: { year: number }) {
                 </div>
               </div>
               <p className="mx-auto max-w-md text-sm text-foreground/60 sm:mx-0">{tFooter("tagline")}</p>
+              <PublicSocialLinks
+                title={tFooter("socialTitle")}
+                description={tFooter("socialDescription")}
+                iconOnly
+              />
+              <p className="text-xs text-foreground/50">{tFooter("creditLine")}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-3 border-t border-foreground/10 pt-5 text-center md:gap-8 md:pt-6 md:text-left lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">

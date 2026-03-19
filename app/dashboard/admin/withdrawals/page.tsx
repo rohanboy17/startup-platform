@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
+import { getLocale, getTranslations } from "next-intl/server";
 import AdminWithdrawalActions from "@/components/admin-withdrawal-actions";
 import { formatMoney } from "@/lib/format-money";
 import { KpiCard } from "@/components/ui/kpi-card";
@@ -11,11 +12,28 @@ type SearchParams = {
   limit?: string;
 };
 
+function resolveIntlLocale(locale: string) {
+  if (locale === "hi") return "hi-IN";
+  if (locale === "bn") return "bn-IN";
+  return "en-IN";
+}
+
+function formatDateTime(value: Date | string, locale: string) {
+  return new Intl.DateTimeFormat(resolveIntlLocale(locale), {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
+}
+
 export default async function AdminWithdrawalsPage({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  const [t, locale] = await Promise.all([
+    getTranslations("admin.withdrawalsPage"),
+    getLocale(),
+  ]);
   const params = await searchParams;
   const commissionRate = Number(process.env.WITHDRAWAL_COMMISSION_RATE ?? 0.02);
   const q = params.q?.trim() || "";
@@ -66,22 +84,22 @@ export default async function AdminWithdrawalsPage({
   return (
     <div className="space-y-8">
       <div className="space-y-2">
-        <h2 className="text-3xl font-semibold">Payout Requests</h2>
+        <h2 className="text-3xl font-semibold">{t("title")}</h2>
         <p className="max-w-3xl text-sm text-foreground/70">
-          Review withdrawal requests, check the net payout amount, and leave clear notes before releasing funds.
+          {t("subtitle")}
         </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <KpiCard label="Waiting review" value={pendingCount} tone="warning" />
-        <KpiCard label="Approved" value={approvedCount} tone="success" />
-        <KpiCard label="Rejected" value={rejectedCount} tone="danger" />
+        <KpiCard label={t("kpis.waitingReview")} value={pendingCount} tone="warning" />
+        <KpiCard label={t("kpis.approved")} value={approvedCount} tone="success" />
+        <KpiCard label={t("kpis.rejected")} value={rejectedCount} tone="danger" />
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <KpiCard label="Gross requested" value={`INR ${formatMoney(pendingGross)}`} />
-        <KpiCard label="Platform fee held" value={`INR ${formatMoney(pendingFee)}`} tone="warning" />
-        <KpiCard label="Net payout due" value={`INR ${formatMoney(pendingPayout)}`} tone="info" />
+        <KpiCard label={t("kpis.grossRequested")} value={`INR ${formatMoney(pendingGross)}`} />
+        <KpiCard label={t("kpis.platformFeeHeld")} value={`INR ${formatMoney(pendingFee)}`} tone="warning" />
+        <KpiCard label={t("kpis.netPayoutDue")} value={`INR ${formatMoney(pendingPayout)}`} tone="info" />
       </div>
 
       <Card className="rounded-2xl border-foreground/10 bg-background/60">
@@ -91,7 +109,7 @@ export default async function AdminWithdrawalsPage({
               type="text"
               name="q"
               defaultValue={q}
-              placeholder="Search user, email, or UPI"
+              placeholder={t("filters.searchPlaceholder")}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             />
             <select
@@ -99,33 +117,33 @@ export default async function AdminWithdrawalsPage({
               defaultValue={statusFilter}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             >
-              <option value="ALL">All statuses</option>
-              <option value="PENDING">PENDING</option>
-              <option value="APPROVED">APPROVED</option>
-              <option value="REJECTED">REJECTED</option>
+              <option value="ALL">{t("filters.statusAll")}</option>
+              <option value="PENDING">{t("status.pending")}</option>
+              <option value="APPROVED">{t("status.approved")}</option>
+              <option value="REJECTED">{t("status.rejected")}</option>
             </select>
             <select
               name="limit"
               defaultValue={limit ? String(limit) : "ALL"}
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             >
-              <option value="5">Show 5</option>
-              <option value="10">Show 10</option>
-              <option value="20">Show 20</option>
-              <option value="ALL">Show all</option>
+              <option value="5">{t("filters.showFive")}</option>
+              <option value="10">{t("filters.showTen")}</option>
+              <option value="20">{t("filters.showTwenty")}</option>
+              <option value="ALL">{t("filters.showAll")}</option>
             </select>
             <div className="flex gap-2">
               <button
                 type="submit"
                 className="rounded-md border border-foreground/15 bg-foreground/[0.06] px-3 py-2 text-sm text-foreground transition hover:bg-foreground/[0.10]"
               >
-                Apply
+                {t("filters.apply")}
               </button>
               <a
                 href="/dashboard/admin/withdrawals"
                 className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground transition hover:bg-foreground/[0.06]"
               >
-                Reset
+                {t("filters.reset")}
               </a>
             </div>
           </form>
@@ -136,7 +154,7 @@ export default async function AdminWithdrawalsPage({
         {withdrawals.length === 0 ? (
           <Card className="rounded-2xl border-foreground/10 bg-background/60">
             <CardContent className="p-6 text-sm text-foreground/70">
-              No payout requests yet.
+              {t("empty")}
             </CardContent>
           </Card>
         ) : (
@@ -152,10 +170,10 @@ export default async function AdminWithdrawalsPage({
                       <p className="font-medium">{w.user.name || w.user.email}</p>
                       <p className="text-sm text-foreground/70">{w.user.email}</p>
                       <p className="text-xs text-foreground/55">
-                        UPI: {w.upiName || "N/A"} | {w.upiId || "N/A"}
+                        {t("fields.upi", { name: w.upiName || t("fields.na"), id: w.upiId || t("fields.na") })}
                       </p>
                       <p className="text-xs text-foreground/55">
-                        {new Date(w.createdAt).toLocaleString()}
+                        {formatDateTime(w.createdAt, locale)}
                       </p>
                     </div>
                     <div className="sm:text-right">
@@ -167,13 +185,16 @@ export default async function AdminWithdrawalsPage({
                   </div>
 
                   <div className="text-sm break-words text-foreground/70">
-                    Platform fee ({(commissionRate * 100).toFixed(1)}%): INR {formatMoney(fee)} |
-                    Net payout: INR {formatMoney(payout)}
+                    {t("fields.feeBreakdown", {
+                      rate: (commissionRate * 100).toFixed(1),
+                      fee: formatMoney(fee),
+                      payout: formatMoney(payout),
+                    })}
                   </div>
-                  {w.adminNote ? <p className="text-xs text-foreground/65">Review note: {w.adminNote}</p> : null}
+                  {w.adminNote ? <p className="text-xs text-foreground/65">{t("fields.reviewNote", { note: w.adminNote })}</p> : null}
                   {w.processedAt ? (
                     <p className="text-xs text-foreground/55">
-                      Processed: {new Date(w.processedAt).toLocaleString()}
+                      {t("fields.processed", { value: formatDateTime(w.processedAt, locale) })}
                     </p>
                   ) : null}
 
