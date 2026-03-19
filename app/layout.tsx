@@ -14,6 +14,12 @@ export const metadata: Metadata = {
   title: "FreeEarnHub",
   description: "Verified task platform for users and businesses",
   manifest: "/manifest.webmanifest",
+  formatDetection: {
+    telephone: false,
+    date: false,
+    address: false,
+    email: false,
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -50,6 +56,7 @@ export default async function RootLayout({
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={`${GeistSans.variable} ${GeistMono.variable} antialiased selection:bg-emerald-300/30`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>

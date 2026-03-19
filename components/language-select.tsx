@@ -2,15 +2,9 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 type Locale = "en" | "hi" | "bn";
-
-function readCookie(name: string) {
-  if (typeof document === "undefined") return "";
-  const match = document.cookie.match(new RegExp(`(?:^|; )${name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")}=([^;]*)`));
-  return match ? decodeURIComponent(match[1] || "") : "";
-}
 
 export default function LanguageSelect({
   className = "",
@@ -20,12 +14,11 @@ export default function LanguageSelect({
   compact?: boolean;
 }) {
   const t = useTranslations();
+  const activeLocale = useLocale() as Locale;
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-
-  const initial = (readCookie("NEXT_LOCALE") as Locale) || "en";
-  const [locale, setLocale] = useState<Locale>(initial);
+  const [locale, setLocale] = useState<Locale>(activeLocale || "en");
 
   const options = useMemo(
     () => [

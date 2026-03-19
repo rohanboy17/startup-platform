@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { Download, X } from "lucide-react";
 
 type BeforeInstallPromptEvent = Event & {
@@ -18,41 +18,45 @@ function isStandalone() {
 const SEEN_KEY = "earnhub:pwa_nudge_seen_v1";
 
 export default function PwaInstallNudge() {
-  const [open, setOpen] = useState(() => {
-    if (typeof window === "undefined") return false;
-    if (isStandalone()) return false;
-    try {
-      const seen = window.localStorage.getItem(SEEN_KEY);
-      if (seen) return false;
-      window.localStorage.setItem(SEEN_KEY, String(Date.now()));
-      return true;
-    } catch {
-      return false;
-    }
-  });
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [installed, setInstalled] = useState(() => isStandalone());
-
-  const isIOS = useMemo(() => {
-    if (typeof navigator === "undefined") return false;
-    return /iphone|ipad|ipod/i.test(navigator.userAgent);
-  }, []);
-
-  const isAndroid = useMemo(() => {
-    if (typeof navigator === "undefined") return false;
-    return /android/i.test(navigator.userAgent);
-  }, []);
+  const [dismissed, setDismissed] = useState(false);
+  const [installedOverride, setInstalledOverride] = useState(false);
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+  const userAgent = hydrated ? navigator.userAgent : "";
+  const isIOS = /iphone|ipad|ipod/i.test(userAgent);
+  const isAndroid = /android/i.test(userAgent);
+  const installed = installedOverride || (hydrated ? isStandalone() : false);
+  const seen = hydrated
+    ? (() => {
+        try {
+          return window.localStorage.getItem(SEEN_KEY) || "";
+        } catch {
+          return "";
+        }
+      })()
+    : "";
 
   useEffect(() => {
+    if (hydrated && !installed && !seen) {
+      try {
+        window.localStorage.setItem(SEEN_KEY, String(Date.now()));
+      } catch {
+        // ignore
+      }
+    }
+
     const onBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
       setDeferredPrompt(event as BeforeInstallPromptEvent);
     };
 
     const onAppInstalled = () => {
-      setInstalled(true);
+      setInstalledOverride(true);
       setDeferredPrompt(null);
-      setOpen(false);
     };
 
     window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
@@ -61,16 +65,17 @@ export default function PwaInstallNudge() {
       window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
       window.removeEventListener("appinstalled", onAppInstalled);
     };
-  }, []);
+  }, [hydrated, installed, seen]);
 
-  if (installed || !open) return null;
+  const open = hydrated && !installed && !dismissed && !seen;
+  if (!open) return null;
 
   async function onInstall() {
     if (deferredPrompt) {
       await deferredPrompt.prompt();
       await deferredPrompt.userChoice;
       setDeferredPrompt(null);
-      setOpen(false);
+      setDismissed(true);
       return;
     }
 
@@ -83,7 +88,7 @@ export default function PwaInstallNudge() {
         type="button"
         aria-label="Close install prompt"
         className="absolute inset-0 bg-background/40 backdrop-blur-sm"
-        onClick={() => setOpen(false)}
+        onClick={() => setDismissed(true)}
       />
 
       <div className="relative w-full max-w-md rounded-3xl border border-foreground/10 bg-background/95 p-5 shadow-[0_30px_90px_-45px_rgba(0,0,0,0.8)]">
@@ -101,7 +106,7 @@ export default function PwaInstallNudge() {
           </div>
           <button
             type="button"
-            onClick={() => setOpen(false)}
+            onClick={() => setDismissed(true)}
             className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-foreground/15 bg-foreground/[0.03] text-foreground/70 transition hover:bg-foreground/10 hover:text-foreground"
           >
             <X size={16} />
@@ -119,7 +124,7 @@ export default function PwaInstallNudge() {
           </button>
           <button
             type="button"
-            onClick={() => setOpen(false)}
+            onClick={() => setDismissed(true)}
             className="inline-flex items-center justify-center rounded-2xl border border-foreground/15 bg-foreground/[0.03] px-4 py-3 text-sm font-semibold text-foreground/80 transition hover:bg-foreground/10 hover:text-foreground"
           >
             Not now
@@ -141,7 +146,7 @@ export default function PwaInstallNudge() {
               </p>
             ) : (
               <p>
-                Install prompt isn’t available right now. Try again later or use your browser menu to install.
+                Install prompt isn&apos;t available right now. Try again later or use your browser menu to install.
               </p>
             )}
           </div>
@@ -150,3 +155,4 @@ export default function PwaInstallNudge() {
     </div>
   );
 }
+

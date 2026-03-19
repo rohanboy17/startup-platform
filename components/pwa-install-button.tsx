@@ -1,7 +1,7 @@
 "use client";
 
 import { Download } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -23,25 +23,19 @@ export default function PwaInstallButton({
   compact?: boolean;
 }) {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isInstalled, setIsInstalled] = useState(() => isStandalone());
+  const [installedOverride, setInstalledOverride] = useState(false);
   const [iosTipOpen, setIosTipOpen] = useState(false);
   const [unsupportedTipOpen, setUnsupportedTipOpen] = useState(false);
-
-  const isIOS = useMemo(() => {
-    if (typeof navigator === "undefined") return false;
-    return /iphone|ipad|ipod/i.test(navigator.userAgent);
-  }, []);
-
-  const isAndroid = useMemo(() => {
-    if (typeof navigator === "undefined") return false;
-    return /android/i.test(navigator.userAgent);
-  }, []);
-
-  const isEdge = useMemo(() => {
-    if (typeof navigator === "undefined") return false;
-    // Edge Chromium uses Edg/ token (incl. Android).
-    return /Edg\//.test(navigator.userAgent);
-  }, []);
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+  const userAgent = hydrated ? navigator.userAgent : "";
+  const isIOS = /iphone|ipad|ipod/i.test(userAgent);
+  const isAndroid = /android/i.test(userAgent);
+  const isEdge = /Edg\//.test(userAgent);
+  const isInstalled = installedOverride || (hydrated ? isStandalone() : false);
 
   useEffect(() => {
     const onBeforeInstallPrompt = (event: Event) => {
@@ -50,7 +44,7 @@ export default function PwaInstallButton({
     };
 
     const onAppInstalled = () => {
-      setIsInstalled(true);
+      setInstalledOverride(true);
       setDeferredPrompt(null);
       setIosTipOpen(false);
       setUnsupportedTipOpen(false);
@@ -85,6 +79,22 @@ export default function PwaInstallButton({
   // On mobile, the browser might not expose `beforeinstallprompt` (OEM browsers, some Edge/Chrome states),
   // but users can still install via the browser menu. Keep the entry point visible.
   const alwaysShow = mobile || compact;
+  if (!hydrated) {
+    return alwaysShow ? (
+      <div className={`${mobile ? "space-y-2" : "relative"}`}>
+        <button
+          type="button"
+          aria-label="Install app"
+          className={`inline-flex items-center gap-1.5 rounded-full border border-foreground/20 bg-foreground/[0.03] font-medium text-foreground/75 transition hover:bg-foreground/10 hover:text-foreground ${
+            compact ? "h-9 w-9 justify-center px-0 py-0 text-xs" : "px-3 py-1.5 text-xs sm:text-sm"
+          } ${mobile ? "w-full justify-center" : ""}`}
+        >
+          <Download size={14} />
+          {compact ? null : "Install App"}
+        </button>
+      </div>
+    ) : null;
+  }
   const hidden = !alwaysShow && !deferredPrompt && !isIOS;
   if (hidden) return null;
 
