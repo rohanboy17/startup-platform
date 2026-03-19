@@ -846,6 +846,13 @@
     "profileCompletion": {
       "progressLabel": "Profile completion",
       "cta": "Complete profile",
+      "prompt": {
+        "eyebrow": "Profile reminder",
+        "title": "Complete your profile before you start",
+        "body": "A complete profile helps FreeEarnHub recommend better work and helps managers assign more relevant opportunities.",
+        "notNow": "Not now",
+        "close": "Close profile reminder"
+      },
       "compact": {
         "eyebrow": "Better work matches",
         "title": "Complete your profile for better work recommendations",
