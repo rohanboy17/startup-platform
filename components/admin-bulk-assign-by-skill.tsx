@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SectionCard } from "@/components/ui/section-card";
@@ -18,6 +18,8 @@ type CampaignRow = {
   title: string;
   status: string;
   assignedUsers: number;
+  taskCategory?: string;
+  taskType?: string;
 };
 
 export default function AdminBulkAssignBySkill() {
@@ -36,47 +38,54 @@ export default function AdminBulkAssignBySkill() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  async function load() {
+  const load = useCallback(async (options?: { clearFeedback?: boolean }) => {
     setLoading(true);
     setError("");
-    setMessage("");
-
-    const [skillsRes, campaignsRes] = await Promise.all([
-      fetch("/api/v2/admin/skills", { credentials: "include" }),
-      fetch("/api/v2/admin/campaigns/assignable?category=work", { credentials: "include" }),
-    ]);
-
-    const [skillsRaw, campaignsRaw] = await Promise.all([skillsRes.text(), campaignsRes.text()]);
-    let skillsParsed: { skills?: SkillRow[]; error?: string } = {};
-    let campaignsParsed: { campaigns?: CampaignRow[]; error?: string } = {};
-
-    try {
-      skillsParsed = skillsRaw ? (JSON.parse(skillsRaw) as { skills?: SkillRow[]; error?: string }) : {};
-    } catch {
-      skillsParsed = { error: "Unexpected skills response" };
+    if (options?.clearFeedback !== false) {
+      setMessage("");
     }
 
     try {
-      campaignsParsed = campaignsRaw ? (JSON.parse(campaignsRaw) as { campaigns?: CampaignRow[]; error?: string }) : {};
+      const [skillsRes, campaignsRes] = await Promise.all([
+        fetch("/api/v2/admin/skills", { credentials: "include" }),
+        fetch("/api/v2/admin/campaigns/assignable?category=work", { credentials: "include" }),
+      ]);
+
+      const [skillsRaw, campaignsRaw] = await Promise.all([skillsRes.text(), campaignsRes.text()]);
+      let skillsParsed: { skills?: SkillRow[]; error?: string } = {};
+      let campaignsParsed: { campaigns?: CampaignRow[]; error?: string } = {};
+
+      try {
+        skillsParsed = skillsRaw ? (JSON.parse(skillsRaw) as { skills?: SkillRow[]; error?: string }) : {};
+      } catch {
+        skillsParsed = { error: "Unexpected skills response" };
+      }
+
+      try {
+        campaignsParsed = campaignsRaw ? (JSON.parse(campaignsRaw) as { campaigns?: CampaignRow[]; error?: string }) : {};
+      } catch {
+        campaignsParsed = { error: "Unexpected campaigns response" };
+      }
+
+      setLoading(false);
+
+      if (!skillsRes.ok) {
+        setError(skillsParsed.error || "Failed to load skills");
+        return;
+      }
+
+      if (!campaignsRes.ok) {
+        setError(campaignsParsed.error || "Failed to load campaigns");
+        return;
+      }
+
+      setSkills(skillsParsed.skills || []);
+      setCampaigns(campaignsParsed.campaigns || []);
     } catch {
-      campaignsParsed = { error: "Unexpected campaigns response" };
+      setLoading(false);
+      setError("Failed to load assignment tools");
     }
-
-    setLoading(false);
-
-    if (!skillsRes.ok) {
-      setError(skillsParsed.error || "Failed to load skills");
-      return;
-    }
-
-    if (!campaignsRes.ok) {
-      setError(campaignsParsed.error || "Failed to load campaigns");
-      return;
-    }
-
-    setSkills(skillsParsed.skills || []);
-    setCampaigns(campaignsParsed.campaigns || []);
-  }
+  }, []);
 
   useLiveRefresh(load, 120000);
 
@@ -148,8 +157,13 @@ export default function AdminBulkAssignBySkill() {
       `Already assigned ${parsed.alreadyAssigned ?? 0}.` +
       (dryRun ? "" : ` Newly assigned ${parsed.newlyAssigned ?? 0}.`);
 
-    setMessage(parsed.message ? `${parsed.message}. ${line}` : line);
-    await load();
+    const nextMessage = parsed.message ? `${parsed.message}. ${line}` : line;
+
+    if (!dryRun) {
+      await load({ clearFeedback: false });
+    }
+
+    setMessage(nextMessage);
   }
 
   async function preview() {
@@ -191,7 +205,7 @@ export default function AdminBulkAssignBySkill() {
             Assign a work campaign to every ACTIVE user who has selected a specific skill.
           </p>
         </div>
-        <Button variant="secondary" onClick={load} disabled={loading} className="w-full sm:w-auto">
+        <Button variant="secondary" onClick={() => void load()} disabled={loading} className="w-full sm:w-auto">
           {loading ? "Loading..." : "Refresh"}
         </Button>
       </div>
@@ -243,7 +257,11 @@ export default function AdminBulkAssignBySkill() {
               ))}
             </select>
             {selectedCampaignRow ? (
-              <p className="text-xs text-foreground/60">Currently assigned: {selectedCampaignRow.assignedUsers}</p>
+              <p className="text-xs text-foreground/60">
+                Currently assigned: {selectedCampaignRow.assignedUsers}
+                {selectedCampaignRow.taskCategory ? ` | ${selectedCampaignRow.taskCategory}` : ""}
+                {selectedCampaignRow.taskType ? ` | ${selectedCampaignRow.taskType}` : ""}
+              </p>
             ) : null}
           </div>
         </div>

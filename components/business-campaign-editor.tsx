@@ -12,6 +12,11 @@ import {
 } from "@/lib/campaign-options";
 import { formatMoney } from "@/lib/format-money";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
+import {
+  TASK_CATEGORIES,
+  getEffectiveTaskLabel,
+  getTaskTypesForCategory,
+} from "@/lib/task-categories";
 
 type Instruction = {
   id: string;
@@ -25,6 +30,9 @@ type BusinessCampaignEditorProps = {
     title: string;
     description: string;
     category: string;
+    taskCategory: string;
+    taskType: string;
+    customTask: string | null;
     taskLink: string | null;
     rewardPerTask: number;
     totalBudget: number;
@@ -45,6 +53,9 @@ export default function BusinessCampaignEditor({
   const [title, setTitle] = useState(campaign.title);
   const [description, setDescription] = useState(campaign.description);
   const [category, setCategory] = useState(campaign.category);
+  const [taskCategory, setTaskCategory] = useState<string>(campaign.taskCategory);
+  const [taskType, setTaskType] = useState<string>(campaign.taskType);
+  const [customTask, setCustomTask] = useState(campaign.customTask || "");
   const [taskLink, setTaskLink] = useState(campaign.taskLink || "");
   const [instructionsText, setInstructionsText] = useState(
     campaign.instructions.map((item) => item.instructionText).join("\n")
@@ -60,6 +71,9 @@ export default function BusinessCampaignEditor({
   const budget = Number(totalBudget) || 0;
   const spentBudget = campaign.totalBudget - campaign.remainingBudget;
   const budgetDelta = budget - campaign.totalBudget;
+  const taskTypeOptions = useMemo(() => getTaskTypesForCategory(taskCategory), [taskCategory]);
+  const needsCustomTask = taskType === "Other";
+  const effectiveTaskLabel = getEffectiveTaskLabel(taskType, customTask);
 
   const stats = useMemo(() => {
     const projectedSlots = reward > 0 ? Math.floor(budget / reward) : 0;
@@ -91,6 +105,12 @@ export default function BusinessCampaignEditor({
       .map((line) => line.trim())
       .filter(Boolean);
 
+    if (needsCustomTask && !customTask.trim()) {
+      setLoading(false);
+      setError(t("errors.customTaskRequired"));
+      return;
+    }
+
     const res = await fetch(`/api/v2/business/campaigns/${campaign.id}`, {
       method: "PUT",
       headers: {
@@ -100,6 +120,9 @@ export default function BusinessCampaignEditor({
         title,
         description,
         category,
+        taskCategory,
+        taskType,
+        customTask: needsCustomTask ? customTask.trim() : null,
         taskLink: taskLink || null,
         rewardPerTask: reward,
         totalBudget: budget,
@@ -190,9 +213,9 @@ export default function BusinessCampaignEditor({
             />
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-3">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("fields.category")}</label>
+              <label className="text-sm font-medium text-white/80">{t("fields.campaignCategory")}</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -207,13 +230,59 @@ export default function BusinessCampaignEditor({
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("fields.taskLink")}</label>
+              <label className="text-sm font-medium text-white/80">{t("fields.taskCategory")}</label>
+              <select
+                value={taskCategory}
+                onChange={(e) => {
+                  const nextTaskCategory = e.target.value;
+                  setTaskCategory(nextTaskCategory);
+                  setTaskType(getTaskTypesForCategory(nextTaskCategory)[0] || "Other");
+                  setCustomTask("");
+                }}
+                className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
+              >
+                {TASK_CATEGORIES.map((option) => (
+                  <option key={option.name} value={option.name}>
+                    {option.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/80">{t("fields.taskType")}</label>
+              <select
+                value={taskType}
+                onChange={(e) => setTaskType(e.target.value)}
+                className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
+              >
+                {taskTypeOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {needsCustomTask ? (
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/80">{t("fields.customTask")}</label>
               <Input
-                value={taskLink}
-                onChange={(e) => setTaskLink(e.target.value)}
-                placeholder={t("placeholders.taskLink")}
+                value={customTask}
+                onChange={(e) => setCustomTask(e.target.value)}
+                placeholder={t("placeholders.customTask")}
               />
             </div>
+          ) : null}
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-white/80">{t("fields.taskLink")}</label>
+            <Input
+              value={taskLink}
+              onChange={(e) => setTaskLink(e.target.value)}
+              placeholder={t("placeholders.taskLink")}
+            />
           </div>
 
           <div className="space-y-2">
@@ -267,6 +336,10 @@ export default function BusinessCampaignEditor({
           <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
             <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("side.currentCategory")}</p>
             <p className="mt-2 text-sm text-white">{getCampaignCategoryLabel(category, tCategories)}</p>
+            <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">{t("side.currentTaskCategory")}</p>
+            <p className="mt-2 text-sm text-white">{taskCategory}</p>
+            <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">{t("side.currentTaskType")}</p>
+            <p className="mt-2 text-sm text-white">{effectiveTaskLabel}</p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">

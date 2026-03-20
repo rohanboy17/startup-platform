@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
+import { TASK_CATEGORIES, getTaskTypesForCategory } from "@/lib/task-categories";
 
 export default function AdminCampaignActions({
   campaignId,
@@ -14,6 +15,9 @@ export default function AdminCampaignActions({
   initialTitle,
   initialDescription,
   initialCategory,
+  initialTaskCategory,
+  initialTaskType,
+  initialCustomTask,
   initialTaskLink,
   initialTutorialVideoUrl,
   initialRewardPerTask,
@@ -28,6 +32,9 @@ export default function AdminCampaignActions({
   initialTitle: string;
   initialDescription: string;
   initialCategory: string;
+  initialTaskCategory: string;
+  initialTaskType: string;
+  initialCustomTask: string | null;
   initialTaskLink: string | null;
   initialTutorialVideoUrl: string | null;
   initialRewardPerTask: number;
@@ -40,6 +47,9 @@ export default function AdminCampaignActions({
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
   const [category, setCategory] = useState(initialCategory);
+  const [taskCategory, setTaskCategory] = useState<string>(initialTaskCategory);
+  const [taskType, setTaskType] = useState<string>(initialTaskType);
+  const [customTask, setCustomTask] = useState(initialCustomTask || "");
   const [taskLink, setTaskLink] = useState(initialTaskLink || "");
   const [tutorialVideoUrl, setTutorialVideoUrl] = useState(initialTutorialVideoUrl || "");
   const [rewardPerTask, setRewardPerTask] = useState(String(initialRewardPerTask));
@@ -115,6 +125,9 @@ export default function AdminCampaignActions({
         title,
         description,
         category,
+        taskCategory,
+        taskType,
+        customTask: taskType === "Other" ? customTask.trim() || null : null,
         taskLink: taskLink || null,
         tutorialVideoUrl: tutorialVideoUrl || null,
         rewardPerTask: Number(rewardPerTask),
@@ -258,6 +271,41 @@ export default function AdminCampaignActions({
             className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
             placeholder="Category"
           />
+          <select
+            value={taskCategory}
+            onChange={(e) => {
+              const nextTaskCategory = e.target.value;
+              setTaskCategory(nextTaskCategory);
+              setTaskType(getTaskTypesForCategory(nextTaskCategory)[0] || "Other");
+              setCustomTask("");
+            }}
+            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          >
+            {TASK_CATEGORIES.map((option) => (
+              <option key={option.name} value={option.name}>
+                {option.name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={taskType}
+            onChange={(e) => setTaskType(e.target.value)}
+            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          >
+            {getTaskTypesForCategory(taskCategory).map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+          {taskType === "Other" ? (
+            <input
+              value={customTask}
+              onChange={(e) => setCustomTask(e.target.value)}
+              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
+              placeholder="Custom task"
+            />
+          ) : null}
           <input
             value={taskLink}
             onChange={(e) => setTaskLink(e.target.value)}

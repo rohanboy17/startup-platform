@@ -1,9 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
+import AdminBulkAssignBySkill from "@/components/admin-bulk-assign-by-skill";
 import AdminCampaignActions from "@/components/admin-campaign-actions";
 import AdminCampaignEscalationControls from "@/components/admin-campaign-escalation-controls";
 import AdminCampaignRepeatControls from "@/components/admin-campaign-repeat-controls";
 import { formatMoney } from "@/lib/format-money";
+import { getEffectiveTaskLabel } from "@/lib/task-categories";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -131,6 +133,8 @@ export default async function AdminCampaignsPage({
 
       <AdminCampaignEscalationControls />
 
+      <AdminBulkAssignBySkill />
+
       <SectionCard elevated className="p-4">
           <form className="grid gap-3 md:grid-cols-5">
             <input
@@ -197,6 +201,9 @@ export default async function AdminCampaignsPage({
                   <StatusBadge label={campaign.status} tone={campaign.status === "LIVE" ? "success" : campaign.status === "REJECTED" ? "danger" : campaign.status === "PENDING" ? "warning" : "neutral"} />
                 </div>
                 <p className="text-sm text-foreground/70">Category: {campaign.category}</p>
+                <p className="text-sm text-foreground/70">
+                  Task category: {campaign.taskCategory} | Task type: {getEffectiveTaskLabel(campaign.taskType, campaign.customTask)}
+                </p>
                 <p className="text-sm text-foreground/70">{campaign.description}</p>
                 <p className="break-all text-sm text-foreground/70">
                   Business account: {campaign.business.name || "Unnamed"} ({campaign.business.email})
@@ -265,6 +272,9 @@ export default async function AdminCampaignsPage({
                   initialTitle={campaign.title}
                   initialDescription={campaign.description}
                   initialCategory={campaign.category}
+                  initialTaskCategory={campaign.taskCategory}
+                  initialTaskType={campaign.taskType}
+                  initialCustomTask={campaign.customTask}
                   initialTaskLink={campaign.taskLink}
                   initialTutorialVideoUrl={campaign.tutorialVideoUrl}
                   initialRewardPerTask={campaign.rewardPerTask}

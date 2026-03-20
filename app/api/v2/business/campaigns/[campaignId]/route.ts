@@ -7,6 +7,7 @@ import {
   canManageBusinessCampaigns,
   getBusinessContext,
 } from "@/lib/business-context";
+import { normalizeTaskSelection } from "@/lib/task-categories";
 
 type CampaignAction = "PAUSE" | "RESUME" | "CLOSE";
 
@@ -138,6 +139,9 @@ export async function PUT(
     title?: string;
     description?: string;
     category?: string;
+    taskCategory?: string;
+    taskType?: string;
+    customTask?: string | null;
     taskLink?: string | null;
     rewardPerTask?: number;
     totalBudget?: number;
@@ -168,6 +172,11 @@ export async function PUT(
   const title = body.title?.trim() || campaign.title;
   const description = body.description?.trim() || campaign.description;
   const category = body.category?.trim().toLowerCase() || campaign.category;
+  const normalizedTaskSelection = normalizeTaskSelection({
+    taskCategory: body.taskCategory ?? campaign.taskCategory,
+    taskType: body.taskType ?? campaign.taskType,
+    customTask: body.customTask === undefined ? campaign.customTask : body.customTask,
+  });
   const taskLink = body.taskLink === undefined ? campaign.taskLink : body.taskLink?.trim() || null;
   const rewardPerTask = Number(body.rewardPerTask ?? campaign.rewardPerTask);
   const totalBudget = Number(body.totalBudget ?? campaign.totalBudget);
@@ -179,6 +188,10 @@ export async function PUT(
 
   if (!isValidCategory(category)) {
     return NextResponse.json({ error: "Invalid category type" }, { status: 400 });
+  }
+
+  if ("error" in normalizedTaskSelection) {
+    return NextResponse.json({ error: normalizedTaskSelection.error }, { status: 400 });
   }
 
   if (Number.isNaN(rewardPerTask) || rewardPerTask <= 0) {
@@ -284,6 +297,9 @@ export async function PUT(
         title,
         description,
         category,
+        taskCategory: normalizedTaskSelection.taskCategory,
+        taskType: normalizedTaskSelection.taskType,
+        customTask: normalizedTaskSelection.customTask,
         taskLink,
         rewardPerTask,
         totalBudget,
@@ -389,6 +405,9 @@ export async function POST(
         title: `${sourceCampaign.title} (Copy)`,
         description: sourceCampaign.description,
         category: sourceCampaign.category,
+        taskCategory: sourceCampaign.taskCategory,
+        taskType: sourceCampaign.taskType,
+        customTask: sourceCampaign.customTask,
         taskLink: sourceCampaign.taskLink,
         tutorialVideoUrl: sourceCampaign.tutorialVideoUrl,
         rewardPerTask: sourceCampaign.rewardPerTask,

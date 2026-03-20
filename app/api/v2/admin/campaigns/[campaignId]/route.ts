@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { normalizeTutorialVideoUrl } from "@/lib/tutorial-video";
+import { normalizeTaskSelection } from "@/lib/task-categories";
 
 export async function PATCH(
   req: Request,
@@ -178,6 +179,9 @@ export async function PUT(
     title?: string;
     description?: string;
     category?: string;
+    taskCategory?: string;
+    taskType?: string;
+    customTask?: string | null;
     taskLink?: string | null;
     tutorialVideoUrl?: string | null;
     rewardPerTask?: number;
@@ -193,6 +197,9 @@ export async function PUT(
       title: true,
       description: true,
       category: true,
+      taskCategory: true,
+      taskType: true,
+      customTask: true,
       taskLink: true,
       tutorialVideoUrl: true,
       rewardPerTask: true,
@@ -210,6 +217,11 @@ export async function PUT(
   const title = body.title?.trim() || campaign.title;
   const description = body.description?.trim() || campaign.description;
   const category = body.category?.trim() || campaign.category;
+  const normalizedTaskSelection = normalizeTaskSelection({
+    taskCategory: body.taskCategory ?? campaign.taskCategory,
+    taskType: body.taskType ?? campaign.taskType,
+    customTask: body.customTask === undefined ? campaign.customTask : body.customTask,
+  });
   const taskLink = body.taskLink === undefined ? campaign.taskLink : body.taskLink?.trim() || null;
   const tutorialVideoUrl =
     body.tutorialVideoUrl === undefined
@@ -222,6 +234,9 @@ export async function PUT(
 
   if (!title || !description || !category) {
     return NextResponse.json({ error: "Title, description and category are required" }, { status: 400 });
+  }
+  if ("error" in normalizedTaskSelection) {
+    return NextResponse.json({ error: normalizedTaskSelection.error }, { status: 400 });
   }
   if (Number.isNaN(rewardPerTask) || rewardPerTask <= 0) {
     return NextResponse.json({ error: "Invalid reward per task" }, { status: 400 });
@@ -257,6 +272,9 @@ export async function PUT(
         title,
         description,
         category,
+        taskCategory: normalizedTaskSelection.taskCategory,
+        taskType: normalizedTaskSelection.taskType,
+        customTask: normalizedTaskSelection.customTask,
         taskLink,
         tutorialVideoUrl,
         rewardPerTask,

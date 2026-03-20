@@ -8,7 +8,6 @@ import AdminUserWalletAdjustment from "@/components/admin-user-wallet-adjustment
 import AdminUserBulkActions from "@/components/admin-user-bulk-actions";
 import AdminUserLifecycleActions from "@/components/admin-user-lifecycle-actions";
 import AdminUserWorkAssignments from "@/components/admin-user-work-assignments";
-import AdminBulkAssignBySkill from "@/components/admin-bulk-assign-by-skill";
 import { formatMoney } from "@/lib/format-money";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
@@ -478,8 +477,6 @@ export default async function AdminUsersPage({
           }))}
         />
       ) : null}
-
-      {!loadError ? <AdminBulkAssignBySkill /> : null}
 
       {loadError ? (
         <Card className="rounded-2xl border-amber-300/20 bg-amber-500/10">

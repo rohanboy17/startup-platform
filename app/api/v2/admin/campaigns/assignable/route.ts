@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getEffectiveTaskLabel } from "@/lib/task-categories";
 
 export async function GET(req: Request) {
   const session = await auth();
@@ -20,6 +21,9 @@ export async function GET(req: Request) {
       id: true,
       title: true,
       category: true,
+      taskCategory: true,
+      taskType: true,
+      customTask: true,
       status: true,
       rewardPerTask: true,
       remainingBudget: true,
@@ -37,6 +41,8 @@ export async function GET(req: Request) {
       id: c.id,
       title: c.title,
       category: c.category,
+      taskCategory: c.taskCategory,
+      taskType: getEffectiveTaskLabel(c.taskType, c.customTask),
       status: c.status,
       rewardPerTask: c.rewardPerTask,
       remainingBudget: c.remainingBudget,
@@ -47,4 +53,3 @@ export async function GET(req: Request) {
     })),
   });
 }
-

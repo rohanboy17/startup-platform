@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { ArrowLeft, ExternalLink, Send, ShieldAlert } from "lucide-react";
+import { ArrowLeft, Copy, ExternalLink, Send, ShieldAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import CampaignTutorialVideo from "@/components/campaign-tutorial-video";
 import { normalizeExternalUrl } from "@/lib/external-url";
 import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
 import { formatMoney } from "@/lib/format-money";
+import { getEffectiveTaskLabel } from "@/lib/task-categories";
 import imageCompression from "browser-image-compression";
 
 type CampaignResponse = {
@@ -19,6 +20,9 @@ type CampaignResponse = {
     title: string;
     description: string;
     category: string;
+    taskCategory: string;
+    taskType: string;
+    customTask: string | null;
     taskLink: string | null;
     tutorialVideoUrl: string | null;
     rewardPerTask: number;
@@ -77,6 +81,7 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
   const [submitting, setSubmitting] = useState(false);
   const [repeatRequestMessage, setRepeatRequestMessage] = useState("");
   const [requestingTomorrow, setRequestingTomorrow] = useState(false);
+  const [copyMessage, setCopyMessage] = useState("");
 
   const load = useCallback(async () => {
     const res = await fetch(`/api/v2/campaigns/${campaignId}/submissions`, { credentials: "include" });
@@ -226,6 +231,17 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
     await load();
   };
 
+  const copyInstruction = async (instructionText: string) => {
+    try {
+      await navigator.clipboard.writeText(instructionText);
+      setCopyMessage(t("instructionCopied"));
+    } catch {
+      setCopyMessage(t("instructionCopyFailed"));
+    }
+
+    window.setTimeout(() => setCopyMessage(""), 1800);
+  };
+
   if (error) {
     return <p className="text-sm text-rose-300">{error}</p>;
   }
@@ -235,6 +251,7 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
   }
 
   const { campaign } = data;
+  const effectiveTaskLabel = getEffectiveTaskLabel(campaign.taskType, campaign.customTask);
   const fillRate = campaign.allowedSubmissions > 0
     ? Math.max(0, Math.min(100, Math.round((campaign.usedSubmissions / campaign.allowedSubmissions) * 100)))
     : 0;
@@ -255,6 +272,9 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80">
             {campaign.category}
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80">
+            {campaign.taskCategory} | {effectiveTaskLabel}
           </div>
           {campaign.taskLink ? (
             <a
@@ -312,12 +332,24 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
 
             {campaign.currentInstruction ? (
               <div className="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 p-5">
-                <p className="text-xs uppercase tracking-[0.16em] text-emerald-200/70">
-                  {t("currentDetail", { sequence: campaign.currentInstruction.sequence })}
-                </p>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-xs uppercase tracking-[0.16em] text-emerald-200/70">
+                    {t("currentDetail", { sequence: campaign.currentInstruction.sequence })}
+                  </p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => void copyInstruction(campaign.currentInstruction?.instructionText || "")}
+                    className="w-full sm:w-auto"
+                  >
+                    <Copy size={16} />
+                    {t("copyInstruction")}
+                  </Button>
+                </div>
                 <p className="mt-3 text-sm text-white/90 break-words">
                   {campaign.currentInstruction.instructionText}
                 </p>
+                {copyMessage ? <p className="mt-3 text-xs text-emerald-100">{copyMessage}</p> : null}
               </div>
             ) : null}
 

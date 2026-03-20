@@ -6,6 +6,7 @@ import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
 import { getBusinessContext } from "@/lib/business-context";
 import { getCampaignCategoryLabel } from "@/lib/campaign-options";
 import { formatMoney } from "@/lib/format-money";
+import { getEffectiveTaskLabel } from "@/lib/task-categories";
 import { Card, CardContent } from "@/components/ui/card";
 import BusinessCampaignEditor from "@/components/business-campaign-editor";
 import CampaignTutorialVideo from "@/components/campaign-tutorial-video";
@@ -74,8 +75,8 @@ export default async function BusinessCampaignDetailPage({
   const totalSlots =
     campaign.rewardPerTask > 0 ? Math.floor(campaign.totalBudget / campaign.rewardPerTask) : 0;
   const usedSlots = campaign.submissions.length;
-  const slotsLeft = Math.max(0, totalSlots - usedSlots);
   const deployment = campaign.totalBudget > 0 ? Math.round((spentBudget / campaign.totalBudget) * 100) : 0;
+  const effectiveTaskLabel = getEffectiveTaskLabel(campaign.taskType, campaign.customTask);
 
   const activityItems = [
     {
@@ -138,6 +139,9 @@ export default async function BusinessCampaignDetailPage({
           title: campaign.title,
           description: campaign.description,
           category: campaign.category,
+          taskCategory: campaign.taskCategory,
+          taskType: campaign.taskType,
+          customTask: campaign.customTask,
           taskLink: campaign.taskLink,
           rewardPerTask: campaign.rewardPerTask,
           totalBudget: campaign.totalBudget,
@@ -155,8 +159,20 @@ export default async function BusinessCampaignDetailPage({
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
           <CardContent className="p-5">
-            <p className="text-sm text-white/60">Category</p>
+            <p className="text-sm text-white/60">Campaign category</p>
             <p className="mt-2 text-lg font-semibold text-white">{getCampaignCategoryLabel(campaign.category)}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
+          <CardContent className="p-5">
+            <p className="text-sm text-white/60">Task category</p>
+            <p className="mt-2 text-lg font-semibold text-white">{campaign.taskCategory}</p>
+          </CardContent>
+        </Card>
+        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
+          <CardContent className="p-5">
+            <p className="text-sm text-white/60">Task type</p>
+            <p className="mt-2 text-lg font-semibold text-white">{effectiveTaskLabel}</p>
           </CardContent>
         </Card>
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
@@ -165,18 +181,6 @@ export default async function BusinessCampaignDetailPage({
             <p className="mt-2 text-lg font-semibold text-emerald-200">
               INR {formatMoney(campaign.rewardPerTask)}
             </p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Budget left</p>
-            <p className="mt-2 text-lg font-semibold text-white">INR {formatMoney(campaign.remainingBudget)}</p>
-          </CardContent>
-        </Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
-          <CardContent className="p-5">
-            <p className="text-sm text-white/60">Slots left</p>
-            <p className="mt-2 text-lg font-semibold text-white">{slotsLeft}</p>
           </CardContent>
         </Card>
       </div>

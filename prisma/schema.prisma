@@ -218,6 +218,9 @@ model Campaign {
   title           String
   description     String
   category        String
+  taskCategory    String                @default("Other")
+  taskType        String                @default("Other")
+  customTask      String?
   taskLink        String?
   tutorialVideoUrl String?
   rewardPerTask   Float

@@ -641,7 +641,10 @@
       "repeatRequestSent": "Your tomorrow request is under review.",
       "repeatRequestFailed": "Unable to send tomorrow request right now.",
       "repeatAlreadyPending": "Your request is already pending. Please wait for admin review.",
-      "repeatRequestWait": "After you complete at least one submission, you can request tomorrow access for this running task."
+      "repeatRequestWait": "After you complete at least one submission, you can request tomorrow access for this running task.",
+      "copyInstruction": "Copy instruction",
+      "instructionCopied": "Instruction copied",
+      "instructionCopyFailed": "Unable to copy instruction"
     },
     "referrals": {
       "loading": "Loading referrals...",
@@ -1217,7 +1220,8 @@
         "minOneSlot": "Budget must be enough to fund at least one slot.",
         "insufficientWallet": "Insufficient wallet balance for this campaign budget.",
         "unexpectedServerResponse": "Unexpected server response",
-        "failedToCreate": "Failed to create campaign"
+        "failedToCreate": "Failed to create campaign",
+        "customTaskRequired": "Please enter a custom task name."
       },
       "messages": {
         "created": "Campaign created successfully!"
@@ -1241,7 +1245,10 @@
         "taskDetails": "Task Details",
         "taskDetailsHelp": "Each new line becomes a separate instruction step.",
         "rewardPerTask": "Per Task Reward",
-        "totalBudget": "Total Budget"
+        "totalBudget": "Total Budget",
+        "campaignCategory": "Campaign Category",
+        "taskCategory": "Task Category",
+        "customTask": "Custom Task"
       },
       "placeholders": {
         "title": "Enter task title",
@@ -1249,7 +1256,8 @@
         "taskLink": "Optional destination link",
         "taskDetails": "Add one instruction per line\\nExample:\\nOpen the app store\\nInstall the app\\nShare screenshot proof",
         "rewardPerTask": "Reward per approved task",
-        "totalBudget": "Total budget"
+        "totalBudget": "Total budget",
+        "customTask": "Enter the custom task name"
       },
       "actions": {
         "launching": "Launching...",
@@ -1273,7 +1281,9 @@
         "checking": "Checking...",
         "sufficient": "Sufficient",
         "insufficient": "Insufficient",
-        "commissionHint": "Marketing campaigns use the marketing commission rules. Work-based campaigns use the default non-marketing commission rules already configured in the platform."
+        "commissionHint": "Marketing campaigns use the marketing commission rules. Work-based campaigns use the default non-marketing commission rules already configured in the platform.",
+        "taskCategoryLabel": "Task category",
+        "taskTypeLabel": "Task type"
       }
     },
     "overviewPanel": {
@@ -1657,7 +1667,8 @@
       "errors": {
         "unexpectedServerResponse": "Unexpected server response",
         "failedToUpdate": "Failed to update campaign",
-        "failedToDuplicate": "Failed to duplicate campaign"
+        "failedToDuplicate": "Failed to duplicate campaign",
+        "customTaskRequired": "Please enter a custom task name."
       },
       "messages": {
         "updated": "Campaign saved",
@@ -1676,7 +1687,11 @@
         "taskLink": "Task Link",
         "instructions": "Task Details",
         "rewardPerTask": "Per Task Reward",
-        "totalBudget": "Total Budget"
+        "totalBudget": "Total Budget",
+        "campaignCategory": "Campaign Category",
+        "taskCategory": "Task Category",
+        "taskType": "Task Type",
+        "customTask": "Custom Task"
       },
       "placeholders": {
         "title": "Campaign title",
@@ -1684,7 +1699,8 @@
         "taskLink": "Optional destination link",
         "instructions": "Add one instruction per line\\nExample:\\nOpen the page\\nComplete the required action\\nSubmit proof",
         "rewardPerTask": "Reward per approved slot",
-        "totalBudget": "Campaign budget"
+        "totalBudget": "Campaign budget",
+        "customTask": "Enter the custom task name"
       },
       "side": {
         "currentCategory": "Selected category",
@@ -1702,7 +1718,9 @@
           "projectedTotalSlots": "Estimated total slots: {count}",
           "finalPayable": "Additional amount to pay now: INR {amount}",
           "platformFee": "Extra platform fee on this edit: INR 0.00"
-        }
+        },
+        "currentTaskCategory": "Selected task category",
+        "currentTaskType": "Selected task type"
       },
       "warnings": {
         "insufficientWallet": "The wallet does not have enough balance to apply this budget increase.",

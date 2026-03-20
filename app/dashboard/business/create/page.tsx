@@ -7,12 +7,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   CAMPAIGN_CATEGORY_OPTIONS,
-  CAMPAIGN_TASK_TYPE_OPTIONS,
   getCampaignCategoryLabel,
 } from "@/lib/campaign-options";
 import { formatMoney } from "@/lib/format-money";
+import {
+  TASK_CATEGORIES,
+  getEffectiveTaskLabel,
+  getTaskTypesForCategory,
+} from "@/lib/task-categories";
 
 const DEFAULT_CATEGORY = "marketing";
+const DEFAULT_TASK_CATEGORY = TASK_CATEGORIES[0].name;
 
 export default function CreateCampaign() {
   const tBusiness = useTranslations("business");
@@ -21,7 +26,9 @@ export default function CreateCampaign() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState(DEFAULT_CATEGORY);
-  const [taskType, setTaskType] = useState(CAMPAIGN_TASK_TYPE_OPTIONS[DEFAULT_CATEGORY][0]);
+  const [taskCategory, setTaskCategory] = useState<string>(DEFAULT_TASK_CATEGORY);
+  const [taskType, setTaskType] = useState<string>(getTaskTypesForCategory(DEFAULT_TASK_CATEGORY)[0] || "Other");
+  const [customTask, setCustomTask] = useState("");
   const [taskLink, setTaskLink] = useState("");
   const [taskDetails, setTaskDetails] = useState("");
   const [reward, setReward] = useState("");
@@ -35,10 +42,9 @@ export default function CreateCampaign() {
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [kycStatus, setKycStatus] = useState<string | null>(null);
 
-  const taskOptions = useMemo(
-    () => CAMPAIGN_TASK_TYPE_OPTIONS[category] || CAMPAIGN_TASK_TYPE_OPTIONS[DEFAULT_CATEGORY],
-    [category]
-  );
+  const taskOptions = useMemo(() => getTaskTypesForCategory(taskCategory), [taskCategory]);
+  const needsCustomTask = taskType === "Other";
+  const effectiveTaskLabel = getEffectiveTaskLabel(taskType, customTask);
   const rewardValue = Number(reward) || 0;
   const budgetValue = Number(budget) || 0;
   const totalSlots = rewardValue > 0 ? Math.floor(budgetValue / rewardValue) : 0;
@@ -101,6 +107,12 @@ export default function CreateCampaign() {
       return;
     }
 
+    if (needsCustomTask && !customTask.trim()) {
+      setError(t("errors.customTaskRequired"));
+      setErrorCode("CREATE_FAILED");
+      return;
+    }
+
     setLoading(true);
     setMessage("");
     setError("");
@@ -118,8 +130,11 @@ export default function CreateCampaign() {
       },
       body: JSON.stringify({
         title,
-        description: `${taskType}: ${description}`,
+        description,
         category,
+        taskCategory,
+        taskType,
+        customTask: needsCustomTask ? customTask.trim() : null,
         taskLink: taskLink || null,
         rewardPerTask: Number(reward),
         totalBudget: Number(budget),
@@ -147,7 +162,9 @@ export default function CreateCampaign() {
     setTitle("");
     setDescription("");
     setCategory(DEFAULT_CATEGORY);
-    setTaskType(CAMPAIGN_TASK_TYPE_OPTIONS[DEFAULT_CATEGORY][0]);
+    setTaskCategory(DEFAULT_TASK_CATEGORY);
+    setTaskType(getTaskTypesForCategory(DEFAULT_TASK_CATEGORY)[0] || "Other");
+    setCustomTask("");
     setTaskLink("");
     setTaskDetails("");
     setReward("");
@@ -208,21 +225,37 @@ export default function CreateCampaign() {
             />
           </div>
 
-          <div className="grid gap-5 md:grid-cols-2">
+          <div className="grid gap-5 md:grid-cols-3">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("form.category")}</label>
+              <label className="text-sm font-medium text-white/80">{t("form.campaignCategory")}</label>
               <select
                 value={category}
-                onChange={(e) => {
-                  const nextCategory = e.target.value;
-                  setCategory(nextCategory);
-                  setTaskType((CAMPAIGN_TASK_TYPE_OPTIONS[nextCategory] || [])[0] || "");
-                }}
+                onChange={(e) => setCategory(e.target.value)}
                 className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
               >
                 {CAMPAIGN_CATEGORY_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
                     {getCampaignCategoryLabel(option.value, tCategories)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/80">{t("form.taskCategory")}</label>
+              <select
+                value={taskCategory}
+                onChange={(e) => {
+                  const nextTaskCategory = e.target.value;
+                  setTaskCategory(nextTaskCategory);
+                  setTaskType(getTaskTypesForCategory(nextTaskCategory)[0] || "Other");
+                  setCustomTask("");
+                }}
+                className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
+              >
+                {TASK_CATEGORIES.map((option) => (
+                  <option key={option.name} value={option.name}>
+                    {option.name}
                   </option>
                 ))}
               </select>
@@ -243,6 +276,17 @@ export default function CreateCampaign() {
               </select>
             </div>
           </div>
+
+          {needsCustomTask ? (
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white/80">{t("form.customTask")}</label>
+              <Input
+                value={customTask}
+                onChange={(e) => setCustomTask(e.target.value)}
+                placeholder={t("placeholders.customTask")}
+              />
+            </div>
+          ) : null}
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-white/80">{t("form.taskLink")}</label>
@@ -321,7 +365,12 @@ export default function CreateCampaign() {
           <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
             <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("preview.categoryLabel")}</p>
             <p className="mt-2 text-sm text-white">{getCampaignCategoryLabel(category, tCategories)}</p>
-            <p className="mt-1 text-sm text-white/60">{taskType}</p>
+            <p className="mt-1 text-sm text-white/60">
+              {t("preview.taskCategoryLabel")}: {taskCategory}
+            </p>
+            <p className="mt-1 text-sm text-white/60">
+              {t("preview.taskTypeLabel")}: {effectiveTaskLabel}
+            </p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-black/20 p-4">

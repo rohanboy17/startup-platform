@@ -5,6 +5,7 @@ import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
 import { CAMPAIGN_CATEGORY_OPTIONS } from "@/lib/campaign-options";
 import { canManageBusinessCampaigns, getBusinessContext } from "@/lib/business-context";
 import { normalizeExternalUrl } from "@/lib/external-url";
+import { normalizeTaskSelection } from "@/lib/task-categories";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -35,11 +36,25 @@ export async function POST(req: Request) {
     );
   }
 
-  const { title, description, category, taskLink, rewardPerTask, totalBudget, instructions } =
+  const {
+    title,
+    description,
+    category,
+    taskCategory,
+    taskType,
+    customTask,
+    taskLink,
+    rewardPerTask,
+    totalBudget,
+    instructions,
+  } =
     (await req.json()) as {
       title?: string;
       description?: string;
       category?: string;
+      taskCategory?: string;
+      taskType?: string;
+      customTask?: string | null;
       taskLink?: string;
       rewardPerTask?: number;
       totalBudget?: number;
@@ -61,6 +76,16 @@ export async function POST(req: Request) {
 
   if (!allowedCategories.has(normalizedCategory)) {
     return NextResponse.json({ error: "Invalid category type" }, { status: 400 });
+  }
+
+  const normalizedTaskSelection = normalizeTaskSelection({
+    taskCategory,
+    taskType,
+    customTask,
+  });
+
+  if ("error" in normalizedTaskSelection) {
+    return NextResponse.json({ error: normalizedTaskSelection.error }, { status: 400 });
   }
 
   const wallet = await ensureBusinessWalletSynced(context.businessUserId);
@@ -100,6 +125,9 @@ export async function POST(req: Request) {
         title,
         description,
         category: normalizedCategory,
+        taskCategory: normalizedTaskSelection.taskCategory,
+        taskType: normalizedTaskSelection.taskType,
+        customTask: normalizedTaskSelection.customTask,
         taskLink: normalizeExternalUrl(taskLink),
         rewardPerTask: reward,
         totalBudget: budget,

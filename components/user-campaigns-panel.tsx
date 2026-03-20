@@ -8,12 +8,16 @@ import { formatMoney } from "@/lib/format-money";
 import { normalizeExternalUrl } from "@/lib/external-url";
 import { useLiveRefresh } from "@/lib/live-refresh";
 import EmptyCampaignsPushNudge from "@/components/empty-campaigns-push-nudge";
+import { getEffectiveTaskLabel } from "@/lib/task-categories";
 
 type Campaign = {
   id: string;
   title: string;
   description: string;
   category: string;
+  taskCategory: string;
+  taskType: string;
+  customTask: string | null;
   taskLink: string | null;
   rewardPerTask: number;
   remainingBudget: number;
@@ -73,6 +77,7 @@ export default function UserCampaignsPanel() {
         </div>
       ) : (
         campaigns.map((campaign) => {
+          const taskLabel = getEffectiveTaskLabel(campaign.taskType, campaign.customTask);
           return (
             <Card
               key={campaign.id}
@@ -83,6 +88,9 @@ export default function UserCampaignsPanel() {
                   <h3 className="text-lg font-semibold sm:text-xl">{campaign.title}</h3>
                   <span className="text-xs text-white/60">{campaign.category}</span>
                 </div>
+                <p className="text-xs text-white/45">
+                  {campaign.taskCategory} | {taskLabel}
+                </p>
                 <p className="text-sm text-white/60">{campaign.description}</p>
                 {campaign.taskLink ? (
                   <a
