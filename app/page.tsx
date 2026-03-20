@@ -13,7 +13,6 @@ import { prisma } from "@/lib/prisma";
 import HomeLiveFloatsAndStats from "@/components/home-live-floats-and-stats";
 import HomeLiveHeroVisual from "@/components/home-live-hero-visual";
 import PwaInstallNudge from "@/components/pwa-install-nudge";
-import PwaStandaloneDashboardRedirect from "@/components/pwa-standalone-dashboard-redirect";
 import HomeGuidedVideoSection from "@/components/home-guided-video-section";
 import HomeTestimonialsSection from "@/components/home-testimonials-section";
 import PublicChannelLinks from "@/components/public-channel-links";
@@ -182,7 +181,6 @@ export default async function Home() {
 
   return (
     <div className="home-shell relative min-h-screen overflow-x-clip bg-background text-foreground">
-      <PwaStandaloneDashboardRedirect />
       <PwaInstallNudge />
       <PublicChannelLinks
         floating
@@ -244,6 +242,19 @@ export default async function Home() {
         </div>
       </section>
 
+      <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-12 sm:px-6 sm:pb-16">
+        <MotionSection className="rounded-[2rem] border border-foreground/10 bg-foreground/5 p-5 sm:p-7">
+          <HomeGuidedVideoSection
+            items={[
+              { ...guidedVideos[0], videoUrl: homeEarnVideoUrl },
+              { ...guidedVideos[1], videoUrl: homeCampaignVideoUrl },
+            ]}
+            openLabel={tHome("guidedVideos.openLabel")}
+            fallbackLabel={tHome("guidedVideos.fallbackLabel")}
+          />
+        </MotionSection>
+      </section>
+
       <section id="how-it-works" className="relative mx-auto w-full max-w-screen-2xl px-4 pb-12 sm:px-6 sm:pb-16">
         <MotionStagger className="grid gap-6 lg:grid-cols-2">
           <MotionItem className="rounded-3xl border border-foreground/10 bg-foreground/5 p-6 sm:p-7">
@@ -287,19 +298,6 @@ export default async function Home() {
             </div>
           </MotionItem>
         </MotionStagger>
-      </section>
-
-      <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-12 sm:px-6 sm:pb-16">
-        <MotionSection className="rounded-[2rem] border border-foreground/10 bg-foreground/5 p-5 sm:p-7">
-          <HomeGuidedVideoSection
-            items={[
-              { ...guidedVideos[0], videoUrl: homeEarnVideoUrl },
-              { ...guidedVideos[1], videoUrl: homeCampaignVideoUrl },
-            ]}
-            openLabel={tHome("guidedVideos.openLabel")}
-            fallbackLabel={tHome("guidedVideos.fallbackLabel")}
-          />
-        </MotionSection>
       </section>
 
       {showFeatures ? (
