@@ -333,7 +333,31 @@
           "name": "Nadia R.",
           "role": "অপারেশনস লিড"
         }
-      ]
+      ],
+      "feedbackCardTitle": "Share your experience",
+      "feedbackCardBody": "Send a short note about your experience on FreeEarnHub. We hold every message for admin review before it appears publicly on the homepage.",
+      "displayNameLabel": "Public display name",
+      "displayNamePlaceholder": "How should your name appear publicly?",
+      "feedbackLabel": "Your feedback",
+      "feedbackPlaceholder": "Tell us what feels clear, useful, or trustworthy about the platform.",
+      "pendingHelp": "Every submission is reviewed by admin before it can appear publicly.",
+      "submit": "Submit feedback",
+      "submitting": "Submitting...",
+      "submitSuccess": "Feedback submitted. It will stay hidden until admin approval.",
+      "submitError": "Unable to submit feedback right now.",
+      "loginPrompt": "Sign in with a user or business account to share feedback for the community section.",
+      "loginCta": "Sign in to share",
+      "registerCta": "Create account",
+      "loggedInAs": "Signed in as {role}",
+      "userRole": "verified user",
+      "businessRole": "business owner",
+      "statusPending": "Your feedback is under review",
+      "statusApproved": "Your feedback is approved",
+      "statusRejected": "Your feedback needs another try",
+      "underReviewHelp": "Your latest feedback is being reviewed by admin. You can submit again after this review is complete.",
+      "approvedHelp": "Your latest feedback is approved and can be shown publicly on the homepage.",
+      "rejectedHelp": "Your latest feedback was not approved for public display. You can write a stronger one and submit again.",
+      "pendingBlockedHelp": "Your current feedback is already under review. Please wait for the admin decision before sending another one."
     },
     "channels": {
       "whatsapp": "WhatsApp-এ যোগ দিন",

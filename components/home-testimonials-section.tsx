@@ -12,11 +12,13 @@ export default function HomeTestimonialsSection({
   title,
   subtitle,
   items,
+  footer,
 }: {
   eyebrow: string;
   title: string;
   subtitle: string;
   items: TestimonialItem[];
+  footer?: React.ReactNode;
 }) {
   return (
     <div className="space-y-6">
@@ -48,6 +50,8 @@ export default function HomeTestimonialsSection({
           </MotionItem>
         ))}
       </MotionStagger>
+
+      {footer ? <div>{footer}</div> : null}
     </div>
   );
 }

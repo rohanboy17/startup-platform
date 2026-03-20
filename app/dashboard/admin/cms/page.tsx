@@ -36,7 +36,7 @@ export default async function AdminCmsPage() {
     )
   );
 
-  const [landing, terms, privacy, refund, faq, flags, announcements] = await Promise.all([
+  const [landing, terms, privacy, refund, faq, flags, announcements, communityFeedback] = await Promise.all([
     getCmsValue<{ heroTitle: string; heroSubtitle: string }>("landing.home", {
       heroTitle: "Run campaigns. Reward real users. Grow with confidence.",
       heroSubtitle:
@@ -48,6 +48,27 @@ export default async function AdminCmsPage() {
     getCmsValue<{ body: string }>("legal.faq", { body: "" }),
     prisma.featureFlag.findMany({ orderBy: { key: "asc" } }),
     prisma.announcement.findMany({ orderBy: { createdAt: "desc" }, take: 50 }),
+    prisma.communityFeedback.findMany({
+      orderBy: { createdAt: "desc" },
+      take: 100,
+      select: {
+        id: true,
+        displayName: true,
+        roleLabel: true,
+        quote: true,
+        status: true,
+        adminNote: true,
+        createdAt: true,
+        reviewedAt: true,
+        user: {
+          select: {
+            name: true,
+            email: true,
+            role: true,
+          },
+        },
+      },
+    }),
   ]);
 
   return (
@@ -65,6 +86,7 @@ export default async function AdminCmsPage() {
         initialFaqBody={faq.body}
         flags={flags}
         announcements={announcements}
+        communityFeedback={communityFeedback}
       />
     </div>
   );

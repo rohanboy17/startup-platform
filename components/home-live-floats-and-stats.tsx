@@ -8,12 +8,13 @@ import { MotionItem, MotionStagger } from "@/components/motion-stagger";
 import { SectionCard } from "@/components/ui/section-card";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { useLiveRefresh } from "@/lib/live-refresh";
+import { mergeMetricMaximums } from "@/lib/display-metrics";
 
 type HeroMetrics = {
   totalPayout: number;
   totalUsers: number;
   businessAccounts: number;
-  activeCampaigns: number;
+  totalCampaigns: number;
   tasksCompleted: number;
 };
 
@@ -30,7 +31,7 @@ export default function HomeLiveFloatsAndStats({
     const res = await fetch("/api/public/hero-metrics", { cache: "no-store" });
     if (!res.ok) return;
     const data = (await res.json()) as HeroMetrics;
-    setMetrics(data);
+    setMetrics((current) => mergeMetricMaximums(current, data));
   }, []);
 
   useLiveRefresh(load, 10000);
@@ -63,8 +64,8 @@ export default function HomeLiveFloatsAndStats({
 
               <MotionItem>
                 <KpiCard
-                  label="Active Campaigns"
-                  value={<MetricCounter value={metrics.activeCampaigns} />}
+                  label="Campaigns Completed"
+                  value={<MetricCounter value={metrics.totalCampaigns} />}
                   tone="info"
                 />
               </MotionItem>
@@ -83,4 +84,3 @@ export default function HomeLiveFloatsAndStats({
     </>
   );
 }
-

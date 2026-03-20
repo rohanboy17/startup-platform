@@ -3,12 +3,13 @@
 import { useCallback, useState } from "react";
 import HomeHeroVisual from "@/components/home-hero-visual";
 import { useLiveRefresh } from "@/lib/live-refresh";
+import { mergeMetricMaximums } from "@/lib/display-metrics";
 
 type HeroMetrics = {
   totalPayout: number;
   totalUsers: number;
   businessAccounts: number;
-  activeCampaigns: number;
+  totalCampaigns: number;
   tasksCompleted: number;
 };
 
@@ -19,7 +20,7 @@ export default function HomeLiveHeroVisual({ initial }: { initial: HeroMetrics }
     const res = await fetch("/api/public/hero-metrics", { cache: "no-store" });
     if (!res.ok) return;
     const data = (await res.json()) as HeroMetrics;
-    setMetrics(data);
+    setMetrics((current) => mergeMetricMaximums(current, data));
   }, []);
 
   useLiveRefresh(load, 10000);

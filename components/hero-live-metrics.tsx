@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import MetricCounter from "@/components/metric-counter";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { mergeMetricMaximums } from "@/lib/display-metrics";
 
 export default function HeroLiveMetrics({
   className,
@@ -52,7 +53,7 @@ export default function HeroLiveMetrics({
           return;
         }
         setError("");
-        if (parsed.stats) setStats(parsed.stats);
+        if (parsed.stats) setStats((current) => mergeMetricMaximums(current, parsed.stats!));
       } catch {
         setError(t("statsError"));
       }

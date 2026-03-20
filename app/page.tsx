@@ -16,6 +16,9 @@ import PwaInstallNudge from "@/components/pwa-install-nudge";
 import HomeGuidedVideoSection from "@/components/home-guided-video-section";
 import HomeTestimonialsSection from "@/components/home-testimonials-section";
 import PublicChannelLinks from "@/components/public-channel-links";
+import { getDisplayMetrics } from "@/lib/display-metrics";
+import { auth } from "@/lib/auth";
+import HomeFeedbackSubmitCard from "@/components/home-feedback-submit-card";
 
 type LandingContent = {
   heroTitle: string;
@@ -42,6 +45,7 @@ function extractSubmissionId(details: string | null) {
 export default async function Home() {
   const locale = await getLocale();
   const tHome = await getTranslations("home");
+  const session = await auth();
 
   const siteUrl =
     process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
@@ -58,9 +62,11 @@ export default async function Home() {
     totalPayout,
     totalUsers,
     businessAccounts,
-    activeCampaigns,
+    totalCampaigns,
     tasksCompleted,
     approvalLogs,
+    approvedCommunityFeedback,
+    currentUserFeedback,
   ] = await Promise.all([
     getCmsValue<LandingContent>("landing.home", {
       heroTitle: "Earn by completing verified tasks.",
@@ -86,7 +92,7 @@ export default async function Home() {
     }),
     prisma.user.count({ where: { role: "USER" } }),
     prisma.user.count({ where: { role: "BUSINESS" } }),
-    prisma.campaign.count({ where: { status: "LIVE" } }),
+    prisma.campaign.count(),
     prisma.submission.count({
       where: { adminStatus: { in: ["ADMIN_APPROVED", "APPROVED"] } },
     }),
@@ -96,6 +102,29 @@ export default async function Home() {
       take: 200,
       select: { createdAt: true, details: true },
     }),
+    prisma.communityFeedback.findMany({
+      where: { status: "APPROVED" },
+      orderBy: [{ reviewedAt: "desc" }, { createdAt: "desc" }],
+      take: 6,
+      select: {
+        id: true,
+        quote: true,
+        displayName: true,
+        roleLabel: true,
+      },
+    }),
+    session?.user.id
+      ? prisma.communityFeedback.findFirst({
+          where: { userId: session.user.id },
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            status: true,
+            quote: true,
+            createdAt: true,
+          },
+        })
+      : Promise.resolve(null),
   ]);
 
   const heroTitle = locale === "en" ? landing.heroTitle : tHome("landing.heroTitle");
@@ -110,11 +139,19 @@ export default async function Home() {
     body: string;
     bullets: string[];
   }>;
-  const testimonials = tHome.raw("testimonials.items") as Array<{
+  const fallbackTestimonials = tHome.raw("testimonials.items") as Array<{
     quote: string;
     name: string;
     role: string;
   }>;
+  const testimonials = [
+    ...approvedCommunityFeedback.map((item) => ({
+      quote: item.quote,
+      name: item.displayName,
+      role: item.roleLabel,
+    })),
+    ...fallbackTestimonials,
+  ].slice(0, 6);
 
   // Avoid rendering duplicate active announcements (common during admin testing).
   const uniqueAnnouncements = (() => {
@@ -169,13 +206,13 @@ export default async function Home() {
       light: "#ffffff",
     },
   });
-  const heroMetrics = {
+  const heroMetrics = getDisplayMetrics({
     totalPayout: Math.round(totalPayout._sum.amount || 0),
     totalUsers,
     businessAccounts,
-    activeCampaigns,
+    totalCampaigns,
     tasksCompleted,
-  };
+  });
   const homeEarnVideoUrl = process.env.NEXT_PUBLIC_HOME_EARNING_VIDEO_URL || null;
   const homeCampaignVideoUrl = process.env.NEXT_PUBLIC_HOME_CAMPAIGN_VIDEO_URL || null;
 
@@ -360,6 +397,29 @@ export default async function Home() {
           title={tHome("testimonials.title")}
           subtitle={tHome("testimonials.subtitle")}
           items={testimonials}
+          footer={
+            <HomeFeedbackSubmitCard
+              currentRole={
+                session?.user.role === "USER" || session?.user.role === "BUSINESS"
+                  ? session.user.role
+                  : null
+              }
+              defaultDisplayName={
+                session?.user.name?.trim() ||
+                session?.user.email?.split("@")[0]?.trim() ||
+                "FreeEarnHub member"
+              }
+              existingFeedback={
+                currentUserFeedback
+                  ? {
+                      status: currentUserFeedback.status,
+                      quote: currentUserFeedback.quote,
+                      createdAt: currentUserFeedback.createdAt.toISOString(),
+                    }
+                  : null
+              }
+            />
+          }
         />
       </section>
 

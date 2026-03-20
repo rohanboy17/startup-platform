@@ -81,6 +81,8 @@ model User {
   skills UserSkill[]
   campaignAssignments CampaignAssignment[]
   campaignAssignmentsAssignedBy CampaignAssignment[] @relation("CampaignAssignmentAssignedBy")
+  communityFeedback CommunityFeedback[] @relation("CommunityFeedbackAuthor")
+  reviewedCommunityFeedback CommunityFeedback[] @relation("CommunityFeedbackReviewer")
   deletedAt DateTime?
   deletedByUserId String?
   deletionReason String?
@@ -393,6 +395,25 @@ model Announcement {
   endsAt    DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model CommunityFeedback {
+  id               String                  @id @default(cuid())
+  userId           String
+  displayName      String
+  roleLabel        String
+  quote            String
+  status           CommunityFeedbackStatus @default(PENDING)
+  adminNote        String?
+  reviewedAt       DateTime?
+  reviewedByUserId String?
+  createdAt        DateTime                @default(now())
+
+  user             User                    @relation("CommunityFeedbackAuthor", fields: [userId], references: [id])
+  reviewedByUser   User?                   @relation("CommunityFeedbackReviewer", fields: [reviewedByUserId], references: [id])
+
+  @@index([status, createdAt])
+  @@index([userId, createdAt])
 }
 
 model IpAccessRule {
@@ -715,6 +736,12 @@ enum ReferralInviteStatus {
 }
 
 enum CoinRedemptionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CommunityFeedbackStatus {
   PENDING
   APPROVED
   REJECTED

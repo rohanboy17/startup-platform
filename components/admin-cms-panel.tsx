@@ -20,6 +20,22 @@ type Announcement = {
   isActive: boolean;
 };
 
+type CommunityFeedback = {
+  id: string;
+  displayName: string;
+  roleLabel: string;
+  quote: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  adminNote: string | null;
+  createdAt: Date;
+  reviewedAt: Date | null;
+  user: {
+    name: string | null;
+    email: string;
+    role: string;
+  };
+};
+
 export default function AdminCmsPanel({
   initialLandingHero,
   initialLandingSubtitle,
@@ -29,6 +45,7 @@ export default function AdminCmsPanel({
   initialFaqBody,
   flags,
   announcements,
+  communityFeedback,
 }: {
   initialLandingHero: string;
   initialLandingSubtitle: string;
@@ -38,6 +55,7 @@ export default function AdminCmsPanel({
   initialFaqBody: string;
   flags: FeatureFlag[];
   announcements: Announcement[];
+  communityFeedback: CommunityFeedback[];
 }) {
   const router = useRouter();
   const [landingHero, setLandingHero] = useState(initialLandingHero);
@@ -53,6 +71,11 @@ export default function AdminCmsPanel({
   const [announcementSegment, setAnnouncementSegment] = useState("ALL");
   const [announcementChannels, setAnnouncementChannels] = useState<Array<"IN_APP" | "EMAIL" | "SMS" | "PUSH" | "TELEGRAM">>(["IN_APP"]);
   const [announcementLimit, setAnnouncementLimit] = useState<"5" | "10" | "20" | "ALL">("10");
+  const [feedbackFilter, setFeedbackFilter] = useState<"ALL" | "PENDING" | "APPROVED" | "REJECTED">("PENDING");
+  const [feedbackLimit, setFeedbackLimit] = useState<"5" | "10" | "20" | "ALL">("10");
+  const [feedbackNotes, setFeedbackNotes] = useState<Record<string, string>>(
+    Object.fromEntries(communityFeedback.map((item) => [item.id, item.adminNote || ""]))
+  );
   const [loading, setLoading] = useState<string | null>(null);
   const [message, setMessage] = useState("");
 
@@ -243,6 +266,46 @@ export default function AdminCmsPanel({
     }
   }
 
+  async function updateFeedbackStatus(
+    item: CommunityFeedback,
+    status: "PENDING" | "APPROVED" | "REJECTED"
+  ) {
+    setLoading(`feedback:${item.id}:${status}`);
+    setMessage("");
+    const res = await fetch(`/api/admin/community-feedback/${item.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ status, adminNote: feedbackNotes[item.id] || "" }),
+    });
+    const raw = await res.text();
+    let data: { message?: string; error?: string } = {};
+    try {
+      data = raw ? (JSON.parse(raw) as typeof data) : {};
+    } catch {
+      data = { error: "Unexpected server response" };
+    }
+    setLoading(null);
+    setMessage(data.message || data.error || "Updated");
+    if (res.ok) {
+      router.refresh();
+      emitDashboardLiveRefresh();
+    }
+  }
+
+  const filteredFeedback =
+    feedbackFilter === "ALL"
+      ? communityFeedback
+      : communityFeedback.filter((item) => item.status === feedbackFilter);
+  const visibleFeedback =
+    feedbackLimit === "ALL" ? filteredFeedback : filteredFeedback.slice(0, Number(feedbackLimit));
+  const feedbackCounts = {
+    ALL: communityFeedback.length,
+    PENDING: communityFeedback.filter((item) => item.status === "PENDING").length,
+    APPROVED: communityFeedback.filter((item) => item.status === "APPROVED").length,
+    REJECTED: communityFeedback.filter((item) => item.status === "REJECTED").length,
+  };
+
   return (
     <div className="space-y-8">
       <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
@@ -418,6 +481,166 @@ export default function AdminCmsPanel({
                 >
                   Delete
                 </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+        <div className="space-y-1">
+          <h3 className="text-lg font-semibold">Community Feedback Review</h3>
+          <p className="text-sm text-white/65">
+            New feedback stays hidden on the homepage until an admin approves it.
+          </p>
+          <p className="text-xs text-white/50">
+            You can review submitted feedback in <span className="font-semibold text-white/80">Admin &gt; Content &amp; CMS</span>.
+          </p>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-3">
+          <div className="rounded-2xl border border-amber-500/15 bg-amber-500/8 p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-200/80">
+              Pending Review
+            </p>
+            <p className="mt-3 text-3xl font-semibold text-white">{feedbackCounts.PENDING}</p>
+            <p className="mt-2 text-sm text-white/60">
+              Feedback waiting for an admin decision before it can appear publicly.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-emerald-500/15 bg-emerald-500/8 p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-200/80">
+              Approved Live
+            </p>
+            <p className="mt-3 text-3xl font-semibold text-white">{feedbackCounts.APPROVED}</p>
+            <p className="mt-2 text-sm text-white/60">
+              Approved feedback that can be shown in the homepage community section.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-rose-500/15 bg-rose-500/8 p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-200/80">
+              Rejected
+            </p>
+            <p className="mt-3 text-3xl font-semibold text-white">{feedbackCounts.REJECTED}</p>
+            <p className="mt-2 text-sm text-white/60">
+              Reviewed feedback that was not approved for public display.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+          <div className="flex flex-wrap gap-2">
+            {(["PENDING", "APPROVED", "REJECTED", "ALL"] as const).map((status) => (
+              <button
+                key={status}
+                type="button"
+                onClick={() => setFeedbackFilter(status)}
+                className={`rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] transition ${
+                  feedbackFilter === status
+                    ? "border-emerald-400/40 bg-emerald-500/15 text-emerald-200"
+                    : "border-white/10 bg-black/20 text-white/55 hover:bg-white/8 hover:text-white/80"
+                }`}
+              >
+                {status === "ALL" ? "All" : status.charAt(0) + status.slice(1).toLowerCase()} ({feedbackCounts[status]})
+              </button>
+            ))}
+          </div>
+          <label className="flex items-center gap-2 text-sm text-white/60">
+            <span>Show</span>
+            <select
+              value={feedbackLimit}
+              onChange={(e) => setFeedbackLimit(e.target.value as "5" | "10" | "20" | "ALL")}
+              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="ALL">Show all</option>
+            </select>
+          </label>
+        </div>
+
+        <div className="space-y-3">
+          {visibleFeedback.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-white/10 bg-black/20 px-4 py-5 text-sm text-white/60">
+              No feedback found for this filter yet.
+            </div>
+          ) : null}
+          {visibleFeedback.map((item) => (
+            <div key={item.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                <div className="space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-semibold text-white">{item.displayName}</p>
+                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-white/55">
+                      {item.roleLabel}
+                    </span>
+                    <span
+                      className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${
+                        item.status === "APPROVED"
+                          ? "bg-emerald-500/15 text-emerald-300"
+                          : item.status === "REJECTED"
+                            ? "bg-rose-500/15 text-rose-300"
+                            : "bg-amber-500/15 text-amber-200"
+                      }`}
+                    >
+                      {item.status}
+                    </span>
+                  </div>
+                  <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                    Submitted by {item.user.name?.trim() || item.user.email} ({item.user.role})
+                  </p>
+                  <p className="text-sm leading-7 text-white/80">{item.quote}</p>
+                  <p className="text-xs text-white/45">
+                    Submitted {new Date(item.createdAt).toLocaleString("en-IN")}
+                    {item.reviewedAt ? ` • Reviewed ${new Date(item.reviewedAt).toLocaleString("en-IN")}` : ""}
+                  </p>
+                  <div className="space-y-2">
+                    <label className="text-xs uppercase tracking-[0.18em] text-white/45">Admin note</label>
+                    <textarea
+                      value={feedbackNotes[item.id] || ""}
+                      onChange={(event) =>
+                        setFeedbackNotes((current) => ({
+                          ...current,
+                          [item.id]: event.target.value,
+                        }))
+                      }
+                      className="min-h-[72px] w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none transition focus:border-emerald-400/35 focus:ring-2 focus:ring-emerald-400/15"
+                      placeholder="Optional internal note for this review"
+                    />
+                  </div>
+                </div>
+                <div className="flex shrink-0 flex-col gap-2 sm:flex-row lg:flex-col">
+                  {item.status !== "APPROVED" ? (
+                    <Button
+                      onClick={() => void updateFeedbackStatus(item, "APPROVED")}
+                      disabled={loading !== null}
+                      className="w-full sm:w-auto"
+                    >
+                      {loading === `feedback:${item.id}:APPROVED` ? "Saving..." : "Approve"}
+                    </Button>
+                  ) : null}
+                  {item.status !== "REJECTED" ? (
+                    <Button
+                      variant="destructive"
+                      onClick={() => void updateFeedbackStatus(item, "REJECTED")}
+                      disabled={loading !== null}
+                      className="w-full sm:w-auto"
+                    >
+                      {loading === `feedback:${item.id}:REJECTED` ? "Saving..." : "Reject"}
+                    </Button>
+                  ) : null}
+                  {item.status !== "PENDING" ? (
+                    <Button
+                      variant="outline"
+                      onClick={() => void updateFeedbackStatus(item, "PENDING")}
+                      disabled={loading !== null}
+                      className="w-full sm:w-auto"
+                    >
+                      {loading === `feedback:${item.id}:PENDING` ? "Saving..." : "Move to Pending"}
+                    </Button>
+                  ) : null}
+                </div>
               </div>
             </div>
           ))}
