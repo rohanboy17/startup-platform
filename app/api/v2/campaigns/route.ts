@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getCampaignRepeatAccess, getIndiaDateKey } from "@/lib/campaign-repeat";
 
 export async function GET() {
   const session = await auth();
@@ -32,12 +33,14 @@ export async function GET() {
       remainingBudget: true,
       totalBudget: true,
       submissionMode: true,
+      repeatAccessMode: true,
     },
     orderBy: { createdAt: "desc" },
   });
 
   const campaignIds = campaigns.map((campaign) => campaign.id);
-  const [occupiedCounts, userSubmissionCounts] = campaignIds.length
+  const todayKey = getIndiaDateKey();
+  const [occupiedCounts, userSubmissionCounts, repeatRequests] = campaignIds.length
     ? await Promise.all([
         prisma.submission.groupBy({
           by: ["campaignId"],
@@ -59,14 +62,28 @@ export async function GET() {
           },
           _count: { _all: true },
         }),
+        prisma.campaignRepeatRequest.findMany({
+          where: {
+            campaignId: { in: campaignIds },
+            userId: session.user.id,
+            requestDateKey: todayKey,
+          },
+          select: {
+            campaignId: true,
+            status: true,
+          },
+        }),
       ])
-    : [[], []];
+    : [[], [], []];
 
   const occupiedCountMap = new Map(
     occupiedCounts.map((item) => [item.campaignId, item._count._all])
   );
   const userSubmissionCountMap = new Map(
     userSubmissionCounts.map((item) => [item.campaignId, item._count._all])
+  );
+  const repeatRequestStatusMap = new Map(
+    repeatRequests.map((item) => [item.campaignId, item.status])
   );
 
   const campaignsWithLimits = campaigns.map((campaign) => {
@@ -79,6 +96,12 @@ export async function GET() {
     const userSubmissionCount = userSubmissionCountMap.get(campaign.id) ?? 0;
     const blockedBySubmissionMode =
       campaign.submissionMode === "ONE_PER_USER" && userSubmissionCount > 0;
+    const repeatAccess = getCampaignRepeatAccess({
+      submissionMode: campaign.submissionMode,
+      repeatAccessMode: campaign.repeatAccessMode,
+      userSubmissionCount,
+      repeatRequestStatus: repeatRequestStatusMap.get(campaign.id) ?? null,
+    });
 
     return {
       ...campaign,
@@ -86,7 +109,11 @@ export async function GET() {
       usedSubmissions: occupiedSubmissions,
       leftSubmissions,
       userSubmissionCount,
-      blockedBySubmissionMode,
+      blockedBySubmissionMode: blockedBySubmissionMode || repeatAccess.blockedByRepeatRule,
+      blockedByRepeatRule: repeatAccess.blockedByRepeatRule,
+      repeatRequestStatus: repeatRequestStatusMap.get(campaign.id) ?? null,
+      repeatAccessMode: campaign.repeatAccessMode,
+      repeatRequestReason: repeatAccess.reason,
       submissionMode: campaign.submissionMode,
     };
   });

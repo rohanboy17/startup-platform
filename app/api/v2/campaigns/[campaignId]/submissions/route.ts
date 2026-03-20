@@ -5,6 +5,7 @@ import { getDailyResetState } from "@/lib/level";
 import { getClientIp } from "@/lib/ip";
 import { checkIpAccess, createSecurityEvent } from "@/lib/security";
 import { autoFlagSuspiciousUser } from "@/lib/safety";
+import { getCampaignRepeatAccess, getIndiaDateKey } from "@/lib/campaign-repeat";
 
 function stableIndex(input: string, length: number) {
   if (length <= 0) return 0;
@@ -38,6 +39,7 @@ export async function GET(
       totalBudget: true,
       remainingBudget: true,
       submissionMode: true,
+      repeatAccessMode: true,
       status: true,
       instructions: {
         orderBy: { sequence: "asc" },
@@ -66,7 +68,8 @@ export async function GET(
   }
 
   const allowedSubmissions = Math.max(1, Math.floor(campaign.totalBudget / campaign.rewardPerTask));
-  const [occupiedSubmissions, userSubmissionCount] = await Promise.all([
+  const todayKey = getIndiaDateKey();
+  const [occupiedSubmissions, userSubmissionCount, repeatRequest] = await Promise.all([
     prisma.submission.count({
       where: {
         campaignId,
@@ -83,16 +86,35 @@ export async function GET(
         userId: session.user.id,
       },
     }),
+    prisma.campaignRepeatRequest.findFirst({
+      where: {
+        campaignId,
+        userId: session.user.id,
+        requestDateKey: todayKey,
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        status: true,
+        createdAt: true,
+      },
+    }),
   ]);
 
   const leftSubmissions = Math.max(0, allowedSubmissions - occupiedSubmissions);
   const blockedBySubmissionMode =
     campaign.submissionMode === "ONE_PER_USER" && userSubmissionCount > 0;
+  const repeatAccess = getCampaignRepeatAccess({
+    submissionMode: campaign.submissionMode,
+    repeatAccessMode: campaign.repeatAccessMode,
+    userSubmissionCount,
+    repeatRequestStatus: repeatRequest?.status ?? null,
+  });
   const isAvailable =
     campaign.status === "LIVE" &&
     campaign.remainingBudget >= campaign.rewardPerTask &&
     leftSubmissions > 0 &&
-    !blockedBySubmissionMode;
+    !blockedBySubmissionMode &&
+    !repeatAccess.blockedByRepeatRule;
   const remainingInstructions = campaign.instructions.slice(occupiedSubmissions);
   const instructionPool =
     remainingInstructions.length > 0 ? remainingInstructions : campaign.instructions;
@@ -114,7 +136,12 @@ export async function GET(
       leftSubmissions,
       userSubmissionCount,
       submissionMode: campaign.submissionMode,
-      blockedBySubmissionMode,
+      blockedBySubmissionMode: blockedBySubmissionMode || repeatAccess.blockedByRepeatRule,
+      blockedByRepeatRule: repeatAccess.blockedByRepeatRule,
+      repeatAccessMode: campaign.repeatAccessMode,
+      repeatRequestStatus: repeatRequest?.status ?? null,
+      canRequestTomorrow: campaign.status === "LIVE" && repeatAccess.canRequestTomorrow,
+      repeatRequestReason: repeatAccess.reason,
       isAvailable,
       currentInstruction,
     },
@@ -176,6 +203,7 @@ export async function POST(
       totalBudget: true,
       remainingBudget: true,
       submissionMode: true,
+      repeatAccessMode: true,
     },
   });
 
@@ -228,18 +256,42 @@ export async function POST(
           ],
         },
       });
+      const existingUserSubmissionCount = await tx.submission.count({
+        where: {
+          campaignId,
+          userId: session.user.id,
+        },
+      });
 
       if (campaign.submissionMode === "ONE_PER_USER") {
-        const existingUserSubmissionCount = await tx.submission.count({
-          where: {
-            campaignId,
-            userId: session.user.id,
-          },
-        });
-
         if (existingUserSubmissionCount > 0) {
           throw new Error("This campaign allows only one submission per user.");
         }
+      }
+
+      const repeatRequest = await tx.campaignRepeatRequest.findFirst({
+        where: {
+          campaignId,
+          userId: session.user.id,
+          requestDateKey: getIndiaDateKey(),
+        },
+        orderBy: { createdAt: "desc" },
+        select: { status: true },
+      });
+
+      const repeatAccess = getCampaignRepeatAccess({
+        submissionMode: campaign.submissionMode,
+        repeatAccessMode: campaign.repeatAccessMode,
+        userSubmissionCount: existingUserSubmissionCount,
+        repeatRequestStatus: repeatRequest?.status ?? null,
+      });
+
+      if (repeatAccess.blockedByRepeatRule) {
+        throw new Error(
+          repeatAccess.reason === "requested_users_only"
+            ? "This campaign is currently running only for approved requested users."
+            : "Request tomorrow access from the task page before submitting again."
+        );
       }
 
       if (occupiedSubmissionCount >= maxCampaignSubmissions) {

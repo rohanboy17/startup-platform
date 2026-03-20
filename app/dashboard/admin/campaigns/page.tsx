@@ -2,10 +2,12 @@ import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import AdminCampaignActions from "@/components/admin-campaign-actions";
 import AdminCampaignEscalationControls from "@/components/admin-campaign-escalation-controls";
+import AdminCampaignRepeatControls from "@/components/admin-campaign-repeat-controls";
 import { formatMoney } from "@/lib/format-money";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { getTranslations } from "next-intl/server";
 
 type SearchParams = {
   q?: string;
@@ -19,6 +21,7 @@ export default async function AdminCampaignsPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  const tRepeat = await getTranslations("admin.repeatCampaigns");
   const params = await searchParams;
   const q = params.q?.trim() || "";
   const statusFilter = params.status || "ALL";
@@ -84,6 +87,23 @@ export default async function AdminCampaignsPage({
     include: {
       business: {
         select: { name: true, email: true },
+      },
+      repeatRequests: {
+        orderBy: { createdAt: "desc" },
+        take: 20,
+        select: {
+          id: true,
+          status: true,
+          requestDateKey: true,
+          createdAt: true,
+          reviewNote: true,
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        },
       },
       _count: {
         select: { submissions: true },
@@ -191,6 +211,16 @@ export default async function AdminCampaignsPage({
                     ? "One submission per user"
                     : "Many submissions per user"}
                 </p>
+                {campaign.submissionMode === "MULTIPLE_PER_USER" ? (
+                  <p className="text-sm text-foreground/70">
+                    {tRepeat("ruleSummaryLabel")}{" "}
+                    {campaign.repeatAccessMode === "REQUESTED_ONLY"
+                      ? tRepeat("modes.requestedOnly")
+                      : campaign.repeatAccessMode === "REQUESTED_PLUS_NEW"
+                        ? tRepeat("modes.requestedPlusNew")
+                        : tRepeat("modes.open")}
+                  </p>
+                ) : null}
                 {campaign.tutorialVideoUrl ? (
                   <p className="text-sm text-foreground/70">
                     Tutorial video: attached
@@ -241,6 +271,16 @@ export default async function AdminCampaignsPage({
                   initialTotalBudget={campaign.totalBudget}
                   initialSubmissionMode={campaign.submissionMode}
                 />
+                {campaign.submissionMode === "MULTIPLE_PER_USER" && campaign.status === "LIVE" ? (
+                  <AdminCampaignRepeatControls
+                    campaignId={campaign.id}
+                    initialRepeatAccessMode={campaign.repeatAccessMode}
+                    requests={campaign.repeatRequests.map((item) => ({
+                      ...item,
+                      createdAt: item.createdAt.toISOString(),
+                    }))}
+                  />
+                ) : null}
               </CardContent>
             </Card>
           ))

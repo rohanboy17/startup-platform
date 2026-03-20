@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { ArrowLeft, ExternalLink, ShieldAlert } from "lucide-react";
+import { ArrowLeft, ExternalLink, Send, ShieldAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,6 +31,11 @@ type CampaignResponse = {
     userSubmissionCount: number;
     submissionMode: "ONE_PER_USER" | "MULTIPLE_PER_USER";
     blockedBySubmissionMode: boolean;
+    blockedByRepeatRule: boolean;
+    repeatAccessMode: "OPEN" | "REQUESTED_ONLY" | "REQUESTED_PLUS_NEW";
+    repeatRequestStatus: "PENDING" | "APPROVED" | "REJECTED" | null;
+    canRequestTomorrow: boolean;
+    repeatRequestReason: string | null;
     isAvailable: boolean;
     instructions: Array<{
       id: string;
@@ -70,6 +75,8 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
   const [uploading, setUploading] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [repeatRequestMessage, setRepeatRequestMessage] = useState("");
+  const [requestingTomorrow, setRequestingTomorrow] = useState(false);
 
   const load = useCallback(async () => {
     const res = await fetch(`/api/v2/campaigns/${campaignId}/submissions`, { credentials: "include" });
@@ -184,6 +191,37 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
     setProofText("");
     setProofImageUrl(null);
     setSubmitMessage(parsed.message || t("sent"));
+    emitDashboardLiveRefresh();
+    await load();
+  };
+
+  const requestTomorrow = async () => {
+    setRequestingTomorrow(true);
+    setRepeatRequestMessage("");
+
+    const res = await fetch(`/api/v2/campaigns/${campaignId}/repeat-request`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({}),
+    });
+
+    const raw = await res.text();
+    let parsed: { error?: string; message?: string } = {};
+    try {
+      parsed = raw ? (JSON.parse(raw) as { error?: string; message?: string }) : {};
+    } catch {
+      parsed = { error: t("unexpected") };
+    }
+
+    setRequestingTomorrow(false);
+
+    if (!res.ok) {
+      setRepeatRequestMessage(parsed.error || t("repeatRequestFailed"));
+      return;
+    }
+
+    setRepeatRequestMessage(parsed.message || t("repeatRequestSent"));
     emitDashboardLiveRefresh();
     await load();
   };
@@ -318,6 +356,53 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
                 {relativeStatusText(t, campaign.isAvailable, campaign.leftSubmissions)}
               </p>
             </div>
+
+            {campaign.submissionMode === "MULTIPLE_PER_USER" ? (
+              <div className="rounded-2xl border border-sky-400/20 bg-sky-500/10 p-4">
+                <p className="text-xs uppercase tracking-[0.16em] text-sky-200/75">
+                  {t("repeatRequestEyebrow")}
+                </p>
+                <p className="mt-3 text-sm text-white/85">
+                  {campaign.repeatAccessMode === "REQUESTED_ONLY"
+                    ? t("repeatRuleRequestedOnly")
+                    : campaign.repeatAccessMode === "REQUESTED_PLUS_NEW"
+                      ? t("repeatRuleRequestedPlusNew")
+                      : t("repeatRuleOpen")}
+                </p>
+                {campaign.repeatRequestStatus ? (
+                  <p className="mt-2 text-xs text-white/60">
+                    {campaign.repeatRequestStatus === "PENDING"
+                      ? t("repeatStatusPending")
+                      : campaign.repeatRequestStatus === "APPROVED"
+                        ? t("repeatStatusApproved")
+                        : t("repeatStatusRejected")}
+                  </p>
+                ) : null}
+                {campaign.canRequestTomorrow ? (
+                  <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-xs text-white/60">{t("repeatRequestBody")}</p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => void requestTomorrow()}
+                      disabled={requestingTomorrow || campaign.repeatRequestStatus === "PENDING"}
+                    >
+                      <Send size={16} />
+                      {requestingTomorrow ? t("repeatRequestSending") : t("repeatRequestCta")}
+                    </Button>
+                  </div>
+                ) : campaign.userSubmissionCount > 0 ? (
+                  <p className="mt-4 text-xs text-white/60">
+                    {campaign.repeatRequestStatus === "PENDING"
+                      ? t("repeatAlreadyPending")
+                      : t("repeatRequestWait")}
+                  </p>
+                ) : null}
+                {repeatRequestMessage ? (
+                  <p className="mt-3 text-xs text-sky-100">{repeatRequestMessage}</p>
+                ) : null}
+              </div>
+            ) : null}
           </CardContent>
         </Card>
 

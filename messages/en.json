@@ -575,7 +575,10 @@
       "pushEnableFailed": "Unable to enable push notifications",
       "pushEnabled": "Notifications enabled. We will alert you when new campaigns go live.",
       "failed": "Failed to load campaigns",
-      "unexpected": "Unexpected server response"
+      "unexpected": "Unexpected server response",
+      "repeatPending": "Tomorrow request is under review.",
+      "requestedUsersOnly": "This run is limited to approved requested users only.",
+      "repeatRequestNeeded": "Request tomorrow access to continue on this task."
     },
     "taskDetail": {
       "loading": "Loading campaign details...",
@@ -624,7 +627,21 @@
       "unexpected": "Unexpected server response",
       "submissionFailed": "Submission failed",
       "sent": "Submission sent for review.",
-      "taskLink": "Open task link"
+      "taskLink": "Open task link",
+      "repeatRequestEyebrow": "Tomorrow access",
+      "repeatRuleOpen": "This many-submission task is still open. After you complete work today, you can request tomorrow access if you want to continue.",
+      "repeatRuleRequestedOnly": "This running campaign is currently limited to approved requested users only.",
+      "repeatRuleRequestedPlusNew": "This running campaign accepts approved requested users and brand-new users who have not submitted yet.",
+      "repeatStatusPending": "Your tomorrow request is under review.",
+      "repeatStatusApproved": "Your tomorrow request is approved.",
+      "repeatStatusRejected": "Your previous tomorrow request was not approved.",
+      "repeatRequestBody": "Want to continue this task tomorrow? Send a request so admin can review it for the next run.",
+      "repeatRequestCta": "Request for tomorrow",
+      "repeatRequestSending": "Sending request...",
+      "repeatRequestSent": "Your tomorrow request is under review.",
+      "repeatRequestFailed": "Unable to send tomorrow request right now.",
+      "repeatAlreadyPending": "Your request is already pending. Please wait for admin review.",
+      "repeatRequestWait": "After you complete at least one submission, you can request tomorrow access for this running task."
     },
     "referrals": {
       "loading": "Loading referrals...",
@@ -2123,6 +2140,42 @@
       "errors": {
         "unexpected": "Unexpected server response",
         "actionFailed": "Action failed"
+      }
+    },
+    "repeatCampaigns": {
+      "subtitle": "Decide whether this running campaign is open to everyone, only approved repeat requesters, or approved repeat requesters plus new users.",
+      "ruleLabel": "Participation rule while campaign is running",
+      "ruleSummaryLabel": "Tomorrow repeat rule:",
+      "saving": "Saving...",
+      "saveRule": "Save rule",
+      "empty": "No tomorrow requests for this campaign yet.",
+      "requestedFor": "Requested for {date} ? {createdAt}",
+      "reviewNotePlaceholder": "Optional review note",
+      "approve": "Approve",
+      "reject": "Reject",
+      "moveToPending": "Move to pending",
+      "modes": {
+        "open": "Open to everyone",
+        "requestedOnly": "Approved requested users only",
+        "requestedPlusNew": "Approved requested users + new users"
+      },
+      "cards": {
+        "pending": {
+          "title": "Pending",
+          "body": "Repeat requests waiting for an admin decision."
+        },
+        "approved": {
+          "title": "Approved",
+          "body": "Users already approved to continue in the next run."
+        },
+        "rejected": {
+          "title": "Rejected",
+          "body": "Requests reviewed but not approved for the next run."
+        }
+      },
+      "messages": {
+        "ruleUpdated": "Repeat rule updated.",
+        "requestUpdated": "Request updated."
       }
     }
   },

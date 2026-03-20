@@ -183,6 +183,7 @@ export async function PUT(
     rewardPerTask?: number;
     totalBudget?: number;
     submissionMode?: "ONE_PER_USER" | "MULTIPLE_PER_USER";
+    repeatAccessMode?: "OPEN" | "REQUESTED_ONLY" | "REQUESTED_PLUS_NEW";
   };
 
   const campaign = await prisma.campaign.findUnique({
@@ -198,6 +199,7 @@ export async function PUT(
       totalBudget: true,
       remainingBudget: true,
       submissionMode: true,
+      repeatAccessMode: true,
     },
   });
 
@@ -216,6 +218,7 @@ export async function PUT(
   const rewardPerTask = Number(body.rewardPerTask ?? campaign.rewardPerTask);
   const totalBudget = Number(body.totalBudget ?? campaign.totalBudget);
   const submissionMode = body.submissionMode ?? campaign.submissionMode;
+  const repeatAccessMode = body.repeatAccessMode ?? campaign.repeatAccessMode;
 
   if (!title || !description || !category) {
     return NextResponse.json({ error: "Title, description and category are required" }, { status: 400 });
@@ -228,6 +231,9 @@ export async function PUT(
   }
   if (!["ONE_PER_USER", "MULTIPLE_PER_USER"].includes(submissionMode)) {
     return NextResponse.json({ error: "Invalid submission mode" }, { status: 400 });
+  }
+  if (!["OPEN", "REQUESTED_ONLY", "REQUESTED_PLUS_NEW"].includes(repeatAccessMode)) {
+    return NextResponse.json({ error: "Invalid repeat access mode" }, { status: 400 });
   }
   if (body.tutorialVideoUrl !== undefined && body.tutorialVideoUrl?.trim() && !tutorialVideoUrl) {
     return NextResponse.json(
@@ -257,6 +263,7 @@ export async function PUT(
         totalBudget,
         remainingBudget: totalBudget - spent,
         submissionMode,
+        repeatAccessMode,
       },
     });
 

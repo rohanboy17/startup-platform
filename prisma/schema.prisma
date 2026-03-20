@@ -81,6 +81,7 @@ model User {
   skills UserSkill[]
   campaignAssignments CampaignAssignment[]
   campaignAssignmentsAssignedBy CampaignAssignment[] @relation("CampaignAssignmentAssignedBy")
+  campaignRepeatRequests CampaignRepeatRequest[]
   communityFeedback CommunityFeedback[] @relation("CommunityFeedbackAuthor")
   reviewedCommunityFeedback CommunityFeedback[] @relation("CommunityFeedbackReviewer")
   deletedAt DateTime?
@@ -223,6 +224,7 @@ model Campaign {
   totalBudget     Float
   remainingBudget Float
   submissionMode  CampaignSubmissionMode @default(MULTIPLE_PER_USER)
+  repeatAccessMode CampaignRepeatAccessMode @default(OPEN)
   status          CampaignStatus        @default(PENDING)
   escalatedAt     DateTime?
   escalationReason String?
@@ -230,6 +232,7 @@ model Campaign {
   submissions     Submission[]
   instructions    CampaignInstruction[]
   assignments    CampaignAssignment[]
+  repeatRequests CampaignRepeatRequest[]
 }
 
 model Skill {
@@ -268,6 +271,25 @@ model CampaignAssignment {
   @@unique([campaignId, userId])
   @@index([userId])
   @@index([campaignId])
+}
+
+model CampaignRepeatRequest {
+  id               String                    @id @default(cuid())
+  campaignId       String
+  userId           String
+  status           CampaignRepeatRequestStatus @default(PENDING)
+  requestDateKey   String
+  createdAt        DateTime                  @default(now())
+  reviewedAt       DateTime?
+  reviewedByUserId String?
+  reviewNote       String?
+
+  campaign         Campaign                  @relation(fields: [campaignId], references: [id])
+  user             User                      @relation(fields: [userId], references: [id])
+
+  @@unique([campaignId, userId, requestDateKey])
+  @@index([campaignId, status, createdAt])
+  @@index([userId, status, createdAt])
 }
 
 model CampaignInstruction {
@@ -628,6 +650,12 @@ enum CampaignSubmissionMode {
   MULTIPLE_PER_USER
 }
 
+enum CampaignRepeatAccessMode {
+  OPEN
+  REQUESTED_ONLY
+  REQUESTED_PLUS_NEW
+}
+
 enum ManagerQueueSort {
   NEWEST
   OLDEST
@@ -742,6 +770,12 @@ enum CoinRedemptionStatus {
 }
 
 enum CommunityFeedbackStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum CampaignRepeatRequestStatus {
   PENDING
   APPROVED
   REJECTED

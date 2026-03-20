@@ -23,6 +23,10 @@ type Campaign = {
   leftSubmissions: number;
   userSubmissionCount: number;
   blockedBySubmissionMode: boolean;
+  blockedByRepeatRule: boolean;
+  repeatAccessMode: "OPEN" | "REQUESTED_ONLY" | "REQUESTED_PLUS_NEW";
+  repeatRequestStatus: "PENDING" | "APPROVED" | "REJECTED" | null;
+  repeatRequestReason: string | null;
   submissionMode: "ONE_PER_USER" | "MULTIPLE_PER_USER";
 };
 
@@ -112,7 +116,13 @@ export default function UserCampaignsPanel() {
                 </p>
                 {campaign.blockedBySubmissionMode ? (
                   <p className="text-xs text-amber-200">
-                    {t("blocked")}
+                    {campaign.blockedByRepeatRule
+                      ? campaign.repeatRequestStatus === "PENDING"
+                        ? t("repeatPending")
+                        : campaign.repeatRequestReason === "requested_users_only"
+                          ? t("requestedUsersOnly")
+                          : t("repeatRequestNeeded")
+                      : t("blocked")}
                   </p>
                 ) : null}
                 <div className="grid gap-3 sm:grid-cols-2">
