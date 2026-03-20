@@ -41,7 +41,6 @@ export default async function UserLayout({
             displayName={displayName}
             role="USER"
             userId={session.user.id}
-            showForgotPasswordInNav
             items={[
               { key: "user.overview", href: "/dashboard/user", label: "Overview", labelKey: "overview", icon: "overview" },
               { key: "user.tasks", href: "/dashboard/user/tasks", label: "Tasks", labelKey: "tasks", icon: "tasks" },

@@ -220,6 +220,16 @@ export default function DashboardTabNav({
         </div>
 
         <nav className="max-h-[50svh] space-y-2 overflow-y-auto pr-1 text-sm md:max-h-none md:space-y-4 md:overflow-visible md:pr-0">
+          <Link
+            href="/"
+            onClick={() => setMobileOpen(false)}
+            className="flex min-h-11 items-center justify-between rounded-xl border border-foreground/10 bg-background/60 px-3 py-2 text-foreground/75 transition hover:bg-foreground/[0.06] hover:text-foreground md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:px-0 md:py-0"
+          >
+            <span className="flex items-center gap-3">
+              <House size={18} />
+              {tShell("mainHome")}
+            </span>
+          </Link>
           {itemsWithState.map((item) => (
             <Link
               key={item.key}
@@ -246,14 +256,6 @@ export default function DashboardTabNav({
           <div className="mb-3 md:hidden">
             <ThemeToggle className="w-full justify-center rounded-xl py-2 text-sm" />
           </div>
-          <Link
-            href="/"
-            onClick={() => setMobileOpen(false)}
-            className="mb-3 flex items-center gap-3 text-sm text-foreground/70 transition hover:text-foreground"
-          >
-            <House size={18} />
-            {tShell("mainHome")}
-          </Link>
           {showForgotPasswordInNav ? (
             <Link
               href="/forgot-password"
