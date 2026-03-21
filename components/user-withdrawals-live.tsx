@@ -22,6 +22,10 @@ type WithdrawalItem = {
 
 type WithdrawalsPayload = {
   balance: number;
+  defaults: {
+    upiId: string | null;
+    upiName: string | null;
+  };
   metrics: {
     pendingAmount: number;
     approvedAmount: number;
@@ -104,6 +108,8 @@ export default function UserWithdrawalsLive({ minAmount }: { minAmount: number }
               minAmount={minAmount}
               availableBalance={data?.balance}
               emergencyRemaining={data?.metrics.emergencyRemaining}
+              defaultUpiId={data?.defaults.upiId}
+              defaultUpiName={data?.defaults.upiName}
             />
         </SectionCard>
 

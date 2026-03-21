@@ -178,7 +178,6 @@ export default function ManagerRiskPanel() {
         <Card className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Flagged users</p>
               <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("sections.flaggedUsers.title")}</p>
               <p className="mt-1 text-sm text-white/60">{t("sections.flaggedUsers.subtitle")}</p>
             </div>
@@ -283,7 +282,7 @@ export default function ManagerRiskPanel() {
                       <div className="min-w-0">
                         <p className="font-medium text-white break-words">{user.name || t("sections.highVelocity.unnamed")}</p>
                         <p className="text-sm text-white/60">
-                          {user.level} | Approved {user.totalApproved} | Rejected {user.totalRejected}
+                          {user.level} | {t("sections.flaggedUsers.approved", { count: user.totalApproved })} | {t("sections.flaggedUsers.rejected", { count: user.totalRejected })}
                         </p>
                       </div>
                       <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-xs text-white/80">
@@ -321,7 +320,7 @@ export default function ManagerRiskPanel() {
                       </span>
                     </div>
                     <p className="mt-1 text-sm text-white/60">
-                      {user.level} | Approved {user.totalApproved} | Rejected {user.totalRejected}
+                      {user.level} | {t("sections.flaggedUsers.approved", { count: user.totalApproved })} | {t("sections.flaggedUsers.rejected", { count: user.totalRejected })}
                     </p>
                     {user.isSuspicious ? (
                       <p className="mt-2 text-xs text-amber-100/80">{t("sections.rejectionOutliers.alreadyFlagged")}</p>

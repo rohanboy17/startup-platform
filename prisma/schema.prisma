@@ -351,6 +351,8 @@ model BusinessFunding {
   amount           Float
   referenceId      String                @unique
   utr              String?
+  payoutUpiId      String?
+  payoutUpiName    String?
   proofImage       String
   status           BusinessFundingStatus @default(PENDING)
   flaggedReason    String?
@@ -660,6 +662,8 @@ enum CampaignRepeatAccessMode {
   OPEN
   REQUESTED_ONLY
   REQUESTED_PLUS_NEW
+  FRESH_CAMPAIGN_ONLY
+  FRESH_PLATFORM_ONLY
 }
 
 enum ManagerQueueSort {

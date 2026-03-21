@@ -479,7 +479,23 @@
       "noActivity": "No activity yet. Complete a task or request a withdrawal to populate the timeline.",
       "loading": "Loading user overview...",
       "failed": "Failed to load overview",
-      "unexpected": "Unexpected server response"
+      "unexpected": "Unexpected server response",
+      "subtitle": "Track your balance, approvals, withdrawal status, and current level without switching between tabs.",
+      "kpiCurrentLevel": "Current level",
+      "levelGuideSubtitle": "Your daily level changes your take-home reward on marketing tasks.",
+      "levelBenefitsEyebrow": "Level benefits",
+      "levelBenefitsTitle": "See exactly how each level pays",
+      "levelBenefitsBody": "Marketing tasks pay your current level share. Right now that is {marketing}% to your wallet. Work tasks stay fixed at {work}% to your wallet.",
+      "currentBadge": "Current",
+      "levelRange": "{min} to {max} approved today",
+      "levelRangeOpen": "{min}+ approved today",
+      "walletShare": "Wallet share: {percent}%",
+      "commissionCut": "Platform commission: {percent}%",
+      "workCommissionEyebrow": "Work job commission",
+      "workCommissionTitle": "Flat payout for work-based jobs",
+      "workCommissionBody": "Work jobs do not change with your daily level. They currently credit a fixed {percent}% share to your wallet after approval.",
+      "workCommissionWalletShare": "Wallet share",
+      "workCommissionPlatformCut": "Platform commission: {percent}%"
     },
     "wallet": {
       "eyebrow": "Money center",
@@ -598,7 +614,7 @@
       "loading": "Loading campaigns...",
       "empty": "No live campaigns right now.",
       "openTaskLink": "Open task link",
-      "budgetLeft": "Budget left: INR {amount}",
+      "budgetLeft": "Wallet budget left: INR {amount}",
       "allowed": "Allowed",
       "used": "Used",
       "slotsLeft": "Slots Left",
@@ -622,7 +638,11 @@
       "unexpected": "Unexpected server response",
       "repeatPending": "Tomorrow request is under review.",
       "requestedUsersOnly": "This run is limited to approved requested users only.",
-      "repeatRequestNeeded": "Request tomorrow access to continue on this task."
+      "repeatRequestNeeded": "Request tomorrow access to continue on this task.",
+      "budgetTotal": "Wallet budget total: INR {amount}",
+      "walletRewardHint": "Wallet credit on approval for {level}: {percent}% share",
+      "freshCampaignOnly": "Fresh users only for this campaign.",
+      "freshPlatformOnly": "Fresh platform users only."
     },
     "taskDetail": {
       "loading": "Loading campaign details...",
@@ -688,7 +708,11 @@
       "repeatRequestWait": "After you complete at least one submission, you can request tomorrow access for this running task.",
       "copyInstruction": "Copy instruction",
       "instructionCopied": "Instruction copied",
-      "instructionCopyFailed": "Unable to copy instruction"
+      "instructionCopyFailed": "Unable to copy instruction",
+      "repeatRuleFreshCampaignOnly": "Only fresh users who have not submitted this campaign before can join right now.",
+      "repeatRuleFreshPlatformOnly": "Only completely fresh users who have not submitted any campaign before can join right now.",
+      "repeatFreshCampaignOnly": "This run is limited to users who have never submitted this campaign before.",
+      "repeatFreshPlatformOnly": "This run is limited to new users who have never submitted any campaign before."
     },
     "referrals": {
       "loading": "Loading referrals...",
@@ -1250,7 +1274,11 @@
         "ready": "Screenshot ready for verification.",
         "remove": "Remove screenshot",
         "submitting": "Submitting...",
-        "verifyButton": "Verify payment"
+        "verifyButton": "Verify payment",
+        "payoutUpiIdLabel": "Payout UPI ID",
+        "payoutUpiIdPlaceholder": "Auto-filled from settings if saved",
+        "payoutUpiNameLabel": "Payout name",
+        "payoutUpiNamePlaceholder": "Optional display name for payout"
       },
       "whatsapp": {
         "title": "Funding request sent for review",
@@ -1290,7 +1318,9 @@
         "reviewFlag": "Review flag: {reason}",
         "adminNote": "Admin note: {note}",
         "reviewed": "Reviewed: {date}",
-        "proofTitle": "Funding proof screenshot"
+        "proofTitle": "Funding proof screenshot",
+        "payoutUpiId": "Payout UPI ID: {value}",
+        "payoutUpiName": "Payout name: {value}"
       },
       "walletActivity": {
         "eyebrow": "Wallet activity",
@@ -1685,7 +1715,9 @@
         "eyebrow": "Billing and policies",
         "title": "Refund and billing preferences",
         "billingDetails": "Billing details",
-        "refundPreference": "Refund preference"
+        "refundPreference": "Refund preference",
+        "defaultPayoutUpiId": "Default payout UPI ID",
+        "defaultPayoutUpiName": "Default payout name"
       },
       "notifications": {
         "eyebrow": "Notification preferences",
@@ -1748,7 +1780,9 @@
         "proof": "Proof",
         "openScreenshot": "Open screenshot",
         "reviewReason": "Why it was rejected",
-        "screenshotUploaded": "Screenshot attached. Use the preview button to open it."
+        "screenshotUploaded": "Screenshot attached. Use the preview button to open it.",
+        "proofHiddenUntilManagerReview": "Proof stays hidden until manager review is complete.",
+        "proofUnlockHelp": "Once a manager approves or rejects this response, the screenshot and proof details unlock here."
       },
       "openProof": "Open proof"
     },
@@ -2133,7 +2167,8 @@
         "waitingForReview": "Still waiting for review",
         "reviewedBy": "By {value}",
         "reviewFlag": "Review flag: {value}",
-        "reviewNote": "Review note: {value}"
+        "reviewNote": "Review note: {value}",
+        "payoutDetails": "Payout details"
       },
       "refund": {
         "title": "Manual Business Refunds",
@@ -2301,7 +2336,7 @@
       }
     },
     "repeatCampaigns": {
-      "subtitle": "Decide whether this running campaign is open to everyone, only approved repeat requesters, or approved repeat requesters plus new users.",
+      "subtitle": "Decide whether this running campaign is open to everyone, only approved repeat requesters, approved repeat requesters plus new users, or fresh users only.",
       "ruleLabel": "Participation rule while campaign is running",
       "ruleSummaryLabel": "Tomorrow repeat rule:",
       "saving": "Saving...",
@@ -2315,7 +2350,9 @@
       "modes": {
         "open": "Open to everyone",
         "requestedOnly": "Approved requested users only",
-        "requestedPlusNew": "Approved requested users + new users"
+        "requestedPlusNew": "Approved requested users + new users",
+        "freshCampaignOnly": "Fresh users only for this campaign",
+        "freshPlatformOnly": "Fresh users only across platform"
       },
       "cards": {
         "pending": {
@@ -2445,7 +2482,8 @@
         "tutorialVideoUrl": "Tutorial video URL (YouTube, Loom, or direct video)",
         "description": "Description",
         "rewardPerTask": "Reward per task",
-        "totalBudget": "Total budget"
+        "totalBudget": "Total budget",
+        "instructions": "Instructions (one per line)"
       },
       "labels": {
         "escalatedAt": "Escalated: {date}"

@@ -3,6 +3,15 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { normalizeTutorialVideoUrl } from "@/lib/tutorial-video";
 import { normalizeTaskSelection } from "@/lib/task-categories";
+import { getAppSettings } from "@/lib/system-settings";
+
+function parseInstructionLines(input: unknown) {
+  if (!Array.isArray(input)) return [];
+
+  return input
+    .map((item) => (typeof item === "string" ? item.trim() : ""))
+    .filter(Boolean);
+}
 
 export async function PATCH(
   req: Request,
@@ -186,8 +195,14 @@ export async function PUT(
     tutorialVideoUrl?: string | null;
     rewardPerTask?: number;
     totalBudget?: number;
+    instructions?: string[];
     submissionMode?: "ONE_PER_USER" | "MULTIPLE_PER_USER";
-    repeatAccessMode?: "OPEN" | "REQUESTED_ONLY" | "REQUESTED_PLUS_NEW";
+    repeatAccessMode?:
+      | "OPEN"
+      | "REQUESTED_ONLY"
+      | "REQUESTED_PLUS_NEW"
+      | "FRESH_CAMPAIGN_ONLY"
+      | "FRESH_PLATFORM_ONLY";
   };
 
   const campaign = await prisma.campaign.findUnique({
@@ -207,6 +222,9 @@ export async function PUT(
       remainingBudget: true,
       submissionMode: true,
       repeatAccessMode: true,
+      instructions: {
+        orderBy: { sequence: "asc" },
+      },
     },
   });
 
@@ -217,11 +235,12 @@ export async function PUT(
   const title = body.title?.trim() || campaign.title;
   const description = body.description?.trim() || campaign.description;
   const category = body.category?.trim() || campaign.category;
+  const appSettings = await getAppSettings();
   const normalizedTaskSelection = normalizeTaskSelection({
     taskCategory: body.taskCategory ?? campaign.taskCategory,
     taskType: body.taskType ?? campaign.taskType,
     customTask: body.customTask === undefined ? campaign.customTask : body.customTask,
-  });
+  }, appSettings.taskCategories);
   const taskLink = body.taskLink === undefined ? campaign.taskLink : body.taskLink?.trim() || null;
   const tutorialVideoUrl =
     body.tutorialVideoUrl === undefined
@@ -229,6 +248,7 @@ export async function PUT(
       : normalizeTutorialVideoUrl(body.tutorialVideoUrl);
   const rewardPerTask = Number(body.rewardPerTask ?? campaign.rewardPerTask);
   const totalBudget = Number(body.totalBudget ?? campaign.totalBudget);
+  const instructions = parseInstructionLines(body.instructions ?? campaign.instructions.map((item) => item.instructionText));
   const submissionMode = body.submissionMode ?? campaign.submissionMode;
   const repeatAccessMode = body.repeatAccessMode ?? campaign.repeatAccessMode;
 
@@ -247,7 +267,15 @@ export async function PUT(
   if (!["ONE_PER_USER", "MULTIPLE_PER_USER"].includes(submissionMode)) {
     return NextResponse.json({ error: "Invalid submission mode" }, { status: 400 });
   }
-  if (!["OPEN", "REQUESTED_ONLY", "REQUESTED_PLUS_NEW"].includes(repeatAccessMode)) {
+  if (
+    ![
+      "OPEN",
+      "REQUESTED_ONLY",
+      "REQUESTED_PLUS_NEW",
+      "FRESH_CAMPAIGN_ONLY",
+      "FRESH_PLATFORM_ONLY",
+    ].includes(repeatAccessMode)
+  ) {
     return NextResponse.json({ error: "Invalid repeat access mode" }, { status: 400 });
   }
   if (body.tutorialVideoUrl !== undefined && body.tutorialVideoUrl?.trim() && !tutorialVideoUrl) {
@@ -284,6 +312,20 @@ export async function PUT(
         repeatAccessMode,
       },
     });
+
+    await tx.campaignInstruction.deleteMany({
+      where: { campaignId },
+    });
+
+    if (instructions.length > 0) {
+      await tx.campaignInstruction.createMany({
+        data: instructions.map((instructionText, index) => ({
+          campaignId,
+          instructionText,
+          sequence: index + 1,
+        })),
+      });
+    }
 
     await tx.activityLog.create({
       data: {

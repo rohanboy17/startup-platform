@@ -6,6 +6,7 @@ import { getMinFundingThreshold } from "@/lib/notifications";
 import { canManageBusinessBilling, getBusinessContext } from "@/lib/business-context";
 import { getManualBusinessFundingConfig } from "@/lib/manual-business-funding";
 import { getAppSettings } from "@/lib/system-settings";
+import { getBusinessSettings } from "@/lib/business-settings";
 
 export async function GET() {
   const session = await auth();
@@ -18,7 +19,7 @@ export async function GET() {
     return NextResponse.json({ error: "Business context not found" }, { status: 404 });
   }
 
-  const [wallet, campaignBudget, recentRequests, transactions, appSettings] = await Promise.all([
+  const [wallet, campaignBudget, recentRequests, transactions, appSettings, businessUser] = await Promise.all([
     ensureBusinessWalletSynced(context.businessUserId),
     prisma.campaign.aggregate({
       where: {
@@ -38,6 +39,8 @@ export async function GET() {
         amount: true,
         referenceId: true,
         utr: true,
+        payoutUpiId: true,
+        payoutUpiName: true,
         proofImage: true,
         status: true,
         flaggedReason: true,
@@ -59,6 +62,13 @@ export async function GET() {
       take: 12,
     }),
     getAppSettings(),
+    prisma.user.findUnique({
+      where: { id: context.businessUserId },
+      select: {
+        name: true,
+        email: true,
+      },
+    }),
   ]);
   const [refundRequests, pendingRefundAgg] = await Promise.all([
     prisma.businessRefundRequest.findMany({
@@ -87,6 +97,10 @@ export async function GET() {
 
   const config = getManualBusinessFundingConfig();
   const pendingCount = recentRequests.filter((item) => item.status === "PENDING").length;
+  const businessSettings = await getBusinessSettings(context.businessUserId, {
+    name: businessUser?.name,
+    email: businessUser?.email,
+  });
 
   return NextResponse.json({
     wallet: {
@@ -106,6 +120,10 @@ export async function GET() {
       canManageBilling: canManageBusinessBilling(context.accessRole),
       fundingFeeRate: appSettings.fundingFeeRate,
       businessRefundFeeRate: appSettings.businessRefundFeeRate,
+    },
+    defaults: {
+      payoutUpiId: businessSettings.defaultPayoutUpiId,
+      payoutUpiName: businessSettings.defaultPayoutUpiName,
     },
     requests: recentRequests,
     transactions,

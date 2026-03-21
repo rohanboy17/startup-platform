@@ -23,17 +23,21 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Only the business owner can submit funding requests" }, { status: 403 });
   }
 
-  const { amount, referenceId, proofImage, utr } = (await req.json()) as {
+  const { amount, referenceId, proofImage, utr, payoutUpiId, payoutUpiName } = (await req.json()) as {
     amount?: number;
     referenceId?: string;
     proofImage?: string;
     utr?: string;
+    payoutUpiId?: string;
+    payoutUpiName?: string;
   };
 
   const amountNumber = Number(amount);
   const normalizedReferenceId = typeof referenceId === "string" ? referenceId.trim().toUpperCase() : "";
   const normalizedProofImage = typeof proofImage === "string" ? proofImage.trim() : "";
   const normalizedUtr = typeof utr === "string" ? utr.trim() : "";
+  const normalizedPayoutUpiId = typeof payoutUpiId === "string" ? payoutUpiId.trim() : "";
+  const normalizedPayoutUpiName = typeof payoutUpiName === "string" ? payoutUpiName.trim() : "";
 
   if (Number.isNaN(amountNumber) || amountNumber <= 0) {
     return NextResponse.json({ error: "Enter a valid funding amount" }, { status: 400 });
@@ -125,6 +129,8 @@ export async function POST(req: Request) {
         referenceId: normalizedReferenceId,
         proofImage: normalizedProofImage,
         utr: normalizedUtr || null,
+        payoutUpiId: normalizedPayoutUpiId || null,
+        payoutUpiName: normalizedPayoutUpiName || null,
         flaggedReason,
       },
     });
@@ -134,7 +140,7 @@ export async function POST(req: Request) {
         userId: context.actorUserId,
         action: "BUSINESS_FUNDING_REQUEST_CREATED",
         entity: "BusinessFunding",
-        details: `fundingId=${funding.id}, businessId=${context.businessUserId}, referenceId=${normalizedReferenceId}, amount=${amountNumber}`,
+        details: `fundingId=${funding.id}, businessId=${context.businessUserId}, referenceId=${normalizedReferenceId}, amount=${amountNumber}, payoutUpiId=${normalizedPayoutUpiId || "-"}`,
       },
     });
 

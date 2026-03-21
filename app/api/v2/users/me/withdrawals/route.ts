@@ -13,6 +13,8 @@ export async function GET() {
       where: { id: session.user.id },
       select: {
         balance: true,
+        defaultUpiId: true,
+        defaultUpiName: true,
         monthlyEmergencyWithdrawCount: true,
         emergencyWithdrawMonthKey: true,
       },
@@ -40,6 +42,10 @@ export async function GET() {
 
   return NextResponse.json({
     balance: user?.balance ?? 0,
+    defaults: {
+      upiId: user?.defaultUpiId ?? null,
+      upiName: user?.defaultUpiName ?? null,
+    },
     metrics: {
       pendingAmount: pendingAmount._sum.amount ?? 0,
       approvedAmount: approvedAmount._sum.amount ?? 0,

@@ -79,6 +79,8 @@ export async function PATCH(req: Request) {
     companyName: settings.companyName.trim(),
     contactEmail: settings.contactEmail.trim(),
     supportContact: settings.supportContact.trim(),
+    defaultPayoutUpiId: settings.defaultPayoutUpiId.trim(),
+    defaultPayoutUpiName: settings.defaultPayoutUpiName.trim(),
     billingDetails: settings.billingDetails.trim(),
     refundPreference: settings.refundPreference.trim(),
     notificationPreferences: {

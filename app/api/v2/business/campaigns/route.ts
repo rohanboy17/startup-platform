@@ -6,6 +6,7 @@ import { CAMPAIGN_CATEGORY_OPTIONS } from "@/lib/campaign-options";
 import { canManageBusinessCampaigns, getBusinessContext } from "@/lib/business-context";
 import { normalizeExternalUrl } from "@/lib/external-url";
 import { normalizeTaskSelection } from "@/lib/task-categories";
+import { getAppSettings } from "@/lib/system-settings";
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -78,11 +79,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid category type" }, { status: 400 });
   }
 
+  const appSettings = await getAppSettings();
   const normalizedTaskSelection = normalizeTaskSelection({
     taskCategory,
     taskType,
     customTask,
-  });
+  }, appSettings.taskCategories);
 
   if ("error" in normalizedTaskSelection) {
     return NextResponse.json({ error: normalizedTaskSelection.error }, { status: 400 });

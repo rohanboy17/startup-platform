@@ -64,7 +64,7 @@ export async function GET(
 
   const allowedSubmissions = Math.max(1, Math.floor(campaign.totalBudget / campaign.rewardPerTask));
   const todayKey = getIndiaDateKey();
-  const [occupiedSubmissions, userSubmissionCount, repeatRequest] = await Promise.all([
+  const [occupiedSubmissions, userSubmissionCount, repeatRequest, userPlatformSubmissionCount] = await Promise.all([
     prisma.submission.count({
       where: {
         campaignId,
@@ -93,6 +93,11 @@ export async function GET(
         createdAt: true,
       },
     }),
+    prisma.submission.count({
+      where: {
+        userId: session.user.id,
+      },
+    }),
   ]);
 
   const leftSubmissions = Math.max(0, allowedSubmissions - occupiedSubmissions);
@@ -102,6 +107,7 @@ export async function GET(
     submissionMode: campaign.submissionMode,
     repeatAccessMode: campaign.repeatAccessMode,
     userSubmissionCount,
+    userPlatformSubmissionCount,
     repeatRequestStatus: repeatRequest?.status ?? null,
   });
   const isAvailable =
@@ -279,10 +285,17 @@ export async function POST(
         select: { status: true },
       });
 
+      const userPlatformSubmissionCount = await tx.submission.count({
+        where: {
+          userId: session.user.id,
+        },
+      });
+
       const repeatAccess = getCampaignRepeatAccess({
         submissionMode: campaign.submissionMode,
         repeatAccessMode: campaign.repeatAccessMode,
         userSubmissionCount: existingUserSubmissionCount,
+        userPlatformSubmissionCount,
         repeatRequestStatus: repeatRequest?.status ?? null,
       });
 
@@ -290,6 +303,10 @@ export async function POST(
         throw new Error(
           repeatAccess.reason === "requested_users_only"
             ? "This campaign is currently running only for approved requested users."
+            : repeatAccess.reason === "fresh_same_campaign_only"
+              ? "This campaign is currently running only for users who have not submitted it before."
+              : repeatAccess.reason === "fresh_platform_only"
+                ? "This campaign is currently running only for new users who have not submitted any campaign before."
             : "Request tomorrow access from the task page before submitting again."
         );
       }

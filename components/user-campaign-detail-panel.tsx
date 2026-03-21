@@ -36,7 +36,12 @@ type CampaignResponse = {
     submissionMode: "ONE_PER_USER" | "MULTIPLE_PER_USER";
     blockedBySubmissionMode: boolean;
     blockedByRepeatRule: boolean;
-    repeatAccessMode: "OPEN" | "REQUESTED_ONLY" | "REQUESTED_PLUS_NEW";
+    repeatAccessMode:
+      | "OPEN"
+      | "REQUESTED_ONLY"
+      | "REQUESTED_PLUS_NEW"
+      | "FRESH_CAMPAIGN_ONLY"
+      | "FRESH_PLATFORM_ONLY";
     repeatRequestStatus: "PENDING" | "APPROVED" | "REJECTED" | null;
     canRequestTomorrow: boolean;
     repeatRequestReason: string | null;
@@ -399,6 +404,10 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
                     ? t("repeatRuleRequestedOnly")
                     : campaign.repeatAccessMode === "REQUESTED_PLUS_NEW"
                       ? t("repeatRuleRequestedPlusNew")
+                      : campaign.repeatAccessMode === "FRESH_CAMPAIGN_ONLY"
+                        ? t("repeatRuleFreshCampaignOnly")
+                        : campaign.repeatAccessMode === "FRESH_PLATFORM_ONLY"
+                          ? t("repeatRuleFreshPlatformOnly")
                       : t("repeatRuleOpen")}
                 </p>
                 {campaign.repeatRequestStatus ? (
@@ -427,6 +436,10 @@ export default function UserCampaignDetailPanel({ campaignId }: { campaignId: st
                   <p className="mt-4 text-xs text-white/60">
                     {campaign.repeatRequestStatus === "PENDING"
                       ? t("repeatAlreadyPending")
+                      : campaign.repeatRequestReason === "fresh_same_campaign_only"
+                        ? t("repeatFreshCampaignOnly")
+                        : campaign.repeatRequestReason === "fresh_platform_only"
+                          ? t("repeatFreshPlatformOnly")
                       : t("repeatRequestWait")}
                   </p>
                 ) : null}

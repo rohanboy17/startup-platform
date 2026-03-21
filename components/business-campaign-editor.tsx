@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Copy, Save } from "lucide-react";
@@ -13,9 +13,12 @@ import {
 import { formatMoney } from "@/lib/format-money";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 import {
-  TASK_CATEGORIES,
+  DEFAULT_TASK_CATEGORIES,
+  type TaskCategoryOption,
   getEffectiveTaskLabel,
   getTaskTypesForCategory,
+  isValidTaskCategory,
+  isValidTaskType,
 } from "@/lib/task-categories";
 
 type Instruction = {
@@ -50,6 +53,7 @@ export default function BusinessCampaignEditor({
   const t = useTranslations("business.campaignEditor");
   const tCategories = useTranslations("business.categories");
   const router = useRouter();
+  const [taskCategories, setTaskCategories] = useState<TaskCategoryOption[]>(DEFAULT_TASK_CATEGORIES);
   const [title, setTitle] = useState(campaign.title);
   const [description, setDescription] = useState(campaign.description);
   const [category, setCategory] = useState(campaign.category);
@@ -71,9 +75,40 @@ export default function BusinessCampaignEditor({
   const budget = Number(totalBudget) || 0;
   const spentBudget = campaign.totalBudget - campaign.remainingBudget;
   const budgetDelta = budget - campaign.totalBudget;
-  const taskTypeOptions = useMemo(() => getTaskTypesForCategory(taskCategory), [taskCategory]);
+  const taskTypeOptions = useMemo(
+    () => getTaskTypesForCategory(taskCategory, taskCategories),
+    [taskCategory, taskCategories]
+  );
   const needsCustomTask = taskType === "Other";
   const effectiveTaskLabel = getEffectiveTaskLabel(taskType, customTask);
+
+  useEffect(() => {
+    let active = true;
+    async function loadTaskCategories() {
+      const res = await fetch("/api/task-categories", { credentials: "include" });
+      const raw = await res.text();
+      if (!active) return;
+      try {
+        const data = raw ? (JSON.parse(raw) as { taskCategories?: TaskCategoryOption[] }) : {};
+        if (data.taskCategories?.length) {
+          setTaskCategories(data.taskCategories);
+          if (!isValidTaskCategory(taskCategory, data.taskCategories)) {
+            const nextTaskCategory = data.taskCategories[0]?.name || "Other";
+            setTaskCategory(nextTaskCategory);
+            setTaskType(getTaskTypesForCategory(nextTaskCategory, data.taskCategories)[0] || "Other");
+          } else if (!isValidTaskType(taskCategory, taskType, data.taskCategories)) {
+            setTaskType(getTaskTypesForCategory(taskCategory, data.taskCategories)[0] || "Other");
+          }
+        }
+      } catch {
+        // keep defaults
+      }
+    }
+    void loadTaskCategories();
+    return () => {
+      active = false;
+    };
+  }, [taskCategory, taskType]);
 
   const stats = useMemo(() => {
     const projectedSlots = reward > 0 ? Math.floor(budget / reward) : 0;
@@ -236,12 +271,12 @@ export default function BusinessCampaignEditor({
                 onChange={(e) => {
                   const nextTaskCategory = e.target.value;
                   setTaskCategory(nextTaskCategory);
-                  setTaskType(getTaskTypesForCategory(nextTaskCategory)[0] || "Other");
+                  setTaskType(getTaskTypesForCategory(nextTaskCategory, taskCategories)[0] || "Other");
                   setCustomTask("");
                 }}
                 className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
               >
-                {TASK_CATEGORIES.map((option) => (
+                {taskCategories.map((option) => (
                   <option key={option.name} value={option.name}>
                     {option.name}
                   </option>

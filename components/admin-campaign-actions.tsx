@@ -1,11 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
-import { TASK_CATEGORIES, getTaskTypesForCategory } from "@/lib/task-categories";
+import {
+  DEFAULT_TASK_CATEGORIES,
+  type TaskCategoryOption,
+  getTaskTypesForCategory,
+  isValidTaskCategory,
+  isValidTaskType,
+} from "@/lib/task-categories";
 
 export default function AdminCampaignActions({
   campaignId,
@@ -24,6 +30,7 @@ export default function AdminCampaignActions({
   initialRewardPerTask,
   initialTotalBudget,
   initialSubmissionMode,
+  initialInstructions,
 }: {
   campaignId: string;
   currentStatus: "PENDING" | "APPROVED" | "REJECTED" | "LIVE" | "COMPLETED";
@@ -41,9 +48,11 @@ export default function AdminCampaignActions({
   initialRewardPerTask: number;
   initialTotalBudget: number;
   initialSubmissionMode: "ONE_PER_USER" | "MULTIPLE_PER_USER";
+  initialInstructions: string[];
 }) {
   const t = useTranslations("admin.campaignActions");
   const router = useRouter();
+  const [taskCategories, setTaskCategories] = useState<TaskCategoryOption[]>(DEFAULT_TASK_CATEGORIES);
   const [loading, setLoading] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState(initialTitle);
@@ -54,6 +63,7 @@ export default function AdminCampaignActions({
   const [customTask, setCustomTask] = useState(initialCustomTask || "");
   const [taskLink, setTaskLink] = useState(initialTaskLink || "");
   const [tutorialVideoUrl, setTutorialVideoUrl] = useState(initialTutorialVideoUrl || "");
+  const [instructionsText, setInstructionsText] = useState(initialInstructions.join("\n"));
   const [rewardPerTask, setRewardPerTask] = useState(String(initialRewardPerTask));
   const [totalBudget, setTotalBudget] = useState(String(initialTotalBudget));
   const [submissionMode, setSubmissionMode] = useState(initialSubmissionMode);
@@ -68,6 +78,34 @@ export default function AdminCampaignActions({
   const canComplete = currentStatus === "LIVE" || currentStatus === "APPROVED";
   const canEdit = currentStatus !== "COMPLETED";
   const canDelete = currentStatus !== "COMPLETED";
+
+  useEffect(() => {
+    let active = true;
+    async function loadTaskCategories() {
+      const res = await fetch("/api/task-categories", { credentials: "include" });
+      const raw = await res.text();
+      if (!active) return;
+      try {
+        const data = raw ? (JSON.parse(raw) as { taskCategories?: TaskCategoryOption[] }) : {};
+        if (data.taskCategories?.length) {
+          setTaskCategories(data.taskCategories);
+          if (!isValidTaskCategory(taskCategory, data.taskCategories)) {
+            const nextTaskCategory = data.taskCategories[0]?.name || "Other";
+            setTaskCategory(nextTaskCategory);
+            setTaskType(getTaskTypesForCategory(nextTaskCategory, data.taskCategories)[0] || "Other");
+          } else if (!isValidTaskType(taskCategory, taskType, data.taskCategories)) {
+            setTaskType(getTaskTypesForCategory(taskCategory, data.taskCategories)[0] || "Other");
+          }
+        }
+      } catch {
+        // keep defaults
+      }
+    }
+    void loadTaskCategories();
+    return () => {
+      active = false;
+    };
+  }, [taskCategory, taskType]);
 
   async function update(
     action:
@@ -132,6 +170,10 @@ export default function AdminCampaignActions({
         customTask: taskType === "Other" ? customTask.trim() || null : null,
         taskLink: taskLink || null,
         tutorialVideoUrl: tutorialVideoUrl || null,
+        instructions: instructionsText
+          .split("\n")
+          .map((item) => item.trim())
+          .filter(Boolean),
         rewardPerTask: Number(rewardPerTask),
         totalBudget: Number(totalBudget),
         submissionMode,
@@ -278,12 +320,12 @@ export default function AdminCampaignActions({
             onChange={(e) => {
               const nextTaskCategory = e.target.value;
               setTaskCategory(nextTaskCategory);
-              setTaskType(getTaskTypesForCategory(nextTaskCategory)[0] || "Other");
+              setTaskType(getTaskTypesForCategory(nextTaskCategory, taskCategories)[0] || "Other");
               setCustomTask("");
             }}
             className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
           >
-            {TASK_CATEGORIES.map((option) => (
+            {taskCategories.map((option) => (
               <option key={option.name} value={option.name}>
                 {option.name}
               </option>
@@ -294,7 +336,7 @@ export default function AdminCampaignActions({
             onChange={(e) => setTaskType(e.target.value)}
             className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
           >
-            {getTaskTypesForCategory(taskCategory).map((option) => (
+            {getTaskTypesForCategory(taskCategory, taskCategories).map((option) => (
               <option key={option} value={option}>
                 {option}
               </option>
@@ -319,6 +361,12 @@ export default function AdminCampaignActions({
             onChange={(e) => setTutorialVideoUrl(e.target.value)}
             className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
             placeholder={t("fields.tutorialVideoUrl")}
+          />
+          <textarea
+            value={instructionsText}
+            onChange={(e) => setInstructionsText(e.target.value)}
+            className="min-h-[96px] rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
+            placeholder={t("fields.instructions")}
           />
           <textarea
             value={description}

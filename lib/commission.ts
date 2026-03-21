@@ -1,6 +1,6 @@
 import type { UserLevel } from "@prisma/client";
 
-const MARKETING_COMMISSION_BY_LEVEL: Record<UserLevel, number> = {
+export const MARKETING_COMMISSION_BY_LEVEL: Record<UserLevel, number> = {
   L1: 0.45,
   L2: 0.4,
   L3: 0.35,

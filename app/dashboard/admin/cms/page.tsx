@@ -1,6 +1,7 @@
 import AdminCmsPanel from "@/components/admin-cms-panel";
 import { prisma } from "@/lib/prisma";
 import { getCmsValue } from "@/lib/cms";
+import { getAppSettings } from "@/lib/system-settings";
 
 const DEFAULT_FLAGS: Array<{ key: string; enabled: boolean; description: string }> = [
   {
@@ -36,7 +37,7 @@ export default async function AdminCmsPage() {
     )
   );
 
-  const [landing, terms, privacy, refund, faq, flags, announcements, communityFeedback] = await Promise.all([
+  const [landing, terms, privacy, refund, faq, flags, announcements, communityFeedback, settings] = await Promise.all([
     getCmsValue<{ heroTitle: string; heroSubtitle: string }>("landing.home", {
       heroTitle: "Run campaigns. Reward real users. Grow with confidence.",
       heroSubtitle:
@@ -69,6 +70,7 @@ export default async function AdminCmsPage() {
         },
       },
     }),
+    getAppSettings(),
   ]);
 
   return (
@@ -87,6 +89,7 @@ export default async function AdminCmsPage() {
         flags={flags}
         announcements={announcements}
         communityFeedback={communityFeedback}
+        initialTaskCategories={settings.taskCategories}
       />
     </div>
   );

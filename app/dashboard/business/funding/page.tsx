@@ -49,11 +49,17 @@ type FundingData = {
     fundingFeeRate: number;
     businessRefundFeeRate: number;
   };
+  defaults: {
+    payoutUpiId: string | null;
+    payoutUpiName: string | null;
+  };
   requests: Array<{
     id: string;
     amount: number;
     referenceId: string;
     utr: string | null;
+    payoutUpiId: string | null;
+    payoutUpiName: string | null;
     proofImage: string;
     status: FundingStatus;
     flaggedReason: string | null;
@@ -142,6 +148,10 @@ export default function BusinessFundingPage() {
   const [data, setData] = useState<FundingData | null>(null);
   const [fundAmount, setFundAmount] = useState("");
   const [utr, setUtr] = useState("");
+  const [payoutUpiId, setPayoutUpiId] = useState("");
+  const [payoutUpiName, setPayoutUpiName] = useState("");
+  const [payoutUpiIdTouched, setPayoutUpiIdTouched] = useState(false);
+  const [payoutUpiNameTouched, setPayoutUpiNameTouched] = useState(false);
   const [referenceId, setReferenceId] = useState("");
   const [proofImageUrl, setProofImageUrl] = useState<string | null>(null);
   const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
@@ -171,6 +181,10 @@ export default function BusinessFundingPage() {
         canManageBilling: false,
         fundingFeeRate: 0,
         businessRefundFeeRate: 0.03,
+      },
+      defaults: {
+        payoutUpiId: null,
+        payoutUpiName: null,
       },
       requests: [],
       refundRequests: [],
@@ -219,6 +233,8 @@ export default function BusinessFundingPage() {
   const openPayLabel = data?.config.upiId?.includes("@paytm")
     ? t("actions.openPaytm")
     : t("actions.openUpi");
+  const effectivePayoutUpiId = payoutUpiIdTouched ? payoutUpiId : data?.defaults.payoutUpiId ?? "";
+  const effectivePayoutUpiName = payoutUpiNameTouched ? payoutUpiName : data?.defaults.payoutUpiName ?? "";
   const stepItems = useMemo(
     () => [
       t("steps.item1"),
@@ -266,6 +282,16 @@ export default function BusinessFundingPage() {
       active = false;
     };
   }, [upiLink]);
+
+  useEffect(() => {
+    if (!data) return;
+    if (!payoutUpiIdTouched) {
+      setPayoutUpiId(data.defaults.payoutUpiId ?? "");
+    }
+    if (!payoutUpiNameTouched) {
+      setPayoutUpiName(data.defaults.payoutUpiName ?? "");
+    }
+  }, [data, payoutUpiIdTouched, payoutUpiNameTouched]);
 
   async function copyText(text: string) {
     try {
@@ -430,6 +456,8 @@ export default function BusinessFundingPage() {
         amount: fundNumber,
         referenceId,
         utr: utr.trim() || undefined,
+        payoutUpiId: effectivePayoutUpiId.trim() || undefined,
+        payoutUpiName: effectivePayoutUpiName.trim() || undefined,
         proofImage: proofImageUrl,
       }),
     });
@@ -453,6 +481,10 @@ export default function BusinessFundingPage() {
     setWhatsappLink(parsed.whatsappLink || null);
     setFundAmount("");
     setUtr("");
+    setPayoutUpiId(data?.defaults.payoutUpiId ?? "");
+    setPayoutUpiName(data?.defaults.payoutUpiName ?? "");
+    setPayoutUpiIdTouched(false);
+    setPayoutUpiNameTouched(false);
     setReferenceId("");
     setProofImageUrl(null);
     setQrDataUrl(null);
@@ -826,6 +858,33 @@ export default function BusinessFundingPage() {
                 />
               </div>
 
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-sm text-foreground/70">{t("verification.payoutUpiIdLabel")}</label>
+                  <Input
+                    placeholder={t("verification.payoutUpiIdPlaceholder")}
+                    value={effectivePayoutUpiId}
+                    onChange={(event) => {
+                      setPayoutUpiIdTouched(true);
+                      setPayoutUpiId(event.target.value);
+                    }}
+                    disabled={!canManageBilling}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm text-foreground/70">{t("verification.payoutUpiNameLabel")}</label>
+                  <Input
+                    placeholder={t("verification.payoutUpiNamePlaceholder")}
+                    value={effectivePayoutUpiName}
+                    onChange={(event) => {
+                      setPayoutUpiNameTouched(true);
+                      setPayoutUpiName(event.target.value);
+                    }}
+                    disabled={!canManageBilling}
+                  />
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <label className="text-sm text-foreground/70">{t("verification.uploadLabel")}</label>
                 <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
@@ -1022,6 +1081,16 @@ export default function BusinessFundingPage() {
                         <p className="text-sm text-foreground/65">{t("history.referenceId", { referenceId: request.referenceId })}</p>
                         {request.utr ? (
                           <p className="text-xs text-foreground/55">{t("history.utr", { utr: request.utr })}</p>
+                        ) : null}
+                        {request.payoutUpiId ? (
+                          <p className="text-xs text-foreground/55">
+                            {t("history.payoutUpiId", { value: request.payoutUpiId })}
+                          </p>
+                        ) : null}
+                        {request.payoutUpiName ? (
+                          <p className="text-xs text-foreground/55">
+                            {t("history.payoutUpiName", { value: request.payoutUpiName })}
+                          </p>
                         ) : null}
                         <p className="text-xs text-foreground/55">
                           {formatDateTime(request.createdAt, locale, t("labels.notAvailable"))}

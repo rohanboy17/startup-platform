@@ -35,6 +35,19 @@ type OverviewResponse = {
     target: number | null;
     percent: number;
   };
+  levelBenefits: Array<{
+    level: "L1" | "L2" | "L3" | "L4" | "L5";
+    minApproved: number;
+    maxApproved: number | null;
+    commissionRate: number;
+    walletShareRate: number;
+    isCurrent: boolean;
+  }>;
+  levelSystem: {
+    currentLevel: "L1" | "L2" | "L3" | "L4" | "L5";
+    marketingShareRate: number;
+    fixedWorkShareRate: number;
+  };
   recentNotifications: Array<{
     id: string;
     title: string;
@@ -112,7 +125,7 @@ export default function UserOverviewPanel() {
           <p className="text-sm uppercase tracking-[0.24em] text-emerald-600/80 dark:text-emerald-300/70">{t("eyebrow")}</p>
           <h2 className="mt-2 text-3xl font-semibold md:text-4xl">{t("title")}</h2>
           <p className="mt-2 max-w-2xl text-sm text-foreground/65 md:text-base">
-            Track your balance, approvals, withdrawal status, and current level without switching between tabs.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -165,7 +178,7 @@ export default function UserOverviewPanel() {
         />
 
         <KpiCard
-          label="Current level"
+          label={t("kpiCurrentLevel")}
           value={data.profile.level}
           tone="info"
         />
@@ -183,6 +196,7 @@ export default function UserOverviewPanel() {
               <div>
                 <p className="text-sm text-foreground/60">{t("levelEyebrow")}</p>
                 <h3 className="text-xl font-semibold text-foreground">{t("levelTitle")}</h3>
+                <p className="mt-1 text-sm text-foreground/65">{t("levelGuideSubtitle")}</p>
               </div>
               <Link href="/dashboard/user/submissions" className="text-sm text-emerald-700 transition hover:text-emerald-800 dark:text-emerald-200 dark:hover:text-emerald-100">
                 {t("viewSubmissions")}
@@ -224,6 +238,84 @@ export default function UserOverviewPanel() {
                 <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                   <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">{t("submittedToday")}</p>
                   <p className="mt-2 text-2xl font-semibold text-foreground">{data.profile.dailySubmits}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-emerald-400/20 bg-emerald-400/[0.08] p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-emerald-700/80 dark:text-emerald-200/75">
+                {t("levelBenefitsEyebrow")}
+              </p>
+              <h4 className="mt-2 text-lg font-semibold text-foreground">{t("levelBenefitsTitle")}</h4>
+              <p className="mt-2 text-sm text-foreground/70">
+                {t("levelBenefitsBody", {
+                  marketing: Math.round(data.levelSystem.marketingShareRate * 100),
+                  work: Math.round(data.levelSystem.fixedWorkShareRate * 100),
+                })}
+              </p>
+
+              <div className="mt-4 grid gap-3 lg:grid-cols-2 2xl:grid-cols-5">
+                {data.levelBenefits.map((item) => (
+                  <div
+                    key={item.level}
+                    className={`rounded-2xl border p-4 transition ${
+                      item.isCurrent
+                        ? "border-emerald-400/40 bg-emerald-400/10"
+                        : "border-foreground/10 bg-background/60"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-lg font-semibold text-foreground">{item.level}</p>
+                      {item.isCurrent ? (
+                        <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-200">
+                          {t("currentBadge")}
+                        </span>
+                      ) : null}
+                    </div>
+                    <p className="mt-2 text-sm text-foreground/65">
+                      {item.maxApproved === null
+                        ? t("levelRangeOpen", { min: item.minApproved })
+                        : t("levelRange", { min: item.minApproved, max: item.maxApproved })}
+                    </p>
+                    <p className="mt-4 text-2xl font-semibold text-foreground">
+                      {Math.round(item.walletShareRate * 100)}%
+                    </p>
+                    <p className="mt-1 text-sm text-foreground/70">
+                      {t("walletShare", { percent: Math.round(item.walletShareRate * 100) })}
+                    </p>
+                    <p className="mt-2 text-xs text-foreground/55">
+                      {t("commissionCut", { percent: Math.round(item.commissionRate * 100) })}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-sky-400/20 bg-sky-400/[0.08] p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-sky-700/80 dark:text-sky-200/75">
+                {t("workCommissionEyebrow")}
+              </p>
+              <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h4 className="text-lg font-semibold text-foreground">{t("workCommissionTitle")}</h4>
+                  <p className="mt-2 max-w-2xl text-sm text-foreground/70">
+                    {t("workCommissionBody", {
+                      percent: Math.round(data.levelSystem.fixedWorkShareRate * 100),
+                    })}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-sky-400/25 bg-background/70 px-4 py-3 sm:min-w-48">
+                  <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">
+                    {t("workCommissionWalletShare")}
+                  </p>
+                  <p className="mt-2 text-2xl font-semibold text-foreground">
+                    {Math.round(data.levelSystem.fixedWorkShareRate * 100)}%
+                  </p>
+                  <p className="mt-1 text-xs text-foreground/55">
+                    {t("workCommissionPlatformCut", {
+                      percent: Math.round((1 - data.levelSystem.fixedWorkShareRate) * 100),
+                    })}
+                  </p>
                 </div>
               </div>
             </div>

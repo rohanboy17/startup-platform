@@ -24,7 +24,12 @@ export default function AdminCampaignRepeatControls({
   requests,
 }: {
   campaignId: string;
-  initialRepeatAccessMode: "OPEN" | "REQUESTED_ONLY" | "REQUESTED_PLUS_NEW";
+  initialRepeatAccessMode:
+    | "OPEN"
+    | "REQUESTED_ONLY"
+    | "REQUESTED_PLUS_NEW"
+    | "FRESH_CAMPAIGN_ONLY"
+    | "FRESH_PLATFORM_ONLY";
   requests: RepeatRequest[];
 }) {
   const t = useTranslations("admin.repeatCampaigns");
@@ -118,13 +123,22 @@ export default function AdminCampaignRepeatControls({
           <select
             value={mode}
             onChange={(event) =>
-              setMode(event.target.value as "OPEN" | "REQUESTED_ONLY" | "REQUESTED_PLUS_NEW")
+              setMode(
+                event.target.value as
+                  | "OPEN"
+                  | "REQUESTED_ONLY"
+                  | "REQUESTED_PLUS_NEW"
+                  | "FRESH_CAMPAIGN_ONLY"
+                  | "FRESH_PLATFORM_ONLY"
+              )
             }
             className="w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
           >
             <option value="OPEN">{t("modes.open")}</option>
             <option value="REQUESTED_ONLY">{t("modes.requestedOnly")}</option>
             <option value="REQUESTED_PLUS_NEW">{t("modes.requestedPlusNew")}</option>
+            <option value="FRESH_CAMPAIGN_ONLY">{t("modes.freshCampaignOnly")}</option>
+            <option value="FRESH_PLATFORM_ONLY">{t("modes.freshPlatformOnly")}</option>
           </select>
         </div>
         <Button onClick={() => void saveMode()} disabled={loading !== null} className="w-full lg:w-auto">

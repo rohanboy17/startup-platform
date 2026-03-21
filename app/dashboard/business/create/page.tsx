@@ -11,23 +11,27 @@ import {
 } from "@/lib/campaign-options";
 import { formatMoney } from "@/lib/format-money";
 import {
-  TASK_CATEGORIES,
+  DEFAULT_TASK_CATEGORIES,
+  type TaskCategoryOption,
   getEffectiveTaskLabel,
   getTaskTypesForCategory,
+  isValidTaskCategory,
+  isValidTaskType,
 } from "@/lib/task-categories";
 
 const DEFAULT_CATEGORY = "marketing";
-const DEFAULT_TASK_CATEGORY = TASK_CATEGORIES[0].name;
+const DEFAULT_TASK_CATEGORY = DEFAULT_TASK_CATEGORIES[0].name;
 
 export default function CreateCampaign() {
   const tBusiness = useTranslations("business");
   const t = useTranslations("business.create");
   const tCategories = useTranslations("business.categories");
+  const [taskCategories, setTaskCategories] = useState<TaskCategoryOption[]>(DEFAULT_TASK_CATEGORIES);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState(DEFAULT_CATEGORY);
   const [taskCategory, setTaskCategory] = useState<string>(DEFAULT_TASK_CATEGORY);
-  const [taskType, setTaskType] = useState<string>(getTaskTypesForCategory(DEFAULT_TASK_CATEGORY)[0] || "Other");
+  const [taskType, setTaskType] = useState<string>(getTaskTypesForCategory(DEFAULT_TASK_CATEGORY, DEFAULT_TASK_CATEGORIES)[0] || "Other");
   const [customTask, setCustomTask] = useState("");
   const [taskLink, setTaskLink] = useState("");
   const [taskDetails, setTaskDetails] = useState("");
@@ -42,7 +46,7 @@ export default function CreateCampaign() {
   const [walletBalance, setWalletBalance] = useState<number | null>(null);
   const [kycStatus, setKycStatus] = useState<string | null>(null);
 
-  const taskOptions = useMemo(() => getTaskTypesForCategory(taskCategory), [taskCategory]);
+  const taskOptions = useMemo(() => getTaskTypesForCategory(taskCategory, taskCategories), [taskCategory, taskCategories]);
   const needsCustomTask = taskType === "Other";
   const effectiveTaskLabel = getEffectiveTaskLabel(taskType, customTask);
   const rewardValue = Number(reward) || 0;
@@ -80,13 +84,35 @@ export default function CreateCampaign() {
       }
     }
 
+    async function loadTaskCategories() {
+      const res = await fetch("/api/task-categories", { credentials: "include" });
+      const raw = await res.text();
+      if (!active) return;
+      try {
+        const data = raw ? (JSON.parse(raw) as { taskCategories?: TaskCategoryOption[] }) : {};
+        if (data.taskCategories?.length) {
+          setTaskCategories(data.taskCategories);
+          if (!isValidTaskCategory(taskCategory, data.taskCategories)) {
+            const nextTaskCategory = data.taskCategories[0]?.name || "Other";
+            setTaskCategory(nextTaskCategory);
+            setTaskType(getTaskTypesForCategory(nextTaskCategory, data.taskCategories)[0] || "Other");
+          } else if (!isValidTaskType(taskCategory, taskType, data.taskCategories)) {
+            setTaskType(getTaskTypesForCategory(taskCategory, data.taskCategories)[0] || "Other");
+          }
+        }
+      } catch {
+        // keep fallback defaults
+      }
+    }
+
     void loadFundingState();
     void loadKycStatus();
+    void loadTaskCategories();
 
     return () => {
       active = false;
     };
-  }, []);
+  }, [taskCategory, taskType]);
 
   async function handleSubmit() {
     if (kycStatus && kycStatus !== "VERIFIED") {
@@ -163,7 +189,7 @@ export default function CreateCampaign() {
     setDescription("");
     setCategory(DEFAULT_CATEGORY);
     setTaskCategory(DEFAULT_TASK_CATEGORY);
-    setTaskType(getTaskTypesForCategory(DEFAULT_TASK_CATEGORY)[0] || "Other");
+    setTaskType(getTaskTypesForCategory(DEFAULT_TASK_CATEGORY, taskCategories)[0] || "Other");
     setCustomTask("");
     setTaskLink("");
     setTaskDetails("");
@@ -248,12 +274,12 @@ export default function CreateCampaign() {
                 onChange={(e) => {
                   const nextTaskCategory = e.target.value;
                   setTaskCategory(nextTaskCategory);
-                  setTaskType(getTaskTypesForCategory(nextTaskCategory)[0] || "Other");
+                  setTaskType(getTaskTypesForCategory(nextTaskCategory, taskCategories)[0] || "Other");
                   setCustomTask("");
                 }}
                 className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
               >
-                {TASK_CATEGORIES.map((option) => (
+                {taskCategories.map((option) => (
                   <option key={option.name} value={option.name}>
                     {option.name}
                   </option>

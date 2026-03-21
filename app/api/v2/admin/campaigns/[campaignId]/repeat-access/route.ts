@@ -13,11 +13,25 @@ export async function PATCH(
 
   const { campaignId } = await params;
   const body = (await req.json().catch(() => ({}))) as {
-    repeatAccessMode?: "OPEN" | "REQUESTED_ONLY" | "REQUESTED_PLUS_NEW";
+    repeatAccessMode?:
+      | "OPEN"
+      | "REQUESTED_ONLY"
+      | "REQUESTED_PLUS_NEW"
+      | "FRESH_CAMPAIGN_ONLY"
+      | "FRESH_PLATFORM_ONLY";
   };
   const repeatAccessMode = body.repeatAccessMode;
 
-  if (!repeatAccessMode || !["OPEN", "REQUESTED_ONLY", "REQUESTED_PLUS_NEW"].includes(repeatAccessMode)) {
+  if (
+    !repeatAccessMode ||
+    ![
+      "OPEN",
+      "REQUESTED_ONLY",
+      "REQUESTED_PLUS_NEW",
+      "FRESH_CAMPAIGN_ONLY",
+      "FRESH_PLATFORM_ONLY",
+    ].includes(repeatAccessMode)
+  ) {
     return NextResponse.json({ error: "A valid repeat access mode is required." }, { status: 400 });
   }
 

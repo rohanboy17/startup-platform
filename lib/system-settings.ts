@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { DEFAULT_TASK_CATEGORIES, normalizeTaskCategoryConfig, type TaskCategoryOption } from "@/lib/task-categories";
 
 export type AppSettings = {
   commissionRateDefault: number;
@@ -8,6 +9,7 @@ export type AppSettings = {
   businessRefundFeeRate: number;
   levelResetHours: number;
   maintenanceMode: boolean;
+  taskCategories: TaskCategoryOption[];
 };
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -18,6 +20,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   businessRefundFeeRate: 0.03,
   levelResetHours: 24,
   maintenanceMode: false,
+  taskCategories: DEFAULT_TASK_CATEGORIES,
 };
 
 export async function getAppSettings(): Promise<AppSettings> {
@@ -52,6 +55,7 @@ export async function getAppSettings(): Promise<AppSettings> {
         : DEFAULT_SETTINGS.levelResetHours,
     maintenanceMode:
       typeof raw.maintenanceMode === "boolean" ? raw.maintenanceMode : DEFAULT_SETTINGS.maintenanceMode,
+    taskCategories: normalizeTaskCategoryConfig(raw.taskCategories),
   };
 }
 

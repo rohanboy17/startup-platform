@@ -296,7 +296,7 @@ export default async function AdminFundingPage({
                   </div>
                 </div>
 
-                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">{t("fields.referenceId")}</p>
                     <p className="mt-2 break-all text-sm font-medium text-foreground">{request.referenceId}</p>
@@ -304,6 +304,11 @@ export default async function AdminFundingPage({
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">{t("fields.utr")}</p>
                     <p className="mt-2 break-all text-sm font-medium text-foreground">{request.utr || t("fields.notProvided")}</p>
+                  </div>
+                  <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">{t("fields.payoutDetails")}</p>
+                    <p className="mt-2 break-all text-sm font-medium text-foreground">{request.payoutUpiId || t("fields.notProvided")}</p>
+                    <p className="mt-1 break-all text-xs text-foreground/55">{request.payoutUpiName || t("fields.notProvided")}</p>
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/55 p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">{t("fields.proof")}</p>

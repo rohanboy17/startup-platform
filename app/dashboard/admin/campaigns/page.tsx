@@ -107,6 +107,12 @@ export default async function AdminCampaignsPage({
           },
         },
       },
+      instructions: {
+        orderBy: { sequence: "asc" },
+        select: {
+          instructionText: true,
+        },
+      },
       _count: {
         select: { submissions: true },
       },
@@ -225,6 +231,10 @@ export default async function AdminCampaignsPage({
                       ? tRepeat("modes.requestedOnly")
                       : campaign.repeatAccessMode === "REQUESTED_PLUS_NEW"
                         ? tRepeat("modes.requestedPlusNew")
+                        : campaign.repeatAccessMode === "FRESH_CAMPAIGN_ONLY"
+                          ? tRepeat("modes.freshCampaignOnly")
+                          : campaign.repeatAccessMode === "FRESH_PLATFORM_ONLY"
+                            ? tRepeat("modes.freshPlatformOnly")
                         : tRepeat("modes.open")}
                   </p>
                 ) : null}
@@ -280,6 +290,7 @@ export default async function AdminCampaignsPage({
                   initialRewardPerTask={campaign.rewardPerTask}
                   initialTotalBudget={campaign.totalBudget}
                   initialSubmissionMode={campaign.submissionMode}
+                  initialInstructions={campaign.instructions.map((item) => item.instructionText)}
                 />
                 {campaign.submissionMode === "MULTIPLE_PER_USER" && campaign.status === "LIVE" ? (
                   <AdminCampaignRepeatControls

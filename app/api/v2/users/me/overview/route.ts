@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
+import type { UserLevel } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { getDailyResetState } from "@/lib/level";
+import { MARKETING_COMMISSION_BY_LEVEL } from "@/lib/commission";
+import { LEVEL_BENEFIT_STEPS, getDailyResetState } from "@/lib/level";
+import { getAppSettings } from "@/lib/system-settings";
 
 function levelTarget(level: string) {
   switch (level) {
@@ -10,9 +13,9 @@ function levelTarget(level: string) {
     case "L2":
       return 20;
     case "L3":
-      return 50;
+      return 30;
     case "L4":
-      return 100;
+      return 40;
     default:
       return null;
   }
@@ -24,7 +27,7 @@ function levelProgress(dailyApproved: number, level: string) {
   }
 
   const floor =
-    level === "L4" ? 50 :
+    level === "L4" ? 30 :
     level === "L3" ? 20 :
     level === "L2" ? 10 :
     0;
@@ -110,7 +113,7 @@ export async function GET() {
     };
   }).walletTransaction;
 
-  const [user, pendingWithdrawalAmount, totalWithdrawn, approvedSubmissions, todayApprovedCount, unreadNotifications, recentNotifications, recentTransactions, recentWithdrawals, recentSubmissions] = await Promise.all([
+  const [user, appSettings, pendingWithdrawalAmount, totalWithdrawn, approvedSubmissions, todayApprovedCount, unreadNotifications, recentNotifications, recentTransactions, recentWithdrawals, recentSubmissions] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -126,6 +129,7 @@ export async function GET() {
         dailySubmits: true,
       },
     }),
+    getAppSettings(),
     prisma.withdrawal.aggregate({
       where: { userId, status: "PENDING" },
       _sum: { amount: true },
@@ -186,6 +190,16 @@ export async function GET() {
   const effectiveDailyApproved = resetNeeded ? 0 : user.dailyApproved;
   const effectiveDailySubmits = resetNeeded ? 0 : user.dailySubmits;
   const progress = levelProgress(effectiveDailyApproved, effectiveLevel);
+  const workCommissionRate = appSettings.commissionRateDefault;
+  const levelBenefits = LEVEL_BENEFIT_STEPS.map((step) => {
+    const commissionRate = MARKETING_COMMISSION_BY_LEVEL[step.level];
+    return {
+      ...step,
+      commissionRate,
+      walletShareRate: Number((1 - commissionRate).toFixed(2)),
+      isCurrent: step.level === effectiveLevel,
+    };
+  });
 
   return NextResponse.json({
     profile: {
@@ -207,6 +221,12 @@ export async function GET() {
       unreadNotifications,
     },
     progress,
+    levelBenefits,
+    levelSystem: {
+      currentLevel: effectiveLevel as UserLevel,
+      marketingShareRate: Number((1 - MARKETING_COMMISSION_BY_LEVEL[effectiveLevel as UserLevel]).toFixed(2)),
+      fixedWorkShareRate: Number((1 - workCommissionRate).toFixed(2)),
+    },
     recentNotifications: recentNotifications.map((item) => ({
       id: item.id,
       title: item.title,

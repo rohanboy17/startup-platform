@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getAppSettings, updateAppSettings } from "@/lib/system-settings";
 import { prisma } from "@/lib/prisma";
+import type { TaskCategoryOption } from "@/lib/task-categories";
 
 export async function GET() {
   const session = await auth();
@@ -27,6 +28,7 @@ export async function PATCH(req: Request) {
     businessRefundFeeRate?: number;
     levelResetHours?: number;
     maintenanceMode?: boolean;
+    taskCategories?: TaskCategoryOption[];
   };
 
   const before = await getAppSettings();

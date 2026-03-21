@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatMoney } from "@/lib/format-money";
@@ -11,17 +11,32 @@ export default function WithdrawRequestCard({
   minAmount,
   availableBalance,
   emergencyRemaining,
+  defaultUpiId,
+  defaultUpiName,
 }: {
   minAmount: number;
   availableBalance?: number;
   emergencyRemaining?: number;
+  defaultUpiId?: string | null;
+  defaultUpiName?: string | null;
 }) {
   const t = useTranslations("user.withdrawRequest");
   const [amount, setAmount] = useState("");
   const [upiId, setUpiId] = useState("");
   const [upiName, setUpiName] = useState("");
+  const [upiIdTouched, setUpiIdTouched] = useState(false);
+  const [upiNameTouched, setUpiNameTouched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+
+  const resolvedUpiId = useMemo(
+    () => (upiIdTouched ? upiId : (defaultUpiId ?? "")),
+    [defaultUpiId, upiId, upiIdTouched]
+  );
+  const resolvedUpiName = useMemo(
+    () => (upiNameTouched ? upiName : (defaultUpiName ?? "")),
+    [defaultUpiName, upiName, upiNameTouched]
+  );
 
   async function requestWithdrawal() {
     setLoading(true);
@@ -33,8 +48,8 @@ export default function WithdrawRequestCard({
       credentials: "include",
       body: JSON.stringify({
         amount: Number(amount),
-        upiId,
-        upiName,
+        upiId: resolvedUpiId,
+        upiName: resolvedUpiName,
       }),
     });
 
@@ -57,6 +72,8 @@ export default function WithdrawRequestCard({
     setAmount("");
     setUpiId("");
     setUpiName("");
+    setUpiIdTouched(false);
+    setUpiNameTouched(false);
     emitDashboardLiveRefresh();
   }
 
@@ -84,14 +101,20 @@ export default function WithdrawRequestCard({
       />
       <Input
         placeholder={t("upiIdPlaceholder")}
-        value={upiId}
-        onChange={(e) => setUpiId(e.target.value)}
+        value={resolvedUpiId}
+        onChange={(e) => {
+          setUpiIdTouched(true);
+          setUpiId(e.target.value);
+        }}
         className="min-h-11"
       />
       <Input
         placeholder={t("upiNamePlaceholder")}
-        value={upiName}
-        onChange={(e) => setUpiName(e.target.value)}
+        value={resolvedUpiName}
+        onChange={(e) => {
+          setUpiNameTouched(true);
+          setUpiName(e.target.value);
+        }}
         className="min-h-11"
       />
       <Button onClick={requestWithdrawal} disabled={loading} className="w-full">

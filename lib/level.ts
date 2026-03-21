@@ -1,8 +1,20 @@
 import type { UserLevel } from "@prisma/client";
 
+export const LEVEL_BENEFIT_STEPS: Array<{
+  level: UserLevel;
+  minApproved: number;
+  maxApproved: number | null;
+}> = [
+  { level: "L1", minApproved: 0, maxApproved: 9 },
+  { level: "L2", minApproved: 10, maxApproved: 19 },
+  { level: "L3", minApproved: 20, maxApproved: 29 },
+  { level: "L4", minApproved: 30, maxApproved: 39 },
+  { level: "L5", minApproved: 40, maxApproved: null },
+];
+
 export function getLevelFromApprovedCount(count: number): UserLevel {
-  if (count >= 100) return "L5";
-  if (count >= 50) return "L4";
+  if (count >= 40) return "L5";
+  if (count >= 30) return "L4";
   if (count >= 20) return "L3";
   if (count >= 10) return "L2";
   return "L1";

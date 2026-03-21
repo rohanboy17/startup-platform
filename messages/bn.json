@@ -392,9 +392,9 @@
       "loggedInAs": "Signed in as {role}",
       "userRole": "verified user",
       "businessRole": "business owner",
-      "statusPending": "Your feedback is under review",
-      "statusApproved": "Your feedback is approved",
-      "statusRejected": "Your feedback needs another try",
+      "statusPending": "????? ???????? ??? ??????????? ???",
+      "statusApproved": "????? ???????? ???????? ?????",
+      "statusRejected": "????? ???????? ???? ???? ??? ?????? ???",
       "underReviewHelp": "Your latest feedback is being reviewed by admin. You can submit again after this review is complete.",
       "approvedHelp": "Your latest feedback is approved and can be shown publicly on the homepage.",
       "rejectedHelp": "Your latest feedback was not approved for public display. You can write a stronger one and submit again.",
@@ -403,6 +403,10 @@
     "channels": {
       "whatsapp": "WhatsApp-এ যোগ দিন",
       "telegram": "Telegram-এ যোগ দিন"
+    },
+    "feedback": {
+      "statusPending": "????? ???????? ??? ??????????? ???",
+      "statusRejected": "????? ???????? ???? ???? ??? ?????? ???"
     }
   },
   "about": {
@@ -519,7 +523,23 @@
       "noActivity": "এখনও কোনো অ্যাক্টিভিটি নেই। টাইমলাইন দেখাতে টাস্ক সম্পন্ন করুন বা উইথড্র রিকোয়েস্ট করুন।",
       "loading": "ইউজার ওভারভিউ লোড হচ্ছে...",
       "failed": "ওভারভিউ লোড করা যায়নি",
-      "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স"
+      "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
+      "subtitle": "Track your balance, approvals, withdrawal status, and current level without switching between tabs.",
+      "kpiCurrentLevel": "Current level",
+      "levelGuideSubtitle": "Your daily level changes your take-home reward on marketing tasks.",
+      "levelBenefitsEyebrow": "Level benefits",
+      "levelBenefitsTitle": "See exactly how each level pays",
+      "levelBenefitsBody": "Marketing tasks pay your current level share. Right now that is {marketing}% to your wallet. Work tasks stay fixed at {work}% to your wallet.",
+      "currentBadge": "Current",
+      "levelRange": "{min} to {max} approved today",
+      "levelRangeOpen": "{min}+ approved today",
+      "walletShare": "Wallet share: {percent}%",
+      "commissionCut": "Platform commission: {percent}%",
+      "workCommissionEyebrow": "Work job commission",
+      "workCommissionTitle": "Flat payout for work-based jobs",
+      "workCommissionBody": "Work jobs do not change with your daily level. They currently credit a fixed {percent}% share to your wallet after approval.",
+      "workCommissionWalletShare": "Wallet share",
+      "workCommissionPlatformCut": "Platform commission: {percent}%"
     },
     "wallet": {
       "eyebrow": "মানি সেন্টার",
@@ -638,7 +658,7 @@
       "loading": "ক্যাম্পেইন লোড হচ্ছে...",
       "empty": "এখন কোনো লাইভ ক্যাম্পেইন নেই।",
       "openTaskLink": "টাস্ক লিংক খুলুন",
-      "budgetLeft": "বাজেট বাকি: INR {amount}",
+      "budgetLeft": "Wallet budget left: INR {amount}",
       "allowed": "অনুমোদিত",
       "used": "ব্যবহৃত",
       "slotsLeft": "স্লট বাকি",
@@ -662,7 +682,15 @@
       "unexpected": "অপ্রত্যাশিত সার্ভার রেসপন্স",
       "repeatPending": "Tomorrow request is under review.",
       "requestedUsersOnly": "This run is limited to approved requested users only.",
-      "repeatRequestNeeded": "Request tomorrow access to continue on this task."
+      "repeatRequestNeeded": "Request tomorrow access to continue on this task.",
+      "budgetTotal": "Wallet budget total: INR {amount}",
+      "walletRewardHint": "Wallet credit on approval for {level}: {percent}% share",
+      "freshCampaignOnly": "???? ?? ???????????? ???? ???? ??????",
+      "freshPlatformOnly": "Fresh platform users only.",
+      "repeatRules": {
+        "freshCampaignOnly": "???? ?? ???????????? ???? ???? ??????"
+      },
+      "repeatStatusRejected": "????? ???? ?????????? ?????? ???????? ?????"
     },
     "taskDetail": {
       "loading": "ক্যাম্পেইন বিস্তারিত লোড হচ্ছে...",
@@ -718,7 +746,7 @@
       "repeatRuleRequestedPlusNew": "This running campaign accepts approved requested users and brand-new users who have not submitted yet.",
       "repeatStatusPending": "Your tomorrow request is under review.",
       "repeatStatusApproved": "Your tomorrow request is approved.",
-      "repeatStatusRejected": "Your previous tomorrow request was not approved.",
+      "repeatStatusRejected": "????? ???? ?????????? ?????? ???????? ?????",
       "repeatRequestBody": "Want to continue this task tomorrow? Send a request so admin can review it for the next run.",
       "repeatRequestCta": "Request for tomorrow",
       "repeatRequestSending": "Sending request...",
@@ -728,7 +756,11 @@
       "repeatRequestWait": "After you complete at least one submission, you can request tomorrow access for this running task.",
       "copyInstruction": "Copy instruction",
       "instructionCopied": "Instruction copied",
-      "instructionCopyFailed": "Unable to copy instruction"
+      "instructionCopyFailed": "Unable to copy instruction",
+      "repeatRuleFreshCampaignOnly": "Only fresh users who have not submitted this campaign before can join right now.",
+      "repeatRuleFreshPlatformOnly": "Only completely fresh users who have not submitted any campaign before can join right now.",
+      "repeatFreshCampaignOnly": "This run is limited to users who have never submitted this campaign before.",
+      "repeatFreshPlatformOnly": "This run is limited to new users who have never submitted any campaign before."
     },
     "referrals": {
       "loading": "রেফারাল লোড হচ্ছে...",
@@ -1290,7 +1322,11 @@
         "ready": "স্ক্রিনশট ভেরিফিকেশনের জন্য প্রস্তুত।",
         "remove": "স্ক্রিনশট সরান",
         "submitting": "সাবমিট হচ্ছে...",
-        "verifyButton": "পেমেন্ট ভেরিফাই করুন"
+        "verifyButton": "পেমেন্ট ভেরিফাই করুন",
+        "payoutUpiIdLabel": "Payout UPI ID",
+        "payoutUpiIdPlaceholder": "Auto-filled from settings if saved",
+        "payoutUpiNameLabel": "Payout name",
+        "payoutUpiNamePlaceholder": "Optional display name for payout"
       },
       "whatsapp": {
         "title": "ফান্ডিং রিকোয়েস্ট রিভিউয়ের জন্য পাঠানো হয়েছে",
@@ -1330,7 +1366,9 @@
         "reviewFlag": "Review flag: {reason}",
         "adminNote": "Admin note: {note}",
         "reviewed": "Reviewed: {date}",
-        "proofTitle": "ফান্ডিং প্রুফ স্ক্রিনশট"
+        "proofTitle": "ফান্ডিং প্রুফ স্ক্রিনশট",
+        "payoutUpiId": "Payout UPI ID: {value}",
+        "payoutUpiName": "Payout name: {value}"
       },
       "walletActivity": {
         "eyebrow": "ওয়ালেট অ্যাক্টিভিটি",
@@ -1725,7 +1763,9 @@
         "eyebrow": "বিলিং ও নীতিমালা",
         "title": "রিফান্ড ও বিলিং পছন্দ",
         "billingDetails": "বিলিং ডিটেলস",
-        "refundPreference": "রিফান্ড পছন্দ"
+        "refundPreference": "রিফান্ড পছন্দ",
+        "defaultPayoutUpiId": "Default payout UPI ID",
+        "defaultPayoutUpiName": "Default payout name"
       },
       "notifications": {
         "eyebrow": "নোটিফিকেশন পছন্দ",
@@ -1788,7 +1828,9 @@
         "proof": "প্রুফ",
         "reviewReason": "রিভিউ কারণ",
         "openScreenshot": "স্ক্রিনশট খুলুন",
-        "screenshotUploaded": "স্ক্রিনশট প্রুফ আপলোড হয়েছে। দেখতে প্রিভিউ বাটন ব্যবহার করুন।"
+        "screenshotUploaded": "স্ক্রিনশট প্রুফ আপলোড হয়েছে। দেখতে প্রিভিউ বাটন ব্যবহার করুন।",
+        "proofHiddenUntilManagerReview": "Proof stays hidden until manager review is complete.",
+        "proofUnlockHelp": "Once a manager approves or rejects this response, the screenshot and proof details unlock here."
       },
       "openProof": "প্রুফ লিংক খুলুন"
     },
@@ -1902,7 +1944,7 @@
       "activity": {
         "created": "Campaign created and entered {status} state.",
         "submissionApproved": "Submission approved. Net payout INR {amount}.",
-        "submissionRejected": "Submission rejected during admin review.",
+        "submissionRejected": "??????? ???????? ??????? ????? ??????",
         "waitingFinalApproval": "Submission is waiting for final approval.",
         "waitingReview": "Submission received and waiting for review."
       }
@@ -2173,7 +2215,8 @@
         "waitingForReview": "এখনও রিভিউর অপেক্ষায়",
         "reviewedBy": "{value} দ্বারা",
         "reviewFlag": "রিভিউ ফ্ল্যাগ: {value}",
-        "reviewNote": "রিভিউ নোট: {value}"
+        "reviewNote": "রিভিউ নোট: {value}",
+        "payoutDetails": "Payout details"
       },
       "refund": {
         "title": "ম্যানুয়াল বিজনেস রিফান্ড",
@@ -2341,7 +2384,7 @@
       }
     },
     "repeatCampaigns": {
-      "subtitle": "Decide whether this running campaign is open to everyone, only approved repeat requesters, or approved repeat requesters plus new users.",
+      "subtitle": "Decide whether this running campaign is open to everyone, only approved repeat requesters, approved repeat requesters plus new users, or fresh users only.",
       "ruleLabel": "Participation rule while campaign is running",
       "ruleSummaryLabel": "Tomorrow repeat rule:",
       "saving": "Saving...",
@@ -2355,7 +2398,9 @@
       "modes": {
         "open": "Open to everyone",
         "requestedOnly": "Approved requested users only",
-        "requestedPlusNew": "Approved requested users + new users"
+        "requestedPlusNew": "Approved requested users + new users",
+        "freshCampaignOnly": "???? ?? ???????????? ???? ???? ?????",
+        "freshPlatformOnly": "???? ???????????? ???? ???? ?????"
       },
       "cards": {
         "pending": {
@@ -2367,7 +2412,7 @@
           "body": "Users already approved to continue in the next run."
         },
         "rejected": {
-          "title": "Rejected",
+          "title": "????????????",
           "body": "Requests reviewed but not approved for the next run."
         }
       },
@@ -2485,7 +2530,8 @@
         "tutorialVideoUrl": "Tutorial video URL (YouTube, Loom, or direct video)",
         "description": "Description",
         "rewardPerTask": "Reward per task",
-        "totalBudget": "Total budget"
+        "totalBudget": "Total budget",
+        "instructions": "Instructions (one per line)"
       },
       "labels": {
         "escalatedAt": "Escalated: {date}"
@@ -2939,7 +2985,7 @@
           "subtitle": "গত {hours} ঘণ্টায় যেসব ক্যাম্পেইনের ম্যানেজার রিজেকশন রেট বেশি।",
           "empty": "কোনো রিজেকশন স্পাইক ধরা পড়েনি।",
           "decisions": "সিদ্ধান্ত {count}",
-          "rejected": "রিজেক্টেড {count}",
+          "rejected": "???????????? {count}",
           "latest": "সর্বশেষ: {date}"
         },
         "footer": "এই ভিউ নিরাপত্তার জন্য IP ও যোগাযোগের তথ্য আড়াল করে দেখায়। আরও শক্ত নিয়ন্ত্রণ যেমন ডিভাইস ফিঙ্গারপ্রিন্টিং বা IP ব্ল্যাকলিস্ট দরকার হলে সেগুলো অ্যাডমিন-অনলি টুল হিসেবে যোগ করা যেতে পারে।"

@@ -8,6 +8,7 @@ import {
   getBusinessContext,
 } from "@/lib/business-context";
 import { normalizeTaskSelection } from "@/lib/task-categories";
+import { getAppSettings } from "@/lib/system-settings";
 
 type CampaignAction = "PAUSE" | "RESUME" | "CLOSE";
 
@@ -172,11 +173,12 @@ export async function PUT(
   const title = body.title?.trim() || campaign.title;
   const description = body.description?.trim() || campaign.description;
   const category = body.category?.trim().toLowerCase() || campaign.category;
+  const appSettings = await getAppSettings();
   const normalizedTaskSelection = normalizeTaskSelection({
     taskCategory: body.taskCategory ?? campaign.taskCategory,
     taskType: body.taskType ?? campaign.taskType,
     customTask: body.customTask === undefined ? campaign.customTask : body.customTask,
-  });
+  }, appSettings.taskCategories);
   const taskLink = body.taskLink === undefined ? campaign.taskLink : body.taskLink?.trim() || null;
   const rewardPerTask = Number(body.rewardPerTask ?? campaign.rewardPerTask);
   const totalBudget = Number(body.totalBudget ?? campaign.totalBudget);

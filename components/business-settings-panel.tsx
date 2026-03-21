@@ -14,6 +14,8 @@ type BusinessSettings = {
   companyName: string;
   contactEmail: string;
   supportContact: string;
+  defaultPayoutUpiId: string;
+  defaultPayoutUpiName: string;
   billingDetails: string;
   refundPreference: string;
   notificationPreferences: {
@@ -179,6 +181,32 @@ export default function BusinessSettingsPanel() {
             <div>
               <p className="text-sm text-foreground/60">{t("billing.eyebrow")}</p>
               <h3 className="text-xl font-semibold text-foreground">{t("billing.title")}</h3>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm text-foreground/70">{t("billing.defaultPayoutUpiId")}</label>
+              <Input
+                value={data.settings.defaultPayoutUpiId}
+                onChange={(e) =>
+                  setData((prev) =>
+                    prev
+                      ? { ...prev, settings: { ...prev.settings, defaultPayoutUpiId: e.target.value } }
+                      : prev
+                  )
+                }
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm text-foreground/70">{t("billing.defaultPayoutUpiName")}</label>
+              <Input
+                value={data.settings.defaultPayoutUpiName}
+                onChange={(e) =>
+                  setData((prev) =>
+                    prev
+                      ? { ...prev, settings: { ...prev.settings, defaultPayoutUpiName: e.target.value } }
+                      : prev
+                  )
+                }
+              />
             </div>
             <div className="space-y-2">
               <label className="text-sm text-foreground/70">{t("billing.billingDetails")}</label>

@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { getSubmissionCommissionRate } from "@/lib/commission";
+import { getDailyResetState } from "@/lib/level";
 import { prisma } from "@/lib/prisma";
 import { getCampaignRepeatAccess, getIndiaDateKey } from "@/lib/campaign-repeat";
+import { getAppSettings } from "@/lib/system-settings";
 
 export async function GET() {
   const session = await auth();
@@ -9,41 +12,58 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
-  const campaigns = await prisma.campaign.findMany({
-    where: {
-      status: "LIVE",
-      remainingBudget: { gt: 0 },
-      OR: [
-        { category: "marketing" },
-        {
-          AND: [
-            { category: "work" },
-            { assignments: { some: { userId: session.user.id } } },
-          ],
-        },
-      ],
-    },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      category: true,
-      taskCategory: true,
-      taskType: true,
-      customTask: true,
-      taskLink: true,
-      rewardPerTask: true,
-      remainingBudget: true,
-      totalBudget: true,
-      submissionMode: true,
-      repeatAccessMode: true,
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const [user, appSettings, campaigns] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        level: true,
+        lastLevelResetAt: true,
+      },
+    }),
+    getAppSettings(),
+    prisma.campaign.findMany({
+      where: {
+        status: "LIVE",
+        remainingBudget: { gt: 0 },
+        OR: [
+          { category: "marketing" },
+          {
+            AND: [
+              { category: "work" },
+              { assignments: { some: { userId: session.user.id } } },
+            ],
+          },
+        ],
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        category: true,
+        taskCategory: true,
+        taskType: true,
+        customTask: true,
+        taskLink: true,
+        rewardPerTask: true,
+        remainingBudget: true,
+        totalBudget: true,
+        submissionMode: true,
+        repeatAccessMode: true,
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+  ]);
+
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
+  const { resetNeeded } = getDailyResetState(user.lastLevelResetAt);
+  const effectiveLevel = resetNeeded ? "L1" : user.level;
 
   const campaignIds = campaigns.map((campaign) => campaign.id);
   const todayKey = getIndiaDateKey();
-  const [occupiedCounts, userSubmissionCounts, repeatRequests] = campaignIds.length
+  const [occupiedCounts, userSubmissionCounts, repeatRequests, userPlatformSubmissionCount] = campaignIds.length
     ? await Promise.all([
         prisma.submission.groupBy({
           by: ["campaignId"],
@@ -76,8 +96,13 @@ export async function GET() {
             status: true,
           },
         }),
+        prisma.submission.count({
+          where: {
+            userId: session.user.id,
+          },
+        }),
       ])
-    : [[], [], []];
+    : [[], [], [], 0];
 
   const occupiedCountMap = new Map(
     occupiedCounts.map((item) => [item.campaignId, item._count._all])
@@ -90,6 +115,12 @@ export async function GET() {
   );
 
   const campaignsWithLimits = campaigns.map((campaign) => {
+    const commissionRate = getSubmissionCommissionRate({
+      category: campaign.category,
+      userLevel: effectiveLevel,
+      oneTimeRateOverride: appSettings.commissionRateDefault,
+    });
+    const walletShareRate = Number((1 - commissionRate).toFixed(2));
     const allowedSubmissions = Math.max(
       1,
       Math.floor(campaign.totalBudget / campaign.rewardPerTask)
@@ -103,8 +134,12 @@ export async function GET() {
       submissionMode: campaign.submissionMode,
       repeatAccessMode: campaign.repeatAccessMode,
       userSubmissionCount,
+      userPlatformSubmissionCount,
       repeatRequestStatus: repeatRequestStatusMap.get(campaign.id) ?? null,
     });
+    const netRewardPerTask = Number((campaign.rewardPerTask * walletShareRate).toFixed(2));
+    const netRemainingBudget = Number((leftSubmissions * netRewardPerTask).toFixed(2));
+    const netTotalBudget = Number((allowedSubmissions * netRewardPerTask).toFixed(2));
 
     return {
       ...campaign,
@@ -118,6 +153,12 @@ export async function GET() {
       repeatAccessMode: campaign.repeatAccessMode,
       repeatRequestReason: repeatAccess.reason,
       submissionMode: campaign.submissionMode,
+      effectiveLevel,
+      commissionRate,
+      walletShareRate,
+      netRewardPerTask,
+      netRemainingBudget,
+      netTotalBudget,
     };
   });
 

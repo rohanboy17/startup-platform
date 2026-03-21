@@ -9,8 +9,14 @@ export function getIndiaDateKey(input = new Date()) {
 
 export function getCampaignRepeatAccess(input: {
   submissionMode: "ONE_PER_USER" | "MULTIPLE_PER_USER";
-  repeatAccessMode: "OPEN" | "REQUESTED_ONLY" | "REQUESTED_PLUS_NEW";
+  repeatAccessMode:
+    | "OPEN"
+    | "REQUESTED_ONLY"
+    | "REQUESTED_PLUS_NEW"
+    | "FRESH_CAMPAIGN_ONLY"
+    | "FRESH_PLATFORM_ONLY";
   userSubmissionCount: number;
+  userPlatformSubmissionCount: number;
   repeatRequestStatus: "PENDING" | "APPROVED" | "REJECTED" | null;
 }) {
   if (input.submissionMode === "ONE_PER_USER") {
@@ -22,6 +28,7 @@ export function getCampaignRepeatAccess(input: {
   }
 
   const hasSubmittedBefore = input.userSubmissionCount > 0;
+  const hasSubmittedOnPlatform = input.userPlatformSubmissionCount > 0;
   const isApprovedRequester = input.repeatRequestStatus === "APPROVED";
   const isPendingRequester = input.repeatRequestStatus === "PENDING";
 
@@ -54,6 +61,22 @@ export function getCampaignRepeatAccess(input: {
       blockedByRepeatRule: true,
       canRequestTomorrow: false,
       reason: "requested_users_only",
+    };
+  }
+
+  if (input.repeatAccessMode === "FRESH_CAMPAIGN_ONLY") {
+    return {
+      blockedByRepeatRule: hasSubmittedBefore,
+      canRequestTomorrow: false,
+      reason: hasSubmittedBefore ? ("fresh_same_campaign_only" as const) : null,
+    };
+  }
+
+  if (input.repeatAccessMode === "FRESH_PLATFORM_ONLY") {
+    return {
+      blockedByRepeatRule: hasSubmittedOnPlatform,
+      canRequestTomorrow: false,
+      reason: hasSubmittedOnPlatform ? ("fresh_platform_only" as const) : null,
     };
   }
 

@@ -103,12 +103,18 @@ export async function GET() {
           : submission.managerStatus === "MANAGER_REJECTED"
             ? "MANAGER_REJECTED"
             : submission.managerStatus === "MANAGER_APPROVED"
-              ? "PENDING_ADMIN"
-              : "PENDING_MANAGER";
+            ? "PENDING_ADMIN"
+            : "PENDING_MANAGER";
+    const canViewProof = submission.managerStatus !== "PENDING";
 
     return {
       ...submission,
+      proof: canViewProof ? submission.proof : "",
+      proofLink: canViewProof ? submission.proofLink : null,
+      proofText: canViewProof ? submission.proofText : null,
+      proofImage: canViewProof ? submission.proofImage : null,
       stage,
+      canViewProof,
       reason:
         stage === "ADMIN_REJECTED"
           ? reasons?.adminReason || "No admin reason provided"

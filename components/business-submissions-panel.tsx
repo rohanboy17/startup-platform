@@ -25,6 +25,7 @@ type SubmissionRow = {
   proofLink: string | null;
   proofText: string | null;
   proofImage: string | null;
+  canViewProof: boolean;
   managerStatus: string;
   adminStatus: string;
   rewardAmount: number;
@@ -297,7 +298,7 @@ export default function BusinessSubmissionsPanel() {
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
                     <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("row.proof")}</p>
-                    {(() => {
+                    {submission.canViewProof ? (() => {
                       const screenshotUrl =
                         submission.proofImage || (isLikelyScreenshotUrl(submission.proof) ? submission.proof : null);
                       const proofText =
@@ -328,7 +329,12 @@ export default function BusinessSubmissionsPanel() {
                           </div>
                         </>
                       );
-                    })()}
+                    })() : (
+                      <>
+                        <p className="mt-2 text-sm text-white/75">{t("row.proofHiddenUntilManagerReview")}</p>
+                        <p className="mt-2 text-xs text-white/45">{t("row.proofUnlockHelp")}</p>
+                      </>
+                    )}
                   </div>
                 </div>
 

@@ -5,6 +5,8 @@ export type BusinessSettings = {
   companyName: string;
   contactEmail: string;
   supportContact: string;
+  defaultPayoutUpiId: string;
+  defaultPayoutUpiName: string;
   billingDetails: string;
   refundPreference: string;
   notificationPreferences: {
@@ -25,6 +27,8 @@ export function getDefaultBusinessSettings(params: { name?: string | null; email
     companyName: params.name?.trim() || "",
     contactEmail: params.email?.trim() || "",
     supportContact: "",
+    defaultPayoutUpiId: "",
+    defaultPayoutUpiName: "",
     billingDetails: "",
     refundPreference: "Refund unused wallet balance with zero business fee during launch.",
     notificationPreferences: {
@@ -48,6 +52,14 @@ export async function getBusinessSettings(userId: string, fallback: { name?: str
     companyName: typeof raw.companyName === "string" ? raw.companyName : defaults.companyName,
     contactEmail: typeof raw.contactEmail === "string" ? raw.contactEmail : defaults.contactEmail,
     supportContact: typeof raw.supportContact === "string" ? raw.supportContact : defaults.supportContact,
+    defaultPayoutUpiId:
+      typeof raw.defaultPayoutUpiId === "string"
+        ? raw.defaultPayoutUpiId
+        : defaults.defaultPayoutUpiId,
+    defaultPayoutUpiName:
+      typeof raw.defaultPayoutUpiName === "string"
+        ? raw.defaultPayoutUpiName
+        : defaults.defaultPayoutUpiName,
     billingDetails: typeof raw.billingDetails === "string" ? raw.billingDetails : defaults.billingDetails,
     refundPreference:
       typeof raw.refundPreference === "string" ? raw.refundPreference : defaults.refundPreference,

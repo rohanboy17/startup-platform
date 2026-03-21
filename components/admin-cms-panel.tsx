@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
+import type { TaskCategoryOption } from "@/lib/task-categories";
 
 type FeatureFlag = {
   key: string;
@@ -43,6 +44,7 @@ export default function AdminCmsPanel({
   initialPrivacyBody,
   initialRefundBody,
   initialFaqBody,
+  initialTaskCategories,
   flags,
   announcements,
   communityFeedback,
@@ -53,6 +55,7 @@ export default function AdminCmsPanel({
   initialPrivacyBody: string;
   initialRefundBody: string;
   initialFaqBody: string;
+  initialTaskCategories: TaskCategoryOption[];
   flags: FeatureFlag[];
   announcements: Announcement[];
   communityFeedback: CommunityFeedback[];
@@ -64,6 +67,9 @@ export default function AdminCmsPanel({
   const [privacyBody, setPrivacyBody] = useState(initialPrivacyBody);
   const [refundBody, setRefundBody] = useState(initialRefundBody);
   const [faqBody, setFaqBody] = useState(initialFaqBody);
+  const [taskCategoryText, setTaskCategoryText] = useState(
+    initialTaskCategories.map((category) => `${category.name}\n${category.items.join("\n")}`).join("\n\n")
+  );
   const [newAnnTitle, setNewAnnTitle] = useState("");
   const [newAnnMessage, setNewAnnMessage] = useState("");
   const [newAnnLink, setNewAnnLink] = useState("");
@@ -293,6 +299,40 @@ export default function AdminCmsPanel({
     }
   }
 
+  async function saveTaskCategories() {
+    setLoading("task-categories");
+    setMessage("");
+    const taskCategories = taskCategoryText
+      .split(/\n\s*\n/)
+      .map((block) => block.split("\n").map((item) => item.trim()).filter(Boolean))
+      .filter((block) => block.length > 0)
+      .map((block) => ({
+        name: block[0],
+        items: block.slice(1),
+      }))
+      .filter((block) => block.name && block.items.length > 0);
+
+    const res = await fetch("/api/admin/settings", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ taskCategories }),
+    });
+    const raw = await res.text();
+    let data: { message?: string; error?: string } = {};
+    try {
+      data = raw ? (JSON.parse(raw) as typeof data) : {};
+    } catch {
+      data = { error: "Unexpected server response" };
+    }
+    setLoading(null);
+    setMessage(data.message || data.error || "Updated");
+    if (res.ok) {
+      router.refresh();
+      emitDashboardLiveRefresh();
+    }
+  }
+
   const filteredFeedback =
     feedbackFilter === "ALL"
       ? communityFeedback
@@ -339,6 +379,24 @@ export default function AdminCmsPanel({
         <textarea value={faqBody} onChange={(e) => setFaqBody(e.target.value)} className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white" placeholder="FAQ body" />
         <Button onClick={() => saveContent("legal.faq", { body: faqBody })} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "legal.faq" ? "Saving..." : "Save FAQ"}
+        </Button>
+      </section>
+
+      <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+        <div className="space-y-1">
+          <h3 className="text-lg font-semibold">Task Categories & Types</h3>
+          <p className="text-sm text-white/65">
+            Edit the master campaign category list used by business create/edit and admin campaign management.
+            Use one category block at a time. First line is the category name, next lines are task types. Leave one blank line between categories.
+          </p>
+        </div>
+        <textarea
+          value={taskCategoryText}
+          onChange={(e) => setTaskCategoryText(e.target.value)}
+          className="min-h-[360px] w-full rounded-xl border border-white/20 bg-black/30 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20"
+        />
+        <Button onClick={saveTaskCategories} disabled={loading !== null} className="w-full sm:w-auto">
+          {loading === "task-categories" ? "Saving..." : "Save Task Categories"}
         </Button>
       </section>
 

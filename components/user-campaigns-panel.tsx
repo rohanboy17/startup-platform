@@ -28,10 +28,21 @@ type Campaign = {
   userSubmissionCount: number;
   blockedBySubmissionMode: boolean;
   blockedByRepeatRule: boolean;
-  repeatAccessMode: "OPEN" | "REQUESTED_ONLY" | "REQUESTED_PLUS_NEW";
+  repeatAccessMode:
+    | "OPEN"
+    | "REQUESTED_ONLY"
+    | "REQUESTED_PLUS_NEW"
+    | "FRESH_CAMPAIGN_ONLY"
+    | "FRESH_PLATFORM_ONLY";
   repeatRequestStatus: "PENDING" | "APPROVED" | "REJECTED" | null;
   repeatRequestReason: string | null;
   submissionMode: "ONE_PER_USER" | "MULTIPLE_PER_USER";
+  effectiveLevel: "L1" | "L2" | "L3" | "L4" | "L5";
+  commissionRate: number;
+  walletShareRate: number;
+  netRewardPerTask: number;
+  netRemainingBudget: number;
+  netTotalBudget: number;
 };
 
 export default function UserCampaignsPanel() {
@@ -103,12 +114,21 @@ export default function UserCampaignsPanel() {
                   </a>
                 ) : null}
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <span className="font-bold text-green-400">
-                    INR {formatMoney(campaign.rewardPerTask)}
-                  </span>
-                  <span className="text-xs text-white/60 sm:text-right">
-                    {t("budgetLeft", { amount: formatMoney(campaign.remainingBudget) })}
-                  </span>
+                  <div>
+                    <span className="font-bold text-green-400">
+                      INR {formatMoney(campaign.netRewardPerTask)}
+                    </span>
+                    <p className="mt-1 text-xs text-white/60">
+                      {t("walletRewardHint", {
+                        level: campaign.effectiveLevel,
+                        percent: Math.round(campaign.walletShareRate * 100),
+                      })}
+                    </p>
+                  </div>
+                  <div className="text-xs text-white/60 sm:text-right">
+                    <p>{t("budgetLeft", { amount: formatMoney(campaign.netRemainingBudget) })}</p>
+                    <p className="mt-1">{t("budgetTotal", { amount: formatMoney(campaign.netTotalBudget) })}</p>
+                  </div>
                 </div>
                 <p className="text-xs text-white/60">
                   {t("allowed")}: {campaign.allowedSubmissions}
@@ -129,6 +149,10 @@ export default function UserCampaignsPanel() {
                         ? t("repeatPending")
                         : campaign.repeatRequestReason === "requested_users_only"
                           ? t("requestedUsersOnly")
+                          : campaign.repeatRequestReason === "fresh_same_campaign_only"
+                            ? t("freshCampaignOnly")
+                            : campaign.repeatRequestReason === "fresh_platform_only"
+                              ? t("freshPlatformOnly")
                           : t("repeatRequestNeeded")
                       : t("blocked")}
                   </p>
