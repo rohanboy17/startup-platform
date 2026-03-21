@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
@@ -15,6 +16,7 @@ export default function AdminUserLifecycleActions({
   userId: string;
   currentStatus: AccountStatus;
 }) {
+  const t = useTranslations("admin.userLifecycleActions");
   const router = useRouter();
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,7 +26,7 @@ export default function AdminUserLifecycleActions({
 
   async function run(action: "SOFT_DELETE" | "REACTIVATE") {
     if (action === "SOFT_DELETE" && !reason.trim()) {
-      setMessage("Reason is required for soft delete");
+      setMessage(t("reasonRequired"));
       return;
     }
 
@@ -46,11 +48,11 @@ export default function AdminUserLifecycleActions({
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
 
     setLoading(false);
-    setMessage(data.message || data.error || "Updated");
+    setMessage(data.message || data.error || t("updated"));
     router.refresh();
     emitDashboardLiveRefresh();
   }
@@ -58,7 +60,7 @@ export default function AdminUserLifecycleActions({
   return (
     <div className="space-y-2">
       <Input
-        placeholder="Soft delete reason (required for delete)"
+        placeholder={t("reasonPlaceholder")}
         value={reason}
         onChange={(e) => setReason(e.target.value)}
       />
@@ -68,18 +70,17 @@ export default function AdminUserLifecycleActions({
           onClick={() => run("SOFT_DELETE")}
           disabled={loading || softDeleted}
         >
-          {loading ? "Processing..." : "Soft Delete"}
+          {loading ? t("processing") : t("softDelete")}
         </Button>
         <Button
           variant="outline"
           onClick={() => run("REACTIVATE")}
           disabled={loading || !softDeleted}
         >
-          {loading ? "Processing..." : "Reactivate"}
+          {loading ? t("processing") : t("reactivate")}
         </Button>
       </div>
       {message ? <p className="text-xs text-white/60">{message}</p> : null}
     </div>
   );
 }
-

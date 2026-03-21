@@ -72,6 +72,8 @@ export async function GET(req: Request) {
             proofText: submission.proofText,
             proofImage: submission.proofImage,
             proof: submission.proof,
+            assignedInstructionSequence: submission.assignedInstructionSequence,
+            assignedInstructionText: submission.assignedInstructionText,
             user: submission.user,
             campaign: submission.campaign,
             managerEscalatedAt: submission.managerEscalatedAt

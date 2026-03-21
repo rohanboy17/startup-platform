@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
@@ -13,6 +14,7 @@ export default function AdminBusinessWalletActions({
 }: {
   businessId: string;
 }) {
+  const t = useTranslations("admin.businessWalletActions");
   const router = useRouter();
   const [action, setAction] = useState<WalletAction>("CREDIT");
   const [amount, setAmount] = useState("");
@@ -41,11 +43,11 @@ export default function AdminBusinessWalletActions({
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
 
     setLoading(false);
-    setMessage(data.message || data.error || "Updated");
+    setMessage(data.message || data.error || t("updated"));
     if (res.ok) {
       setAmount("");
       setNote("");
@@ -63,26 +65,26 @@ export default function AdminBusinessWalletActions({
           className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white sm:w-auto"
           disabled={loading}
         >
-          <option value="CREDIT">CREDIT</option>
-          <option value="DEBIT">DEBIT</option>
+          <option value="CREDIT">{t("actions.credit")}</option>
+          <option value="DEBIT">{t("actions.debit")}</option>
         </select>
         <Input
           type="number"
           min={0.01}
           step="0.01"
-          placeholder="Amount"
+          placeholder={t("amountPlaceholder")}
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           className="w-full sm:max-w-[180px]"
         />
       </div>
       <Input
-        placeholder="Wallet note (optional)"
+        placeholder={t("notePlaceholder")}
         value={note}
         onChange={(e) => setNote(e.target.value)}
       />
       <Button onClick={submit} disabled={loading} className="w-full sm:w-auto">
-        {loading ? "Applying..." : "Apply Business Wallet Update"}
+        {loading ? t("applying") : t("apply")}
       </Button>
       {message ? <p className="text-xs text-white/60">{message}</p> : null}
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SectionCard } from "@/components/ui/section-card";
@@ -23,6 +24,7 @@ type CampaignRow = {
 };
 
 export default function AdminBulkAssignBySkill() {
+  const t = useTranslations("admin.bulkAssignBySkill");
   const [loading, setLoading] = useState(true);
   const [skills, setSkills] = useState<SkillRow[]>([]);
   const [campaigns, setCampaigns] = useState<CampaignRow[]>([]);
@@ -58,24 +60,24 @@ export default function AdminBulkAssignBySkill() {
       try {
         skillsParsed = skillsRaw ? (JSON.parse(skillsRaw) as { skills?: SkillRow[]; error?: string }) : {};
       } catch {
-        skillsParsed = { error: "Unexpected skills response" };
+        skillsParsed = { error: t("errors.unexpectedSkillsResponse") };
       }
 
       try {
         campaignsParsed = campaignsRaw ? (JSON.parse(campaignsRaw) as { campaigns?: CampaignRow[]; error?: string }) : {};
       } catch {
-        campaignsParsed = { error: "Unexpected campaigns response" };
+        campaignsParsed = { error: t("errors.unexpectedCampaignsResponse") };
       }
 
       setLoading(false);
 
       if (!skillsRes.ok) {
-        setError(skillsParsed.error || "Failed to load skills");
+        setError(skillsParsed.error || t("errors.failedToLoadSkills"));
         return;
       }
 
       if (!campaignsRes.ok) {
-        setError(campaignsParsed.error || "Failed to load campaigns");
+        setError(campaignsParsed.error || t("errors.failedToLoadCampaigns"));
         return;
       }
 
@@ -83,9 +85,9 @@ export default function AdminBulkAssignBySkill() {
       setCampaigns(campaignsParsed.campaigns || []);
     } catch {
       setLoading(false);
-      setError("Failed to load assignment tools");
+      setError(t("errors.failedToLoadTools"));
     }
-  }, []);
+  }, [t]);
 
   useLiveRefresh(load, 120000);
 
@@ -141,21 +143,21 @@ export default function AdminBulkAssignBySkill() {
     try {
       parsed = raw ? (JSON.parse(raw) as typeof parsed) : {};
     } catch {
-      parsed = { error: "Unexpected server response" };
+      parsed = { error: t("errors.unexpectedServerResponse") };
     }
 
     setSaving(false);
 
     if (!res.ok) {
-      setError(parsed.error || (dryRun ? "Preview failed" : "Bulk assign failed"));
+      setError(parsed.error || (dryRun ? t("errors.previewFailed") : t("errors.bulkAssignFailed")));
       return;
     }
 
     const line =
-      `Eligible ${parsed.eligible ?? 0}. ` +
-      `Would assign ${parsed.wouldAssign ?? 0}. ` +
-      `Already assigned ${parsed.alreadyAssigned ?? 0}.` +
-      (dryRun ? "" : ` Newly assigned ${parsed.newlyAssigned ?? 0}.`);
+      `${t("messages.eligible", { count: parsed.eligible ?? 0 })}. ` +
+      `${t("messages.wouldAssign", { count: parsed.wouldAssign ?? 0 })}. ` +
+      `${t("messages.alreadyAssigned", { count: parsed.alreadyAssigned ?? 0 })}.` +
+      (dryRun ? "" : ` ${t("messages.newlyAssigned", { count: parsed.newlyAssigned ?? 0 })}.`);
 
     const nextMessage = parsed.message ? `${parsed.message}. ${line}` : line;
 
@@ -175,20 +177,20 @@ export default function AdminBulkAssignBySkill() {
     const skillLabel = selectedSkillRow?.label || selectedSkill;
     const campaignTitle = selectedCampaignRow?.title || selectedCampaign;
     const count = selectedSkillRow?.activeUserCount ?? 0;
-    const filterLabel = excludeSuspicious ? "excluding suspicious users" : "including suspicious users";
+    const filterLabel = excludeSuspicious ? t("confirm.excludingSuspicious") : t("confirm.includingSuspicious");
     const profileFilters = [
-      workMode ? `work mode: ${workMode}` : null,
-      workingPreference ? `preference: ${workingPreference}` : null,
-      education ? `education contains "${education}"` : null,
-      language ? `language contains "${language}"` : null,
+      workMode ? t("confirm.workMode", { value: workMode }) : null,
+      workingPreference ? t("confirm.preference", { value: workingPreference }) : null,
+      education ? t("confirm.education", { value: education }) : null,
+      language ? t("confirm.language", { value: language }) : null,
     ]
       .filter(Boolean)
       .join(", ");
 
     const ok = confirm(
-      `Assign campaign "${campaignTitle}" to all ACTIVE users with skill "${skillLabel}" (${filterLabel})?` +
-        `${profileFilters ? `\\nProfile filters: ${profileFilters}` : ""}` +
-        `\\n\\nBase eligible users for this skill: ${count}`
+      `${t("confirm.assignCampaign", { campaign: campaignTitle, skill: skillLabel, filter: filterLabel })}` +
+        `${profileFilters ? `\\n${t("confirm.profileFilters", { value: profileFilters })}` : ""}` +
+        `\\n\\n${t("confirm.baseEligible", { count })}`
     );
     if (!ok) return;
 
@@ -199,14 +201,14 @@ export default function AdminBulkAssignBySkill() {
     <SectionCard elevated className="space-y-4 p-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">Work campaign targeting</p>
-          <h3 className="mt-1 text-lg font-semibold tracking-tight">Bulk assign users by skill</h3>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">{t("eyebrow")}</p>
+          <h3 className="mt-1 text-lg font-semibold tracking-tight">{t("title")}</h3>
           <p className="mt-1 text-sm text-foreground/70">
-            Assign a work campaign to every ACTIVE user who has selected a specific skill.
+            {t("description")}
           </p>
         </div>
         <Button variant="secondary" onClick={() => void load()} disabled={loading} className="w-full sm:w-auto">
-          {loading ? "Loading..." : "Refresh"}
+          {loading ? t("actions.loading") : t("actions.refresh")}
         </Button>
       </div>
 
@@ -215,12 +217,12 @@ export default function AdminBulkAssignBySkill() {
 
       <div className="grid gap-3 lg:grid-cols-[1fr_1fr_220px]">
         <div className="rounded-2xl border border-foreground/10 bg-background/60 p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-foreground/60">Skill</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-foreground/60">{t("fields.skill")}</p>
           <div className="mt-2 space-y-2">
             <Input
               value={skillQuery}
               onChange={(e) => setSkillQuery(e.target.value)}
-              placeholder="Search skills..."
+              placeholder={t("fields.searchSkills")}
               className="min-h-11"
             />
             <select
@@ -228,7 +230,7 @@ export default function AdminBulkAssignBySkill() {
               onChange={(e) => setSelectedSkill(e.target.value)}
               className="w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             >
-              <option value="">Select a skill</option>
+              <option value="">{t("fields.selectSkill")}</option>
               {filteredSkills.map((s) => (
                 <option key={s.slug} value={s.slug}>
                   {s.label} ({s.activeUserCount})
@@ -236,20 +238,20 @@ export default function AdminBulkAssignBySkill() {
               ))}
             </select>
             {selectedSkillRow ? (
-              <p className="text-xs text-foreground/60">Eligible ACTIVE users: {selectedSkillRow.activeUserCount}</p>
+              <p className="text-xs text-foreground/60">{t("fields.eligibleActiveUsers", { count: selectedSkillRow.activeUserCount })}</p>
             ) : null}
           </div>
         </div>
 
         <div className="rounded-2xl border border-foreground/10 bg-background/60 p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-foreground/60">Work campaign</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-foreground/60">{t("fields.workCampaign")}</p>
           <div className="mt-2 space-y-2">
             <select
               value={selectedCampaign}
               onChange={(e) => setSelectedCampaign(e.target.value)}
               className="w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             >
-              <option value="">Select a work campaign</option>
+              <option value="">{t("fields.selectWorkCampaign")}</option>
               {campaigns.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.title} [{c.status}] (assigned {c.assignedUsers})
@@ -258,7 +260,7 @@ export default function AdminBulkAssignBySkill() {
             </select>
             {selectedCampaignRow ? (
               <p className="text-xs text-foreground/60">
-                Currently assigned: {selectedCampaignRow.assignedUsers}
+                {t("fields.currentlyAssigned", { count: selectedCampaignRow.assignedUsers })}
                 {selectedCampaignRow.taskCategory ? ` | ${selectedCampaignRow.taskCategory}` : ""}
                 {selectedCampaignRow.taskType ? ` | ${selectedCampaignRow.taskType}` : ""}
               </p>
@@ -274,7 +276,7 @@ export default function AdminBulkAssignBySkill() {
                 checked={excludeSuspicious}
                 onChange={(e) => setExcludeSuspicious(e.target.checked)}
               />
-              Exclude suspicious users
+              {t("fields.excludeSuspicious")}
             </label>
 
             <Button
@@ -284,7 +286,7 @@ export default function AdminBulkAssignBySkill() {
               disabled={saving || loading || !selectedSkill || !selectedCampaign}
               className="w-full"
             >
-              {saving ? "Working..." : "Preview"}
+              {saving ? t("actions.working") : t("actions.preview")}
             </Button>
 
             <Button
@@ -292,7 +294,7 @@ export default function AdminBulkAssignBySkill() {
               disabled={saving || loading || !selectedSkill || !selectedCampaign}
               className="w-full"
             >
-              {saving ? "Assigning..." : "Assign all"}
+              {saving ? t("actions.assigning") : t("actions.assignAll")}
             </Button>
           </div>
         </div>
@@ -304,10 +306,10 @@ export default function AdminBulkAssignBySkill() {
           onChange={(e) => setWorkMode(e.target.value)}
           className="w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
         >
-          <option value="">Any work mode</option>
-          <option value="WORK_FROM_HOME">Work from home</option>
-          <option value="WORK_FROM_OFFICE">Work from office</option>
-          <option value="WORK_IN_FIELD">Work in field</option>
+          <option value="">{t("filters.anyWorkMode")}</option>
+          <option value="WORK_FROM_HOME">{t("filters.workFromHome")}</option>
+          <option value="WORK_FROM_OFFICE">{t("filters.workFromOffice")}</option>
+          <option value="WORK_IN_FIELD">{t("filters.workInField")}</option>
         </select>
 
         <select
@@ -315,23 +317,23 @@ export default function AdminBulkAssignBySkill() {
           onChange={(e) => setWorkingPreference(e.target.value)}
           className="w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
         >
-          <option value="">Any work preference</option>
-          <option value="SALARIED">Salaried</option>
-          <option value="FREELANCE_CONTRACTUAL">Freelance contractual</option>
-          <option value="DAY_BASIS">Day basis</option>
+          <option value="">{t("filters.anyWorkPreference")}</option>
+          <option value="SALARIED">{t("filters.salaried")}</option>
+          <option value="FREELANCE_CONTRACTUAL">{t("filters.freelanceContractual")}</option>
+          <option value="DAY_BASIS">{t("filters.dayBasis")}</option>
         </select>
 
         <Input
           value={education}
           onChange={(e) => setEducation(e.target.value)}
-          placeholder="Education keyword"
+          placeholder={t("filters.educationKeyword")}
           className="min-h-11"
         />
 
         <Input
           value={language}
           onChange={(e) => setLanguage(e.target.value)}
-          placeholder="Language"
+          placeholder={t("filters.language")}
           className="min-h-11"
         />
       </div>

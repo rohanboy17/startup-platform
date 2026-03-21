@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
@@ -17,6 +18,7 @@ type BulkUser = {
 };
 
 export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
+  const t = useTranslations("admin.userBulkActions");
   const router = useRouter();
   const [selected, setSelected] = useState<string[]>([]);
   const [action, setAction] = useState<BulkAction>("SET_STATUS");
@@ -45,11 +47,11 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
 
   async function runBulk() {
     if (selected.length === 0) {
-      setMessage("Select at least one user");
+      setMessage(t("selectAtLeastOne"));
       return;
     }
     if (action === "SET_STATUS" && (status === "SUSPENDED" || status === "BANNED") && !reason.trim()) {
-      setMessage("Reason is required for suspend or ban");
+      setMessage(t("reasonRequired"));
       return;
     }
 
@@ -80,16 +82,16 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
     try {
       data = raw ? (JSON.parse(raw) as typeof data) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
 
     setLoading(false);
     if (!res.ok) {
-      setMessage(data.error || "Bulk update failed");
+      setMessage(data.error || t("bulkUpdateFailed"));
       return;
     }
 
-    setMessage(`Done. Updated ${data.updated ?? 0}, skipped ${data.skipped ?? 0}.`);
+    setMessage(t("doneMessage", { updated: data.updated ?? 0, skipped: data.skipped ?? 0 }));
     setSelected([]);
     setReason("");
     router.refresh();
@@ -99,18 +101,18 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
   return (
     <div className="space-y-3 rounded-2xl border border-foreground/10 bg-background/50 p-4">
       <div className="flex flex-wrap items-center gap-2">
-        <p className="text-sm text-foreground/70">Bulk account update</p>
+        <p className="text-sm text-foreground/70">{t("title")}</p>
         <span className="rounded-full bg-foreground/10 px-2 py-0.5 text-xs text-foreground/70">
-          Selected: {selected.length}
+          {t("selected", { count: selected.length })}
         </span>
       </div>
 
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         <Button type="button" variant="outline" onClick={selectAll} disabled={loading} className="w-full sm:w-auto">
-          Select All (non-admin)
+          {t("selectAll")}
         </Button>
         <Button type="button" variant="outline" onClick={clearAll} disabled={loading} className="w-full sm:w-auto">
-          Clear
+          {t("clear")}
         </Button>
       </div>
 
@@ -121,10 +123,10 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
           className="w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
           disabled={loading}
         >
-          <option value="SET_STATUS">Set Status</option>
-          <option value="SET_ROLE">Set Role</option>
-          <option value="FLAG">Flag</option>
-          <option value="UNFLAG">Unflag</option>
+          <option value="SET_STATUS">{t("actions.setStatus")}</option>
+          <option value="SET_ROLE">{t("actions.setRole")}</option>
+          <option value="FLAG">{t("actions.flag")}</option>
+          <option value="UNFLAG">{t("actions.unflag")}</option>
         </select>
 
         {action === "SET_STATUS" ? (
@@ -134,9 +136,9 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
             className="w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
             disabled={loading}
           >
-            <option value="ACTIVE">ACTIVE</option>
-            <option value="SUSPENDED">SUSPENDED</option>
-            <option value="BANNED">BANNED</option>
+            <option value="ACTIVE">{t("status.active")}</option>
+            <option value="SUSPENDED">{t("status.suspended")}</option>
+            <option value="BANNED">{t("status.banned")}</option>
           </select>
         ) : action === "SET_ROLE" ? (
           <select
@@ -145,10 +147,10 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
             className="w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
             disabled={loading}
           >
-            <option value="USER">USER</option>
-            <option value="BUSINESS">BUSINESS</option>
-            <option value="MANAGER">MANAGER</option>
-            <option value="ADMIN">ADMIN</option>
+            <option value="USER">{t("roles.user")}</option>
+            <option value="BUSINESS">{t("roles.business")}</option>
+            <option value="MANAGER">{t("roles.manager")}</option>
+            <option value="ADMIN">{t("roles.admin")}</option>
           </select>
         ) : (
           <div />
@@ -157,7 +159,7 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
         <input
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          placeholder="Reason (optional)"
+          placeholder={t("reasonPlaceholder")}
           className="rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground placeholder:text-foreground/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 md:col-span-2"
           disabled={loading}
         />
@@ -173,14 +175,14 @@ export default function AdminUserBulkActions({ users }: { users: BulkUser[] }) {
               onChange={() => toggle(user.id)}
             />
             <span>
-              {user.name || "Unnamed"} ({user.email}) - {user.role}
+              {t("userLabel", { name: user.name || t("unnamed"), email: user.email, role: user.role })}
             </span>
           </label>
         ))}
       </div>
 
       <Button type="button" onClick={runBulk} disabled={loading} className="w-full sm:w-auto">
-        {loading ? "Applying..." : "Apply changes"}
+        {loading ? t("applying") : t("applyChanges")}
       </Button>
       {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>

@@ -23,6 +23,8 @@ type Submission = {
   proofLink: string | null;
   proofText: string | null;
   proofImage: string | null;
+  assignedInstructionSequence: number | null;
+  assignedInstructionText: string | null;
   managerStatus: string;
   adminStatus: string;
   rewardAmount: number;
@@ -257,12 +259,26 @@ export default function UserV2SubmissionsPanel() {
                     />
                   </div>
 
-                  <div className="grid gap-4 xl:grid-cols-[0.85fr_1.15fr]">
+                  <div className="grid gap-4 xl:grid-cols-[0.8fr_1fr_1.2fr]">
                     <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
                       <p className="text-xs uppercase tracking-[0.16em] text-white/35">{t("reviewStatus")}</p>
                       <p className="text-sm text-white/75">{t("manager", { status: submission.managerStatus.replaceAll("_", " ") })}</p>
                       <p className="text-sm text-white/75">{t("admin", { status: submission.adminStatus.replaceAll("_", " ") })}</p>
                       <p className="text-sm text-white/50">{t("submitted", { date: new Date(submission.createdAt).toLocaleString(locale) })}</p>
+                    </div>
+
+                    <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
+                      <p className="text-xs uppercase tracking-[0.16em] text-white/35">{t("instructionShown")}</p>
+                      {submission.assignedInstructionText ? (
+                        <>
+                          <p className="text-sm text-white/60">
+                            {t("instructionSequence", { sequence: submission.assignedInstructionSequence ?? 0 })}
+                          </p>
+                          <p className="break-words text-sm text-white/80">{submission.assignedInstructionText}</p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-white/50">{t("instructionNotStored")}</p>
+                      )}
                     </div>
 
                     <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">

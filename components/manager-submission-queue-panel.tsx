@@ -19,6 +19,8 @@ type QueueItem = {
   proofLink: string | null;
   proofText: string | null;
   proofImage: string | null;
+  assignedInstructionSequence: number | null;
+  assignedInstructionText: string | null;
   createdAt: string;
   user: {
     id: string;
@@ -283,6 +285,28 @@ export default function ManagerSubmissionQueuePanel() {
                         </div>
 
                         <p className="text-sm text-white/80 break-words">{submission.campaign.description}</p>
+
+                        <div className="rounded-2xl border border-emerald-400/15 bg-emerald-500/10 p-3">
+                          <p className="text-xs uppercase tracking-[0.16em] text-emerald-100/70">
+                            {t("task.assignedInstruction")}
+                          </p>
+                          {submission.assignedInstructionText ? (
+                            <div className="mt-2 space-y-2">
+                              <span className="inline-flex rounded-full border border-emerald-300/20 px-2 py-1 text-xs text-emerald-100/80">
+                                {t("task.assignedInstructionSequence", {
+                                  sequence: submission.assignedInstructionSequence ?? 0,
+                                })}
+                              </span>
+                              <p className="text-sm text-emerald-50/90 break-words">
+                                {submission.assignedInstructionText}
+                              </p>
+                            </div>
+                          ) : (
+                            <p className="mt-2 text-sm text-emerald-50/70">
+                              {t("task.assignedInstructionFallback")}
+                            </p>
+                          )}
+                        </div>
 
                         {submission.campaign.instructions?.length ? (
                           <details className="rounded-2xl border border-white/10 bg-white/5 p-3">

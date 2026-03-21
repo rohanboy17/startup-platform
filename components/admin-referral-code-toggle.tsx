@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
@@ -14,6 +15,7 @@ export default function AdminReferralCodeToggle({
   code: string;
   isActive: boolean;
 }) {
+  const t = useTranslations("admin.referralCodeToggle");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -34,11 +36,11 @@ export default function AdminReferralCodeToggle({
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
 
     setLoading(false);
-    setMessage(data.message || data.error || "Updated");
+    setMessage(data.message || data.error || t("updated"));
 
     if (res.ok) {
       router.refresh();
@@ -59,7 +61,7 @@ export default function AdminReferralCodeToggle({
           onClick={toggleCode}
           disabled={loading}
         >
-          {loading ? "Saving..." : isActive ? "Disable code" : "Enable code"}
+          {loading ? t("saving") : isActive ? t("disableCode") : t("enableCode")}
         </Button>
       </div>
       {message ? <p className="text-xs text-foreground/60">{message}</p> : null}

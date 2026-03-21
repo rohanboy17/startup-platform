@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
@@ -15,6 +16,7 @@ export default function AdminUserStatusActions({
   userId: string;
   currentStatus: AccountStatus;
 }) {
+  const t = useTranslations("admin.userStatusActions");
   const router = useRouter();
   const [status, setStatus] = useState<AccountStatus>(currentStatus);
   const [reason, setReason] = useState("");
@@ -23,11 +25,11 @@ export default function AdminUserStatusActions({
 
   async function saveStatus() {
     if (status === currentStatus) {
-      setMessage("No status change");
+      setMessage(t("noStatusChange"));
       return;
     }
     if ((status === "SUSPENDED" || status === "BANNED") && !reason.trim()) {
-      setMessage("Reason is required for suspend or ban");
+      setMessage(t("reasonRequired"));
       return;
     }
 
@@ -46,11 +48,11 @@ export default function AdminUserStatusActions({
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
 
     setLoading(false);
-    setMessage(data.message || data.error || "Updated");
+    setMessage(data.message || data.error || t("updated"));
     router.refresh();
     emitDashboardLiveRefresh();
   }
@@ -64,16 +66,16 @@ export default function AdminUserStatusActions({
           className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white sm:w-auto"
           disabled={loading}
         >
-          <option value="ACTIVE">ACTIVE</option>
-          <option value="SUSPENDED">SUSPENDED</option>
-          <option value="BANNED">BANNED</option>
+          <option value="ACTIVE">{t("status.active")}</option>
+          <option value="SUSPENDED">{t("status.suspended")}</option>
+          <option value="BANNED">{t("status.banned")}</option>
         </select>
         <Button onClick={saveStatus} disabled={loading} className="w-full sm:w-auto">
-          {loading ? "Saving..." : "Update Status"}
+          {loading ? t("saving") : t("updateStatus")}
         </Button>
       </div>
       <Input
-        placeholder="Status reason (optional)"
+        placeholder={t("reasonPlaceholder")}
         value={reason}
         onChange={(e) => setReason(e.target.value)}
       />

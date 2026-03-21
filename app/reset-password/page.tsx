@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default function ResetPasswordPage() {
+  const t = useTranslations("auth.resetPassword");
   const params = useSearchParams();
   const token = params.get("token") || "";
   const [password, setPassword] = useState("");
@@ -22,17 +24,17 @@ export default function ResetPasswordPage() {
     setMessage("");
 
     if (!token) {
-      setError("Invalid or missing reset token");
+      setError(t("errors.invalidToken"));
       return;
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters long");
+      setError(t("errors.passwordTooShort"));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError(t("errors.passwordMismatch"));
       return;
     }
 
@@ -46,11 +48,11 @@ export default function ResetPasswordPage() {
     setLoading(false);
 
     if (!res.ok) {
-      setError(data.error || "Unable to reset password");
+      setError(data.error || t("errors.failed"));
       return;
     }
 
-    setMessage(data.message || "Password reset successful. You can sign in now.");
+    setMessage(data.message || t("messages.success"));
     setPassword("");
     setConfirmPassword("");
   }
@@ -62,11 +64,11 @@ export default function ResetPasswordPage() {
           <CardContent className="space-y-5 p-6 sm:p-8">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-emerald-300/80">
-                Account Recovery
+                {t("eyebrow")}
               </p>
-              <h1 className="mt-2 text-2xl font-semibold">Reset Password</h1>
+              <h1 className="mt-2 text-2xl font-semibold">{t("title")}</h1>
               <p className="mt-2 text-sm text-white/65">
-                Enter your new password below.
+                {t("description")}
               </p>
             </div>
 
@@ -75,7 +77,7 @@ export default function ResetPasswordPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="New password"
+                placeholder={t("passwordPlaceholder")}
                 required
                 className="h-11 border-white/15 bg-white/5"
               />
@@ -83,7 +85,7 @@ export default function ResetPasswordPage() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm new password"
+                placeholder={t("confirmPasswordPlaceholder")}
                 required
                 className="h-11 border-white/15 bg-white/5"
               />
@@ -92,7 +94,7 @@ export default function ResetPasswordPage() {
                 disabled={loading}
                 className="h-11 w-full rounded-xl bg-white text-black hover:bg-white/90"
               >
-                {loading ? "Resetting..." : "Reset Password"}
+                {loading ? t("actions.resetting") : t("actions.reset")}
               </Button>
             </form>
 
@@ -100,9 +102,9 @@ export default function ResetPasswordPage() {
             {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
             <p className="text-sm text-white/60">
-              Back to{" "}
+              {t("backTo")}{" "}
               <Link href="/login" className="font-medium text-white underline underline-offset-4">
-                Sign In
+                {t("signIn")}
               </Link>
             </p>
           </CardContent>

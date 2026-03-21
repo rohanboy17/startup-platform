@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SectionCard } from "@/components/ui/section-card";
@@ -27,6 +28,7 @@ type SettingsPayload = {
 };
 
 export default function UserSettingsPanel() {
+  const t = useTranslations("user.settingsPanel");
   const [data, setData] = useState<SettingsPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -41,15 +43,15 @@ export default function UserSettingsPanel() {
     const settingsRes = await fetch("/api/v2/users/me/settings", { cache: "no-store" });
 
     const raw = await settingsRes.text();
-    let parsed: SettingsPayload | { error?: string } = { error: "Unexpected response" };
+    let parsed: SettingsPayload | { error?: string } = { error: t("errors.unexpectedResponse") };
     try {
       parsed = raw ? (JSON.parse(raw) as SettingsPayload) : parsed;
     } catch {
-      parsed = { error: "Unexpected response" };
+      parsed = { error: t("errors.unexpectedResponse") };
     }
 
     if (!settingsRes.ok) {
-      setError((parsed as { error?: string }).error || "Failed to load settings");
+      setError((parsed as { error?: string }).error || t("errors.failedToLoad"));
       setLoading(false);
       return;
     }
@@ -64,7 +66,7 @@ export default function UserSettingsPanel() {
       setDefaultUpiName(payload.withdrawals.defaultUpiName || "");
       setInitialized(true);
     }
-  }, [initialized]);
+  }, [initialized, t]);
 
   useLiveRefresh(load, 60000);
 
@@ -87,17 +89,17 @@ export default function UserSettingsPanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as { error?: string; message?: string }) : {};
     } catch {
-      parsed = { error: "Unexpected server response" };
+      parsed = { error: t("errors.unexpectedServerResponse") };
     }
 
     setSaving(false);
 
     if (!res.ok) {
-      setError(parsed.error || "Failed to save settings");
+      setError(parsed.error || t("errors.failedToSave"));
       return;
     }
 
-    setMessage(parsed.message || "Saved");
+    setMessage(parsed.message || t("messages.saved"));
     await load();
   }
 
@@ -116,27 +118,27 @@ export default function UserSettingsPanel() {
       ) : null}
 
       {loading ? (
-        <SectionCard className="text-sm text-foreground/70">Loading settings...</SectionCard>
+        <SectionCard className="text-sm text-foreground/70">{t("loading")}</SectionCard>
       ) : null}
 
       <SectionCard elevated className="space-y-5">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">Withdrawals</p>
-            <h3 className="mt-2 text-xl font-semibold tracking-tight">Default payout details</h3>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">{t("eyebrow")}</p>
+            <h3 className="mt-2 text-xl font-semibold tracking-tight">{t("title")}</h3>
             <p className="mt-1 text-sm text-foreground/70">
-              Save UPI details to speed up future withdrawal requests.
+              {t("description")}
             </p>
           </div>
 
           <div className="grid gap-3">
             <Input
-              placeholder="Default UPI ID / mobile"
+              placeholder={t("upiIdPlaceholder")}
               value={defaultUpiId}
               onChange={(e) => setDefaultUpiId(e.target.value)}
               className="min-h-11"
             />
             <Input
-              placeholder="Default UPI name"
+              placeholder={t("upiNamePlaceholder")}
               value={defaultUpiName}
               onChange={(e) => setDefaultUpiName(e.target.value)}
               className="min-h-11"
@@ -144,18 +146,19 @@ export default function UserSettingsPanel() {
           </div>
 
           <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4 text-sm text-foreground/70">
-            <p className="font-medium text-foreground">Emergency withdrawals</p>
+            <p className="font-medium text-foreground">{t("emergency.title")}</p>
             <p className="mt-1">
-              Used this month: <span className="font-semibold text-foreground">{data?.withdrawals.emergencyUsed ?? 0}</span>
+              {t("emergency.used", { count: data?.withdrawals.emergencyUsed ?? 0 })}{" "}
+              <span className="font-semibold text-foreground">{data?.withdrawals.emergencyUsed ?? 0}</span>
               {" - "}
-              Remaining:{" "}
+              {t("emergency.remaining", { count: data?.withdrawals.emergencyRemaining ?? 0 })}{" "}
               <span className="font-semibold text-foreground">{data?.withdrawals.emergencyRemaining ?? 0}</span>
             </p>
-            <p className="mt-2 text-xs text-foreground/55">Month key: {data?.withdrawals.monthKey}</p>
+            <p className="mt-2 text-xs text-foreground/55">{t("emergency.monthKey", { value: data?.withdrawals.monthKey ?? "" })}</p>
           </div>
 
           <Button onClick={saveProfile} disabled={saving} className="w-full sm:w-auto">
-            {saving ? "Saving..." : "Save withdrawal defaults"}
+            {saving ? t("actions.saving") : t("actions.save")}
           </Button>
       </SectionCard>
     </div>

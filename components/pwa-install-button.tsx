@@ -2,6 +2,7 @@
 
 import { Download } from "lucide-react";
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { useTranslations } from "next-intl";
 
 type BeforeInstallPromptEvent = Event & {
   prompt: () => Promise<void>;
@@ -22,6 +23,7 @@ export default function PwaInstallButton({
   mobile?: boolean;
   compact?: boolean;
 }) {
+  const t = useTranslations("common.pwaInstall");
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [installedOverride, setInstalledOverride] = useState(false);
   const [iosTipOpen, setIosTipOpen] = useState(false);
@@ -84,13 +86,13 @@ export default function PwaInstallButton({
       <div className={`${mobile ? "space-y-2" : "relative"}`}>
         <button
           type="button"
-          aria-label="Install app"
+          aria-label={t("label")}
           className={`inline-flex items-center gap-1.5 rounded-full border border-foreground/20 bg-foreground/[0.03] font-medium text-foreground/75 transition hover:bg-foreground/10 hover:text-foreground ${
             compact ? "h-9 w-9 justify-center px-0 py-0 text-xs" : "px-3 py-1.5 text-xs sm:text-sm"
           } ${mobile ? "w-full justify-center" : ""}`}
         >
           <Download size={14} />
-          {compact ? null : "Install App"}
+          {compact ? null : t("button")}
         </button>
       </div>
     ) : null;
@@ -103,13 +105,13 @@ export default function PwaInstallButton({
       <button
         type="button"
         onClick={() => void onInstallClick()}
-        aria-label="Install app"
+        aria-label={t("label")}
         className={`inline-flex items-center gap-1.5 rounded-full border border-foreground/20 bg-foreground/[0.03] font-medium text-foreground/75 transition hover:bg-foreground/10 hover:text-foreground ${
           compact ? "h-9 w-9 justify-center px-0 py-0 text-xs" : "px-3 py-1.5 text-xs sm:text-sm"
         } ${mobile ? "w-full justify-center" : ""}`}
       >
         <Download size={14} />
-        {compact ? null : "Install App"}
+        {compact ? null : t("button")}
       </button>
       {iosTipOpen ? (
         <p
@@ -119,7 +121,7 @@ export default function PwaInstallButton({
               : "absolute right-0 top-full mt-2 w-56 rounded-lg border border-foreground/15 bg-background/95 p-2.5 shadow-xl"
           }`}
         >
-          On iPhone/iPad: tap Share, then &quot;Add to Home Screen&quot;.
+          {t("iosTip")}
         </p>
       ) : null}
       {unsupportedTipOpen ? (
@@ -132,13 +134,14 @@ export default function PwaInstallButton({
         >
           {isAndroid ? (
             <>
-              Install prompt not available. In{" "}
-              {isEdge ? "Edge" : "your browser"}, open the menu and choose{" "}
-              <span className="font-semibold text-foreground">Install app</span> or{" "}
-              <span className="font-semibold text-foreground">Add to Home screen</span>.
+              {t("androidUnavailableBefore")} {isEdge ? t("edge") : t("browser")},{" "}
+              {t("androidUnavailableAfter")}{" "}
+              <span className="font-semibold text-foreground">{t("installAppOption")}</span>{" "}
+              {t("or")}{" "}
+              <span className="font-semibold text-foreground">{t("addToHomeOption")}</span>.
             </>
           ) : (
-            <>Install prompt not available. Open this site over HTTPS and revisit.</>
+            <>{t("genericUnavailable")}</>
           )}
         </p>
       ) : null}

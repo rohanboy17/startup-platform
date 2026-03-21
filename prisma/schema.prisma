@@ -114,6 +114,9 @@ model Submission {
   proofLink String?
   proofText String?
   proofImage String?
+  assignedInstructionId String?
+  assignedInstructionSequence Int?
+  assignedInstructionText String?
   ipAddress String?
   status    SubmissionStatus @default(PENDING)
   managerStatus SubmissionStatus @default(PENDING)

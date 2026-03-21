@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 
 export default function ThemeToggle({
@@ -12,6 +13,7 @@ export default function ThemeToggle({
   className?: string;
   compact?: boolean;
 }) {
+  const t = useTranslations("common.themeToggle");
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(
     () => () => {},
@@ -19,7 +21,7 @@ export default function ThemeToggle({
     () => false
   );
   const isDark = mounted ? resolvedTheme === "dark" : true;
-  const nextThemeLabel = isDark ? "light" : "dark";
+  const nextThemeLabel = isDark ? t("lightMode") : t("darkMode");
 
   return (
     <button
@@ -30,20 +32,20 @@ export default function ThemeToggle({
         compact ? "h-9 w-9" : "px-3 py-1.5 text-xs font-medium sm:text-sm",
         className
       )}
-      aria-label="Toggle theme"
-      title={mounted ? `Switch to ${nextThemeLabel} mode` : "Toggle theme"}
+      aria-label={t("toggleLabel")}
+      title={mounted ? t("switchTo", { mode: nextThemeLabel }) : t("toggleLabel")}
     >
       {!mounted ? (
         <span className={compact ? "block size-4" : "block h-4 w-4"} />
       ) : isDark ? (
         <>
           <Sun size={16} />
-          {!compact ? <span>Light</span> : null}
+          {!compact ? <span>{t("light")}</span> : null}
         </>
       ) : (
         <>
           <Moon size={16} />
-          {!compact ? <span>Dark</span> : null}
+          {!compact ? <span>{t("dark")}</span> : null}
         </>
       )}
     </button>

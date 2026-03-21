@@ -10,7 +10,8 @@
     "installApp": "ऐप इंस्टॉल करें",
     "signIn": "साइन इन",
     "register": "रजिस्टर",
-    "dashboardHome": "होम"
+    "dashboardHome": "होम",
+    "toggleNavigation": "Toggle navigation"
   },
   "footer": {
     "platform": "प्लेटफ़ॉर्म",
@@ -187,6 +188,46 @@
       "footer": {
         "alreadyHave": "पहले से अकाउंट है?",
         "signIn": "साइन इन"
+      }
+    },
+    "forgotPassword": {
+      "eyebrow": "Account Recovery",
+      "title": "Forgot Password",
+      "description": "Enter your email or mobile number and we will send a password reset link.",
+      "identifierPlaceholder": "Email or mobile number",
+      "backTo": "Back to",
+      "signIn": "Sign In",
+      "actions": {
+        "sending": "Sending...",
+        "send": "Send Reset Link"
+      },
+      "errors": {
+        "failed": "Unable to send reset link"
+      },
+      "messages": {
+        "sent": "If the account exists, a reset link has been sent to your email."
+      }
+    },
+    "resetPassword": {
+      "eyebrow": "Account Recovery",
+      "title": "Reset Password",
+      "description": "Enter your new password below.",
+      "passwordPlaceholder": "New password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "backTo": "Back to",
+      "signIn": "Sign In",
+      "actions": {
+        "resetting": "Resetting...",
+        "reset": "Reset Password"
+      },
+      "errors": {
+        "invalidToken": "Invalid or missing reset token",
+        "passwordTooShort": "Password must be at least 8 characters long",
+        "passwordMismatch": "Passwords do not match",
+        "failed": "Unable to reset password"
+      },
+      "messages": {
+        "success": "Password reset successful. You can sign in now."
       }
     }
   },
@@ -587,7 +628,10 @@
       "controls": {
         "show": "दिखाएं",
         "showAll": "सभी दिखाएं"
-      }
+      },
+      "instructionShown": "Instruction shown",
+      "instructionSequence": "Detail #{sequence}",
+      "instructionNotStored": "No exact instruction snapshot was stored for this older submission."
     },
     "tasks": {
       "title": "लाइव कैंपेन",
@@ -961,6 +1005,56 @@
         "workTime": "काम का समय",
         "workingPreference": "काम की पसंद",
         "languages": "भाषाएँ"
+      }
+    },
+    "skillsPanel": {
+      "eyebrow": "Skills",
+      "title": "What work can you do?",
+      "description": "Add a few skills so admins can match you to invite-only work campaigns. (Max 20)",
+      "placeholder": "Add a skill (e.g., Data entry, Research, Writing)",
+      "loading": "Loading skills...",
+      "empty": "No skills yet. Add 3 to 6 to get started.",
+      "actions": {
+        "add": "Add",
+        "remove": "Remove",
+        "saving": "Saving...",
+        "save": "Save skills"
+      },
+      "errors": {
+        "unexpected": "Unexpected response",
+        "failedToLoad": "Failed to load skills",
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToSave": "Failed to save skills"
+      },
+      "messages": {
+        "updated": "Skills updated"
+      }
+    },
+    "settingsPanel": {
+      "eyebrow": "Withdrawals",
+      "title": "Default payout details",
+      "description": "Save UPI details to speed up future withdrawal requests.",
+      "upiIdPlaceholder": "Default UPI ID / mobile",
+      "upiNamePlaceholder": "Default UPI name",
+      "loading": "Loading settings...",
+      "emergency": {
+        "title": "Emergency withdrawals",
+        "used": "Used this month:",
+        "remaining": "Remaining:",
+        "monthKey": "Month key: {value}"
+      },
+      "actions": {
+        "saving": "Saving...",
+        "save": "Save withdrawal defaults"
+      },
+      "errors": {
+        "unexpectedResponse": "Unexpected response",
+        "failedToLoad": "Failed to load settings",
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToSave": "Failed to save settings"
+      },
+      "messages": {
+        "saved": "Saved"
       }
     }
   },
@@ -1766,6 +1860,52 @@
         "insufficientWallet": "इस बजट बढ़ोतरी के लिए वॉलेट बैलेंस पर्याप्त नहीं है।",
         "invalidUsedSlots": "यह अपडेट कुल स्लॉट्स को पहले से रिकॉर्डेड सबमिशन से कम कर देगा।"
       }
+    },
+    "campaignDetailPage": {
+      "backToCampaigns": "Back to campaigns",
+      "openTaskLink": "Open task link",
+      "openAnalytics": "Open analytics",
+      "cards": {
+        "campaignCategory": "Campaign category",
+        "taskCategory": "Task category",
+        "taskType": "Task type",
+        "rewardPerTask": "Reward per task"
+      },
+      "budget": {
+        "eyebrow": "Budget performance",
+        "title": "Campaign economics",
+        "totalBudget": "Total budget",
+        "spentSoFar": "Spent so far",
+        "totalSlots": "Total slots",
+        "usedSlots": "Used slots",
+        "deployment": "Budget deployment",
+        "approved": "Approved",
+        "pending": "Pending",
+        "rejected": "Rejected"
+      },
+      "instructions": {
+        "eyebrow": "Task details",
+        "title": "Instruction checklist",
+        "empty": "No task details added for this campaign."
+      },
+      "video": {
+        "eyebrow": "How-to video",
+        "title": "What users will watch before they submit",
+        "body": "This admin-managed guide appears on the task page so users can understand the work before sending proof.",
+        "openLabel": "Open video in new tab"
+      },
+      "timeline": {
+        "eyebrow": "Activity timeline",
+        "title": "Recent campaign events",
+        "empty": "No campaign activity yet."
+      },
+      "activity": {
+        "created": "Campaign created and entered {status} state.",
+        "submissionApproved": "Submission approved. Net payout INR {amount}.",
+        "submissionRejected": "Submission rejected during admin review.",
+        "waitingFinalApproval": "Submission is waiting for final approval.",
+        "waitingReview": "Submission received and waiting for review."
+      }
     }
   },
   "dashboard": {
@@ -2235,6 +2375,391 @@
         "ruleUpdated": "Repeat rule updated.",
         "requestUpdated": "Request updated."
       }
+    },
+    "bulkAssignBySkill": {
+      "eyebrow": "Work campaign targeting",
+      "title": "Bulk assign users by skill",
+      "description": "Assign a work campaign to every ACTIVE user who has selected a specific skill.",
+      "fields": {
+        "skill": "Skill",
+        "searchSkills": "Search skills...",
+        "selectSkill": "Select a skill",
+        "eligibleActiveUsers": "Eligible ACTIVE users: {count}",
+        "workCampaign": "Work campaign",
+        "selectWorkCampaign": "Select a work campaign",
+        "currentlyAssigned": "Currently assigned: {count}",
+        "excludeSuspicious": "Exclude suspicious users"
+      },
+      "filters": {
+        "anyWorkMode": "Any work mode",
+        "workFromHome": "Work from home",
+        "workFromOffice": "Work from office",
+        "workInField": "Work in field",
+        "anyWorkPreference": "Any work preference",
+        "salaried": "Salaried",
+        "freelanceContractual": "Freelance contractual",
+        "dayBasis": "Day basis",
+        "educationKeyword": "Education keyword",
+        "language": "Language"
+      },
+      "actions": {
+        "loading": "Loading...",
+        "refresh": "Refresh",
+        "working": "Working...",
+        "preview": "Preview",
+        "assigning": "Assigning...",
+        "assignAll": "Assign all"
+      },
+      "errors": {
+        "unexpectedSkillsResponse": "Unexpected skills response",
+        "unexpectedCampaignsResponse": "Unexpected campaigns response",
+        "failedToLoadSkills": "Failed to load skills",
+        "failedToLoadCampaigns": "Failed to load campaigns",
+        "failedToLoadTools": "Failed to load assignment tools",
+        "unexpectedServerResponse": "Unexpected server response",
+        "previewFailed": "Preview failed",
+        "bulkAssignFailed": "Bulk assign failed"
+      },
+      "messages": {
+        "eligible": "Eligible {count}",
+        "wouldAssign": "Would assign {count}",
+        "alreadyAssigned": "Already assigned {count}",
+        "newlyAssigned": "Newly assigned {count}"
+      },
+      "confirm": {
+        "excludingSuspicious": "excluding suspicious users",
+        "includingSuspicious": "including suspicious users",
+        "workMode": "work mode: {value}",
+        "preference": "preference: {value}",
+        "education": "education contains \"{value}\"",
+        "language": "language contains \"{value}\"",
+        "assignCampaign": "Assign campaign \"{campaign}\" to all ACTIVE users with skill \"{skill}\" ({filter})?",
+        "profileFilters": "Profile filters: {value}",
+        "baseEligible": "Base eligible users for this skill: {count}"
+      }
+    },
+    "campaignActions": {
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "updateFailed": "Update failed",
+        "deleteFailed": "Delete failed"
+      },
+      "messages": {
+        "updated": "Updated",
+        "campaignUpdated": "Campaign updated",
+        "campaignDeleted": "Campaign deleted"
+      },
+      "confirm": {
+        "delete": "Delete this campaign? This cannot be undone."
+      },
+      "actions": {
+        "approving": "Approving...",
+        "approve": "Approve",
+        "publishing": "Publishing...",
+        "markLive": "Mark Live",
+        "pausing": "Pausing...",
+        "pause": "Pause",
+        "resuming": "Resuming...",
+        "resume": "Resume",
+        "completing": "Completing...",
+        "forceComplete": "Force Complete",
+        "rejecting": "Rejecting...",
+        "reject": "Reject",
+        "closeEdit": "Close Edit",
+        "edit": "Edit",
+        "deleting": "Deleting...",
+        "delete": "Delete",
+        "escalating": "Escalating...",
+        "escalate": "Escalate",
+        "clearing": "Clearing...",
+        "clearEscalation": "Clear Escalation",
+        "saving": "Saving...",
+        "saveCampaignChanges": "Save Campaign Changes"
+      },
+      "fields": {
+        "escalationReason": "Escalation reason (optional)",
+        "title": "Title",
+        "category": "Category",
+        "customTask": "Custom task",
+        "taskLink": "Task link (optional)",
+        "tutorialVideoUrl": "Tutorial video URL (YouTube, Loom, or direct video)",
+        "description": "Description",
+        "rewardPerTask": "Reward per task",
+        "totalBudget": "Total budget"
+      },
+      "labels": {
+        "escalatedAt": "Escalated: {date}"
+      },
+      "submissionModes": {
+        "onePerUser": "One submission per user",
+        "multiplePerUser": "Many submissions per user"
+      }
+    },
+    "businessWalletActions": {
+      "unexpectedServerResponse": "Unexpected server response",
+      "updated": "Updated",
+      "amountPlaceholder": "Amount",
+      "notePlaceholder": "Wallet note (optional)",
+      "applying": "Applying...",
+      "apply": "Apply Business Wallet Update",
+      "actions": {
+        "credit": "CREDIT",
+        "debit": "DEBIT"
+      }
+    },
+    "campaignEscalationButton": {
+      "riskCenterReason": "Escalated from Risk Center",
+      "unexpectedServerResponse": "Unexpected server response",
+      "updated": "Updated",
+      "loading": {
+        "escalating": "Escalating...",
+        "clearing": "Clearing..."
+      },
+      "actions": {
+        "escalate": "Escalate",
+        "clearEscalation": "Clear Escalation"
+      }
+    },
+    "campaignEscalationControls": {
+      "unexpectedServerResponse": "Unexpected server response",
+      "failed": "Escalation failed",
+      "completed": "Escalation completed",
+      "escalating": "Escalating...",
+      "button": "Escalate All Breached (>24h)"
+    },
+    "businessKycActions": {
+      "unexpectedServerResponse": "Unexpected server response",
+      "updated": "Updated",
+      "saving": "Saving...",
+      "update": "Update KYC",
+      "notesPlaceholder": "KYC notes (optional)",
+      "status": {
+        "pending": "PENDING",
+        "verified": "VERIFIED",
+        "rejected": "REJECTED"
+      }
+    },
+    "userFlagActions": {
+      "unexpectedServerResponse": "Unexpected server response",
+      "updated": "Updated",
+      "reasonPlaceholder": "Reason (optional)",
+      "flagging": "Flagging...",
+      "flagUser": "Flag User",
+      "updating": "Updating...",
+      "unflagUser": "Unflag User"
+    },
+    "referralCodeToggle": {
+      "unexpectedServerResponse": "Unexpected server response",
+      "updated": "Updated",
+      "saving": "Saving...",
+      "disableCode": "Disable code",
+      "enableCode": "Enable code"
+    },
+    "userLifecycleActions": {
+      "reasonRequired": "Reason is required for soft delete",
+      "unexpectedServerResponse": "Unexpected server response",
+      "updated": "Updated",
+      "reasonPlaceholder": "Soft delete reason (required for delete)",
+      "processing": "Processing...",
+      "softDelete": "Soft Delete",
+      "reactivate": "Reactivate"
+    },
+    "kycRequestsPanel": {
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoad": "Failed to load KYC requests",
+        "failedToUpdate": "Failed to update KYC status"
+      },
+      "loading": "Loading KYC requests...",
+      "empty": "No pending KYC requests.",
+      "unnamedBusiness": "Unnamed business",
+      "businessLine": "Business: {name} | {email}",
+      "submittedAt": "Submitted {value}",
+      "notProvided": "Not provided",
+      "notesPlaceholder": "Admin notes (optional)",
+      "saving": "Saving...",
+      "verify": "Verify",
+      "reject": "Reject",
+      "fields": {
+        "contact": "Contact: {value}",
+        "phone": "Phone: {value}",
+        "address": "Address: {value}",
+        "website": "Website: {value}",
+        "taxId": "Tax ID: {value}",
+        "documentUrl": "Document URL: {value}"
+      }
+    },
+    "userBulkActions": {
+      "selectAtLeastOne": "Select at least one user",
+      "reasonRequired": "Reason is required for suspend or ban",
+      "unexpectedServerResponse": "Unexpected server response",
+      "bulkUpdateFailed": "Bulk update failed",
+      "doneMessage": "Done. Updated {updated}, skipped {skipped}.",
+      "title": "Bulk account update",
+      "selected": "Selected: {count}",
+      "selectAll": "Select All (non-admin)",
+      "clear": "Clear",
+      "reasonPlaceholder": "Reason (optional)",
+      "unnamed": "Unnamed",
+      "userLabel": "{name} ({email}) - {role}",
+      "applying": "Applying...",
+      "applyChanges": "Apply changes",
+      "actions": {
+        "setStatus": "Set Status",
+        "setRole": "Set Role",
+        "flag": "Flag",
+        "unflag": "Unflag"
+      },
+      "status": {
+        "active": "ACTIVE",
+        "suspended": "SUSPENDED",
+        "banned": "BANNED"
+      },
+      "roles": {
+        "user": "USER",
+        "business": "BUSINESS",
+        "manager": "MANAGER",
+        "admin": "ADMIN"
+      }
+    },
+    "userWalletAdjustment": {
+      "unexpectedServerResponse": "Unexpected server response",
+      "updated": "Updated",
+      "amountPlaceholder": "Amount",
+      "reasonPlaceholder": "Adjustment reason (required)",
+      "submitting": "Submitting...",
+      "createRequest": "Create Adjustment Request",
+      "actions": {
+        "credit": "CREDIT",
+        "debit": "DEBIT"
+      }
+    },
+    "userRoleActions": {
+      "noRoleChange": "No role change",
+      "unexpectedServerResponse": "Unexpected server response",
+      "updated": "Updated",
+      "saving": "Saving...",
+      "updateRole": "Update Role",
+      "roles": {
+        "user": "USER",
+        "business": "BUSINESS",
+        "manager": "MANAGER",
+        "admin": "ADMIN"
+      }
+    },
+    "userReactivateButton": {
+      "reason": "Reactivated from Risk Center",
+      "unexpectedServerResponse": "Unexpected server response",
+      "updated": "Updated",
+      "reactivating": "Reactivating...",
+      "reactivate": "Reactivate"
+    },
+    "userStatusActions": {
+      "noStatusChange": "No status change",
+      "reasonRequired": "Reason is required for suspend or ban",
+      "unexpectedServerResponse": "Unexpected server response",
+      "updated": "Updated",
+      "saving": "Saving...",
+      "updateStatus": "Update Status",
+      "reasonPlaceholder": "Status reason (optional)",
+      "status": {
+        "active": "ACTIVE",
+        "suspended": "SUSPENDED",
+        "banned": "BANNED"
+      }
+    },
+    "v2SubmissionActions": {
+      "reopenReasonRequired": "Reopen reason is required",
+      "unexpectedServerResponse": "Unexpected server response",
+      "reviewFailed": "Review failed",
+      "updated": "Updated",
+      "escalationFailed": "Escalation failed",
+      "escalated": "Escalated",
+      "reopenReasonPlaceholder": "Reason (required for reopen)",
+      "escalationReasonPlaceholder": "Escalation reason (optional)",
+      "approving": "Approving...",
+      "approve": "Approve",
+      "rejecting": "Rejecting...",
+      "reject": "Reject",
+      "reopening": "Reopening...",
+      "reopen": "Reopen",
+      "escalating": "Escalating...",
+      "escalate": "Escalate"
+    },
+    "v2SubmissionBulkActions": {
+      "selectFirst": "Select submissions first",
+      "unexpectedServerResponse": "Unexpected server response",
+      "bulkUpdateFailed": "Bulk review update failed",
+      "done": "Done",
+      "doneMessage": "{message} | Updated: {updated}, Failed: {failed}",
+      "title": "Bulk review update",
+      "selected": "Selected: {count}",
+      "selectAll": "Select All",
+      "clear": "Clear",
+      "notePlaceholder": "Optional note",
+      "itemLabel": "{label} | Fraud: {score}",
+      "processing": "Processing...",
+      "applyChanges": "Apply changes",
+      "actions": {
+        "approve": "APPROVE",
+        "reject": "REJECT"
+      }
+    },
+    "walletAdjustmentReviewActions": {
+      "unexpectedServerResponse": "Unexpected server response",
+      "actionFailed": "Action failed",
+      "updated": "Updated",
+      "notePlaceholder": "Review note (optional)",
+      "approving": "Approving...",
+      "approve": "Approve",
+      "rejecting": "Rejecting...",
+      "reject": "Reject"
+    },
+    "userWorkAssignments": {
+      "unexpectedServerResponse": "Unexpected server response",
+      "failedToLoadAssignments": "Failed to load assignments",
+      "failedToLoadCampaigns": "Failed to load campaigns",
+      "failedToAssignUser": "Failed to assign user",
+      "failedToRemoveAssignment": "Failed to remove assignment",
+      "confirmRemove": "Remove this assignment?",
+      "open": "Work assignments",
+      "title": "Work assignments",
+      "assignedCampaigns": "Assigned campaigns",
+      "loading": "Loading...",
+      "assignedCount": "{count} assigned",
+      "noAssignedCampaigns": "No work campaigns assigned yet.",
+      "assignedItemMeta": "Status: {status} - Assigned {date}",
+      "remove": "Remove",
+      "assignNewCampaign": "Assign new work campaign",
+      "assignHelp": "Choose a campaign and assign this user. Only campaigns in category work show up here.",
+      "searchPlaceholder": "Search campaigns...",
+      "noCampaignsFound": "No work campaigns found.",
+      "suggested": "Suggested",
+      "campaignMeta": "{status} - Assigned users: {count}",
+      "assigned": "Assigned",
+      "assign": "Assign"
+    },
+    "platformPayoutActions": {
+      "unexpectedServerResponse": "Unexpected server response",
+      "actionFailed": "Action failed",
+      "updated": "Updated",
+      "notePlaceholder": "Payout note (optional)",
+      "approving": "Approving...",
+      "approve": "Approve",
+      "rejecting": "Rejecting...",
+      "reject": "Reject",
+      "retrying": "Retrying...",
+      "retry": "Retry"
+    },
+    "platformPayoutRequest": {
+      "unexpectedServerResponse": "Unexpected server response",
+      "failedToCreate": "Failed to create payout request",
+      "created": "Payout request created",
+      "title": "Create Owner Payout Request",
+      "amountPlaceholder": "Amount (INR)",
+      "notePlaceholder": "Note (optional)",
+      "submitting": "Submitting...",
+      "create": "Create Payout Request"
     }
   },
   "manager": {
@@ -2518,7 +3043,10 @@
         "title": "टास्क विवरण",
         "openTaskLink": "टास्क लिंक खोलें",
         "viewSteps": "स्टेप्स देखें ({count})",
-        "noSteps": "इस कैंपेन के लिए कोई स्टेप नहीं जोड़े गए।"
+        "noSteps": "इस कैंपेन के लिए कोई स्टेप नहीं जोड़े गए।",
+        "assignedInstruction": "Instruction shown to user",
+        "assignedInstructionSequence": "Detail #{sequence}",
+        "assignedInstructionFallback": "No exact instruction snapshot was stored for this older submission."
       },
       "proof": {
         "title": "प्रूफ प्रीव्यू",
@@ -2573,6 +3101,11 @@
         "previewScreenshot": "स्क्रीनशॉट प्रीव्यू",
         "noProofStored": "कोई प्रूफ स्टोर नहीं है",
         "screenshotUploaded": "स्क्रीनशॉट प्रूफ अपलोड है।"
+      },
+      "instruction": {
+        "title": "Instruction shown to user",
+        "sequence": "Detail #{sequence}",
+        "fallback": "No exact instruction snapshot was stored for this submission."
       }
     },
     "submissionActions": {
@@ -2589,13 +3122,59 @@
         "unexpected": "अप्रत्याशित सर्वर प्रतिक्रिया",
         "actionFailed": "कार्रवाई विफल रही"
       }
-    }
+    },
+    "submissions": {
+      "task": {}
+    },
+    "history": {}
   },
   "common": {
     "tutorialVideo": {
       "youtube": "YouTube ट्यूटोरियल",
       "loom": "Loom ट्यूटोरियल",
       "hosted": "होस्टेड ट्यूटोरियल वीडियो"
+    },
+    "pwaInstall": {
+      "label": "Install app",
+      "button": "Install App",
+      "iosTip": "On iPhone/iPad: tap Share, then Add to Home Screen.",
+      "androidUnavailableBefore": "Install prompt not available. In",
+      "androidUnavailableAfter": "open the menu and choose",
+      "installAppOption": "Install app",
+      "addToHomeOption": "Add to Home screen",
+      "browser": "your browser",
+      "edge": "Edge",
+      "or": "or",
+      "genericUnavailable": "Install prompt not available. Open this site over HTTPS and revisit."
+    },
+    "themeToggle": {
+      "toggleLabel": "Toggle theme",
+      "switchTo": "Switch to {mode} mode",
+      "light": "Light",
+      "dark": "Dark",
+      "lightMode": "light",
+      "darkMode": "dark"
+    },
+    "submitCampaignModal": {
+      "title": "Submit Campaign Proof",
+      "placeholder": "Paste proof link or details...",
+      "actions": {
+        "open": "Submit",
+        "submitting": "Submitting...",
+        "submit": "Submit"
+      },
+      "errors": {
+        "proofRequired": "Proof is required",
+        "unexpected": "Unexpected server response",
+        "failed": "Error"
+      },
+      "messages": {
+        "sent": "Submission sent for manager review."
+      }
+    },
+    "languageSelect": {
+      "unexpectedServerResponse": "Unexpected server response",
+      "unableToChangeLanguage": "Unable to change language"
     }
   },
   "notifications": {

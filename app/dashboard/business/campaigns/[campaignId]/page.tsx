@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
@@ -24,6 +25,8 @@ export default async function BusinessCampaignDetailPage({
 }: {
   params: Promise<{ campaignId: string }>;
 }) {
+  const t = await getTranslations("business.campaignDetailPage");
+  const locale = await getLocale();
   const session = await auth();
   if (!session || session.user.role !== "BUSINESS") {
     redirect("/dashboard");
@@ -81,19 +84,19 @@ export default async function BusinessCampaignDetailPage({
   const activityItems = [
     {
       id: `campaign-created-${campaign.id}`,
-      label: `Campaign created and entered ${campaign.status.toLowerCase()} state.`,
+      label: t("activity.created", { status: campaign.status.toLowerCase() }),
       createdAt: campaign.createdAt,
     },
     ...campaign.submissions.slice(0, 8).map((submission) => ({
       id: submission.id,
       label:
         submission.adminStatus === "ADMIN_APPROVED"
-          ? `Submission approved. Net payout INR ${formatMoney(submission.rewardAmount)}.`
+          ? t("activity.submissionApproved", { amount: formatMoney(submission.rewardAmount) })
           : submission.adminStatus === "ADMIN_REJECTED"
-            ? "Submission rejected during admin review."
+            ? t("activity.submissionRejected")
             : submission.managerStatus === "MANAGER_APPROVED"
-              ? "Submission is waiting for final approval."
-              : "Submission received and waiting for review.",
+              ? t("activity.waitingFinalApproval")
+              : t("activity.waitingReview"),
       createdAt: submission.createdAt,
     })),
   ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
@@ -103,7 +106,7 @@ export default async function BusinessCampaignDetailPage({
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <Link href="/dashboard/business/campaigns" className="text-sm text-white/60 transition hover:text-white">
-            Back to campaigns
+            {t("backToCampaigns")}
           </Link>
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <h2 className="text-3xl font-semibold md:text-4xl">{campaign.title}</h2>
@@ -121,14 +124,14 @@ export default async function BusinessCampaignDetailPage({
               target="_blank"
               className="inline-flex w-full items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm text-white/85 transition hover:bg-white/10 sm:w-auto"
             >
-              Open task link
+              {t("openTaskLink")}
             </Link>
           ) : null}
           <Link
             href="/dashboard/business/analytics"
             className="inline-flex w-full items-center justify-center rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm text-emerald-100 transition hover:bg-emerald-400/20 sm:w-auto"
           >
-            Open analytics
+            {t("openAnalytics")}
           </Link>
         </div>
       </div>
@@ -159,25 +162,25 @@ export default async function BusinessCampaignDetailPage({
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
           <CardContent className="p-5">
-            <p className="text-sm text-white/60">Campaign category</p>
+            <p className="text-sm text-white/60">{t("cards.campaignCategory")}</p>
             <p className="mt-2 text-lg font-semibold text-white">{getCampaignCategoryLabel(campaign.category)}</p>
           </CardContent>
         </Card>
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
           <CardContent className="p-5">
-            <p className="text-sm text-white/60">Task category</p>
+            <p className="text-sm text-white/60">{t("cards.taskCategory")}</p>
             <p className="mt-2 text-lg font-semibold text-white">{campaign.taskCategory}</p>
           </CardContent>
         </Card>
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
           <CardContent className="p-5">
-            <p className="text-sm text-white/60">Task type</p>
+            <p className="text-sm text-white/60">{t("cards.taskType")}</p>
             <p className="mt-2 text-lg font-semibold text-white">{effectiveTaskLabel}</p>
           </CardContent>
         </Card>
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
           <CardContent className="p-5">
-            <p className="text-sm text-white/60">Reward per task</p>
+            <p className="text-sm text-white/60">{t("cards.rewardPerTask")}</p>
             <p className="mt-2 text-lg font-semibold text-emerald-200">
               INR {formatMoney(campaign.rewardPerTask)}
             </p>
@@ -189,32 +192,32 @@ export default async function BusinessCampaignDetailPage({
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
           <CardContent className="space-y-6 p-4 sm:p-6">
             <div>
-              <p className="text-sm text-white/60">Budget performance</p>
-              <h3 className="text-xl font-semibold text-white">Campaign economics</h3>
+              <p className="text-sm text-white/60">{t("budget.eyebrow")}</p>
+              <h3 className="text-xl font-semibold text-white">{t("budget.title")}</h3>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/40">Total budget</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("budget.totalBudget")}</p>
                 <p className="mt-2 text-xl font-semibold text-white">INR {formatMoney(campaign.totalBudget)}</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/40">Spent so far</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("budget.spentSoFar")}</p>
                 <p className="mt-2 text-xl font-semibold text-white">INR {formatMoney(spentBudget)}</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/40">Total slots</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("budget.totalSlots")}</p>
                 <p className="mt-2 text-xl font-semibold text-white">{totalSlots}</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/40">Used slots</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("budget.usedSlots")}</p>
                 <p className="mt-2 text-xl font-semibold text-white">{usedSlots}</p>
               </div>
             </div>
 
             <div>
               <div className="mb-2 flex items-center justify-between text-sm text-white/70">
-                <span>Budget deployment</span>
+                <span>{t("budget.deployment")}</span>
                 <span>{deployment}%</span>
               </div>
               <div className="h-2 rounded-full bg-white/10">
@@ -224,15 +227,15 @@ export default async function BusinessCampaignDetailPage({
 
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/40">Approved</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("budget.approved")}</p>
                 <p className="mt-2 text-xl font-semibold text-emerald-200">{approvedCount}</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/40">Pending</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("budget.pending")}</p>
                 <p className="mt-2 text-xl font-semibold text-amber-100">{pendingCount}</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/40">Rejected</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("budget.rejected")}</p>
                 <p className="mt-2 text-xl font-semibold text-rose-100">{rejectedCount}</p>
               </div>
             </div>
@@ -242,23 +245,23 @@ export default async function BusinessCampaignDetailPage({
         <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
           <CardContent className="space-y-4 p-4 sm:p-6">
             <div>
-              <p className="text-sm text-white/60">Task details</p>
-              <h3 className="text-xl font-semibold text-white">Instruction checklist</h3>
+              <p className="text-sm text-white/60">{t("instructions.eyebrow")}</p>
+              <h3 className="text-xl font-semibold text-white">{t("instructions.title")}</h3>
             </div>
 
             {campaign.tutorialVideoUrl ? (
               <CampaignTutorialVideo
                 videoUrl={campaign.tutorialVideoUrl}
-                eyebrow="How-to video"
-                title="What users will watch before they submit"
-                body="This admin-managed guide appears on the task page so users can understand the work before sending proof."
-                openLabel="Open video in new tab"
+                eyebrow={t("video.eyebrow")}
+                title={t("video.title")}
+                body={t("video.body")}
+                openLabel={t("video.openLabel")}
               />
             ) : null}
 
             {campaign.instructions.length === 0 ? (
               <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/50">
-                No task details added for this campaign.
+                {t("instructions.empty")}
               </div>
             ) : (
               <ol className="space-y-3">
@@ -277,13 +280,13 @@ export default async function BusinessCampaignDetailPage({
       <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
         <CardContent className="space-y-4 p-4 sm:p-6">
           <div>
-            <p className="text-sm text-white/60">Activity timeline</p>
-            <h3 className="text-xl font-semibold text-white">Recent campaign events</h3>
+            <p className="text-sm text-white/60">{t("timeline.eyebrow")}</p>
+            <h3 className="text-xl font-semibold text-white">{t("timeline.title")}</h3>
           </div>
 
           {activityItems.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/50">
-              No campaign activity yet.
+              {t("timeline.empty")}
             </div>
           ) : (
             <div className="space-y-3">
@@ -291,7 +294,7 @@ export default async function BusinessCampaignDetailPage({
                 <div key={item.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
                   <p className="break-words text-sm text-white/85">{item.label}</p>
                   <p className="mt-1 text-xs text-white/40">
-                    {item.createdAt.toLocaleString("en-IN", {
+                    {item.createdAt.toLocaleString(locale, {
                       day: "2-digit",
                       month: "short",
                       year: "numeric",

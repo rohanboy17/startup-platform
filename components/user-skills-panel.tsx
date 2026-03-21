@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SectionCard } from "@/components/ui/section-card";
@@ -12,6 +13,7 @@ type SkillsResponse = {
 };
 
 export default function UserSkillsPanel() {
+  const t = useTranslations("user.skillsPanel");
   const [skills, setSkills] = useState<string[]>([]);
   const [skillInput, setSkillInput] = useState("");
   const [loading, setLoading] = useState(true);
@@ -27,13 +29,13 @@ export default function UserSkillsPanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as SkillsResponse) : (parsed as SkillsResponse);
     } catch {
-      parsed = { error: "Unexpected response" };
+      parsed = { error: t("errors.unexpected") };
     }
 
     setLoading(false);
 
     if (!res.ok) {
-      setError((parsed as { error?: string }).error || "Failed to load skills");
+      setError((parsed as { error?: string }).error || t("errors.failedToLoad"));
       return;
     }
 
@@ -42,7 +44,7 @@ export default function UserSkillsPanel() {
     if (!dirty) {
       setSkills(payload.skills.map((s) => s.label));
     }
-  }, [dirty]);
+  }, [dirty, t]);
 
   useLiveRefresh(load, 60000);
 
@@ -81,18 +83,18 @@ export default function UserSkillsPanel() {
     try {
       parsed = raw ? (JSON.parse(raw) as { error?: string; message?: string }) : {};
     } catch {
-      parsed = { error: "Unexpected server response" };
+      parsed = { error: t("errors.unexpectedServerResponse") };
     }
 
     setSaving(false);
 
     if (!res.ok) {
-      setError(parsed.error || "Failed to save skills");
+      setError(parsed.error || t("errors.failedToSave"));
       return;
     }
 
     setDirty(false);
-    setMessage(parsed.message || "Skills updated");
+    setMessage(parsed.message || t("messages.updated"));
     await load();
   }
 
@@ -106,10 +108,10 @@ export default function UserSkillsPanel() {
 
       <SectionCard elevated className="space-y-5">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">Skills</p>
-          <h3 className="mt-2 text-xl font-semibold tracking-tight">What work can you do?</h3>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">{t("eyebrow")}</p>
+          <h3 className="mt-2 text-xl font-semibold tracking-tight">{t("title")}</h3>
           <p className="mt-1 text-sm text-foreground/70">
-            Add a few skills so admins can match you to invite-only work campaigns. (Max 20)
+            {t("description")}
           </p>
         </div>
 
@@ -117,7 +119,7 @@ export default function UserSkillsPanel() {
           <Input
             value={skillInput}
             onChange={(e) => setSkillInput(e.target.value)}
-            placeholder="Add a skill (e.g., Data entry, Research, Writing)"
+            placeholder={t("placeholder")}
             className="min-h-11"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -137,15 +139,15 @@ export default function UserSkillsPanel() {
             disabled={skills.length >= 20}
             className="w-full sm:w-auto"
           >
-            Add
+            {t("actions.add")}
           </Button>
         </div>
 
         <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
           {loading ? (
-            <p className="text-sm text-foreground/70">Loading skills...</p>
+            <p className="text-sm text-foreground/70">{t("loading")}</p>
           ) : skills.length === 0 ? (
-            <p className="text-sm text-foreground/70">No skills yet. Add 3 to 6 to get started.</p>
+            <p className="text-sm text-foreground/70">{t("empty")}</p>
           ) : (
             <div className="flex flex-wrap gap-2">
               {skills.map((skill) => (
@@ -154,7 +156,7 @@ export default function UserSkillsPanel() {
                   type="button"
                   onClick={() => removeSkill(skill)}
                   className="inline-flex items-center gap-2 rounded-full border border-foreground/10 bg-background/60 px-3 py-1 text-xs text-foreground/80 transition hover:bg-foreground/[0.06]"
-                  title="Remove"
+                  title={t("actions.remove")}
                 >
                   <span>{skill}</span>
                   <span className="text-foreground/50">x</span>
@@ -166,7 +168,7 @@ export default function UserSkillsPanel() {
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <Button onClick={saveSkills} disabled={saving} className="w-full sm:w-auto">
-            {saving ? "Saving..." : "Save skills"}
+            {saving ? t("actions.saving") : t("actions.save")}
           </Button>
           {message ? <p className="text-sm text-foreground/70">{message}</p> : null}
         </div>

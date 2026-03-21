@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
@@ -12,6 +13,7 @@ type BulkItem = {
 };
 
 export default function AdminV2SubmissionBulkActions({ items }: { items: BulkItem[] }) {
+  const t = useTranslations("admin.v2SubmissionBulkActions");
   const router = useRouter();
   const [selected, setSelected] = useState<string[]>([]);
   const [action, setAction] = useState<"APPROVE" | "REJECT">("APPROVE");
@@ -25,7 +27,7 @@ export default function AdminV2SubmissionBulkActions({ items }: { items: BulkIte
 
   async function submit() {
     if (selected.length === 0) {
-      setMessage("Select submissions first");
+      setMessage(t("selectFirst"));
       return;
     }
 
@@ -48,16 +50,16 @@ export default function AdminV2SubmissionBulkActions({ items }: { items: BulkIte
     try {
       data = raw ? (JSON.parse(raw) as typeof data) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
 
     setLoading(false);
     if (!res.ok) {
-      setMessage(data.error || "Bulk review update failed");
+      setMessage(data.error || t("bulkUpdateFailed"));
       return;
     }
 
-    setMessage(`${data.message || "Done"} | Updated: ${data.updated || 0}, Failed: ${data.failed || 0}`);
+    setMessage(t("doneMessage", { message: data.message || t("done"), updated: data.updated || 0, failed: data.failed || 0 }));
     setSelected([]);
     setReason("");
     router.refresh();
@@ -67,16 +69,16 @@ export default function AdminV2SubmissionBulkActions({ items }: { items: BulkIte
   return (
     <div className="space-y-3 rounded-2xl border border-foreground/10 bg-background/50 p-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-foreground/70">Bulk review update</p>
-        <span className="text-xs text-foreground/60">Selected: {selected.length}</span>
+        <p className="text-sm text-foreground/70">{t("title")}</p>
+        <span className="text-xs text-foreground/60">{t("selected", { count: selected.length })}</span>
       </div>
 
       <div className="flex flex-wrap gap-2">
         <Button type="button" variant="outline" onClick={() => setSelected(items.map((i) => i.id))} disabled={loading}>
-          Select All
+          {t("selectAll")}
         </Button>
         <Button type="button" variant="outline" onClick={() => setSelected([])} disabled={loading}>
-          Clear
+          {t("clear")}
         </Button>
       </div>
 
@@ -87,13 +89,13 @@ export default function AdminV2SubmissionBulkActions({ items }: { items: BulkIte
           className="rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
           disabled={loading}
         >
-          <option value="APPROVE">APPROVE</option>
-          <option value="REJECT">REJECT</option>
+          <option value="APPROVE">{t("actions.approve")}</option>
+          <option value="REJECT">{t("actions.reject")}</option>
         </select>
         <input
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          placeholder="Optional note"
+          placeholder={t("notePlaceholder")}
           className="rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground placeholder:text-foreground/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 md:col-span-2"
           disabled={loading}
         />
@@ -109,14 +111,14 @@ export default function AdminV2SubmissionBulkActions({ items }: { items: BulkIte
               disabled={loading}
             />
             <span>
-              {item.label} | Fraud: {item.fraudScore}
+              {t("itemLabel", { label: item.label, score: item.fraudScore })}
             </span>
           </label>
         ))}
       </div>
 
       <Button type="button" onClick={submit} disabled={loading}>
-        {loading ? "Processing..." : "Apply changes"}
+        {loading ? t("processing") : t("applyChanges")}
       </Button>
       {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>

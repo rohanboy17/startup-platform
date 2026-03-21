@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
 export default function PlatformPayoutRequest() {
+  const t = useTranslations("admin.platformPayoutRequest");
   const router = useRouter();
   const [amount, setAmount] = useState("");
   const [note, setNote] = useState("");
@@ -32,17 +34,17 @@ export default function PlatformPayoutRequest() {
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
 
     setLoading(false);
 
     if (!res.ok) {
-      setMessage(data.error || "Failed to create payout request");
+      setMessage(data.error || t("failedToCreate"));
       return;
     }
 
-    setMessage(data.message || "Payout request created");
+    setMessage(data.message || t("created"));
     setAmount("");
     setNote("");
     router.refresh();
@@ -51,20 +53,20 @@ export default function PlatformPayoutRequest() {
 
   return (
     <div className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-6">
-      <h3 className="text-lg font-semibold">Create Owner Payout Request</h3>
+      <h3 className="text-lg font-semibold">{t("title")}</h3>
       <Input
         type="number"
-        placeholder="Amount (INR)"
+        placeholder={t("amountPlaceholder")}
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
       />
       <Input
-        placeholder="Note (optional)"
+        placeholder={t("notePlaceholder")}
         value={note}
         onChange={(e) => setNote(e.target.value)}
       />
       <Button onClick={submit} disabled={loading} className="w-full">
-        {loading ? "Submitting..." : "Create Payout Request"}
+        {loading ? t("submitting") : t("create")}
       </Button>
       {message ? <p className="text-sm text-white/70">{message}</p> : null}
     </div>

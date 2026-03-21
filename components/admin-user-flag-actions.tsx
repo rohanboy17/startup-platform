@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
@@ -13,6 +14,7 @@ export default function AdminUserFlagActions({
   userId: string;
   isSuspicious: boolean;
 }) {
+  const t = useTranslations("admin.userFlagActions");
   const router = useRouter();
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(false);
@@ -37,11 +39,11 @@ export default function AdminUserFlagActions({
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
 
     setLoading(false);
-    setMessage(data.message || data.error || "Updated");
+    setMessage(data.message || data.error || t("updated"));
     router.refresh();
     emitDashboardLiveRefresh();
   }
@@ -50,7 +52,7 @@ export default function AdminUserFlagActions({
     <div className="space-y-2">
       {!isSuspicious ? (
         <Input
-          placeholder="Reason (optional)"
+          placeholder={t("reasonPlaceholder")}
           value={reason}
           onChange={(e) => setReason(e.target.value)}
         />
@@ -58,11 +60,11 @@ export default function AdminUserFlagActions({
       <div className="flex gap-2">
         {!isSuspicious ? (
           <Button onClick={() => run("FLAG")} disabled={loading}>
-            {loading ? "Flagging..." : "Flag User"}
+            {loading ? t("flagging") : t("flagUser")}
           </Button>
         ) : (
           <Button variant="outline" onClick={() => run("UNFLAG")} disabled={loading}>
-            {loading ? "Updating..." : "Unflag User"}
+            {loading ? t("updating") : t("unflagUser")}
           </Button>
         )}
       </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
@@ -12,6 +13,7 @@ export default function AdminCampaignEscalationButton({
   campaignId: string;
   mode: "ESCALATE" | "CLEAR_ESCALATION";
 }) {
+  const t = useTranslations("admin.campaignEscalationButton");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -26,7 +28,7 @@ export default function AdminCampaignEscalationButton({
       credentials: "include",
       body: JSON.stringify({
         action: mode,
-        reason: mode === "ESCALATE" ? "Escalated from Risk Center" : undefined,
+        reason: mode === "ESCALATE" ? t("riskCenterReason") : undefined,
       }),
     });
 
@@ -35,11 +37,11 @@ export default function AdminCampaignEscalationButton({
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
 
     setLoading(false);
-    setMessage(data.message || data.error || "Updated");
+    setMessage(data.message || data.error || t("updated"));
     router.refresh();
     emitDashboardLiveRefresh();
   }
@@ -49,14 +51,13 @@ export default function AdminCampaignEscalationButton({
       <Button type="button" variant="outline" onClick={run} disabled={loading}>
         {loading
           ? mode === "ESCALATE"
-            ? "Escalating..."
-            : "Clearing..."
+            ? t("loading.escalating")
+            : t("loading.clearing")
           : mode === "ESCALATE"
-            ? "Escalate"
-            : "Clear Escalation"}
+            ? t("actions.escalate")
+            : t("actions.clearEscalation")}
       </Button>
       {message ? <p className="text-xs text-white/60">{message}</p> : null}
     </div>
   );
 }
-

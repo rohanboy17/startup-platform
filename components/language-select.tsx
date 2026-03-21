@@ -47,19 +47,19 @@ export default function LanguageSelect({
       try {
         parsed = raw ? (JSON.parse(raw) as { error?: string }) : {};
       } catch {
-        parsed = { error: "Unexpected server response" };
+        parsed = { error: t("common.languageSelect.unexpectedServerResponse") };
       }
 
       setLoading(false);
 
       if (!res.ok) {
-        setMessage(parsed.error || "Unable to change language");
+        setMessage(parsed.error || t("common.languageSelect.unableToChangeLanguage"));
         return;
       }
 
       router.refresh();
     },
-    [router]
+    [router, t]
   );
 
   return (

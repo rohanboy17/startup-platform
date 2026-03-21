@@ -26,6 +26,8 @@ type HistoryRow = {
     proofText: string | null;
     proofImage: string | null;
     proof: string;
+    assignedInstructionSequence: number | null;
+    assignedInstructionText: string | null;
     user: { id: string; name: string | null; level: string; isSuspicious: boolean };
     campaign: { id: string; title: string; category: string; rewardPerTask: number } | null;
     managerEscalatedAt?: string | null;
@@ -227,6 +229,26 @@ export default function ManagerHistoryPanel() {
                       </p>
                       <p className="text-xs text-foreground/60 break-all">{t("user.submissionId", { value: row.submissionId || t("fallbacks.unknown") })}</p>
                     </div>
+                    <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                      <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">{t("instruction.title")}</p>
+                      {row.submission?.assignedInstructionText ? (
+                        <>
+                          <p className="text-sm text-foreground/60">
+                            {t("instruction.sequence", {
+                              sequence: row.submission.assignedInstructionSequence ?? 0,
+                            })}
+                          </p>
+                          <p className="text-sm text-foreground/80 break-words">
+                            {row.submission.assignedInstructionText}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-foreground/60">{t("instruction.fallback")}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="grid gap-4 lg:grid-cols-1">
                     <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
                       <div className="flex items-center justify-between gap-3">
                         <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">{t("proof.title")}</p>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
@@ -10,6 +11,7 @@ export default function AdminWalletAdjustmentReviewActions({
 }: {
   requestId: string;
 }) {
+  const t = useTranslations("admin.walletAdjustmentReviewActions");
   const router = useRouter();
   const [reviewNote, setReviewNote] = useState("");
   const [loading, setLoading] = useState<"APPROVE" | "REJECT" | null>(null);
@@ -31,16 +33,16 @@ export default function AdminWalletAdjustmentReviewActions({
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
 
     setLoading(null);
     if (!res.ok) {
-      setMessage(data.error || "Action failed");
+      setMessage(data.error || t("actionFailed"));
       return;
     }
 
-    setMessage(data.message || "Updated");
+    setMessage(data.message || t("updated"));
     setReviewNote("");
     router.refresh();
     emitDashboardLiveRefresh();
@@ -52,14 +54,14 @@ export default function AdminWalletAdjustmentReviewActions({
         value={reviewNote}
         onChange={(e) => setReviewNote(e.target.value)}
         className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
-        placeholder="Review note (optional)"
+        placeholder={t("notePlaceholder")}
       />
       <div className="flex flex-col gap-2 sm:flex-row">
         <Button onClick={() => run("APPROVE")} disabled={loading !== null} className="w-full sm:w-auto">
-          {loading === "APPROVE" ? "Approving..." : "Approve"}
+          {loading === "APPROVE" ? t("approving") : t("approve")}
         </Button>
         <Button variant="destructive" onClick={() => run("REJECT")} disabled={loading !== null} className="w-full sm:w-auto">
-          {loading === "REJECT" ? "Rejecting..." : "Reject"}
+          {loading === "REJECT" ? t("rejecting") : t("reject")}
         </Button>
       </div>
       {message ? <p className="text-xs text-white/60">{message}</p> : null}

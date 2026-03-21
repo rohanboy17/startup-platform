@@ -113,7 +113,7 @@ export default function SiteHeader() {
               type="button"
               onClick={() => setOpen((prev) => !prev)}
               className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-foreground/15 bg-foreground/[0.04] text-foreground/70 transition hover:bg-foreground/[0.08]"
-              aria-label="Toggle navigation"
+              aria-label={t("toggleNavigation")}
               aria-expanded={open}
             >
               {open ? <X size={16} /> : <Menu size={16} />}

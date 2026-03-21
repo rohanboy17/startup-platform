@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 import { TASK_CATEGORIES, getTaskTypesForCategory } from "@/lib/task-categories";
@@ -41,6 +42,7 @@ export default function AdminCampaignActions({
   initialTotalBudget: number;
   initialSubmissionMode: "ONE_PER_USER" | "MULTIPLE_PER_USER";
 }) {
+  const t = useTranslations("admin.campaignActions");
   const router = useRouter();
   const [loading, setLoading] = useState<string | null>(null);
   const [message, setMessage] = useState("");
@@ -96,16 +98,16 @@ export default function AdminCampaignActions({
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("errors.unexpectedServerResponse") };
     }
 
     setLoading(null);
     if (!res.ok) {
-      setMessage(data.error || "Update failed");
+      setMessage(data.error || t("errors.updateFailed"));
       return;
     }
 
-    setMessage(data.message || "Updated");
+    setMessage(data.message || t("messages.updated"));
     if (action === "ESCALATE") {
       setEscalationNote("");
     }
@@ -141,23 +143,23 @@ export default function AdminCampaignActions({
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("errors.unexpectedServerResponse") };
     }
 
     setLoading(null);
     if (!res.ok) {
-      setMessage(data.error || "Update failed");
+      setMessage(data.error || t("errors.updateFailed"));
       return;
     }
 
-    setMessage(data.message || "Campaign updated");
+    setMessage(data.message || t("messages.campaignUpdated"));
     setEditOpen(false);
     router.refresh();
     emitDashboardLiveRefresh();
   }
 
   async function removeCampaign() {
-    if (!window.confirm("Delete this campaign? This cannot be undone.")) {
+    if (!window.confirm(t("confirm.delete"))) {
       return;
     }
 
@@ -174,16 +176,16 @@ export default function AdminCampaignActions({
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("errors.unexpectedServerResponse") };
     }
 
     setLoading(null);
     if (!res.ok) {
-      setMessage(data.error || "Delete failed");
+      setMessage(data.error || t("errors.deleteFailed"));
       return;
     }
 
-    setMessage(data.message || "Campaign deleted");
+    setMessage(data.message || t("messages.campaignDeleted"));
     router.refresh();
     emitDashboardLiveRefresh();
   }
@@ -193,52 +195,52 @@ export default function AdminCampaignActions({
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
         {canApprove ? (
           <Button onClick={() => update("APPROVE")} disabled={loading !== null} className="w-full sm:w-auto">
-            {loading === "APPROVE" ? "Approving..." : "Approve"}
+            {loading === "APPROVE" ? t("actions.approving") : t("actions.approve")}
           </Button>
         ) : null}
         {canMarkLive ? (
           <Button onClick={() => update("LIVE")} disabled={loading !== null} variant="secondary" className="w-full sm:w-auto">
-            {loading === "LIVE" ? "Publishing..." : "Mark Live"}
+            {loading === "LIVE" ? t("actions.publishing") : t("actions.markLive")}
           </Button>
         ) : null}
         {canPause ? (
           <Button onClick={() => update("PAUSE")} disabled={loading !== null} variant="secondary" className="w-full sm:w-auto">
-            {loading === "PAUSE" ? "Pausing..." : "Pause"}
+            {loading === "PAUSE" ? t("actions.pausing") : t("actions.pause")}
           </Button>
         ) : null}
         {canResume ? (
           <Button onClick={() => update("RESUME")} disabled={loading !== null} variant="secondary" className="w-full sm:w-auto">
-            {loading === "RESUME" ? "Resuming..." : "Resume"}
+            {loading === "RESUME" ? t("actions.resuming") : t("actions.resume")}
           </Button>
         ) : null}
         {canComplete ? (
           <Button onClick={() => update("COMPLETE")} disabled={loading !== null} variant="secondary" className="w-full sm:w-auto">
-            {loading === "COMPLETE" ? "Completing..." : "Force Complete"}
+            {loading === "COMPLETE" ? t("actions.completing") : t("actions.forceComplete")}
           </Button>
         ) : null}
         {canReject ? (
           <Button variant="destructive" onClick={() => update("REJECT")} disabled={loading !== null} className="w-full sm:w-auto">
-            {loading === "REJECT" ? "Rejecting..." : "Reject"}
+            {loading === "REJECT" ? t("actions.rejecting") : t("actions.reject")}
           </Button>
         ) : null}
         {canEdit ? (
           <Button variant="outline" onClick={() => setEditOpen((v) => !v)} disabled={loading !== null} className="w-full sm:w-auto">
-            {editOpen ? "Close Edit" : "Edit"}
+            {editOpen ? t("actions.closeEdit") : t("actions.edit")}
           </Button>
         ) : null}
         {canDelete ? (
           <Button variant="destructive" onClick={removeCampaign} disabled={loading !== null} className="w-full sm:w-auto">
-            {loading === "DELETE" ? "Deleting..." : "Delete"}
+            {loading === "DELETE" ? t("actions.deleting") : t("actions.delete")}
           </Button>
         ) : null}
         {canEscalate ? (
           <Button variant="outline" onClick={() => update("ESCALATE")} disabled={loading !== null} className="w-full sm:w-auto">
-            {loading === "ESCALATE" ? "Escalating..." : "Escalate"}
+            {loading === "ESCALATE" ? t("actions.escalating") : t("actions.escalate")}
           </Button>
         ) : null}
         {escalatedAt ? (
           <Button variant="outline" onClick={() => update("CLEAR_ESCALATION")} disabled={loading !== null} className="w-full sm:w-auto">
-            {loading === "CLEAR_ESCALATION" ? "Clearing..." : "Clear Escalation"}
+            {loading === "CLEAR_ESCALATION" ? t("actions.clearing") : t("actions.clearEscalation")}
           </Button>
         ) : null}
       </div>
@@ -247,12 +249,12 @@ export default function AdminCampaignActions({
           value={escalationNote}
           onChange={(e) => setEscalationNote(e.target.value)}
           className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
-          placeholder="Escalation reason (optional)"
+          placeholder={t("fields.escalationReason")}
         />
       ) : null}
       {escalatedAt ? (
         <p className="text-xs text-amber-300">
-          Escalated: {new Date(escalatedAt).toLocaleString()}
+          {t("labels.escalatedAt", { date: new Date(escalatedAt).toLocaleString() })}
           {escalationReason ? ` | ${escalationReason}` : ""}
         </p>
       ) : null}
@@ -263,13 +265,13 @@ export default function AdminCampaignActions({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
-            placeholder="Title"
+            placeholder={t("fields.title")}
           />
           <input
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
-            placeholder="Category"
+            placeholder={t("fields.category")}
           />
           <select
             value={taskCategory}
@@ -303,26 +305,26 @@ export default function AdminCampaignActions({
               value={customTask}
               onChange={(e) => setCustomTask(e.target.value)}
               className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
-              placeholder="Custom task"
+              placeholder={t("fields.customTask")}
             />
           ) : null}
           <input
             value={taskLink}
             onChange={(e) => setTaskLink(e.target.value)}
             className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
-            placeholder="Task link (optional)"
+            placeholder={t("fields.taskLink")}
           />
           <input
             value={tutorialVideoUrl}
             onChange={(e) => setTutorialVideoUrl(e.target.value)}
             className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
-            placeholder="Tutorial video URL (YouTube, Loom, or direct video)"
+            placeholder={t("fields.tutorialVideoUrl")}
           />
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="min-h-[70px] rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
-            placeholder="Description"
+            placeholder={t("fields.description")}
           />
           <input
             type="number"
@@ -331,7 +333,7 @@ export default function AdminCampaignActions({
             value={rewardPerTask}
             onChange={(e) => setRewardPerTask(e.target.value)}
             className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
-            placeholder="Reward per task"
+            placeholder={t("fields.rewardPerTask")}
           />
           <input
             type="number"
@@ -340,18 +342,18 @@ export default function AdminCampaignActions({
             value={totalBudget}
             onChange={(e) => setTotalBudget(e.target.value)}
             className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
-            placeholder="Total budget"
+            placeholder={t("fields.totalBudget")}
           />
           <select
             value={submissionMode}
             onChange={(e) => setSubmissionMode(e.target.value as "ONE_PER_USER" | "MULTIPLE_PER_USER")}
             className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
           >
-            <option value="ONE_PER_USER">One submission per user</option>
-            <option value="MULTIPLE_PER_USER">Many submissions per user</option>
+            <option value="ONE_PER_USER">{t("submissionModes.onePerUser")}</option>
+            <option value="MULTIPLE_PER_USER">{t("submissionModes.multiplePerUser")}</option>
           </select>
           <Button onClick={saveEdit} disabled={loading !== null} className="md:col-span-2">
-            {loading === "EDIT" ? "Saving..." : "Save Campaign Changes"}
+            {loading === "EDIT" ? t("actions.saving") : t("actions.saveCampaignChanges")}
           </Button>
         </div>
       ) : null}

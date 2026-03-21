@@ -6,15 +6,7 @@ import { getClientIp } from "@/lib/ip";
 import { checkIpAccess, createSecurityEvent } from "@/lib/security";
 import { autoFlagSuspiciousUser } from "@/lib/safety";
 import { getCampaignRepeatAccess, getIndiaDateKey } from "@/lib/campaign-repeat";
-
-function stableIndex(input: string, length: number) {
-  if (length <= 0) return 0;
-  let hash = 0;
-  for (let index = 0; index < input.length; index += 1) {
-    hash = (hash * 31 + input.charCodeAt(index)) >>> 0;
-  }
-  return hash % length;
-}
+import { pickCampaignInstruction } from "@/lib/campaign-instructions";
 
 export async function GET(
   _req: Request,
@@ -118,18 +110,15 @@ export async function GET(
     leftSubmissions > 0 &&
     !blockedBySubmissionMode &&
     !repeatAccess.blockedByRepeatRule;
-  const remainingInstructions = campaign.instructions.slice(occupiedSubmissions);
-  const instructionPool =
-    remainingInstructions.length > 0 ? remainingInstructions : campaign.instructions;
-  const currentInstruction =
-    isAvailable && instructionPool.length > 0
-      ? instructionPool[
-          stableIndex(
-            `${session.user.id}:${campaignId}:${occupiedSubmissions}:${userSubmissionCount}`,
-            instructionPool.length
-          )
-        ]
-      : null;
+  const currentInstruction = isAvailable
+    ? pickCampaignInstruction({
+        userId: session.user.id,
+        campaignId,
+        occupiedSubmissions,
+        userSubmissionCount,
+        instructions: campaign.instructions,
+      })
+    : null;
 
   return NextResponse.json({
     campaign: {
@@ -207,6 +196,14 @@ export async function POST(
       remainingBudget: true,
       submissionMode: true,
       repeatAccessMode: true,
+      instructions: {
+        orderBy: { sequence: "asc" },
+        select: {
+          id: true,
+          instructionText: true,
+          sequence: true,
+        },
+      },
     },
   });
 
@@ -301,6 +298,14 @@ export async function POST(
         throw new Error("Campaign submission capacity is full. Try again later.");
       }
 
+      const assignedInstruction = pickCampaignInstruction({
+        userId: session.user.id,
+        campaignId,
+        occupiedSubmissions: occupiedSubmissionCount,
+        userSubmissionCount: existingUserSubmissionCount,
+        instructions: campaign.instructions,
+      });
+
       await tx.user.update({
         where: { id: session.user.id },
         data: {
@@ -325,6 +330,9 @@ export async function POST(
           proofLink: normalizedProofLink || null,
           proofText: normalizedProofText || null,
           proofImage: normalizedProofImage || null,
+          assignedInstructionId: assignedInstruction?.id ?? null,
+          assignedInstructionSequence: assignedInstruction?.sequence ?? null,
+          assignedInstructionText: assignedInstruction?.instructionText ?? null,
           ipAddress: ip !== "unknown" ? ip : null,
           managerStatus: "PENDING",
           adminStatus: "PENDING",

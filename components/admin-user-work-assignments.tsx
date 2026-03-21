@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -41,6 +42,7 @@ export default function AdminUserWorkAssignments({
   userId: string;
   userSkills: string[];
 }) {
+  const t = useTranslations("admin.userWorkAssignments");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -58,11 +60,11 @@ export default function AdminUserWorkAssignments({
     try {
       parsed = raw ? (JSON.parse(raw) as { assignments?: AssignmentRow[]; error?: string }) : {};
     } catch {
-      parsed = { error: "Unexpected server response" };
+      parsed = { error: t("unexpectedServerResponse") };
     }
     setLoading(false);
     if (!res.ok) {
-      setError(parsed.error || "Failed to load assignments");
+      setError(parsed.error || t("failedToLoadAssignments"));
       return;
     }
     setAssignments(parsed.assignments || []);
@@ -75,10 +77,10 @@ export default function AdminUserWorkAssignments({
     try {
       parsed = raw ? (JSON.parse(raw) as { campaigns?: AssignableCampaign[]; error?: string }) : {};
     } catch {
-      parsed = { error: "Unexpected server response" };
+      parsed = { error: t("unexpectedServerResponse") };
     }
     if (!res.ok) {
-      setError(parsed.error || "Failed to load campaigns");
+      setError(parsed.error || t("failedToLoadCampaigns"));
       return;
     }
     setCampaigns(parsed.campaigns || []);
@@ -136,18 +138,18 @@ export default function AdminUserWorkAssignments({
     try {
       parsed = raw ? (JSON.parse(raw) as { error?: string }) : {};
     } catch {
-      parsed = { error: "Unexpected server response" };
+      parsed = { error: t("unexpectedServerResponse") };
     }
     setSaving(false);
     if (!res.ok) {
-      setError(parsed.error || "Failed to assign user");
+      setError(parsed.error || t("failedToAssignUser"));
       return;
     }
     await loadAssignments();
   }
 
   async function unassign(campaignId: string) {
-    if (!confirm("Remove this assignment?")) return;
+    if (!confirm(t("confirmRemove"))) return;
     setSaving(true);
     setError("");
     const res = await fetch(`/api/v2/admin/users/${userId}/assignments?campaignId=${encodeURIComponent(campaignId)}`, {
@@ -159,11 +161,11 @@ export default function AdminUserWorkAssignments({
     try {
       parsed = raw ? (JSON.parse(raw) as { error?: string }) : {};
     } catch {
-      parsed = { error: "Unexpected server response" };
+      parsed = { error: t("unexpectedServerResponse") };
     }
     setSaving(false);
     if (!res.ok) {
-      setError(parsed.error || "Failed to remove assignment");
+      setError(parsed.error || t("failedToRemoveAssignment"));
       return;
     }
     await loadAssignments();
@@ -172,22 +174,22 @@ export default function AdminUserWorkAssignments({
   return (
     <>
       <Button variant="outline" onClick={() => setOpen(true)} className="w-full sm:w-auto">
-        Work assignments
+        {t("open")}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Work assignments</DialogTitle>
+            <DialogTitle>{t("title")}</DialogTitle>
           </DialogHeader>
 
           <div className="grid gap-4 md:grid-cols-[1fr_1.2fr]">
             <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">
-                Assigned campaigns
+                {t("assignedCampaigns")}
               </p>
               <p className="mt-2 text-sm text-foreground/70">
-                {loading ? "Loading..." : `${assignments.length} assigned`}
+                {loading ? t("loading") : t("assignedCount", { count: assignments.length })}
               </p>
 
               {error ? (
@@ -196,7 +198,7 @@ export default function AdminUserWorkAssignments({
 
               <div className="mt-4 space-y-2">
                 {assignments.length === 0 && !loading ? (
-                  <p className="text-sm text-foreground/60">No work campaigns assigned yet.</p>
+                  <p className="text-sm text-foreground/60">{t("noAssignedCampaigns")}</p>
                 ) : null}
                 {assignments.map((a) => (
                   <div
@@ -206,8 +208,10 @@ export default function AdminUserWorkAssignments({
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium text-foreground">{a.campaign.title}</p>
                       <p className="mt-1 text-xs text-foreground/60">
-                        Status: {a.campaign.status} - Assigned{" "}
-                        {new Date(a.createdAt).toLocaleDateString()}
+                        {t("assignedItemMeta", {
+                          status: a.campaign.status,
+                          date: new Date(a.createdAt).toLocaleDateString(),
+                        })}
                       </p>
                     </div>
                     <Button
@@ -217,7 +221,7 @@ export default function AdminUserWorkAssignments({
                       disabled={saving}
                       className="w-full sm:w-auto"
                     >
-                      Remove
+                      {t("remove")}
                     </Button>
                   </div>
                 ))}
@@ -226,24 +230,24 @@ export default function AdminUserWorkAssignments({
 
             <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">
-                Assign new work campaign
+                {t("assignNewCampaign")}
               </p>
               <p className="mt-2 text-sm text-foreground/70">
-                Choose a campaign and assign this user. Only campaigns in category work show up here.
+                {t("assignHelp")}
               </p>
 
               <div className="mt-4">
                 <Input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search campaigns..."
+                  placeholder={t("searchPlaceholder")}
                   className="min-h-11"
                 />
               </div>
 
               <div className="mt-4 grid max-h-[360px] gap-2 overflow-auto pr-1">
                 {filteredCampaigns.length === 0 ? (
-                  <p className="text-sm text-foreground/60">No work campaigns found.</p>
+                  <p className="text-sm text-foreground/60">{t("noCampaignsFound")}</p>
                 ) : null}
                 {filteredCampaigns.map((c) => {
                   const isAssigned = assignedCampaignIds.has(c.id);
@@ -261,12 +265,12 @@ export default function AdminUserWorkAssignments({
                           {c.title}{" "}
                           {isSuggested ? (
                             <span className="ml-2 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-500">
-                              Suggested
+                              {t("suggested")}
                             </span>
                           ) : null}
                         </p>
                         <p className="mt-1 text-xs text-foreground/60">
-                          {c.status} - Assigned users: {c.assignedUsers}
+                          {t("campaignMeta", { status: c.status, count: c.assignedUsers })}
                         </p>
                       </div>
                       <Button
@@ -275,7 +279,7 @@ export default function AdminUserWorkAssignments({
                         disabled={saving || isAssigned}
                         className="w-full sm:w-auto"
                       >
-                        {isAssigned ? "Assigned" : "Assign"}
+                        {isAssigned ? t("assigned") : t("assign")}
                       </Button>
                     </div>
                   );

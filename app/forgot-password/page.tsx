@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations("auth.forgotPassword");
   const [identifier, setIdentifier] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -28,14 +30,11 @@ export default function ForgotPasswordPage() {
     setLoading(false);
 
     if (!res.ok) {
-      setError(data.error || "Unable to send reset link");
+      setError(data.error || t("errors.failed"));
       return;
     }
 
-    setMessage(
-      data.message ||
-        "If the account exists, a reset link has been sent to your email."
-    );
+    setMessage(data.message || t("messages.sent"));
   }
 
   return (
@@ -45,11 +44,11 @@ export default function ForgotPasswordPage() {
           <CardContent className="space-y-5 p-6 sm:p-8">
             <div>
               <p className="text-xs uppercase tracking-[0.2em] text-emerald-300/80">
-                Account Recovery
+                {t("eyebrow")}
               </p>
-              <h1 className="mt-2 text-2xl font-semibold">Forgot Password</h1>
+              <h1 className="mt-2 text-2xl font-semibold">{t("title")}</h1>
               <p className="mt-2 text-sm text-white/65">
-                Enter your email or mobile number and we will send a password reset link.
+                {t("description")}
               </p>
             </div>
 
@@ -58,7 +57,7 @@ export default function ForgotPasswordPage() {
                 type="text"
                 value={identifier}
                 onChange={(e) => setIdentifier(e.target.value)}
-                placeholder="Email or mobile number"
+                placeholder={t("identifierPlaceholder")}
                 required
                 className="h-11 border-white/15 bg-white/5"
               />
@@ -67,7 +66,7 @@ export default function ForgotPasswordPage() {
                 disabled={loading}
                 className="h-11 w-full rounded-xl bg-white text-black hover:bg-white/90"
               >
-                {loading ? "Sending..." : "Send Reset Link"}
+                {loading ? t("actions.sending") : t("actions.send")}
               </Button>
             </form>
 
@@ -75,9 +74,9 @@ export default function ForgotPasswordPage() {
             {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
             <p className="text-sm text-white/60">
-              Back to{" "}
+              {t("backTo")}{" "}
               <Link href="/login" className="font-medium text-white underline underline-offset-4">
-                Sign In
+                {t("signIn")}
               </Link>
             </p>
           </CardContent>

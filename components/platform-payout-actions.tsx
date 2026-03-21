@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
@@ -12,6 +13,7 @@ export default function PlatformPayoutActions({
   payoutId: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
 }) {
+  const t = useTranslations("admin.platformPayoutActions");
   const router = useRouter();
   const [note, setNote] = useState("");
   const [loading, setLoading] = useState<"APPROVED" | "REJECTED" | "RETRY" | null>(null);
@@ -33,17 +35,17 @@ export default function PlatformPayoutActions({
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
 
     setLoading(null);
 
     if (!res.ok) {
-      setMessage(data.error || "Action failed");
+      setMessage(data.error || t("actionFailed"));
       return;
     }
 
-    setMessage(data.message || "Updated");
+    setMessage(data.message || t("updated"));
     router.refresh();
     emitDashboardLiveRefresh();
   }
@@ -54,13 +56,13 @@ export default function PlatformPayoutActions({
         value={note}
         onChange={(e) => setNote(e.target.value)}
         className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
-        placeholder="Payout note (optional)"
+        placeholder={t("notePlaceholder")}
       />
       <div className="flex flex-col gap-2 sm:flex-row">
         {status === "PENDING" ? (
           <>
             <Button onClick={() => update("APPROVED")} disabled={loading !== null} className="w-full sm:w-auto">
-              {loading === "APPROVED" ? "Approving..." : "Approve"}
+              {loading === "APPROVED" ? t("approving") : t("approve")}
             </Button>
             <Button
               variant="destructive"
@@ -68,13 +70,13 @@ export default function PlatformPayoutActions({
               disabled={loading !== null}
               className="w-full sm:w-auto"
             >
-              {loading === "REJECTED" ? "Rejecting..." : "Reject"}
+              {loading === "REJECTED" ? t("rejecting") : t("reject")}
             </Button>
           </>
         ) : null}
         {status === "REJECTED" ? (
           <Button variant="outline" onClick={() => update("RETRY")} disabled={loading !== null} className="w-full sm:w-auto">
-            {loading === "RETRY" ? "Retrying..." : "Retry"}
+            {loading === "RETRY" ? t("retrying") : t("retry")}
           </Button>
         ) : null}
       </div>

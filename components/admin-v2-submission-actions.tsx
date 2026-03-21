@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
@@ -14,6 +15,7 @@ export default function AdminV2SubmissionActions({
   allowReopen?: boolean;
   allowEscalate?: boolean;
 }) {
+  const t = useTranslations("admin.v2SubmissionActions");
   const router = useRouter();
   const [loading, setLoading] = useState<"APPROVE" | "REJECT" | "REOPEN" | "ESCALATE" | null>(null);
   const [reason, setReason] = useState("");
@@ -21,7 +23,7 @@ export default function AdminV2SubmissionActions({
 
   async function review(action: "APPROVE" | "REJECT" | "REOPEN") {
     if (action === "REOPEN" && !reason.trim()) {
-      setMessage("Reopen reason is required");
+      setMessage(t("reopenReasonRequired"));
       return;
     }
     setLoading(action);
@@ -39,16 +41,16 @@ export default function AdminV2SubmissionActions({
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
     setLoading(null);
 
     if (!res.ok) {
-      setMessage(data.error || "Review failed");
+      setMessage(data.error || t("reviewFailed"));
       return;
     }
 
-    setMessage(data.message || "Updated");
+    setMessage(data.message || t("updated"));
     if (action === "REOPEN") {
       setReason("");
     }
@@ -72,16 +74,16 @@ export default function AdminV2SubmissionActions({
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
     setLoading(null);
 
     if (!res.ok) {
-      setMessage(data.error || "Escalation failed");
+      setMessage(data.error || t("escalationFailed"));
       return;
     }
 
-    setMessage(data.message || "Escalated");
+    setMessage(data.message || t("escalated"));
     setReason("");
     router.refresh();
     emitDashboardLiveRefresh();
@@ -94,24 +96,24 @@ export default function AdminV2SubmissionActions({
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           className="w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground placeholder:text-foreground/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30"
-          placeholder={allowReopen ? "Reason (required for reopen)" : "Escalation reason (optional)"}
+          placeholder={allowReopen ? t("reopenReasonPlaceholder") : t("escalationReasonPlaceholder")}
         />
       ) : null}
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <Button onClick={() => review("APPROVE")} disabled={loading !== null} className="w-full sm:w-auto">
-          {loading === "APPROVE" ? "Approving..." : "Approve"}
+          {loading === "APPROVE" ? t("approving") : t("approve")}
         </Button>
         <Button variant="destructive" onClick={() => review("REJECT")} disabled={loading !== null} className="w-full sm:w-auto">
-          {loading === "REJECT" ? "Rejecting..." : "Reject"}
+          {loading === "REJECT" ? t("rejecting") : t("reject")}
         </Button>
         {allowReopen ? (
           <Button variant="outline" onClick={() => review("REOPEN")} disabled={loading !== null} className="w-full sm:w-auto">
-            {loading === "REOPEN" ? "Reopening..." : "Reopen"}
+            {loading === "REOPEN" ? t("reopening") : t("reopen")}
           </Button>
         ) : null}
         {allowEscalate ? (
           <Button variant="secondary" onClick={escalate} disabled={loading !== null} className="w-full sm:w-auto">
-            {loading === "ESCALATE" ? "Escalating..." : "Escalate"}
+            {loading === "ESCALATE" ? t("escalating") : t("escalate")}
           </Button>
         ) : null}
       </div>

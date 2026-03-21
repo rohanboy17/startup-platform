@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
@@ -9,6 +10,7 @@ import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 type WalletAction = "CREDIT" | "DEBIT";
 
 export default function AdminUserWalletAdjustment({ userId }: { userId: string }) {
+  const t = useTranslations("admin.userWalletAdjustment");
   const router = useRouter();
   const [action, setAction] = useState<WalletAction>("CREDIT");
   const [amount, setAmount] = useState("");
@@ -36,11 +38,11 @@ export default function AdminUserWalletAdjustment({ userId }: { userId: string }
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
 
     setLoading(false);
-    setMessage(data.message || data.error || "Updated");
+    setMessage(data.message || data.error || t("updated"));
 
     if (res.ok) {
       setAmount("");
@@ -59,26 +61,26 @@ export default function AdminUserWalletAdjustment({ userId }: { userId: string }
           className="w-full rounded-md border border-foreground/20 bg-background/60 px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/30 sm:w-auto"
           disabled={loading}
         >
-          <option value="CREDIT">CREDIT</option>
-          <option value="DEBIT">DEBIT</option>
+          <option value="CREDIT">{t("actions.credit")}</option>
+          <option value="DEBIT">{t("actions.debit")}</option>
         </select>
         <Input
           type="number"
           min={0.01}
           step="0.01"
-          placeholder="Amount"
+          placeholder={t("amountPlaceholder")}
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           className="w-full sm:max-w-[180px]"
         />
       </div>
       <Input
-        placeholder="Adjustment reason (required)"
+        placeholder={t("reasonPlaceholder")}
         value={note}
         onChange={(e) => setNote(e.target.value)}
       />
       <Button onClick={submitAdjustment} disabled={loading} className="w-full sm:w-auto">
-        {loading ? "Submitting..." : "Create Adjustment Request"}
+        {loading ? t("submitting") : t("createRequest")}
       </Button>
       {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>

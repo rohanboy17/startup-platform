@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
@@ -15,6 +16,7 @@ export default function AdminBusinessKycActions({
   userId: string;
   currentStatus: KycStatus;
 }) {
+  const t = useTranslations("admin.businessKycActions");
   const router = useRouter();
   const [kycStatus, setKycStatus] = useState<KycStatus>(currentStatus);
   const [notes, setNotes] = useState("");
@@ -37,11 +39,11 @@ export default function AdminBusinessKycActions({
     try {
       data = raw ? (JSON.parse(raw) as { message?: string; error?: string }) : {};
     } catch {
-      data = { error: "Unexpected server response" };
+      data = { error: t("unexpectedServerResponse") };
     }
 
     setLoading(false);
-    setMessage(data.message || data.error || "Updated");
+    setMessage(data.message || data.error || t("updated"));
     router.refresh();
     emitDashboardLiveRefresh();
   }
@@ -55,16 +57,16 @@ export default function AdminBusinessKycActions({
           className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
           disabled={loading}
         >
-          <option value="PENDING">PENDING</option>
-          <option value="VERIFIED">VERIFIED</option>
-          <option value="REJECTED">REJECTED</option>
+          <option value="PENDING">{t("status.pending")}</option>
+          <option value="VERIFIED">{t("status.verified")}</option>
+          <option value="REJECTED">{t("status.rejected")}</option>
         </select>
         <Button onClick={saveKyc} disabled={loading}>
-          {loading ? "Saving..." : "Update KYC"}
+          {loading ? t("saving") : t("update")}
         </Button>
       </div>
       <Input
-        placeholder="KYC notes (optional)"
+        placeholder={t("notesPlaceholder")}
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
       />
@@ -72,4 +74,3 @@ export default function AdminBusinessKycActions({
     </div>
   );
 }
-
