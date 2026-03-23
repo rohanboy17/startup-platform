@@ -11,6 +11,9 @@ import {
 } from "@/lib/ad-rewards";
 import { getAppSettings } from "@/lib/system-settings";
 
+const HEARTBEAT_GAP_RESET_SECONDS = 5;
+const HEARTBEAT_INCREMENT_CAP_SECONDS = 2;
+
 async function expireStalePendingSessions(userId: string, now = new Date()) {
   await prisma.adWatchSession.updateMany({
     where: {
@@ -73,6 +76,9 @@ async function buildEarnAdsPayload(userId: string) {
     ? new Date(latestRewarded.completedAt.getTime() + settings.cooldownSeconds * 1000)
     : null;
   const cooldownLeftSeconds = activeSession ? 0 : getSecondsRemaining(cooldownUntil, now);
+  const remainingWatchSeconds = activeSession
+    ? Math.max(0, activeSession.requiredSeconds - activeSession.watchedSeconds)
+    : 0;
 
   return {
     settings,
@@ -91,9 +97,11 @@ async function buildEarnAdsPayload(userId: string) {
           reward: activeSession.reward,
           status: activeSession.status,
           startedAt: activeSession.createdAt.toISOString(),
-          availableAt: activeSession.availableAt.toISOString(),
           expiresAt: activeSession.expiresAt.toISOString(),
-          secondsLeft: getSecondsRemaining(activeSession.availableAt, now),
+          watchedSeconds: activeSession.watchedSeconds,
+          requiredSeconds: activeSession.requiredSeconds,
+          remainingSeconds: remainingWatchSeconds,
+          progressPercent: Math.round((activeSession.watchedSeconds / Math.max(1, activeSession.requiredSeconds)) * 100),
         }
       : null,
     recentRewards: recentRewards.map((item) => ({
@@ -122,7 +130,7 @@ export async function POST(req: Request) {
 
   const userId = session.user.id;
   const body = (await req.json().catch(() => ({}))) as {
-    action?: "start" | "complete";
+    action?: "start" | "heartbeat" | "complete";
     sessionId?: string;
   };
 
@@ -196,27 +204,72 @@ export async function POST(req: Request) {
       );
     }
 
-    const availableAt = new Date(now.getTime() + settings.watchSeconds * 1000);
-    const sessionRow = await prisma.adWatchSession.create({
+    const expectedFinishAt = new Date(now.getTime() + settings.watchSeconds * 1000);
+    await prisma.adWatchSession.create({
       data: {
         userId,
         reward: settings.rewardPerAd,
-        availableAt,
-        expiresAt: getAdSessionExpiry(availableAt),
+        requiredSeconds: settings.watchSeconds,
+        watchedSeconds: 0,
+        lastHeartbeatAt: now,
+        availableAt: expectedFinishAt,
+        expiresAt: getAdSessionExpiry(expectedFinishAt),
       },
     });
 
     return NextResponse.json({
       message: "Ad started.",
-      activeSession: {
-        id: sessionRow.id,
-        reward: sessionRow.reward,
-        status: sessionRow.status,
-        startedAt: sessionRow.createdAt.toISOString(),
-        availableAt: sessionRow.availableAt.toISOString(),
-        expiresAt: sessionRow.expiresAt.toISOString(),
-        secondsLeft: getSecondsRemaining(sessionRow.availableAt, now),
+      payload: await buildEarnAdsPayload(userId),
+    });
+  }
+
+  if (body.action === "heartbeat") {
+    if (!body.sessionId) {
+      return NextResponse.json({ error: "Missing session ID" }, { status: 400 });
+    }
+
+    const sessionRow = await prisma.adWatchSession.findUnique({
+      where: { id: body.sessionId },
+    });
+
+    if (!sessionRow || sessionRow.userId !== userId) {
+      return NextResponse.json({ error: "Ad session not found" }, { status: 404 });
+    }
+
+    if (sessionRow.status !== "PENDING") {
+      return NextResponse.json({
+        payload: await buildEarnAdsPayload(userId),
+      });
+    }
+
+    if (sessionRow.expiresAt.getTime() < now.getTime()) {
+      await prisma.adWatchSession.update({
+        where: { id: sessionRow.id },
+        data: { status: "EXPIRED" },
+      });
+      return NextResponse.json({ error: "Ad session expired. Start another ad." }, { status: 400 });
+    }
+
+    const deltaSeconds = sessionRow.lastHeartbeatAt
+      ? Math.max(0, Math.floor((now.getTime() - sessionRow.lastHeartbeatAt.getTime()) / 1000))
+      : 1;
+    const countedSeconds =
+      deltaSeconds > 0 && deltaSeconds <= HEARTBEAT_GAP_RESET_SECONDS
+        ? Math.min(deltaSeconds, HEARTBEAT_INCREMENT_CAP_SECONDS)
+        : 0;
+    const nextWatchedSeconds = Math.min(sessionRow.requiredSeconds, sessionRow.watchedSeconds + countedSeconds);
+    const remainingSeconds = Math.max(0, sessionRow.requiredSeconds - nextWatchedSeconds);
+
+    await prisma.adWatchSession.update({
+      where: { id: sessionRow.id },
+      data: {
+        watchedSeconds: nextWatchedSeconds,
+        lastHeartbeatAt: now,
+        availableAt: new Date(now.getTime() + remainingSeconds * 1000),
       },
+    });
+
+    return NextResponse.json({
       payload: await buildEarnAdsPayload(userId),
     });
   }
@@ -256,11 +309,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Ad session expired. Start another ad." }, { status: 400 });
     }
 
-    if (sessionRow.availableAt.getTime() > now.getTime()) {
+    if (sessionRow.watchedSeconds < sessionRow.requiredSeconds) {
       return NextResponse.json(
         {
-          error: "Ad is still playing.",
-          secondsLeft: getSecondsRemaining(sessionRow.availableAt, now),
+          error: "Keep the ad active in the foreground until the timer completes.",
           payload: await buildEarnAdsPayload(userId),
         },
         { status: 400 }
@@ -283,6 +335,10 @@ export async function POST(req: Request) {
             data: { status: "EXPIRED" },
           });
           throw new Error("SESSION_EXPIRED");
+        }
+
+        if (freshSession.watchedSeconds < freshSession.requiredSeconds) {
+          throw new Error("WATCH_NOT_COMPLETE");
         }
 
         const rewardedToday = await tx.adWatchSession.count({
@@ -354,6 +410,15 @@ export async function POST(req: Request) {
       }
       if (message === "DAILY_LIMIT_REACHED") {
         return NextResponse.json({ error: "Daily ad limit reached." }, { status: 400 });
+      }
+      if (message === "WATCH_NOT_COMPLETE") {
+        return NextResponse.json(
+          {
+            error: "Keep the ad active in the foreground until the timer completes.",
+            payload: await buildEarnAdsPayload(userId),
+          },
+          { status: 400 }
+        );
       }
       if (message === "SESSION_ALREADY_PROCESSED" || message === "SESSION_NOT_PENDING") {
         return NextResponse.json(

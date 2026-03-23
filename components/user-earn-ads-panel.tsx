@@ -31,9 +31,11 @@ type EarnAdsResponse = {
     reward: number;
     status: "PENDING";
     startedAt: string;
-    availableAt: string;
     expiresAt: string;
-    secondsLeft: number;
+    watchedSeconds: number;
+    requiredSeconds: number;
+    remainingSeconds: number;
+    progressPercent: number;
   } | null;
   recentRewards: Array<{
     id: string;
@@ -49,6 +51,11 @@ function resolveIntlLocale(locale: string) {
   return "en-IN";
 }
 
+function getPageActiveState() {
+  if (typeof document === "undefined" || typeof window === "undefined") return true;
+  return !document.hidden && document.hasFocus();
+}
+
 export default function UserEarnAdsPanel() {
   const t = useTranslations("user.earnAds");
   const locale = useLocale();
@@ -58,6 +65,7 @@ export default function UserEarnAdsPanel() {
   const [loadingAction, setLoadingAction] = useState<"start" | "complete" | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [nowTs, setNowTs] = useState(() => Date.now());
+  const [pageActive, setPageActive] = useState(getPageActiveState);
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/users/me/earn-ads", { credentials: "include" });
@@ -79,32 +87,61 @@ export default function UserEarnAdsPanel() {
   useLiveRefresh(load, 10000);
 
   useEffect(() => {
-    if (!data?.activeSession && !data?.cooldownEndsAt) return;
+    const updatePageState = () => setPageActive(getPageActiveState());
+    updatePageState();
+    document.addEventListener("visibilitychange", updatePageState);
+    window.addEventListener("focus", updatePageState);
+    window.addEventListener("blur", updatePageState);
+    return () => {
+      document.removeEventListener("visibilitychange", updatePageState);
+      window.removeEventListener("focus", updatePageState);
+      window.removeEventListener("blur", updatePageState);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!data?.cooldownEndsAt) return;
     const timer = window.setInterval(() => {
       setNowTs(Date.now());
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [data?.activeSession, data?.cooldownEndsAt]);
-
-  const activeSecondsLeft = useMemo(() => {
-    if (!data?.activeSession) return 0;
-    return Math.max(0, Math.ceil((new Date(data.activeSession.availableAt).getTime() - nowTs) / 1000));
-  }, [data?.activeSession, nowTs]);
+  }, [data?.cooldownEndsAt]);
 
   const cooldownLeft = useMemo(() => {
     if (!data?.cooldownEndsAt || data.activeSession) return 0;
     return Math.max(0, Math.ceil((new Date(data.cooldownEndsAt).getTime() - nowTs) / 1000));
   }, [data?.cooldownEndsAt, data?.activeSession, nowTs]);
 
-  const adProgress = useMemo(() => {
-    if (!data?.activeSession) return 0;
-    const total = Math.max(1, data.settings.watchSeconds);
-    const startedAt = new Date(data.activeSession.startedAt).getTime();
-    const availableAt = new Date(data.activeSession.availableAt).getTime();
-    const elapsed = Math.min(total, Math.max(0, Math.round((nowTs - startedAt) / 1000)));
-    const duration = Math.max(1, Math.round((availableAt - startedAt) / 1000));
-    return Math.max(0, Math.min(100, Math.round((elapsed / duration) * 100)));
-  }, [data?.activeSession, data?.settings.watchSeconds, nowTs]);
+  const activeSecondsLeft = data?.activeSession?.remainingSeconds ?? 0;
+  const adProgress = data?.activeSession?.progressPercent ?? 0;
+
+  const heartbeat = useCallback(
+    async (sessionId: string) => {
+      const res = await fetch("/api/v2/users/me/earn-ads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ action: "heartbeat", sessionId }),
+      });
+      const raw = await res.text();
+      const parsed = raw
+        ? (JSON.parse(raw) as { error?: string; payload?: EarnAdsResponse })
+        : {};
+
+      if (!res.ok) {
+        setFeedback(parsed.error || t("errors.heartbeat"));
+        if (parsed.payload) {
+          setData(parsed.payload);
+        }
+        return;
+      }
+
+      if (parsed.payload) {
+        setData(parsed.payload);
+      }
+    },
+    [t]
+  );
 
   const completeAd = useCallback(
     async (sessionId: string) => {
@@ -142,13 +179,22 @@ export default function UserEarnAdsPanel() {
   );
 
   useEffect(() => {
-    if (!data?.activeSession || activeSecondsLeft > 0 || loadingAction === "complete") return;
+    if (!data?.activeSession || !pageActive || loadingAction === "complete") return;
+    const sessionId = data.activeSession.id;
+    const timer = window.setInterval(() => {
+      void heartbeat(sessionId);
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [data?.activeSession, heartbeat, loadingAction, pageActive]);
+
+  useEffect(() => {
+    if (!data?.activeSession || activeSecondsLeft > 0 || loadingAction === "complete" || !pageActive) return;
     const sessionId = data.activeSession.id;
     const timer = window.setTimeout(() => {
       void completeAd(sessionId);
     }, 0);
     return () => window.clearTimeout(timer);
-  }, [activeSecondsLeft, completeAd, data?.activeSession, loadingAction]);
+  }, [activeSecondsLeft, completeAd, data?.activeSession, loadingAction, pageActive]);
 
   async function startAd() {
     setLoadingAction("start");
@@ -187,11 +233,11 @@ export default function UserEarnAdsPanel() {
 
   const buttonLabel = useMemo(() => {
     if (!data) return t("states.loading");
-    if (data.activeSession) return t("states.playing");
+    if (data.activeSession) return pageActive ? t("states.playing") : t("states.paused");
     if (data.summary.remainingAds <= 0) return t("states.limitReached");
     if (cooldownLeft > 0) return t("states.wait", { seconds: cooldownLeft });
     return t("actions.watch");
-  }, [cooldownLeft, data, t]);
+  }, [cooldownLeft, data, pageActive, t]);
 
   if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
   if (!data) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
@@ -263,7 +309,9 @@ export default function UserEarnAdsPanel() {
                 <p className="text-sm font-medium text-foreground">{t("status.title")}</p>
                 <p className="mt-1 text-sm text-foreground/65">
                   {data.activeSession
-                    ? t("status.playing", { seconds: activeSecondsLeft })
+                    ? pageActive
+                      ? t("status.playing", { seconds: activeSecondsLeft })
+                      : t("status.paused")
                     : data.summary.remainingAds <= 0
                       ? t("status.limitReached")
                       : cooldownLeft > 0
@@ -273,7 +321,11 @@ export default function UserEarnAdsPanel() {
               </div>
               <div className="inline-flex items-center gap-2 rounded-full border border-foreground/10 bg-foreground/[0.04] px-3 py-1.5 text-sm text-foreground/75">
                 <Clock3 size={15} />
-                {data.activeSession ? t("status.adRunning") : t("status.remaining", { count: data.summary.remainingAds })}
+                {data.activeSession
+                  ? pageActive
+                    ? t("status.adRunning")
+                    : t("status.keepTabActive")
+                  : t("status.remaining", { count: data.summary.remainingAds })}
               </div>
             </div>
           </div>
@@ -341,13 +393,19 @@ export default function UserEarnAdsPanel() {
             </div>
 
             <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4 text-sm text-foreground/70">
-              {activeSecondsLeft > 0
-                ? t("modal.keepOpen", { seconds: activeSecondsLeft })
-                : t("modal.claiming")}
+              {!pageActive
+                ? t("modal.paused")
+                : activeSecondsLeft > 0
+                  ? t("modal.keepOpen", { seconds: activeSecondsLeft })
+                  : t("modal.claiming")}
             </div>
 
             <Button type="button" disabled className="w-full">
-              {loadingAction === "complete" ? t("actions.rewarding") : t("states.playing")}
+              {loadingAction === "complete"
+                ? t("actions.rewarding")
+                : pageActive
+                  ? t("states.playing")
+                  : t("states.paused")}
             </Button>
           </div>
         </DialogContent>

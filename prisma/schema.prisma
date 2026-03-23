@@ -311,11 +311,14 @@ model AdWatchSession {
   id          String               @id @default(cuid())
   userId      String
   reward      Float
+  requiredSeconds Int              @default(20)
+  watchedSeconds Int              @default(0)
   status      AdWatchSessionStatus @default(PENDING)
   createdAt   DateTime             @default(now())
   availableAt DateTime
   expiresAt   DateTime
   completedAt DateTime?
+  lastHeartbeatAt DateTime?
 
   user        User                 @relation(fields: [userId], references: [id])
 

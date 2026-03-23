@@ -1048,7 +1048,7 @@
       "subtitle": "Earn small bonus by watching short simulated ads. Daily limits and cooldown keep this separate from your main task income.",
       "bonusEyebrow": "Bonus system",
       "bonusTitle": "Small rewards, controlled safely",
-      "bonusBody": "This page is only for lightweight bonus earning. Rewards are added to your wallet after the ad timer completes.",
+      "bonusBody": "This page is only for lightweight bonus earning. Rewards are added to your wallet only after the ad stays active in the foreground until the timer completes.",
       "historyEyebrow": "Reward history",
       "historyTitle": "Recent ad rewards",
       "kpis": {
@@ -1069,7 +1069,9 @@
         "cooldown": "Please wait {seconds}s before the next ad.",
         "limitReached": "You already used today's bonus ad limit.",
         "adRunning": "Ad in progress",
-        "remaining": "{count} ads remaining today"
+        "remaining": "{count} ads remaining today",
+        "paused": "The ad is paused because this tab is not active.",
+        "keepTabActive": "Keep this tab active"
       },
       "actions": {
         "watch": "Watch Ad",
@@ -1080,7 +1082,8 @@
         "loading": "Loading...",
         "playing": "Ad playing...",
         "limitReached": "Daily limit reached",
-        "wait": "Wait {seconds}s"
+        "wait": "Wait {seconds}s",
+        "paused": "Ad paused"
       },
       "messages": {
         "started": "Ad started.",
@@ -1089,7 +1092,8 @@
       "errors": {
         "failed": "Failed to load bonus ads",
         "start": "Unable to start ad right now",
-        "complete": "Unable to complete ad right now"
+        "complete": "Unable to complete ad right now",
+        "heartbeat": "Unable to keep the ad active right now"
       },
       "history": {
         "rewardRow": "Bonus reward credited",
@@ -1097,10 +1101,11 @@
       },
       "modal": {
         "title": "Ad is playing...",
-        "body": "Keep this open while the timer finishes. Reward is added automatically after completion.",
+        "body": "Keep this tab open and active while the timer finishes. Background or hidden time will not count.",
         "progressLabel": "Ad progress",
         "keepOpen": "Please wait {seconds}s. We will credit the reward when the timer finishes.",
-        "claiming": "Finalizing your reward now..."
+        "claiming": "Finalizing your reward now...",
+        "paused": "This ad is paused. Return to this tab and keep it active to continue earning progress."
       }
     }
   },
