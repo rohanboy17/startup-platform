@@ -6,8 +6,8 @@ export default function PwaRegister() {
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
     const onLoad = () => {
-      // Single SW for both PWA shell caching and Firebase background push.
-      navigator.serviceWorker.register("/firebase-messaging-sw.js", { scope: "/" }).catch(() => {
+      // Keep the app shell registration separate from optional push support.
+      navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {
         // Non-blocking registration failure.
       });
     };

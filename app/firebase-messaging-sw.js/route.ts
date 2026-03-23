@@ -12,11 +12,20 @@ export async function GET() {
     appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "",
   };
 
-  const body = `
+const body = `
 // FreeEarnHub Service Worker (PWA shell + Firebase background push)
 const CACHE_NAME = "earnhub-shell-v1";
 const OFFLINE_URL = "/offline";
 const SHELL_ASSETS = ["/", OFFLINE_URL, "/manifest.webmanifest", "/icons/icon-192.svg", "/icons/icon-512.svg"];
+const FIREBASE_CONFIG = ${JSON.stringify(config)};
+const PUSH_CONFIGURED = Boolean(
+  FIREBASE_CONFIG.apiKey &&
+  FIREBASE_CONFIG.authDomain &&
+  FIREBASE_CONFIG.projectId &&
+  FIREBASE_CONFIG.storageBucket &&
+  FIREBASE_CONFIG.messagingSenderId &&
+  FIREBASE_CONFIG.appId
+);
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -68,23 +77,32 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-importScripts("https://www.gstatic.com/firebasejs/12.10.0/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/12.10.0/firebase-messaging-compat.js");
+if (PUSH_CONFIGURED) {
+  try {
+    importScripts("https://www.gstatic.com/firebasejs/12.10.0/firebase-app-compat.js");
+    importScripts("https://www.gstatic.com/firebasejs/12.10.0/firebase-messaging-compat.js");
 
-firebase.initializeApp(${JSON.stringify(config)});
-const messaging = firebase.messaging();
+    if (self.firebase?.initializeApp) {
+      self.firebase.initializeApp(FIREBASE_CONFIG);
+      const messaging = self.firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
-  const title = payload.notification?.title || "FreeEarnHub update";
-  const options = {
-    body: payload.notification?.body || "You have a new notification.",
-    icon: "/icons/icon-192.png",
-    badge: "/icons/icon-192.png",
-    data: payload.data || {},
-  };
+      messaging.onBackgroundMessage((payload) => {
+        const title = payload.notification?.title || "FreeEarnHub update";
+        const options = {
+          body: payload.notification?.body || "You have a new notification.",
+          icon: "/icons/icon-192.png",
+          badge: "/icons/icon-192.png",
+          data: payload.data || {},
+        };
 
-  self.registration.showNotification(title, options);
-});
+        self.registration.showNotification(title, options);
+      });
+    }
+  } catch (error) {
+    // Keep the shell/offline worker active even if push bootstrap fails on this browser.
+    console.warn("Firebase messaging is unavailable in this service worker.", error);
+  }
+}
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();

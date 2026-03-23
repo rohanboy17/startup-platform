@@ -6,7 +6,12 @@ import { BellRing } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { getBrowserMessaging, isFirebaseWebConfigured } from "@/lib/firebase-client";
+import {
+  ensureFirebaseMessagingServiceWorker,
+  getBrowserMessaging,
+  isFirebaseWebConfigured,
+  isFirebaseWebPushSupportedInBrowser,
+} from "@/lib/firebase-client";
 import { useLiveRefresh } from "@/lib/live-refresh";
 
 type ChannelState = {
@@ -46,7 +51,10 @@ export default function EmptyCampaignsPushNudge() {
   const [message, setMessage] = useState("");
   const autoTriggered = useRef(false);
 
-  const pushReadyInBrowser = useMemo(() => isFirebaseWebConfigured(), []);
+  const pushReadyInBrowser = useMemo(
+    () => isFirebaseWebConfigured() && isFirebaseWebPushSupportedInBrowser(),
+    []
+  );
 
   const loadChannels = useCallback(async () => {
     const res = await fetch("/api/notifications/channels", { credentials: "include", cache: "no-store" });
@@ -92,9 +100,12 @@ export default function EmptyCampaignsPushNudge() {
         return;
       }
 
-      const registration =
-        (await navigator.serviceWorker.getRegistration()) ??
-        (await navigator.serviceWorker.register("/firebase-messaging-sw.js", { scope: "/" }));
+      const registration = await ensureFirebaseMessagingServiceWorker();
+      if (!registration) {
+        setMessage(t("pushUnsupported"));
+        setLoading(false);
+        return;
+      }
 
       const token = await getToken(messaging, { vapidKey, serviceWorkerRegistration: registration });
       if (!token) {

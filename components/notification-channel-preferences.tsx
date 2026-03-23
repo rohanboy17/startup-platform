@@ -6,7 +6,12 @@ import { useTranslations } from "next-intl";
 import { BellRing, Send, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SectionCard } from "@/components/ui/section-card";
-import { getBrowserMessaging, isFirebaseWebConfigured } from "@/lib/firebase-client";
+import {
+  ensureFirebaseMessagingServiceWorker,
+  getBrowserMessaging,
+  isFirebaseWebConfigured,
+  isFirebaseWebPushSupportedInBrowser,
+} from "@/lib/firebase-client";
 import { useLiveRefresh } from "@/lib/live-refresh";
 
 type ChannelState = {
@@ -52,7 +57,10 @@ export default function NotificationChannelPreferences() {
 
   useLiveRefresh(load, 30000);
 
-  const pushReadyInBrowser = useMemo(() => isFirebaseWebConfigured(), []);
+  const pushReadyInBrowser = useMemo(
+    () => isFirebaseWebConfigured() && isFirebaseWebPushSupportedInBrowser(),
+    []
+  );
 
   async function enablePush() {
     setActionLoading("push");
@@ -82,9 +90,12 @@ export default function NotificationChannelPreferences() {
       }
 
       // Reuse the already-registered root service worker when possible.
-      const registration =
-        (await navigator.serviceWorker.getRegistration()) ??
-        (await navigator.serviceWorker.register("/firebase-messaging-sw.js", { scope: "/" }));
+      const registration = await ensureFirebaseMessagingServiceWorker();
+      if (!registration) {
+        setMessage(t("push.unsupportedBrowser"));
+        setActionLoading(null);
+        return;
+      }
       const token = await getToken(messaging, {
         vapidKey,
         serviceWorkerRegistration: registration,
