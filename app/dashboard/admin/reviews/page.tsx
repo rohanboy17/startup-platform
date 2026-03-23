@@ -47,7 +47,7 @@ export default async function AdminReviewsPage({
   const params = await searchParams;
   const q = params.q?.trim() || "";
   const sort = params.sort || "fraud";
-  const limit = [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
+  const limit = params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
   const now = new Date();
   const submissions = await prisma.submission.findMany({
     where: {
@@ -76,7 +76,7 @@ export default async function AdminReviewsPage({
       },
     },
     orderBy: { createdAt: "desc" },
-    take: limit,
+    ...(limit ? { take: limit } : {}),
   });
 
   const recentlyReviewed = await prisma.submission.findMany({
@@ -94,7 +94,7 @@ export default async function AdminReviewsPage({
       },
     },
     orderBy: { createdAt: "desc" },
-    take: limit,
+    ...(limit ? { take: limit } : {}),
   });
 
   const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -197,12 +197,13 @@ export default async function AdminReviewsPage({
             </select>
             <select
               name="limit"
-              defaultValue={String(limit)}
+              defaultValue={limit ? String(limit) : "ALL"}
               className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
             >
               <option value="5">Show 5</option>
               <option value="10">Show 10</option>
               <option value="20">Show 20</option>
+              <option value="ALL">Show all</option>
             </select>
             <button
               type="submit"

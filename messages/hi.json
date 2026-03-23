@@ -113,7 +113,7 @@
         "identifierPlaceholder": "ईमेल या मोबाइल नंबर",
         "mobileExamples": "मोबाइल लॉगिन उदाहरण: India <highlight>{india}</highlight>, US <highlight>{us}</highlight>, UK <highlight>{uk}</highlight>.",
         "passwordPlaceholder": "पासवर्ड",
-        "forgotPassword": "पासवर्ड भूल गए?",
+        "forgotPassword": "Forgot password?",
         "signingIn": "साइन इन हो रहा है...",
         "signIn": "साइन इन"
       },
@@ -131,7 +131,7 @@
         "liveSecurity": "लाइव सिक्योरिटी"
       },
       "footer": {
-        "newHere": "नए हैं?",
+        "newHere": "New here?",
         "createAccount": "अकाउंट बनाएं"
       },
       "errors": {
@@ -186,7 +186,7 @@
         "failed": "रजिस्ट्रेशन विफल"
       },
       "footer": {
-        "alreadyHave": "पहले से अकाउंट है?",
+        "alreadyHave": "Already have an account?",
         "signIn": "साइन इन"
       }
     },
@@ -312,7 +312,7 @@
       ]
     },
     "cta": {
-      "title": "कमाई शुरू करने के लिए तैयार?",
+      "title": "Ready to start earning?",
       "body": "हज़ारों यूज़र्स के साथ जुड़ें जो हर हफ्ते सत्यापित टास्क पूरा करते हैं।"
     },
     "offlineInvite": {
@@ -392,9 +392,9 @@
       "loggedInAs": "Signed in as {role}",
       "userRole": "verified user",
       "businessRole": "business owner",
-      "statusPending": "???? ??????? ??????? ??? ??",
-      "statusApproved": "???? ??????? ??????? ?? ???? ??",
-      "statusRejected": "???? ??????? ?? ??? ?? ????? ????? ????? ????",
+      "statusPending": "Your feedback is under review",
+      "statusApproved": "Your feedback is approved",
+      "statusRejected": "Your feedback needs another try",
       "underReviewHelp": "Your latest feedback is being reviewed by admin. You can submit again after this review is complete.",
       "approvedHelp": "Your latest feedback is approved and can be shown publicly on the homepage.",
       "rejectedHelp": "Your latest feedback was not approved for public display. You can write a stronger one and submit again.",
@@ -404,10 +404,7 @@
       "whatsapp": "WhatsApp जॉइन करें",
       "telegram": "Telegram जॉइन करें"
     },
-    "feedback": {
-      "statusPending": "???? ??????? ??????? ??? ??",
-      "statusRejected": "???? ??????? ?? ??? ?? ????? ????? ????? ????"
-    }
+    "feedback": {}
   },
   "about": {
     "eyebrow": "हमारे बारे में",
@@ -440,23 +437,23 @@
     "sectionTitle": "FAQ",
     "items": [
       {
-        "q": "FreeEarnHub क्या है?",
+        "q": "What is FreeEarnHub?",
         "a": "FreeEarnHub एक दो-पक्षीय मार्केटप्लेस है जहां बिज़नेस कैंपेन लॉन्च करते हैं और यूज़र सत्यापित टास्क पूरा करके कमाते हैं।"
       },
       {
-        "q": "यूज़र्स को रिवॉर्ड कब मिलता है?",
+        "q": "When do users receive rewards?",
         "a": "मॉडरेशन वर्कफ़्लो और कैंपेन नियमों के अनुसार मैनेजर/एडमिन अप्रूवल के बाद रिवॉर्ड क्रेडिट होता है।"
       },
       {
-        "q": "विथड्रॉ में कितना समय लगता है?",
+        "q": "How long do withdrawals take?",
         "a": "अधिकांश विथड्रॉ रिक्वेस्ट 3 से 5 बिज़नेस दिनों में प्रोसेस होती हैं, फ्रॉड और अनुपालन चेक के अधीन।"
       },
       {
-        "q": "क्या बिज़नेस तुरंत कैंपेन लॉन्च कर सकते हैं?",
+        "q": "Can businesses launch campaigns immediately?",
         "a": "कैंपेन बनाने और बजट डिप्लॉय से पहले बिज़नेस अकाउंट को KYC अप्रूवल की आवश्यकता हो सकती है।"
       },
       {
-        "q": "क्या आप व्यक्तिगत डेटा शेयर करते हैं?",
+        "q": "Do you share personal data?",
         "a": "हम व्यक्तिगत डेटा नहीं बेचते। डेटा शेयरिंग केवल आवश्यक सर्विस प्रोवाइडर और कानूनी/रेगुलेटरी दायित्वों तक सीमित है।"
       }
     ]
@@ -464,7 +461,7 @@
   "contact": {
     "eyebrow": "सपोर्ट",
     "title": "FreeEarnHub से संपर्क करें",
-    "description": "अकाउंट, पेमेंट, KYC या कैंपेन में मदद चाहिए? FreeEarnHub सपोर्ट टीम से संपर्क करें।",
+    "description": "Need help with your account, payments, KYC, or campaigns? Contact the FreeEarnHub support team.",
     "supportEmailTitle": "सपोर्ट ईमेल",
     "supportEmailLead": "मुख्य सपोर्ट चैनल:",
     "supportResponse": "आम तौर पर पहली प्रतिक्रिया: 24 से 48 बिज़नेस घंटे।",
@@ -685,12 +682,10 @@
       "repeatRequestNeeded": "Request tomorrow access to continue on this task.",
       "budgetTotal": "Wallet budget total: INR {amount}",
       "walletRewardHint": "Wallet credit on approval for {level}: {percent}% share",
-      "freshCampaignOnly": "?????? ??? ?????? ?? ??? ?? ??????",
+      "freshCampaignOnly": "Fresh users only for this campaign.",
       "freshPlatformOnly": "Fresh platform users only.",
-      "repeatRules": {
-        "freshCampaignOnly": "?????? ??? ?????? ?? ??? ?? ??????"
-      },
-      "repeatStatusRejected": "???? ????? ?? ???? ????????? ??????? ???? ??? ???"
+      "repeatRules": {},
+      "repeatStatusRejected": "Your previous tomorrow request was not approved."
     },
     "taskDetail": {
       "loading": "कैंपेन विवरण लोड हो रहा है...",
@@ -746,7 +741,7 @@
       "repeatRuleRequestedPlusNew": "This running campaign accepts approved requested users and brand-new users who have not submitted yet.",
       "repeatStatusPending": "Your tomorrow request is under review.",
       "repeatStatusApproved": "Your tomorrow request is approved.",
-      "repeatStatusRejected": "???? ????? ?? ???? ????????? ??????? ???? ??? ???",
+      "repeatStatusRejected": "Your previous tomorrow request was not approved.",
       "repeatRequestBody": "Want to continue this task tomorrow? Send a request so admin can review it for the next run.",
       "repeatRequestCta": "Request for tomorrow",
       "repeatRequestSending": "Sending request...",
@@ -831,7 +826,7 @@
       "title": "सेटिंग्स",
       "subtitle": "अपनी प्रोफ़ाइल, विथड्रॉ डिफ़ॉल्ट्स और अकाउंट सिक्योरिटी मैनेज करें।",
       "securityTitle": "अकाउंट सिक्योरिटी",
-      "securityBody": "पासवर्ड भूल गए? इसे सुरक्षित तरीके से रीसेट करें।",
+      "securityBody": "Forgot your password? Reset it securely.",
       "forgotPassword": "पासवर्ड भूल गए"
     },
     "help": {
@@ -863,7 +858,7 @@
       "withdrawalsBullet3": "एक समय में केवल एक पेंडिंग विथड्रॉ रिक्वेस्ट अलाउड है।",
       "withdrawalsBullet4": "अप्रूवल या रिजेक्शन एडमिन रिव्यू से तय होता है।",
       "supportEyebrow": "सपोर्ट",
-      "supportTitle": "हेल्प चाहिए?",
+      "supportTitle": "Need help?",
       "supportBody": "अगर आपके सबमिशन, वॉलेट या विथड्रॉ में कुछ गलत लगे, तो पब्लिक कॉन्टैक्ट पेज या वहाँ दिए गए ऑफिशियल सपोर्ट चैनल का उपयोग करें।"
     },
     "profilePage": {
@@ -924,7 +919,7 @@
         "FREELANCE_CONTRACTUAL": "फ्रीलांस कॉन्ट्रैक्ट",
         "DAY_BASIS": "डे बेसिस"
       },
-      "skillsTitle": "आप कौन सा काम कर सकते हैं?",
+      "skillsTitle": "What work can you do?",
       "skillsSubtitle": "वे स्किल्स जोड़ें जिन्हें एडमिन वर्क-बेस्ड कैंपेन असाइन करते समय उपयोग कर सकें।",
       "languagesTitle": "आप किन भाषाओं में काम कर सकते हैं",
       "languagesSubtitle": "वे भाषाएँ जोड़ें जिनमें आप सहजता से बात या काम कर सकते हैं।",
@@ -1424,7 +1419,7 @@
       },
       "placeholders": {
         "title": "उदाहरण: 5-स्टार रिव्यू दें",
-        "description": "यूज़र क्या करें और कौन सा प्रूफ सबमिट करें?",
+        "description": "Summarize what the participant needs to do",
         "taskLink": "https://example.com",
         "taskDetails": "स्टेप 1...\nस्टेप 2...\nस्टेप 3...",
         "rewardPerTask": "जैसे 10",
@@ -1944,7 +1939,7 @@
       "activity": {
         "created": "Campaign created and entered {status} state.",
         "submissionApproved": "Submission approved. Net payout INR {amount}.",
-        "submissionRejected": "?????? ????? ??????? ??? ???????? ?? ????",
+        "submissionRejected": "Submission rejected during admin review.",
         "waitingFinalApproval": "Submission is waiting for final approval.",
         "waitingReview": "Submission received and waiting for review."
       }
@@ -2399,8 +2394,8 @@
         "open": "Open to everyone",
         "requestedOnly": "Approved requested users only",
         "requestedPlusNew": "Approved requested users + new users",
-        "freshCampaignOnly": "?????? ??? ?????? ?? ??? ?? ?????",
-        "freshPlatformOnly": "???? ??????????? ?? ?????? ?? ?????"
+        "freshCampaignOnly": "Fresh users only for this campaign",
+        "freshPlatformOnly": "Fresh users only across platform"
       },
       "cards": {
         "pending": {
@@ -2412,7 +2407,7 @@
           "body": "Users already approved to continue in the next run."
         },
         "rejected": {
-          "title": "????????",
+          "title": "Rejected",
           "body": "Requests reviewed but not approved for the next run."
         }
       },
@@ -2985,7 +2980,7 @@
           "subtitle": "पिछले {hours} घंटों में मैनेजर रिजेक्शन रेट ज़्यादा वाले कैंपेन।",
           "empty": "कोई रिजेक्शन स्पाइक नहीं मिला।",
           "decisions": "निर्णय {count}",
-          "rejected": "???????? {count}",
+          "rejected": "Rejected {count}",
           "latest": "आख़िरी: {date}"
         },
         "footer": "यह दृश्य सुरक्षा के लिए IP और कॉन्टैक्ट डिटेल्स छुपाकर दिखाता है। अगर आपको डिवाइस फ़िंगरप्रिंटिंग या IP ब्लैकलिस्ट जैसे मजबूत कंट्रोल चाहिए हों, तो उन्हें केवल एडमिन टूल के रूप में जोड़ा जा सकता है।"
@@ -2996,7 +2991,7 @@
       "title": "सेटिंग्स",
       "subtitle": "अपनी प्रोफ़ाइल, रिव्यू पसंद और अकाउंट सुरक्षा मैनेज करें।",
       "securityTitle": "अकाउंट सुरक्षा",
-      "securityBody": "पासवर्ड भूल गए? उसे सुरक्षित तरीके से रीसेट करें।",
+      "securityBody": "Forgot your password? Reset it securely.",
       "forgotPassword": "पासवर्ड भूल गए"
     },
     "settings": {

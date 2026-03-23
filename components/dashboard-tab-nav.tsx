@@ -177,6 +177,11 @@ export default function DashboardTabNav({
     [alerts, counts, hydrated, items, pathname, storagePrefix, tNav]
   );
 
+  const hasNavAlerts = useMemo(
+    () => itemsWithState.some((item) => item.showDot || item.badgeCount > 0),
+    [itemsWithState]
+  );
+
   const firstName = useMemo(() => {
     const trimmed = displayName.trim();
     if (!trimmed) return "User";
@@ -203,10 +208,11 @@ export default function DashboardTabNav({
           <button
             type="button"
             onClick={() => setMobileOpen((prev) => !prev)}
-            className="inline-flex items-center justify-center rounded-lg border border-foreground/15 bg-foreground/[0.04] p-2 text-foreground/90 md:hidden"
+            className="relative inline-flex items-center justify-center rounded-lg border border-foreground/15 bg-foreground/[0.04] p-2 text-foreground/90 md:hidden"
             aria-label={mobileOpen ? tShell("closeMenu") : tShell("openMenu")}
           >
             {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+            {hasNavAlerts ? <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-emerald-400" /> : null}
           </button>
         </div>
       </div>

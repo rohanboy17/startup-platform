@@ -141,11 +141,12 @@ export default function UserV2SubmissionsPanel() {
 
   const stats = useMemo(() => {
     const approved = submissions.filter((item) => item.stage === "APPROVED").length;
+    const pendingManager = submissions.filter((item) => item.stage === "PENDING_MANAGER").length;
+    const pendingAdmin = submissions.filter((item) => item.stage === "PENDING_ADMIN").length;
     const rejected = submissions.filter(
       (item) => item.stage === "MANAGER_REJECTED" || item.stage === "ADMIN_REJECTED"
     ).length;
-    const pending = submissions.length - approved - rejected;
-    return { total: submissions.length, approved, rejected, pending };
+    return { total: submissions.length, approved, rejected, pendingManager, pendingAdmin };
   }, [submissions]);
 
   const filtered = useMemo(() => {
@@ -171,9 +172,10 @@ export default function UserV2SubmissionsPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <KpiCard label={t("kpiTotal")} value={stats.total} />
-        <KpiCard label={t("kpiPending")} value={stats.pending} tone="warning" />
+        <KpiCard label={t("filterPendingManager")} value={stats.pendingManager} tone="warning" />
+        <KpiCard label={t("filterPendingAdmin")} value={stats.pendingAdmin} tone="info" />
         <KpiCard label={t("kpiApproved")} value={stats.approved} tone="success" />
         <KpiCard label={t("kpiRejected")} value={stats.rejected} tone="danger" />
       </div>
