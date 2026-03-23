@@ -9,6 +9,10 @@ export type AppSettings = {
   businessRefundFeeRate: number;
   levelResetHours: number;
   maintenanceMode: boolean;
+  adRewardPerView: number;
+  adMaxViewsPerDay: number;
+  adCooldownSeconds: number;
+  adWatchSeconds: number;
   taskCategories: TaskCategoryOption[];
 };
 
@@ -20,6 +24,10 @@ const DEFAULT_SETTINGS: AppSettings = {
   businessRefundFeeRate: 0.03,
   levelResetHours: 24,
   maintenanceMode: false,
+  adRewardPerView: 0.5,
+  adMaxViewsPerDay: 5,
+  adCooldownSeconds: 60,
+  adWatchSeconds: 20,
   taskCategories: DEFAULT_TASK_CATEGORIES,
 };
 
@@ -55,6 +63,22 @@ export async function getAppSettings(): Promise<AppSettings> {
         : DEFAULT_SETTINGS.levelResetHours,
     maintenanceMode:
       typeof raw.maintenanceMode === "boolean" ? raw.maintenanceMode : DEFAULT_SETTINGS.maintenanceMode,
+    adRewardPerView:
+      typeof raw.adRewardPerView === "number" && raw.adRewardPerView > 0
+        ? Math.min(Math.max(raw.adRewardPerView, 0.1), 100)
+        : DEFAULT_SETTINGS.adRewardPerView,
+    adMaxViewsPerDay:
+      typeof raw.adMaxViewsPerDay === "number" && raw.adMaxViewsPerDay >= 1
+        ? Math.min(Math.max(Math.floor(raw.adMaxViewsPerDay), 1), 100)
+        : DEFAULT_SETTINGS.adMaxViewsPerDay,
+    adCooldownSeconds:
+      typeof raw.adCooldownSeconds === "number" && raw.adCooldownSeconds >= 0
+        ? Math.min(Math.max(Math.floor(raw.adCooldownSeconds), 0), 3600)
+        : DEFAULT_SETTINGS.adCooldownSeconds,
+    adWatchSeconds:
+      typeof raw.adWatchSeconds === "number" && raw.adWatchSeconds >= 5
+        ? Math.min(Math.max(Math.floor(raw.adWatchSeconds), 5), 300)
+        : DEFAULT_SETTINGS.adWatchSeconds,
     taskCategories: normalizeTaskCategoryConfig(raw.taskCategories),
   };
 }

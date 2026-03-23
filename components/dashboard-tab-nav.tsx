@@ -55,6 +55,7 @@ type IconName =
   | "cms"
   | "trust"
   | "referrals"
+  | "earnAds"
   | "skills"
   | "profile";
 
@@ -88,6 +89,7 @@ const iconMap: Record<IconName, ComponentType<{ size?: number }>> = {
   cms: Settings2,
   trust: ScrollText,
   referrals: Gift,
+  earnAds: CircleDollarSign,
   skills: Sparkles,
   profile: Users,
 };

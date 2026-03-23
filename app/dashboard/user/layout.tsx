@@ -47,6 +47,7 @@ export default async function UserLayout({
               { key: "user.submissions", href: "/dashboard/user/submissions", label: "Submissions", labelKey: "submissions", icon: "submissions" },
               { key: "user.wallet", href: "/dashboard/user/wallet", label: "Wallet", labelKey: "wallet", icon: "wallet" },
               { key: "user.withdrawals", href: "/dashboard/user/withdrawals", label: "Withdrawals", labelKey: "withdrawals", icon: "withdrawals" },
+              { key: "user.earnAds", href: "/dashboard/user/earn-ads", label: "Watch Ads & Earn", labelKey: "earnAds", icon: "earnAds" },
               { key: "user.referrals", href: "/dashboard/user/referrals", label: "Referrals", labelKey: "referrals", icon: "referrals" },
               { key: "user.notifications", href: "/dashboard/user/notifications", label: "Notifications", labelKey: "notifications", icon: "notifications" },
               { key: "user.profile", href: "/dashboard/user/profile", label: "Profile", labelKey: "profile", icon: "profile" },

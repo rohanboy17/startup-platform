@@ -1040,6 +1040,68 @@
       "messages": {
         "saved": "Saved"
       }
+    },
+    "earnAds": {
+      "loading": "Loading bonus ads...",
+      "eyebrow": "Bonus rewards",
+      "title": "Watch Ads & Earn",
+      "subtitle": "Earn small bonus by watching short simulated ads. Daily limits and cooldown keep this separate from your main task income.",
+      "bonusEyebrow": "Bonus system",
+      "bonusTitle": "Small rewards, controlled safely",
+      "bonusBody": "This page is only for lightweight bonus earning. Rewards are added to your wallet after the ad timer completes.",
+      "historyEyebrow": "Reward history",
+      "historyTitle": "Recent ad rewards",
+      "kpis": {
+        "availableAds": "Available ads today",
+        "watchedToday": "Ads watched today",
+        "remainingAds": "Remaining ads",
+        "rewardPerAd": "Reward per ad"
+      },
+      "rules": {
+        "maxPerDay": "Daily limit",
+        "cooldown": "Cooldown",
+        "watchTime": "Ad duration"
+      },
+      "status": {
+        "title": "Current status",
+        "ready": "You can start a new bonus ad right now.",
+        "playing": "An ad is currently playing. Reward unlocks in {seconds}s.",
+        "cooldown": "Please wait {seconds}s before the next ad.",
+        "limitReached": "You already used today's bonus ad limit.",
+        "adRunning": "Ad in progress",
+        "remaining": "{count} ads remaining today"
+      },
+      "actions": {
+        "watch": "Watch Ad",
+        "starting": "Starting ad...",
+        "rewarding": "Adding reward..."
+      },
+      "states": {
+        "loading": "Loading...",
+        "playing": "Ad playing...",
+        "limitReached": "Daily limit reached",
+        "wait": "Wait {seconds}s"
+      },
+      "messages": {
+        "started": "Ad started.",
+        "rewarded": "Bonus reward added to your wallet."
+      },
+      "errors": {
+        "failed": "Failed to load bonus ads",
+        "start": "Unable to start ad right now",
+        "complete": "Unable to complete ad right now"
+      },
+      "history": {
+        "rewardRow": "Bonus reward credited",
+        "empty": "No ad rewards yet. Watch your first bonus ad when you are ready."
+      },
+      "modal": {
+        "title": "Ad is playing...",
+        "body": "Keep this open while the timer finishes. Reward is added automatically after completion.",
+        "progressLabel": "Ad progress",
+        "keepOpen": "Please wait {seconds}s. We will credit the reward when the timer finishes.",
+        "claiming": "Finalizing your reward now..."
+      }
     }
   },
   "business": {
@@ -1943,7 +2005,8 @@
       "cms": "Content & CMS",
       "auditLogs": "Audit Logs",
       "systemSettings": "System Settings",
-      "profile": "Profile"
+      "profile": "Profile",
+      "earnAds": "Watch Ads & Earn"
     },
     "shell": {
       "signedInAs": "Signed in as",

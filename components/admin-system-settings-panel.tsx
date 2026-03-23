@@ -13,6 +13,10 @@ type Settings = {
   businessRefundFeeRate: number;
   levelResetHours: number;
   maintenanceMode: boolean;
+  adRewardPerView: number;
+  adMaxViewsPerDay: number;
+  adCooldownSeconds: number;
+  adWatchSeconds: number;
 };
 
 export default function AdminSystemSettingsPanel({
@@ -87,6 +91,32 @@ export default function AdminSystemSettingsPanel({
           type="number"
           value={settings.levelResetHours}
           onChange={(e) => setSettings((s) => ({ ...s, levelResetHours: Number(e.target.value) }))}
+        />
+
+        <label className="text-sm text-foreground/70">Bonus ad reward per view</label>
+        <Input
+          type="number"
+          step="0.1"
+          value={settings.adRewardPerView}
+          onChange={(e) => setSettings((s) => ({ ...s, adRewardPerView: Number(e.target.value) }))}
+        />
+        <label className="text-sm text-foreground/70">Bonus ads allowed per day</label>
+        <Input
+          type="number"
+          value={settings.adMaxViewsPerDay}
+          onChange={(e) => setSettings((s) => ({ ...s, adMaxViewsPerDay: Number(e.target.value) }))}
+        />
+        <label className="text-sm text-foreground/70">Bonus ad cooldown seconds</label>
+        <Input
+          type="number"
+          value={settings.adCooldownSeconds}
+          onChange={(e) => setSettings((s) => ({ ...s, adCooldownSeconds: Number(e.target.value) }))}
+        />
+        <label className="text-sm text-foreground/70">Bonus ad watch seconds</label>
+        <Input
+          type="number"
+          value={settings.adWatchSeconds}
+          onChange={(e) => setSettings((s) => ({ ...s, adWatchSeconds: Number(e.target.value) }))}
         />
 
         <label className="flex items-center gap-2 text-sm text-foreground/80">

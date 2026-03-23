@@ -82,6 +82,7 @@ model User {
   campaignAssignments CampaignAssignment[]
   campaignAssignmentsAssignedBy CampaignAssignment[] @relation("CampaignAssignmentAssignedBy")
   campaignRepeatRequests CampaignRepeatRequest[]
+  adWatchSessions AdWatchSession[]
   communityFeedback CommunityFeedback[] @relation("CommunityFeedbackAuthor")
   reviewedCommunityFeedback CommunityFeedback[] @relation("CommunityFeedbackReviewer")
   deletedAt DateTime?
@@ -304,6 +305,22 @@ model CampaignInstruction {
   campaign        Campaign @relation(fields: [campaignId], references: [id])
   instructionText String
   sequence        Int
+}
+
+model AdWatchSession {
+  id          String               @id @default(cuid())
+  userId      String
+  reward      Float
+  status      AdWatchSessionStatus @default(PENDING)
+  createdAt   DateTime             @default(now())
+  availableAt DateTime
+  expiresAt   DateTime
+  completedAt DateTime?
+
+  user        User                 @relation(fields: [userId], references: [id])
+
+  @@index([userId, status, createdAt])
+  @@index([userId, createdAt])
 }
 
 model WithdrawRequest {
@@ -789,4 +806,10 @@ enum CampaignRepeatRequestStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum AdWatchSessionStatus {
+  PENDING
+  REWARDED
+  EXPIRED
 }
