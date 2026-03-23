@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { BadgeIndianRupee, Clock3, Film, Gift, PlayCircle } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -66,6 +66,7 @@ export default function UserEarnAdsPanel() {
   const [modalOpen, setModalOpen] = useState(false);
   const [nowTs, setNowTs] = useState(() => Date.now());
   const [pageActive, setPageActive] = useState(getPageActiveState);
+  const expiringSessionIdRef = useRef<string | null>(null);
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/users/me/earn-ads", { credentials: "include" });
@@ -178,6 +179,48 @@ export default function UserEarnAdsPanel() {
     [load, t]
   );
 
+  const expireActiveSession = useCallback(
+    async (sessionId: string) => {
+      if (expiringSessionIdRef.current === sessionId) return;
+      expiringSessionIdRef.current = sessionId;
+      setFeedback(t("messages.expiredOnHide"));
+      setModalOpen(false);
+
+      try {
+        const res = await fetch("/api/v2/users/me/earn-ads", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          keepalive: true,
+          body: JSON.stringify({ action: "expire", sessionId }),
+        });
+        const raw = await res.text();
+        const parsed = raw
+          ? (JSON.parse(raw) as { error?: string; message?: string; payload?: EarnAdsResponse })
+          : {};
+
+        if (parsed.payload) {
+          setData(parsed.payload);
+        } else if (res.ok) {
+          await load();
+        }
+
+        if (!res.ok) {
+          setFeedback(parsed.error || t("errors.expire"));
+        }
+      } catch {
+        setFeedback(t("errors.expire"));
+      }
+    },
+    [load, t]
+  );
+
+  useEffect(() => {
+    if (!data?.activeSession) {
+      expiringSessionIdRef.current = null;
+    }
+  }, [data?.activeSession]);
+
   useEffect(() => {
     if (!data?.activeSession || !pageActive || loadingAction === "complete") return;
     const sessionId = data.activeSession.id;
@@ -195,6 +238,15 @@ export default function UserEarnAdsPanel() {
     }, 0);
     return () => window.clearTimeout(timer);
   }, [activeSecondsLeft, completeAd, data?.activeSession, loadingAction, pageActive]);
+
+  useEffect(() => {
+    if (!data?.activeSession || pageActive || loadingAction === "complete") return;
+    const sessionId = data.activeSession.id;
+    const timer = window.setTimeout(() => {
+      void expireActiveSession(sessionId);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [data?.activeSession, expireActiveSession, loadingAction, pageActive]);
 
   async function startAd() {
     setLoadingAction("start");
@@ -311,7 +363,7 @@ export default function UserEarnAdsPanel() {
                   {data.activeSession
                     ? pageActive
                       ? t("status.playing", { seconds: activeSecondsLeft })
-                      : t("status.paused")
+                      : t("status.expiring")
                     : data.summary.remainingAds <= 0
                       ? t("status.limitReached")
                       : cooldownLeft > 0
@@ -324,7 +376,7 @@ export default function UserEarnAdsPanel() {
                 {data.activeSession
                   ? pageActive
                     ? t("status.adRunning")
-                    : t("status.keepTabActive")
+                    : t("status.expiringBadge")
                   : t("status.remaining", { count: data.summary.remainingAds })}
               </div>
             </div>
@@ -394,7 +446,7 @@ export default function UserEarnAdsPanel() {
 
             <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4 text-sm text-foreground/70">
               {!pageActive
-                ? t("modal.paused")
+                ? t("modal.expiring")
                 : activeSecondsLeft > 0
                   ? t("modal.keepOpen", { seconds: activeSecondsLeft })
                   : t("modal.claiming")}
@@ -405,7 +457,7 @@ export default function UserEarnAdsPanel() {
                 ? t("actions.rewarding")
                 : pageActive
                   ? t("states.playing")
-                  : t("states.paused")}
+                  : t("states.expiring")}
             </Button>
           </div>
         </DialogContent>

@@ -1071,7 +1071,9 @@
         "adRunning": "Ad in progress",
         "remaining": "{count} ads remaining today",
         "paused": "The ad is paused because this tab is not active.",
-        "keepTabActive": "Keep this tab active"
+        "keepTabActive": "Keep this tab active",
+        "expiring": "The ad is expiring because this tab is no longer active.",
+        "expiringBadge": "Ad expiring"
       },
       "actions": {
         "watch": "Watch Ad",
@@ -1083,17 +1085,20 @@
         "playing": "Ad playing...",
         "limitReached": "Daily limit reached",
         "wait": "Wait {seconds}s",
-        "paused": "Ad paused"
+        "paused": "Ad paused",
+        "expiring": "Ad expiring"
       },
       "messages": {
         "started": "Ad started.",
-        "rewarded": "Bonus reward added to your wallet."
+        "rewarded": "Bonus reward added to your wallet.",
+        "expiredOnHide": "The ad expired because the page lost focus."
       },
       "errors": {
         "failed": "Failed to load bonus ads",
         "start": "Unable to start ad right now",
         "complete": "Unable to complete ad right now",
-        "heartbeat": "Unable to keep the ad active right now"
+        "heartbeat": "Unable to keep the ad active right now",
+        "expire": "Unable to expire the ad session cleanly"
       },
       "history": {
         "rewardRow": "Bonus reward credited",
@@ -1105,7 +1110,8 @@
         "progressLabel": "Ad progress",
         "keepOpen": "Please wait {seconds}s. We will credit the reward when the timer finishes.",
         "claiming": "Finalizing your reward now...",
-        "paused": "This ad is paused. Return to this tab and keep it active to continue earning progress."
+        "paused": "This ad is paused. Return to this tab and keep it active to continue earning progress.",
+        "expiring": "This ad is expiring because the page is no longer active. You will need to start a fresh ad when you return."
       }
     }
   },

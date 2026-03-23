@@ -130,7 +130,7 @@ export async function POST(req: Request) {
 
   const userId = session.user.id;
   const body = (await req.json().catch(() => ({}))) as {
-    action?: "start" | "heartbeat" | "complete";
+    action?: "start" | "heartbeat" | "complete" | "expire";
     sessionId?: string;
   };
 
@@ -434,6 +434,34 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       message: "Bonus reward added.",
+      payload: await buildEarnAdsPayload(userId),
+    });
+  }
+
+  if (body.action === "expire") {
+    if (!body.sessionId) {
+      return NextResponse.json({ error: "Missing session ID" }, { status: 400 });
+    }
+
+    const sessionRow = await prisma.adWatchSession.findUnique({
+      where: { id: body.sessionId },
+    });
+
+    if (!sessionRow || sessionRow.userId !== userId) {
+      return NextResponse.json({ error: "Ad session not found" }, { status: 404 });
+    }
+
+    if (sessionRow.status === "PENDING") {
+      await prisma.adWatchSession.update({
+        where: { id: sessionRow.id },
+        data: {
+          status: "EXPIRED",
+        },
+      });
+    }
+
+    return NextResponse.json({
+      message: "Ad session expired because the page lost focus.",
       payload: await buildEarnAdsPayload(userId),
     });
   }
