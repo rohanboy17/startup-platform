@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { getLocale } from "next-intl/server";
 
 export default async function OfflinePage() {
@@ -6,16 +6,16 @@ export default async function OfflinePage() {
   const content =
     locale === "hi"
       ? {
-          eyebrow: "ऑफ़लाइन मोड",
-          title: "आप ऑफ़लाइन हैं",
-          body: "नेटवर्क कनेक्शन उपलब्ध नहीं है। लाइव डैशबोर्ड और कैंपेन एक्शन जारी रखने के लिए फिर से कनेक्ट करें।",
+          eyebrow: "ऑफलाइन मोड",
+          title: "आप ऑफलाइन हैं",
+          body: "Network connection उपलब्ध नहीं है। Live dashboards और campaign actions जारी रखने के लिए फिर से connect करें।",
           cta: "होम पर वापस जाएँ",
         }
       : locale === "bn"
         ? {
             eyebrow: "অফলাইন মোড",
             title: "আপনি অফলাইনে আছেন",
-            body: "নেটওয়ার্ক সংযোগ পাওয়া যাচ্ছে না। লাইভ ড্যাশবোর্ড ও ক্যাম্পেইন অ্যাকশন চালিয়ে যেতে পুনরায় সংযুক্ত হন।",
+            body: "Network connection পাওয়া যাচ্ছে না। Live dashboards এবং campaign actions চালিয়ে যেতে আবার connect করুন।",
             cta: "হোমে ফিরুন",
           }
         : {
@@ -30,9 +30,7 @@ export default async function OfflinePage() {
       <div className="mx-auto max-w-xl rounded-3xl border border-white/10 bg-white/[0.03] p-8 text-center shadow-xl shadow-black/30 backdrop-blur-xl">
         <p className="text-xs uppercase tracking-[0.22em] text-emerald-300/80">{content.eyebrow}</p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">{content.title}</h1>
-        <p className="mt-3 text-sm text-white/70">
-          {content.body}
-        </p>
+        <p className="mt-3 text-sm text-white/70">{content.body}</p>
         <Link
           href="/"
           className="mt-6 inline-flex rounded-full border border-white/20 bg-white/10 px-5 py-2 text-sm font-medium transition hover:bg-white/15"

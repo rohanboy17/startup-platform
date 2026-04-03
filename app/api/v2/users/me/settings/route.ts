@@ -99,6 +99,11 @@ export async function GET() {
       createdAt: user.createdAt.toISOString(),
       timezone: user.timezone,
       address: profileDetails.address,
+      city: profileDetails.city,
+      state: profileDetails.state,
+      pincode: profileDetails.pincode,
+      latitude: profileDetails.latitude,
+      longitude: profileDetails.longitude,
       gender: profileDetails.gender,
       religion: profileDetails.religion,
       dateOfBirth: profileDetails.dateOfBirth,
@@ -140,6 +145,11 @@ export async function POST(req: Request) {
           mobile?: unknown;
           timezone?: unknown;
           address?: unknown;
+          city?: unknown;
+          state?: unknown;
+          pincode?: unknown;
+          latitude?: unknown;
+          longitude?: unknown;
           gender?: unknown;
           religion?: unknown;
           dateOfBirth?: unknown;
@@ -166,6 +176,11 @@ export async function POST(req: Request) {
       body.profile &&
         [
           "address",
+          "city",
+          "state",
+          "pincode",
+          "latitude",
+          "longitude",
           "gender",
           "religion",
           "dateOfBirth",
@@ -213,6 +228,38 @@ export async function POST(req: Request) {
 
     if (typeof body.profile?.address !== "undefined") {
       nextProfileDetails.address = normalizeText(body.profile.address, 240) || null;
+    }
+    if (typeof body.profile?.city !== "undefined") {
+      nextProfileDetails.city = normalizeText(body.profile.city, 80) || null;
+    }
+    if (typeof body.profile?.state !== "undefined") {
+      nextProfileDetails.state = normalizeText(body.profile.state, 80) || null;
+    }
+    if (typeof body.profile?.pincode !== "undefined") {
+      nextProfileDetails.pincode = normalizeText(body.profile.pincode, 16) || null;
+    }
+    if (typeof body.profile?.latitude !== "undefined") {
+      const value =
+        typeof body.profile.latitude === "number"
+          ? body.profile.latitude
+          : Number(normalizeText(body.profile.latitude, 32));
+      nextProfileDetails.latitude = Number.isFinite(value) ? value : null;
+    }
+    if (typeof body.profile?.longitude !== "undefined") {
+      const value =
+        typeof body.profile.longitude === "number"
+          ? body.profile.longitude
+          : Number(normalizeText(body.profile.longitude, 32));
+      nextProfileDetails.longitude = Number.isFinite(value) ? value : null;
+    }
+    if (typeof nextProfileDetails.latitude === "number" && (nextProfileDetails.latitude < -90 || nextProfileDetails.latitude > 90)) {
+      return NextResponse.json({ error: "Latitude must be between -90 and 90" }, { status: 400 });
+    }
+    if (typeof nextProfileDetails.longitude === "number" && (nextProfileDetails.longitude < -180 || nextProfileDetails.longitude > 180)) {
+      return NextResponse.json({ error: "Longitude must be between -180 and 180" }, { status: 400 });
+    }
+    if ((nextProfileDetails.latitude === null) !== (nextProfileDetails.longitude === null)) {
+      return NextResponse.json({ error: "Latitude and longitude must be provided together" }, { status: 400 });
     }
     if (typeof body.profile?.gender !== "undefined") {
       const value = normalizeOption(body.profile.gender, ALLOWED_GENDERS);
@@ -347,6 +394,11 @@ export async function POST(req: Request) {
         createdAt: updated.createdAt.toISOString(),
         timezone: updated.timezone,
         address: profileDetails.address,
+        city: profileDetails.city,
+        state: profileDetails.state,
+        pincode: profileDetails.pincode,
+        latitude: profileDetails.latitude,
+        longitude: profileDetails.longitude,
         gender: profileDetails.gender,
         religion: profileDetails.religion,
         dateOfBirth: profileDetails.dateOfBirth,

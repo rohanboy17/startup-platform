@@ -1,4 +1,4 @@
-import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
+﻿import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
 import { getLocale } from "next-intl/server";
 
 export default async function CookiePolicyPage() {
@@ -9,13 +9,13 @@ export default async function CookiePolicyPage() {
       ? {
           eyebrow: "अनुपालन",
           title: "कुकी नीति",
-          description: "सुरक्षित सत्र चलाने और प्लेटफ़ॉर्म विश्वसनीयता सुधारने के लिए कुकीज़ और समान तकनीकों का उपयोग।",
+          description: "सुरक्षित sessions चलाने और platform reliability बेहतर बनाने के लिए cookies और similar technologies का उपयोग।",
         }
       : locale === "bn"
         ? {
             eyebrow: "কমপ্লায়েন্স",
             title: "কুকি নীতি",
-            description: "নিরাপদ সেশন চালাতে এবং প্ল্যাটফর্ম নির্ভরযোগ্যতা উন্নত করতে কুকি ও অনুরূপ প্রযুক্তির ব্যবহার।",
+            description: "নিরাপদ sessions চালাতে এবং platform reliability উন্নত করতে cookies ও similar technologies কীভাবে ব্যবহৃত হয়।",
           }
         : {
             eyebrow: "Compliance",
@@ -27,31 +27,31 @@ export default async function CookiePolicyPage() {
     locale === "hi"
       ? [
           {
-            title: "आवश्यक कुकीज़",
-            body: "आवश्यक कुकीज़ साइन-इन सत्र, ऑथ स्टेट, अकाउंट सुरक्षा और प्रोटेक्टेड रूट्स के लिए उपयोग होती हैं। इन्हें डिसेबल करने से मुख्य फीचर्स तक पहुंच बाधित हो सकती है।",
+            title: "आवश्यक cookies",
+            body: "आवश्यक cookies sign-in sessions, auth state, account security और protected routes के लिए उपयोग होती हैं। इन्हें disable करने से core features तक पहुँच प्रभावित हो सकती है।",
           },
           {
-            title: "परफ़ॉर्मेंस और प्रेफरेंस कुकीज़",
-            body: "हम उत्पाद स्थिरता, इंटरफ़ेस गुणवत्ता और वर्कफ़्लो गति सुधारने के लिए सीमित एनालिटिक्स और प्रेफरेंस स्टोरेज का उपयोग कर सकते हैं।",
+            title: "Performance और preference cookies",
+            body: "हम product stability, interface quality और workflow speed सुधारने के लिए limited analytics और preference storage का उपयोग कर सकते हैं।",
           },
           {
-            title: "कुकीज़ कैसे नियंत्रित करें",
-            body: "आप ब्राउज़र कंट्रोल से कुकीज़ मैनेज कर सकते हैं। सभी कुकीज़ ब्लॉक करने से अनुभव खराब हो सकता है और महत्वपूर्ण ऑपरेशंस सीमित हो सकते हैं।",
+            title: "Cookies को कैसे control करें",
+            body: "आप browser controls से cookies manage कर सकते हैं। सभी cookies block करने से experience खराब हो सकता है और महत्वपूर्ण platform operations सीमित हो सकते हैं।",
           },
         ]
       : locale === "bn"
         ? [
             {
-              title: "প্রয়োজনীয় কুকি",
-              body: "প্রয়োজনীয় কুকি সাইন-ইন সেশন, অথ স্টেট, অ্যাকাউন্ট সিকিউরিটি এবং প্রোটেক্টেড রুটের জন্য ব্যবহৃত হয়। এগুলো বন্ধ করলে মূল ফিচারগুলো ব্যবহার করা কঠিন হতে পারে।",
+              title: "প্রয়োজনীয় cookies",
+              body: "প্রয়োজনীয় cookies sign-in sessions, auth state, account security এবং protected routes-এর জন্য ব্যবহৃত হয়। এগুলো disable করলে core features ব্যবহার করা কঠিন হতে পারে।",
             },
             {
-              title: "পারফরম্যান্স ও প্রেফারেন্স কুকি",
-              body: "পণ্য স্থিতিশীলতা, ইন্টারফেস কোয়ালিটি এবং ওয়ার্কফ্লো গতি উন্নত করতে আমরা সীমিত অ্যানালিটিক্স ও প্রেফারেন্স স্টোরেজ ব্যবহার করতে পারি।",
+              title: "Performance ও preference cookies",
+              body: "আমরা product stability, interface quality এবং workflow speed উন্নত করতে limited analytics ও preference storage ব্যবহার করতে পারি।",
             },
             {
-              title: "কুকি কীভাবে নিয়ন্ত্রণ করবেন",
-              body: "আপনি ব্রাউজারের কন্ট্রোল থেকে কুকি ম্যানেজ করতে পারেন। সব কুকি ব্লক করলে অভিজ্ঞতা খারাপ হতে পারে এবং গুরুত্বপূর্ণ অপারেশন সীমিত হতে পারে।",
+              title: "Cookies কীভাবে control করবেন",
+              body: "আপনি browser controls থেকে cookies manage করতে পারেন। সব cookies block করলে experience খারাপ হতে পারে এবং গুরুত্বপূর্ণ platform operations সীমিত হতে পারে।",
             },
           ]
         : [
@@ -70,12 +70,7 @@ export default async function CookiePolicyPage() {
           ];
 
   return (
-    <PublicPageShell
-      eyebrow={meta.eyebrow}
-      title={meta.title}
-      description={meta.description}
-      lastUpdated="March 11, 2026"
-    >
+    <PublicPageShell eyebrow={meta.eyebrow} title={meta.title} description={meta.description} lastUpdated="April 3, 2026">
       <div className="space-y-4">
         {sections.map((section) => (
           <PolicySection key={section.title} title={section.title}>

@@ -36,6 +36,7 @@ export default async function AdminLayout({
               { key: "admin.overview", href: "/dashboard/admin", label: "Overview", labelKey: "overview", icon: "overview" },
               { key: "admin.risk", href: "/dashboard/admin/risk", label: "Risk Center", labelKey: "riskCenter", icon: "risk" },
               { key: "admin.campaigns", href: "/dashboard/admin/campaigns", label: "Campaign Management", labelKey: "campaignManagement", icon: "campaigns" },
+              { key: "admin.jobs", href: "/dashboard/admin/jobs", label: "Jobs", labelKey: "jobs", icon: "jobs" },
               { key: "admin.reviews", href: "/dashboard/admin/reviews", label: "Final Reviews", labelKey: "finalReviews", icon: "reviews" },
               { key: "admin.users", href: "/dashboard/admin/users", label: "Users", labelKey: "users", icon: "users" },
               { key: "admin.businesses", href: "/dashboard/admin/businesses", label: "Businesses", labelKey: "businesses", icon: "users" },

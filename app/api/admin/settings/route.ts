@@ -28,6 +28,7 @@ export async function PATCH(req: Request) {
     businessRefundFeeRate?: number;
     levelResetHours?: number;
     maintenanceMode?: boolean;
+    bonusAdsEnabled?: boolean;
     adRewardPerView?: number;
     adMaxViewsPerDay?: number;
     adCooldownSeconds?: number;

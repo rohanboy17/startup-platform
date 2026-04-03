@@ -13,6 +13,7 @@ type Settings = {
   businessRefundFeeRate: number;
   levelResetHours: number;
   maintenanceMode: boolean;
+  bonusAdsEnabled: boolean;
   adRewardPerView: number;
   adMaxViewsPerDay: number;
   adCooldownSeconds: number;
@@ -22,9 +23,11 @@ type Settings = {
 export default function AdminSystemSettingsPanel({
   initial,
   envChecks,
+  bonusAdsLockedForLaunch,
 }: {
   initial: Settings;
   envChecks: { checks: Record<string, boolean>; missing: string[] };
+  bonusAdsLockedForLaunch: boolean;
 }) {
   const router = useRouter();
   const [settings, setSettings] = useState(initial);
@@ -93,26 +96,26 @@ export default function AdminSystemSettingsPanel({
           onChange={(e) => setSettings((s) => ({ ...s, levelResetHours: Number(e.target.value) }))}
         />
 
-        <label className="text-sm text-foreground/70">Bonus ad reward per view</label>
+        <label className="text-sm text-foreground/70">Experimental perk credits per completed ad</label>
         <Input
           type="number"
-          step="0.1"
+          step="1"
           value={settings.adRewardPerView}
           onChange={(e) => setSettings((s) => ({ ...s, adRewardPerView: Number(e.target.value) }))}
         />
-        <label className="text-sm text-foreground/70">Bonus ads allowed per day</label>
+        <label className="text-sm text-foreground/70">Experimental ads allowed per day</label>
         <Input
           type="number"
           value={settings.adMaxViewsPerDay}
           onChange={(e) => setSettings((s) => ({ ...s, adMaxViewsPerDay: Number(e.target.value) }))}
         />
-        <label className="text-sm text-foreground/70">Bonus ad cooldown seconds</label>
+        <label className="text-sm text-foreground/70">Experimental ad cooldown seconds</label>
         <Input
           type="number"
           value={settings.adCooldownSeconds}
           onChange={(e) => setSettings((s) => ({ ...s, adCooldownSeconds: Number(e.target.value) }))}
         />
-        <label className="text-sm text-foreground/70">Bonus ad watch seconds</label>
+        <label className="text-sm text-foreground/70">Experimental ad watch seconds</label>
         <Input
           type="number"
           value={settings.adWatchSeconds}
@@ -127,6 +130,21 @@ export default function AdminSystemSettingsPanel({
           />
           Maintenance mode
         </label>
+        <label className="flex items-center gap-2 text-sm text-foreground/80">
+          <input
+            type="checkbox"
+            checked={settings.bonusAdsEnabled}
+            disabled={bonusAdsLockedForLaunch}
+            onChange={(e) => setSettings((s) => ({ ...s, bonusAdsEnabled: e.target.checked }))}
+          />
+          Enable experimental ad trials with internal perk credits only
+        </label>
+        {bonusAdsLockedForLaunch ? (
+          <p className="text-xs text-amber-700 dark:text-amber-300">
+            Bonus ads are locked off for public launch. Set <code>ALLOW_BONUS_ADS_PUBLIC=true</code> only when you are ready
+            with a policy-safe rollout.
+          </p>
+        ) : null}
 
         <Button onClick={save} disabled={loading} className="w-full sm:w-auto">{loading ? "Saving..." : "Save Settings"}</Button>
       </div>

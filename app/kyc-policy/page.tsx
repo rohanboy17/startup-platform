@@ -1,4 +1,4 @@
-import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
+﻿import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
 import { getLocale } from "next-intl/server";
 
 export default async function KycPolicyPage() {
@@ -9,13 +9,13 @@ export default async function KycPolicyPage() {
       ? {
           eyebrow: "अनुपालन",
           title: "KYC नीति",
-          description: "बिज़नेस एक्सेस, फ्रॉड प्रिवेंशन और पेआउट सुरक्षा के लिए KYC सत्यापन नियम।",
+          description: "बिज़नेस access, fraud prevention और payout safety के लिए KYC verification rules।",
         }
       : locale === "bn"
         ? {
             eyebrow: "কমপ্লায়েন্স",
             title: "KYC নীতি",
-            description: "ব্যবসায়িক অ্যাক্সেস, ফ্রড প্রতিরোধ এবং পেআউট নিরাপত্তার জন্য KYC যাচাইকরণ নীতি।",
+            description: "Business access, fraud prevention এবং payout safety-এর জন্য KYC verification rules।",
           }
         : {
             eyebrow: "Compliance",
@@ -28,48 +28,48 @@ export default async function KycPolicyPage() {
       ? [
           {
             title: "KYC कब आवश्यक है",
-            body: "बिज़नेस कैंपेन संचालन, उच्च-जोखिम पेआउट वर्कफ़्लो, संदिग्ध गतिविधि फ्लैग, या नियामकीय दायित्वों के लिए KYC आवश्यक हो सकता है।",
+            body: "Business campaign operations, higher-risk payout workflows, suspicious activity flags या regulatory obligations के लिए KYC आवश्यक हो सकता है।",
           },
           {
             title: "कौन-सी जानकारी मांगी जा सकती है",
             bullets: [
-              "कानूनी बिज़नेस नाम और संपर्क विवरण",
-              "रजिस्टर्ड पता और सहायक दस्तावेज़",
-              "जहाँ लागू हो वहाँ टैक्स पहचान",
-              "अधिकृत प्रतिनिधियों के सत्यापन दस्तावेज़",
+              "Legal business name और contact details",
+              "Registered address और supporting documents",
+              "जहाँ लागू हो वहाँ tax identifiers",
+              "Authorized representatives के verification documents",
             ],
           },
           {
-            title: "वेरिफ़िकेशन परिणाम",
-            body: "अकाउंट अप्रूव, रिजेक्ट या री-सबमिशन के लिए कहा जा सकता है। पेंडिंग KYC से रिव्यू पूरा होने तक कैंपेन क्रिएशन या पेआउट ऑपरेशन सीमित हो सकते हैं।",
+            title: "Verification outcomes",
+            body: "Accounts approved, rejected या re-submission के लिए marked हो सकते हैं। Pending KYC की स्थिति में campaign creation या payout operations review पूरा होने तक सीमित हो सकते हैं।",
           },
           {
-            title: "डेटा हैंडलिंग",
-            body: "KYC डेटा सख्त एक्सेस कंट्रोल के साथ प्रोसेस होता है और केवल हमारी Privacy Policy में परिभाषित कानूनी/रिस्क/अनुपालन दायित्वों के लिए ही रखा जाता है।",
+            title: "Data handling",
+            body: "KYC data strict access controls के साथ process होता है और केवल हमारी Privacy Policy में परिभाषित legal, risk और compliance obligations के लिए रखा जाता है।",
           },
         ]
       : locale === "bn"
         ? [
             {
-              title: "কখন KYC প্রয়োজন",
-              body: "ব্যবসায়িক ক্যাম্পেইন অপারেশন, উচ্চ-ঝুঁকির পেআউট ওয়ার্কফ্লো, সন্দেহজনক অ্যাক্টিভিটি ফ্ল্যাগ, বা নিয়ন্ত্রক বাধ্যবাধকতার জন্য KYC প্রয়োজন হতে পারে।",
+              title: "KYC কখন প্রয়োজন",
+              body: "Business campaign operations, higher-risk payout workflows, suspicious activity flags বা regulatory obligations-এর জন্য KYC প্রয়োজন হতে পারে।",
             },
             {
-              title: "কোন তথ্য চাওয়া হতে পারে",
+              title: "কোন তথ্য চাওয়া হতে পারে",
               bullets: [
-                "আইনি ব্যবসার নাম ও যোগাযোগ তথ্য",
-                "রেজিস্টার্ড ঠিকানা ও সহায়ক ডকুমেন্ট",
-                "প্রযোজ্য হলে ট্যাক্স আইডেন্টিফায়ার",
-                "অনুমোদিত প্রতিনিধিদের যাচাইকরণ ডকুমেন্ট",
+                "Legal business name এবং contact details",
+                "Registered address এবং supporting documents",
+                "প্রযোজ্য হলে tax identifiers",
+                "Authorized representatives-এর verification documents",
               ],
             },
             {
-              title: "যাচাইকরণ ফলাফল",
-              body: "অ্যাকাউন্ট অনুমোদিত, প্রত্যাখ্যাত বা পুনরায় সাবমিশনের জন্য বলা হতে পারে। KYC পেন্ডিং থাকলে রিভিউ সম্পন্ন না হওয়া পর্যন্ত ক্যাম্পেইন তৈরি বা পেআউট অপারেশন সীমিত হতে পারে।",
+              title: "Verification outcomes",
+              body: "Accounts approved, rejected বা re-submission-এর জন্য marked হতে পারে। Pending KYC থাকলে review সম্পন্ন না হওয়া পর্যন্ত campaign creation বা payout operations সীমিত হতে পারে।",
             },
             {
-              title: "ডেটা হ্যান্ডলিং",
-              body: "KYC ডেটা কঠোর অ্যাক্সেস কন্ট্রোলসহ প্রসেস করা হয় এবং আমাদের Privacy Policy-তে নির্ধারিত আইনগত/রিস্ক/কমপ্লায়েন্স দায়বদ্ধতার জন্যই সংরক্ষণ করা হয়।",
+              title: "Data handling",
+              body: "KYC data strict access controls-এর মাধ্যমে process করা হয় এবং শুধু আমাদের Privacy Policy-তে নির্ধারিত legal, risk এবং compliance obligations-এর জন্য রাখা হয়।",
             },
           ]
         : [
@@ -97,12 +97,7 @@ export default async function KycPolicyPage() {
           ];
 
   return (
-    <PublicPageShell
-      eyebrow={meta.eyebrow}
-      title={meta.title}
-      description={meta.description}
-      lastUpdated="March 11, 2026"
-    >
+    <PublicPageShell eyebrow={meta.eyebrow} title={meta.title} description={meta.description} lastUpdated="April 3, 2026">
       <div className="space-y-4">
         {sections.map((section) => (
           <PolicySection key={section.title} title={section.title}>

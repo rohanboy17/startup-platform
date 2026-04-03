@@ -1,83 +1,115 @@
-import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
+﻿import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
 import { getLocale } from "next-intl/server";
+
+type Section = { title: string; body: string };
+
+type Content = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  sections: Section[];
+};
+
+const CONTENT: Record<string, Content> = {
+  en: {
+    eyebrow: "Compliance",
+    title: "Disclaimer",
+    description:
+      "Important operating boundaries for using FreeEarnHub as a moderated micro-work platform.",
+    sections: [
+      {
+        title: "No guarantee of income or business outcome",
+        body:
+          "FreeEarnHub does not guarantee a specific earning level for users or a guaranteed commercial outcome for businesses. Performance depends on campaign quality, review outcomes, user suitability, fraud controls, and third-party factors.",
+      },
+      {
+        title: "Prohibited use warning",
+        body:
+          "The platform does not approve campaigns for public review posting, rating manipulation, artificial traffic, ad-click farming, fake engagement, or deceptive install-count activity. Businesses remain responsible for ensuring every campaign is lawful and compliant with third-party platform rules.",
+      },
+      {
+        title: "Third-party dependencies",
+        body:
+          "Platform availability, payments, notifications, cloud services, and other integrations may be affected by third-party systems outside our direct control.",
+      },
+      {
+        title: "Local law and tax responsibility",
+        body:
+          "Users and businesses are responsible for compliance with local law, tax obligations, contract rules, and industry-specific restrictions that apply in their jurisdiction.",
+      },
+    ],
+  },
+  hi: {
+    eyebrow: "अनुपालन",
+    title: "डिस्क्लेमर",
+    description:
+      "FreeEarnHub को moderated micro-work platform के रूप में उपयोग करते समय महत्वपूर्ण operating boundaries।",
+    sections: [
+      {
+        title: "कमाई या बिज़नेस परिणाम की गारंटी नहीं",
+        body:
+          "FreeEarnHub यूज़र के लिए किसी निश्चित earning level या बिज़नेस के लिए किसी निश्चित commercial outcome की गारंटी नहीं देता। Performance campaign quality, review outcomes, user suitability, fraud controls और third-party factors पर निर्भर करती है।",
+      },
+      {
+        title: "प्रतिबंधित उपयोग चेतावनी",
+        body:
+          "यह प्लेटफ़ॉर्म public review posting, rating manipulation, artificial traffic, ad-click farming, fake engagement या deceptive install-count activity वाले campaigns approve नहीं करता। हर campaign lawful और third-party platform rules के अनुरूप रखना बिज़नेस की जिम्मेदारी है।",
+      },
+      {
+        title: "Third-party dependencies",
+        body:
+          "Platform availability, payments, notifications, cloud services और अन्य integrations हमारे सीधे नियंत्रण से बाहर third-party systems से प्रभावित हो सकते हैं।",
+      },
+      {
+        title: "Local law और tax responsibility",
+        body:
+          "अपने क्षेत्र में लागू local law, tax obligations, contract rules और industry-specific restrictions के पालन की जिम्मेदारी यूज़र और बिज़नेस की ही है।",
+      },
+    ],
+  },
+  bn: {
+    eyebrow: "কমপ্লায়েন্স",
+    title: "ডিসক্লেইমার",
+    description:
+      "FreeEarnHub-কে moderated micro-work platform হিসেবে ব্যবহার করার গুরুত্বপূর্ণ operating boundaries।",
+    sections: [
+      {
+        title: "আয় বা ব্যবসার ফলাফলের গ্যারান্টি নেই",
+        body:
+          "FreeEarnHub ব্যবহারকারীর জন্য নির্দিষ্ট earning level বা ব্যবসার জন্য নির্দিষ্ট commercial outcome-এর গ্যারান্টি দেয় না। Performance campaign quality, review outcomes, user suitability, fraud controls এবং third-party factors-এর উপর নির্ভর করে।",
+      },
+      {
+        title: "নিষিদ্ধ ব্যবহার সতর্কতা",
+        body:
+          "এই প্ল্যাটফর্ম public review posting, rating manipulation, artificial traffic, ad-click farming, fake engagement বা deceptive install-count activity-সম্পর্কিত campaigns approve করে না। প্রতিটি campaign lawful এবং third-party platform rules অনুযায়ী রাখা ব্যবসার দায়িত্ব।",
+      },
+      {
+        title: "Third-party dependencies",
+        body:
+          "Platform availability, payments, notifications, cloud services এবং অন্যান্য integrations আমাদের সরাসরি নিয়ন্ত্রণের বাইরে থাকা third-party systems-এর কারণে প্রভাবিত হতে পারে।",
+      },
+      {
+        title: "Local law ও tax responsibility",
+        body:
+          "নিজ নিজ অঞ্চলে প্রযোজ্য local law, tax obligations, contract rules এবং industry-specific restrictions মেনে চলার দায় ব্যবহারকারী ও ব্যবসার উপরই থাকে।",
+      },
+    ],
+  },
+};
 
 export default async function DisclaimerPage() {
   const locale = await getLocale();
-
-  const meta =
-    locale === "hi"
-      ? {
-          eyebrow: "अनुपालन",
-          title: "डिस्क्लेमर",
-          description: "FreeEarnHub प्लेटफ़ॉर्म उपयोग के लिए महत्वपूर्ण सीमाएँ और संचालन सीमाबंध।",
-        }
-      : locale === "bn"
-        ? {
-            eyebrow: "কমপ্লায়েন্স",
-            title: "ডিসক্লেইমার",
-            description: "FreeEarnHub প্ল্যাটফর্ম ব্যবহারের জন্য গুরুত্বপূর্ণ সীমাবদ্ধতা ও অপারেশনাল সীমা।",
-          }
-        : {
-            eyebrow: "Compliance",
-            title: "Disclaimer",
-            description: "Important limitations and operational boundaries for using the FreeEarnHub platform.",
-          };
-
-  const sections =
-    locale === "hi"
-      ? [
-          {
-            title: "सेवा का दायरा",
-            body: "FreeEarnHub कैंपेन निष्पादन और यूज़र भागीदारी के लिए वर्कफ़्लो इंफ़्रास्ट्रक्चर प्रदान करता है। हम किसी विशेष बिज़नेस परिणाम, कमाई परिणाम या निरंतर उपलब्धता की गारंटी नहीं देते।",
-          },
-          {
-            title: "थर्ड-पार्टी निर्भरता",
-            body: "पेमेंट प्रोवाइडर, क्लाउड इंफ़्रास्ट्रक्चर, टेलीकॉम नेटवर्क और बाहरी APIs उपलब्धता या प्रोसेसिंग टाइमलाइन को प्रभावित कर सकते हैं जो हमारे सीधे नियंत्रण से बाहर है।",
-          },
-          {
-            title: "क्षेत्रीय अनुपालन जिम्मेदारी",
-            body: "यूज़र्स और बिज़नेस अपने क्षेत्र में लागू स्थानीय कानूनों, टैक्स आवश्यकताओं और डिजिटल मार्केटिंग नियमों के अनुपालन के लिए जिम्मेदार हैं।",
-          },
-        ]
-      : locale === "bn"
-        ? [
-            {
-              title: "সার্ভিসের পরিধি",
-              body: "FreeEarnHub ক্যাম্পেইন এক্সিকিউশন ও ব্যবহারকারী অংশগ্রহণের জন্য ওয়ার্কফ্লো অবকাঠামো প্রদান করে। আমরা নির্দিষ্ট ব্যবসায়িক ফলাফল, আয়ের ফলাফল বা নিরবচ্ছিন্ন উপলভ্যতার গ্যারান্টি দিই না।",
-            },
-            {
-              title: "তৃতীয় পক্ষের নির্ভরতা",
-              body: "পেমেন্ট প্রোভাইডার, ক্লাউড অবকাঠামো, টেলিকম নেটওয়ার্ক এবং বাহ্যিক API আমাদের সরাসরি নিয়ন্ত্রণের বাইরে থাকা কারণে উপলভ্যতা বা প্রসেসিং টাইমলাইন প্রভাবিত করতে পারে।",
-            },
-            {
-              title: "অঞ্চলভিত্তিক কমপ্লায়েন্স দায়িত্ব",
-              body: "ব্যবহারকারী ও ব্যবসা তাদের অঞ্চলে প্রযোজ্য স্থানীয় আইন, ট্যাক্স প্রয়োজনীয়তা এবং ডিজিটাল মার্কেটিং রুলস মেনে চলার জন্য দায়ী।",
-            },
-          ]
-        : [
-            {
-              title: "Service Scope",
-              body: "FreeEarnHub provides workflow infrastructure for campaign execution and user participation. We do not guarantee specific business results, earning outcomes, or uninterrupted availability.",
-            },
-            {
-              title: "Third-Party Dependencies",
-              body: "Payment providers, cloud infrastructure, telecom networks, and external APIs may affect availability or processing timelines beyond our direct control.",
-            },
-            {
-              title: "Jurisdictional Responsibility",
-              body: "Users and businesses are responsible for compliance with local laws, tax requirements, and digital marketing rules applicable in their region.",
-            },
-          ];
+  const content = CONTENT[locale] ?? CONTENT.en;
 
   return (
     <PublicPageShell
-      eyebrow={meta.eyebrow}
-      title={meta.title}
-      description={meta.description}
-      lastUpdated="March 11, 2026"
+      eyebrow={content.eyebrow}
+      title={content.title}
+      description={content.description}
+      lastUpdated="April 3, 2026"
     >
       <div className="space-y-4">
-        {sections.map((section) => (
+        {content.sections.map((section) => (
           <PolicySection key={section.title} title={section.title}>
             <p>{section.body}</p>
           </PolicySection>
@@ -86,4 +118,3 @@ export default async function DisclaimerPage() {
     </PublicPageShell>
   );
 }
-

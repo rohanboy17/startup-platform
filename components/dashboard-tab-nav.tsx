@@ -27,6 +27,7 @@ import {
   Settings2,
   Gift,
   Sparkles,
+  BriefcaseBusiness,
 } from "lucide-react";
 import { useLiveRefresh } from "@/lib/live-refresh";
 import LogoutButton from "@/components/logout-button";
@@ -57,7 +58,8 @@ type IconName =
   | "referrals"
   | "earnAds"
   | "skills"
-  | "profile";
+  | "profile"
+  | "jobs";
 
 type Item = {
   key: string;
@@ -92,6 +94,7 @@ const iconMap: Record<IconName, ComponentType<{ size?: number }>> = {
   earnAds: CircleDollarSign,
   skills: Sparkles,
   profile: Users,
+  jobs: BriefcaseBusiness,
 };
 
 type NavAlertsResponse = {

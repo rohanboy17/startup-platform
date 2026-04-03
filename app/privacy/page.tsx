@@ -1,87 +1,135 @@
-import { getCmsValue } from "@/lib/cms";
-import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
+﻿import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
 import { getLocale } from "next-intl/server";
 
-const FALLBACK_EN = `We collect necessary data such as name, email, account role, task activity, IP address, and transaction metadata to operate the platform safely.
+type Section = { title: string; body: string };
 
-Payment operations are processed via Razorpay. We do not store raw card, UPI PIN, or other sensitive payment instrument details on our servers.
+type Content = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  sections: Section[];
+};
 
-Data is used for authentication, fraud prevention, moderation, ledger integrity, and legal compliance.
-
-We do not sell personal data. Data may be shared only with service providers or regulators when legally required.
-
-We implement reasonable security controls such as access restrictions, audit logging, and transport encryption.`;
+const CONTENT: Record<string, Content> = {
+  en: {
+    eyebrow: "Legal",
+    title: "Privacy Policy",
+    description:
+      "How FreeEarnHub collects, uses, protects, and retains account, proof, payout, and operations data.",
+    sections: [
+      {
+        title: "What we collect",
+        body:
+          "We collect account details such as name, email, mobile number, role, profile preferences, campaign activity, proof submissions, payout details, IP and device-related security signals, and transaction metadata needed to run the platform responsibly.",
+      },
+      {
+        title: "How we use data",
+        body:
+          "Data is used for authentication, fraud prevention, moderation, payout and refund processing, ledger integrity, dispute handling, support, platform safety, and legal compliance. Businesses and managers only see the data necessary to review or operate the work assigned to them.",
+      },
+      {
+        title: "How data may be shared",
+        body:
+          "We do not sell personal data. Data may be shared with payment providers, infrastructure vendors, messaging providers, compliance reviewers, auditors, or regulators only when operationally necessary or legally required.",
+      },
+      {
+        title: "Retention and security",
+        body:
+          "We retain records for fraud review, accounting, moderation history, support, and legal obligations for as long as reasonably required. We apply access controls, audit logging, transport encryption, and role-based restrictions, but no system can guarantee absolute security.",
+      },
+      {
+        title: "Requests and responsibilities",
+        body:
+          "You should keep account information accurate and report unauthorized access quickly. Privacy, deletion, correction, or grievance requests can be raised through the support contact listed on the Contact page, subject to legal retention and compliance requirements.",
+      },
+    ],
+  },
+  hi: {
+    eyebrow: "कानूनी",
+    title: "प्राइवेसी नीति",
+    description:
+      "FreeEarnHub अकाउंट, प्रूफ, पेआउट और ऑपरेशन्स डेटा को कैसे एकत्र, उपयोग, सुरक्षित और संरक्षित करता है।",
+    sections: [
+      {
+        title: "हम क्या एकत्र करते हैं",
+        body:
+          "हम नाम, ईमेल, मोबाइल नंबर, role, profile preferences, campaign activity, proof submissions, payout details, IP और device-related security signals तथा platform को जिम्मेदारी से चलाने के लिए आवश्यक transaction metadata एकत्र करते हैं।",
+      },
+      {
+        title: "डेटा का उपयोग कैसे होता है",
+        body:
+          "डेटा का उपयोग authentication, fraud prevention, moderation, payout और refund processing, ledger integrity, dispute handling, support, platform safety और legal compliance के लिए किया जाता है। बिज़नेस और मैनेजर केवल वही डेटा देखते हैं जो उनके assigned work की review या operation के लिए आवश्यक है।",
+      },
+      {
+        title: "डेटा कब साझा किया जा सकता है",
+        body:
+          "हम व्यक्तिगत डेटा बेचते नहीं हैं। डेटा केवल payment providers, infrastructure vendors, messaging providers, compliance reviewers, auditors या regulators के साथ तभी साझा किया जा सकता है जब operational necessity या कानूनी आवश्यकता हो।",
+      },
+      {
+        title: "Retention और सुरक्षा",
+        body:
+          "हम fraud review, accounting, moderation history, support और legal obligations के लिए records उतनी अवधि तक रखते हैं जितनी उचित रूप से आवश्यक हो। हम access controls, audit logging, transport encryption और role-based restrictions लागू करते हैं, लेकिन कोई भी system पूर्ण सुरक्षा की गारंटी नहीं दे सकता।",
+      },
+      {
+        title: "Requests और जिम्मेदारियाँ",
+        body:
+          "आपको अपनी account information सही रखनी चाहिए और unauthorized access की सूचना तुरंत देनी चाहिए। Privacy, deletion, correction या grievance requests Contact page पर दिए गए support channel के माध्यम से भेजी जा सकती हैं, हालांकि legal retention और compliance requirements लागू रहेंगी।",
+      },
+    ],
+  },
+  bn: {
+    eyebrow: "আইনি",
+    title: "প্রাইভেসি নীতি",
+    description:
+      "FreeEarnHub কীভাবে অ্যাকাউন্ট, প্রুফ, পেআউট এবং অপারেশনস ডেটা সংগ্রহ, ব্যবহার, সুরক্ষা এবং সংরক্ষণ করে।",
+    sections: [
+      {
+        title: "আমরা কী সংগ্রহ করি",
+        body:
+          "আমরা নাম, ইমেইল, মোবাইল নম্বর, role, profile preferences, campaign activity, proof submissions, payout details, IP এবং device-related security signals এবং প্ল্যাটফর্ম দায়িত্বশীলভাবে চালাতে প্রয়োজনীয় transaction metadata সংগ্রহ করি।",
+      },
+      {
+        title: "ডেটা কীভাবে ব্যবহার করি",
+        body:
+          "ডেটা authentication, fraud prevention, moderation, payout ও refund processing, ledger integrity, dispute handling, support, platform safety এবং legal compliance-এর জন্য ব্যবহার করা হয়। ব্যবসা ও ম্যানেজাররা কেবল সেই ডেটাই দেখে যা তাদের assigned work review বা operate করতে দরকার।",
+      },
+      {
+        title: "ডেটা কখন শেয়ার হতে পারে",
+        body:
+          "আমরা ব্যক্তিগত ডেটা বিক্রি করি না। ডেটা শুধুমাত্র payment providers, infrastructure vendors, messaging providers, compliance reviewers, auditors বা regulators-এর সাথে operational necessity বা আইনি বাধ্যবাধকতার ক্ষেত্রে শেয়ার করা হতে পারে।",
+      },
+      {
+        title: "Retention ও নিরাপত্তা",
+        body:
+          "Fraud review, accounting, moderation history, support এবং legal obligations-এর জন্য আমরা প্রয়োজন অনুযায়ী records সংরক্ষণ করি। আমরা access controls, audit logging, transport encryption এবং role-based restrictions ব্যবহার করি, তবে কোনো system সম্পূর্ণ নিরাপত্তার গ্যারান্টি দিতে পারে না।",
+      },
+      {
+        title: "Requests ও দায়িত্ব",
+        body:
+          "আপনার account information সঠিক রাখা এবং unauthorized access দ্রুত রিপোর্ট করা উচিত। Privacy, deletion, correction বা grievance requests Contact page-এ দেওয়া support channel দিয়ে পাঠানো যেতে পারে, তবে legal retention এবং compliance requirements তখনও প্রযোজ্য থাকবে।",
+      },
+    ],
+  },
+};
 
 export default async function PrivacyPage() {
   const locale = await getLocale();
-  const content = await getCmsValue<{ body: string }>("legal.privacy", { body: "" });
-  const body = content.body?.trim();
-
-  const meta =
-    locale === "hi"
-      ? {
-          eyebrow: "कानूनी",
-          title: "प्राइवेसी पॉलिसी",
-          description: "FreeEarnHub पर हम खाते और लेनदेन डेटा कैसे एकत्र, उपयोग, सुरक्षित और संरक्षित रखते हैं।",
-        }
-      : locale === "bn"
-        ? {
-            eyebrow: "আইনি",
-            title: "প্রাইভেসি নীতি",
-            description: "FreeEarnHub-এ আমরা অ্যাকাউন্ট ও লেনদেন ডেটা কীভাবে সংগ্রহ, ব্যবহার, সুরক্ষা ও সংরক্ষণ করি।",
-          }
-        : {
-            eyebrow: "Legal",
-            title: "Privacy Policy",
-            description: "How we collect, use, protect, and retain account and transaction data on FreeEarnHub.",
-          };
-
-  const fallback =
-    locale === "hi"
-      ? `हम प्लेटफ़ॉर्म को सुरक्षित रूप से चलाने के लिए नाम, ईमेल, अकाउंट रोल, टास्क गतिविधि, IP एड्रेस और ट्रांज़ैक्शन मेटाडेटा जैसी आवश्यक जानकारी एकत्र करते हैं।
-
-पेमेंट ऑपरेशन Razorpay के माध्यम से प्रोसेस होते हैं। हम अपने सर्वर पर कार्ड/UPI PIN या अन्य संवेदनशील भुगतान विवरण स्टोर नहीं करते।
-
-डेटा का उपयोग ऑथेंटिकेशन, फ्रॉड प्रिवेंशन, मॉडरेशन, लेजर इंटेग्रिटी और कानूनी अनुपालन के लिए किया जाता है।
-
-हम व्यक्तिगत डेटा नहीं बेचते। डेटा केवल आवश्यक सेवा प्रदाताओं या कानूनी रूप से आवश्यक होने पर नियामकों के साथ साझा किया जा सकता है।
-
-हम उचित सुरक्षा नियंत्रण लागू करते हैं जैसे एक्सेस प्रतिबंध, ऑडिट लॉगिंग और ट्रांसपोर्ट एन्क्रिप्शन।`
-      : locale === "bn"
-        ? `প্ল্যাটফর্ম নিরাপদভাবে পরিচালনা করতে আমরা নাম, ইমেইল, অ্যাকাউন্ট রোল, টাস্ক অ্যাক্টিভিটি, IP ঠিকানা এবং ট্রানজ্যাকশন মেটাডেটা সংগ্রহ করি।
-
-পেমেন্ট অপারেশন Razorpay-এর মাধ্যমে প্রসেস হয়। আমরা আমাদের সার্ভারে কার্ড/UPI PIN বা অন্যান্য সংবেদনশীল পেমেন্ট ডিটেইলস সংরক্ষণ করি না।
-
-ডেটা ব্যবহার করা হয় অথেনটিকেশন, ফ্রড প্রিভেনশন, মডারেশন, লেজার ইন্টিগ্রিটি এবং আইনগত কমপ্লায়েন্সের জন্য।
-
-আমরা ব্যক্তিগত ডেটা বিক্রি করি না। আইনগতভাবে প্রয়োজন হলে কেবল প্রয়োজনীয় সার্ভিস প্রোভাইডার বা নিয়ন্ত্রকদের সাথে ডেটা শেয়ার হতে পারে।
-
-আমরা যুক্তিসঙ্গত সিকিউরিটি কন্ট্রোল ব্যবহার করি যেমন অ্যাক্সেস রেস্ট্রিকশন, অডিট লগিং এবং ট্রান্সপোর্ট এনক্রিপশন।`
-        : FALLBACK_EN;
+  const content = CONTENT[locale] ?? CONTENT.en;
 
   return (
     <PublicPageShell
-      eyebrow={meta.eyebrow}
-      title={meta.title}
-      description={meta.description}
-      lastUpdated="March 11, 2026"
+      eyebrow={content.eyebrow}
+      title={content.title}
+      description={content.description}
+      lastUpdated="April 3, 2026"
     >
       <div className="space-y-4">
-        {locale === "en" && body ? (
-          <PolicySection title="Privacy Policy">
-            {body.split("\n\n").map((paragraph, idx) => (
-              <p key={idx}>{paragraph}</p>
-            ))}
+        {content.sections.map((section) => (
+          <PolicySection key={section.title} title={section.title}>
+            <p>{section.body}</p>
           </PolicySection>
-        ) : (
-          fallback.split("\n\n").map((paragraph, idx) => (
-            <PolicySection key={idx} title={`Privacy Clause ${idx + 1}`}>
-              <p>{paragraph}</p>
-            </PolicySection>
-          ))
-        )}
+        ))}
       </div>
     </PublicPageShell>
   );
 }
-

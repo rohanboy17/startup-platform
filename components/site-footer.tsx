@@ -81,6 +81,12 @@ export default function SiteFooter({ year }: { year: number }) {
                   <Link href="/kyc-policy" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("kyc")}
                   </Link>
+                  <Link href="/business-guidelines" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                    {tLinks("businessGuidelines")}
+                  </Link>
+                  <Link href="/compliance" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                    {tLinks("compliancePage")}
+                  </Link>
                 </nav>
               </div>
             </div>

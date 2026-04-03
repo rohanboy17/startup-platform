@@ -1,13 +1,12 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import { Coins, Copy, Gift, Wallet } from "lucide-react";
+import { Coins, Copy, Gift } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
-import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
 import { useHydrated } from "@/lib/use-hydrated";
 
@@ -17,14 +16,16 @@ type ReferralsResponse = {
     newUserBonusCoins: number;
     redeemMinCoins: number;
     redeemMonthlyLimit: number;
-    coinToInrRate: number;
+    coinToPerkRate: number;
   };
   summary: {
     coinBalance: number;
+    perkCreditBalance: number;
     totalInvites: number;
     rewardedInvites: number;
     pendingInvites: number;
     monthlyRedeemedCoins: number;
+    monthlyPerkCreditsGranted: number;
   };
   referral: {
     code: string;
@@ -139,9 +140,9 @@ export default function UserReferralsPanel() {
 
   useLiveRefresh(load, 10000);
 
-  const estimatedWalletValue = useMemo(() => {
+  const estimatedPerkCredits = useMemo(() => {
     if (!data) return 0;
-    return Number((data.summary.coinBalance * data.settings.coinToInrRate).toFixed(2));
+    return Math.max(0, Math.floor(data.summary.coinBalance * data.settings.coinToPerkRate));
   }, [data]);
 
   async function copyText(value: string) {
@@ -164,7 +165,7 @@ export default function UserReferralsPanel() {
       body: JSON.stringify({ coins }),
     });
     const raw = await res.text();
-    const parsed = raw ? (JSON.parse(raw) as { error?: string; message?: string; walletAmount?: number }) : {};
+    const parsed = raw ? (JSON.parse(raw) as { error?: string; message?: string; perkCreditsGranted?: number }) : {};
     setLoading(null);
     if (!res.ok) {
       setFeedback(parsed.error || t("redeemFailed"));
@@ -203,7 +204,8 @@ export default function UserReferralsPanel() {
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         <KpiCard label={t("kpiCoin")} value={data.summary.coinBalance} tone="info" />
-        <KpiCard label={t("kpiEstimated")} value={`INR ${formatMoney(estimatedWalletValue)}`} tone="success" />
+        <KpiCard label={t("kpiEstimated")} value={estimatedPerkCredits} tone="success" />
+        <KpiCard label={t("kpiPerkCredits")} value={data.summary.perkCreditBalance} tone="success" />
         <KpiCard label={t("kpiTotalInvites")} value={data.summary.totalInvites} />
         <KpiCard label={t("kpiRewardedInvites")} value={data.summary.rewardedInvites} tone="success" />
         <KpiCard label={t("kpiPendingInvites")} value={data.summary.pendingInvites} tone="warning" />
@@ -317,8 +319,9 @@ export default function UserReferralsPanel() {
             <ul className="mt-3 space-y-2 text-sm text-foreground/70">
               <li>{t("minRedeem", { count: data.settings.redeemMinCoins })}</li>
               <li>{t("monthlyLimit", { count: data.settings.redeemMonthlyLimit })}</li>
-              <li>{t("rate", { amount: data.settings.coinToInrRate.toFixed(2) })}</li>
+              <li>{t("rate", { count: Math.max(1, Math.floor(100 * data.settings.coinToPerkRate)) })}</li>
               <li>{t("redeemedThisMonth", { count: data.summary.monthlyRedeemedCoins })}</li>
+              <li>{t("perkCreditsThisMonth", { count: data.summary.monthlyPerkCreditsGranted })}</li>
             </ul>
           </div>
 
@@ -330,7 +333,7 @@ export default function UserReferralsPanel() {
               className="h-11 w-full rounded-xl border border-foreground/20 bg-background/60 px-3 text-sm text-foreground placeholder:text-foreground/50 outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20"
             />
             <Button onClick={redeem} disabled={loading !== null} className="w-full sm:w-auto">
-              <Wallet size={16} />
+              <Coins size={16} />
               {loading === "redeem" ? t("redeeming") : t("redeem")}
             </Button>
           </div>

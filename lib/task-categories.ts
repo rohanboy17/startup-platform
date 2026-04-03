@@ -5,26 +5,23 @@ export type TaskCategoryOption = {
 
 export const DEFAULT_TASK_CATEGORIES: TaskCategoryOption[] = [
   {
-    name: "Digital Marketing",
+    name: "Listing, Insight & Experience QA",
     items: [
-      "Social Media Like",
-      "Follow / Subscribe",
-      "Share / Retweet",
-      "Comment / Engagement",
-      "Post Promotion",
-      "YouTube Watch / Like",
-      "App Install",
-      "Website Visit",
-      "Ad Click / Traffic",
-      "Google Review",
-      "Play Store Review",
-      "Trustpilot Review",
+      "Google Business Profile QA",
+      "Local Listing Accuracy Audit",
+      "Website Journey Test",
+      "Landing Page UX Test",
+      "App Listing QA",
+      "App Onboarding Test",
+      "Video Watchability Feedback",
+      "Content Appeal Feedback",
+      "Campaign Message Clarity Test",
+      "Screenshot-Based Listing Audit",
     ],
   },
   {
     name: "Content & Writing",
     items: [
-      "Review Writing",
       "Article Writing",
       "Blog Writing",
       "Product Description",
@@ -32,22 +29,24 @@ export const DEFAULT_TASK_CATEGORIES: TaskCategoryOption[] = [
       "Copywriting",
       "Translation Work",
       "Proofreading / Editing",
+      "Help Center Writing",
     ],
   },
   {
-    name: "Data & Micro Tasks",
+    name: "Data, Research & Operations",
     items: [
       "Data Entry",
       "Form Filling",
       "Survey Completion",
-      "Captcha Tasks",
       "Image Tagging",
       "Product Listing",
       "Spreadsheet Work",
+      "Lead List Verification",
+      "Manual Research Task",
     ],
   },
   {
-    name: "Freelance Work",
+    name: "Design & Creative Delivery",
     items: [
       "Graphic Design",
       "Logo Design",
@@ -55,8 +54,8 @@ export const DEFAULT_TASK_CATEGORIES: TaskCategoryOption[] = [
       "Photo Editing",
       "Web Design",
       "UI/UX Design",
+      "Creative Asset Refresh",
       "Content Creation",
-      "SEO Work",
     ],
   },
   {
@@ -67,26 +66,28 @@ export const DEFAULT_TASK_CATEGORIES: TaskCategoryOption[] = [
       "Bug Reporting",
       "Feature Feedback",
       "Beta Testing",
+      "Usability Feedback",
     ],
   },
   {
-    name: "Promotion & Leads",
+    name: "Support, Moderation & Community",
     items: [
-      "Lead Generation",
-      "Email Marketing",
-      "Affiliate Promotion",
-      "Influencer Promotion",
-      "Bulk Promotion Campaign",
+      "Comment Moderation Support",
+      "Community Moderation",
+      "Support Reply Drafting",
+      "Sentiment Tagging",
+      "FAQ Tagging",
+      "Inbox Triage",
     ],
   },
   {
-    name: "Part-Time Work",
+    name: "Research & Growth Ops",
     items: [
-      "Bulk Review Campaign",
-      "Bulk Data Entry",
-      "Bulk Social Tasks",
-      "Community Engagement",
-      "Telegram / WhatsApp Promotion",
+      "Competitor Research Snapshot",
+      "Lead Qualification",
+      "Listing Data Enrichment",
+      "SEO Metadata Review",
+      "Catalog Cleanup",
     ],
   },
   {
@@ -96,6 +97,41 @@ export const DEFAULT_TASK_CATEGORIES: TaskCategoryOption[] = [
 ] as const as TaskCategoryOption[];
 
 export const TASK_CATEGORIES = DEFAULT_TASK_CATEGORIES;
+
+const UNSAFE_TASK_CATEGORY_NAMES = new Set([
+  "digital marketing",
+  "promotion & leads",
+  "part-time work",
+]);
+
+const UNSAFE_TASK_TYPE_NAMES = new Set([
+  "social media like",
+  "follow / subscribe",
+  "share / retweet",
+  "comment / engagement",
+  "post promotion",
+  "youtube watch / like",
+  "app install",
+  "website visit",
+  "ad click / traffic",
+  "google review",
+  "play store review",
+  "trustpilot review",
+  "tripadvisor review",
+  "email marketing",
+  "affiliate promotion",
+  "influencer promotion",
+  "bulk promotion campaign",
+  "bulk review campaign",
+  "bulk social tasks",
+  "telegram / whatsapp promotion",
+]);
+
+function isUnsafeTaskCatalogLabel(value: string) {
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) return false;
+  return UNSAFE_TASK_CATEGORY_NAMES.has(normalized) || UNSAFE_TASK_TYPE_NAMES.has(normalized);
+}
 
 export function normalizeTaskCategoryConfig(input: unknown): TaskCategoryOption[] {
   if (!Array.isArray(input)) return DEFAULT_TASK_CATEGORIES;
@@ -119,6 +155,21 @@ export function normalizeTaskCategoryConfig(input: unknown): TaskCategoryOption[
   if (!normalized.some((item) => item.name === "Other")) {
     normalized.push({ name: "Other", items: ["Other"] });
   }
+  return normalized;
+}
+
+export function getLaunchSafeTaskCategories(input: unknown): TaskCategoryOption[] {
+  const normalized = normalizeTaskCategoryConfig(input);
+
+  const hasUnsafeContent = normalized.some(
+    (category) =>
+      isUnsafeTaskCatalogLabel(category.name) || category.items.some((item) => isUnsafeTaskCatalogLabel(item))
+  );
+
+  if (hasUnsafeContent) {
+    return DEFAULT_TASK_CATEGORIES;
+  }
+
   return normalized;
 }
 

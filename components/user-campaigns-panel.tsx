@@ -12,6 +12,7 @@ import { getEffectiveTaskLabel } from "@/lib/task-categories";
 
 type Campaign = {
   id: string;
+  createdAt?: string;
   title: string;
   description: string;
   category: string;
@@ -48,13 +49,18 @@ type Campaign = {
 export default function UserCampaignsPanel() {
   const t = useTranslations("user.tasks");
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [recommendationBoost, setRecommendationBoost] = useState<{ active: boolean; endsAt: string | null } | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/campaigns", { credentials: "include" });
     const raw = await res.text();
-    let data: { campaigns?: Campaign[]; error?: string } = {};
+    let data: {
+      campaigns?: Campaign[];
+      recommendationBoost?: { active: boolean; endsAt: string | null };
+      error?: string;
+    } = {};
     try {
       data = raw ? (JSON.parse(raw) as { campaigns?: Campaign[]; error?: string }) : {};
     } catch {
@@ -65,6 +71,7 @@ export default function UserCampaignsPanel() {
     } else {
       setError("");
       setCampaigns(data.campaigns || []);
+      setRecommendationBoost(data.recommendationBoost || null);
     }
     setLoading(false);
   }, [t]);
@@ -80,7 +87,18 @@ export default function UserCampaignsPanel() {
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="space-y-4">
+      {recommendationBoost?.active ? (
+        <div className="rounded-2xl border border-sky-400/25 bg-sky-400/10 px-4 py-3 text-sm text-sky-100">
+          {t("recommendationBoostActive", {
+            date: recommendationBoost.endsAt
+              ? new Date(recommendationBoost.endsAt).toLocaleString()
+              : "",
+          })}
+        </div>
+      ) : null}
+
+      <div className="grid gap-4 lg:grid-cols-2">
       {campaigns.length === 0 ? (
         <div className="py-20 text-center text-white/50 md:col-span-2">
           <p>{t("empty")}</p>
@@ -180,6 +198,7 @@ export default function UserCampaignsPanel() {
           );
         })
       )}
+      </div>
     </div>
   );
 }

@@ -1,5 +1,10 @@
 export type UserProfileDetails = {
   address: string | null;
+  city: string | null;
+  state: string | null;
+  pincode: string | null;
+  latitude: number | null;
+  longitude: number | null;
   gender: string | null;
   religion: string | null;
   dateOfBirth: string | null;
@@ -13,6 +18,11 @@ export type UserProfileDetails = {
 
 export const EMPTY_PROFILE_DETAILS: UserProfileDetails = {
   address: null,
+  city: null,
+  state: null,
+  pincode: null,
+  latitude: null,
+  longitude: null,
   gender: null,
   religion: null,
   dateOfBirth: null,
@@ -39,6 +49,17 @@ function normalizeDate(input: unknown) {
   return date.toISOString().slice(0, 10);
 }
 
+function normalizeCoordinate(input: unknown) {
+  if (typeof input === "number" && Number.isFinite(input)) {
+    return input;
+  }
+  if (typeof input !== "string") return null;
+  const trimmed = input.trim();
+  if (!trimmed) return null;
+  const value = Number(trimmed);
+  return Number.isFinite(value) ? value : null;
+}
+
 function normalizeStringArray(input: unknown, maxItems = 10, maxLength = 40) {
   if (!Array.isArray(input)) return [];
   const seen = new Set<string>();
@@ -63,6 +84,11 @@ export function parseProfileDetails(input: unknown): UserProfileDetails {
   const source = input as Record<string, unknown>;
   return {
     address: normalizeText(source.address, 240) || null,
+    city: normalizeText(source.city, 80) || null,
+    state: normalizeText(source.state, 80) || null,
+    pincode: normalizeText(source.pincode, 16) || null,
+    latitude: normalizeCoordinate(source.latitude),
+    longitude: normalizeCoordinate(source.longitude),
     gender: normalizeText(source.gender, 48) || null,
     religion: normalizeText(source.religion, 80) || null,
     dateOfBirth: normalizeDate(source.dateOfBirth) || null,
@@ -93,6 +119,9 @@ export function calculateAgeFromDate(dateOfBirth: string | null) {
 export type ProfileCompletionSource = {
   name?: string | null;
   address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  pincode?: string | null;
   gender?: string | null;
   religion?: string | null;
   dateOfBirth?: string | null;

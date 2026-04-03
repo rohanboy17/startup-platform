@@ -1,10 +1,11 @@
 import AdminSystemSettingsPanel from "@/components/admin-system-settings-panel";
 import LanguageSettingsCard from "@/components/language-settings-card";
-import { getAppSettings, getRequiredEnvChecks } from "@/lib/system-settings";
+import { getAppSettings, getRequiredEnvChecks, isBonusAdsLockedForLaunch } from "@/lib/system-settings";
 import Link from "next/link";
 
 export default async function AdminSettingsPage() {
   const [settings, envChecks] = await Promise.all([getAppSettings(), Promise.resolve(getRequiredEnvChecks())]);
+  const bonusAdsLockedForLaunch = isBonusAdsLockedForLaunch();
 
   return (
     <div className="space-y-6">
@@ -20,7 +21,11 @@ export default async function AdminSettingsPage() {
         </Link>
       </div>
       <LanguageSettingsCard />
-      <AdminSystemSettingsPanel initial={settings} envChecks={envChecks} />
+      <AdminSystemSettingsPanel
+        initial={settings}
+        envChecks={envChecks}
+        bonusAdsLockedForLaunch={bonusAdsLockedForLaunch}
+      />
     </div>
   );
 }

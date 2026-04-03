@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { Button } from "@/components/ui/button";
-import { formatMoney } from "@/lib/format-money";
 import { getReferralSettings } from "@/lib/referrals";
 import AdminReferralCodeToggle from "@/components/admin-referral-code-toggle";
 
@@ -30,7 +29,7 @@ export default async function AdminReferralsPage() {
     totalCoinBalance,
     totalCoinsCredited,
     monthlyCoinsRedeemed,
-    monthlyWalletRedeemed,
+    monthlyPerkCreditsGranted,
     suspiciousRewardedInvites,
     recentInvites,
     recentRedemptions,
@@ -55,7 +54,7 @@ export default async function AdminReferralsPage() {
     }),
     prisma.coinRedemption.aggregate({
       where: { status: "APPROVED", createdAt: { gte: monthStart } },
-      _sum: { walletAmount: true },
+      _sum: { perkCreditsGranted: true },
     }),
     prisma.referralInvite.count({
       where: {
@@ -150,7 +149,7 @@ export default async function AdminReferralsPage() {
           <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">Growth controls</p>
           <h2 className="mt-2 text-3xl font-semibold md:text-4xl">Referral monitoring</h2>
           <p className="mt-2 max-w-3xl text-sm text-white/65 md:text-base">
-            Monitor referral adoption, coin issuance, redemptions, and suspicious reward patterns from one admin view.
+            Monitor referral adoption, coin issuance, perk conversions, and suspicious reward patterns from one admin view.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
@@ -158,7 +157,7 @@ export default async function AdminReferralsPage() {
             <a href="/api/admin/export/referrals?type=invites">Export invites CSV</a>
           </Button>
           <Button asChild variant="outline" className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white">
-            <a href="/api/admin/export/referrals?type=redemptions">Export redemptions CSV</a>
+            <a href="/api/admin/export/referrals?type=redemptions">Export conversions CSV</a>
           </Button>
         </div>
       </div>
@@ -188,11 +187,11 @@ export default async function AdminReferralsPage() {
               <p className="mt-2 text-2xl font-semibold text-white">{settings.newUserBonusCoins} coins</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/45">Redeem minimum</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/45">Conversion minimum</p>
               <p className="mt-2 text-2xl font-semibold text-white">{settings.redeemMinCoins} coins</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/45">Monthly redeem cap</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/45">Monthly conversion cap</p>
               <p className="mt-2 text-2xl font-semibold text-white">{settings.redeemMonthlyLimit} coins</p>
             </div>
           </div>
@@ -201,7 +200,7 @@ export default async function AdminReferralsPage() {
         <SectionCard elevated className="space-y-4 lg:col-span-2">
           <div>
             <p className="text-sm text-white/60">Monthly movement</p>
-            <h3 className="text-xl font-semibold text-white">Coins to wallet conversion</h3>
+            <h3 className="text-xl font-semibold text-white">Coins to perk conversion</h3>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
@@ -209,12 +208,12 @@ export default async function AdminReferralsPage() {
               <p className="mt-2 text-2xl font-semibold text-white">{totalCoinsCredited._sum.amount ?? 0}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/45">Coins redeemed this month</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/45">Coins converted this month</p>
               <p className="mt-2 text-2xl font-semibold text-white">{monthlyCoinsRedeemed._sum.coinsUsed ?? 0}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/45">Wallet value this month</p>
-              <p className="mt-2 text-2xl font-semibold text-white">INR {formatMoney(monthlyWalletRedeemed._sum.walletAmount)}</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/45">Perk credits granted this month</p>
+              <p className="mt-2 text-2xl font-semibold text-white">{Math.floor(monthlyPerkCreditsGranted._sum.perkCreditsGranted ?? 0)}</p>
             </div>
           </div>
           <div className="rounded-2xl border border-amber-400/20 bg-amber-500/10 p-4 text-sm text-amber-100">
@@ -344,12 +343,12 @@ export default async function AdminReferralsPage() {
 
           <SectionCard elevated className="space-y-4 p-4">
             <div>
-              <p className="text-sm text-white/60">Recent redemptions</p>
-              <h3 className="text-xl font-semibold text-white">Coins converted into wallet balance</h3>
+              <p className="text-sm text-white/60">Recent conversions</p>
+              <h3 className="text-xl font-semibold text-white">Coins converted into perk credits</h3>
             </div>
 
             {recentRedemptions.length === 0 ? (
-              <p className="text-sm text-white/60">No coin redemptions yet.</p>
+              <p className="text-sm text-white/60">No coin conversions yet.</p>
             ) : (
               <div className="space-y-3">
                 {recentRedemptions.map((item) => (
@@ -377,8 +376,8 @@ export default async function AdminReferralsPage() {
                         <p>{item.coinsUsed}</p>
                       </div>
                       <div>
-                        <p className="text-xs uppercase tracking-[0.18em] text-white/35">Wallet credit</p>
-                        <p>INR {formatMoney(item.walletAmount)}</p>
+                        <p className="text-xs uppercase tracking-[0.18em] text-white/35">Perk credits granted</p>
+                        <p>{Math.floor(item.perkCreditsGranted)}</p>
                       </div>
                     </div>
                     {item.user.isSuspicious ? (

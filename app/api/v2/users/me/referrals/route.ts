@@ -20,6 +20,7 @@ export async function GET() {
       name: true,
       email: true,
       coinBalance: true,
+      perkCreditBalance: true,
     },
   });
 
@@ -35,7 +36,7 @@ export async function GET() {
 
   const monthStart = getMonthStart();
 
-  const [invites, recentCoinTransactions, monthlyRedemption] = await Promise.all([
+  const [invites, recentCoinTransactions, monthlyRedemption, monthlyPerkConversions] = await Promise.all([
     prisma.referralInvite.findMany({
       where: { referrerUserId: userId },
       orderBy: { createdAt: "desc" },
@@ -63,6 +64,14 @@ export async function GET() {
       },
       _sum: { coinsUsed: true },
     }),
+    prisma.coinRedemption.aggregate({
+      where: {
+        userId,
+        status: "APPROVED",
+        createdAt: { gte: monthStart },
+      },
+      _sum: { perkCreditsGranted: true },
+    }),
   ]);
 
   const h = await headers();
@@ -78,10 +87,12 @@ export async function GET() {
     settings,
     summary: {
       coinBalance: user.coinBalance,
+      perkCreditBalance: user.perkCreditBalance,
       totalInvites: invites.length,
       rewardedInvites: invites.filter((item) => item.status === "REWARDED").length,
       pendingInvites: invites.filter((item) => item.status === "PENDING").length,
       monthlyRedeemedCoins: monthlyRedemption._sum.coinsUsed ?? 0,
+      monthlyPerkCreditsGranted: Math.floor(monthlyPerkConversions._sum.perkCreditsGranted ?? 0),
     },
     referral: {
       code: code.code,

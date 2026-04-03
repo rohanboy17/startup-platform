@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
 import { CAMPAIGN_CATEGORY_OPTIONS } from "@/lib/campaign-options";
+import { validateCampaignPolicy } from "@/lib/campaign-policy";
 import {
   canManageBusinessCampaigns,
   getBusinessContext,
@@ -58,6 +59,15 @@ export async function PATCH(
       id: true,
       title: true,
       status: true,
+      description: true,
+      category: true,
+      taskCategory: true,
+      taskType: true,
+      customTask: true,
+      taskLink: true,
+      instructions: {
+        orderBy: { sequence: "asc" },
+      },
     },
   });
 
@@ -84,6 +94,23 @@ export async function PATCH(
       { error: "Campaign is still pending admin approval" },
       { status: 400 }
     );
+  }
+
+  if (action === "RESUME") {
+    const policyError = validateCampaignPolicy({
+      title: campaign.title,
+      description: campaign.description,
+      category: campaign.category,
+      taskCategory: campaign.taskCategory,
+      taskType: campaign.taskType,
+      customTask: campaign.customTask,
+      taskLink: campaign.taskLink,
+      instructions: campaign.instructions.map((item) => item.instructionText),
+    });
+
+    if (policyError) {
+      return NextResponse.json({ error: policyError.error }, { status: 400 });
+    }
   }
 
   if (action === "CLOSE" && campaign.status === "COMPLETED") {
@@ -194,6 +221,21 @@ export async function PUT(
 
   if ("error" in normalizedTaskSelection) {
     return NextResponse.json({ error: normalizedTaskSelection.error }, { status: 400 });
+  }
+
+  const policyError = validateCampaignPolicy({
+    title,
+    description,
+    category,
+    taskCategory: normalizedTaskSelection.taskCategory,
+    taskType: normalizedTaskSelection.taskType,
+    customTask: normalizedTaskSelection.customTask,
+    taskLink,
+    instructions,
+  });
+
+  if (policyError) {
+    return NextResponse.json({ error: policyError.error }, { status: 400 });
   }
 
   if (Number.isNaN(rewardPerTask) || rewardPerTask <= 0) {
@@ -374,6 +416,21 @@ export async function POST(
   const wallet = await ensureBusinessWalletSynced(context.businessUserId);
   if (wallet.balance < sourceCampaign.totalBudget) {
     return NextResponse.json({ error: "Insufficient business wallet balance to duplicate this campaign" }, { status: 400 });
+  }
+
+  const duplicatePolicyError = validateCampaignPolicy({
+    title: sourceCampaign.title,
+    description: sourceCampaign.description,
+    category: sourceCampaign.category,
+    taskCategory: sourceCampaign.taskCategory,
+    taskType: sourceCampaign.taskType,
+    customTask: sourceCampaign.customTask,
+    taskLink: sourceCampaign.taskLink,
+    instructions: sourceCampaign.instructions.map((item) => item.instructionText),
+  });
+
+  if (duplicatePolicyError) {
+    return NextResponse.json({ error: duplicatePolicyError.error }, { status: 400 });
   }
 
   const duplicated = await prisma.$transaction(async (tx) => {

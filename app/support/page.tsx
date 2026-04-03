@@ -1,4 +1,4 @@
-import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
+﻿import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
 import { getLocale } from "next-intl/server";
 import { SUPPORT_EMAIL } from "@/lib/public-links";
 
@@ -10,30 +10,30 @@ export default async function SupportPage() {
       ? {
           eyebrow: "सपोर्ट सेंटर",
           title: "हम कैसे मदद कर सकते हैं?",
-          description: "अकाउंट एक्सेस, विथड्रॉल, कैंपेन बिलिंग, KYC और मॉडरेशन समस्याओं के लिए सहायता प्राप्त करें।",
+          description: "अकाउंट एक्सेस, विथड्रॉ, कैंपेन billing, KYC और moderation issues के लिए सहायता प्राप्त करें।",
           accountTitle: "अकाउंट और सुरक्षा",
-          walletTitle: "वॉलेट, फंडिंग और पेआउट",
-          campaignTitle: "कैंपेन और सबमिशन सपोर्ट",
+          walletTitle: "Wallet, funding और payouts",
+          campaignTitle: "Campaign और submission support",
           contactTitle: "सपोर्ट से संपर्क करें",
-          response: "रिस्पॉन्स SLA: आमतौर पर 24 से 48 बिज़नेस घंटे के भीतर।",
-          bulletsAccount: ["लॉगिन और 2FA समस्याएं", "सस्पेंड/रिस्ट्रिक्टेड अकाउंट सपोर्ट", "पासवर्ड रीसेट गाइडेंस"],
-          bulletsWallet: ["बिज़नेस वॉलेट डिपॉज़िट/रिफंड", "यूज़र विथड्रॉल स्टेटस और देरी", "लेजर/ट्रांज़ैक्शन स्पष्टीकरण"],
-          bulletsCampaign: ["कैंपेन अप्रूवल और KYC चेक", "सबमिशन रिव्यू रिज़ल्ट", "रिजेक्शन कारण स्पष्टीकरण"],
+          response: "Response SLA: आमतौर पर 24 से 48 business hours के भीतर।",
+          bulletsAccount: ["Login और 2FA issues", "Suspended या restricted account support", "Password reset guidance"],
+          bulletsWallet: ["Business wallet deposits या refunds", "User withdrawal status और delays", "Ledger और transaction clarification"],
+          bulletsCampaign: ["Campaign approval और KYC checks", "Submission review outcomes", "Rejection reason clarification"],
           emailLabel: "ईमेल:",
         }
       : locale === "bn"
         ? {
             eyebrow: "সাপোর্ট সেন্টার",
             title: "আমরা কীভাবে সাহায্য করতে পারি?",
-            description: "অ্যাকাউন্ট অ্যাক্সেস, উইথড্র, ক্যাম্পেইন বিলিং, KYC এবং মডারেশন সংক্রান্ত সাপোর্ট নিন।",
-            accountTitle: "অ্যাকাউন্ট ও সিকিউরিটি",
-            walletTitle: "ওয়ালেট, ফান্ডিং ও পেআউট",
-            campaignTitle: "ক্যাম্পেইন ও সাবমিশন সাপোর্ট",
+            description: "অ্যাকাউন্ট access, withdrawals, campaign billing, KYC এবং moderation issues-এর জন্য সাহায্য নিন।",
+            accountTitle: "অ্যাকাউন্ট ও নিরাপত্তা",
+            walletTitle: "Wallet, funding ও payouts",
+            campaignTitle: "Campaign ও submission support",
             contactTitle: "সাপোর্টে যোগাযোগ",
-            response: "রেসপন্স SLA: সাধারণত ২৪ থেকে ৪৮ কর্মঘণ্টার মধ্যে।",
-            bulletsAccount: ["লগইন ও 2FA সমস্যা", "সাসপেন্ড/রেস্ট্রিক্টেড অ্যাকাউন্ট সাপোর্ট", "পাসওয়ার্ড রিসেট গাইডেন্স"],
-            bulletsWallet: ["বিজনেস ওয়ালেট ডিপোজিট/রিফান্ড", "ইউজার উইথড্র স্ট্যাটাস ও দেরি", "লেজার/ট্রানজ্যাকশন ব্যাখ্যা"],
-            bulletsCampaign: ["ক্যাম্পেইন অনুমোদন ও KYC চেক", "সাবমিশন রিভিউ ফলাফল", "রিজেকশন কারণ ব্যাখ্যা"],
+            response: "Response SLA: সাধারণত 24 থেকে 48 business hours-এর মধ্যে।",
+            bulletsAccount: ["Login ও 2FA issues", "Suspended বা restricted account support", "Password reset guidance"],
+            bulletsWallet: ["Business wallet deposits বা refunds", "User withdrawal status ও delays", "Ledger ও transaction clarification"],
+            bulletsCampaign: ["Campaign approval ও KYC checks", "Submission review outcomes", "Rejection reason clarification"],
             emailLabel: "ইমেইল:",
           }
         : {
@@ -52,11 +52,7 @@ export default async function SupportPage() {
           };
 
   return (
-    <PublicPageShell
-      eyebrow={meta.eyebrow}
-      title={meta.title}
-      description={meta.description}
-    >
+    <PublicPageShell eyebrow={meta.eyebrow} title={meta.title} description={meta.description} lastUpdated="April 3, 2026">
       <div className="grid gap-4 sm:grid-cols-2">
         <PolicySection title={meta.accountTitle}>
           <ul className="list-disc space-y-1 pl-5">

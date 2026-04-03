@@ -2,13 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 import QRCode from "qrcode";
 import { ArrowRight, ShieldCheck, Zap, TrendingUp, Users, Briefcase, Timer } from "lucide-react";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import HomeLiveSection from "@/components/home-live-section";
 import MotionSection from "@/components/motion-section";
 import HomeHeroText from "@/components/home-hero-text";
 import HomeParallaxOrbs from "@/components/home-parallax-orbs";
 import { MotionItem, MotionStagger } from "@/components/motion-stagger";
-import { getCmsValue, getFeatureFlag } from "@/lib/cms";
+import { getFeatureFlag } from "@/lib/cms";
 import { prisma } from "@/lib/prisma";
 import HomeLiveFloatsAndStats from "@/components/home-live-floats-and-stats";
 import HomeLiveHeroVisual from "@/components/home-live-hero-visual";
@@ -16,14 +16,8 @@ import PwaInstallNudge from "@/components/pwa-install-nudge";
 import HomeGuidedVideoSection from "@/components/home-guided-video-section";
 import HomeTestimonialsSection from "@/components/home-testimonials-section";
 import PublicChannelLinks from "@/components/public-channel-links";
-import { getDisplayMetrics } from "@/lib/display-metrics";
 import { auth } from "@/lib/auth";
 import HomeFeedbackSubmitCard from "@/components/home-feedback-submit-card";
-
-type LandingContent = {
-  heroTitle: string;
-  heroSubtitle: string;
-};
 
 type ApprovalLog = {
   createdAt: Date;
@@ -43,7 +37,6 @@ function extractSubmissionId(details: string | null) {
 }
 
 export default async function Home() {
-  const locale = await getLocale();
   const tHome = await getTranslations("home");
   const session = await auth();
 
@@ -53,7 +46,6 @@ export default async function Home() {
     "https://startup-platform-eight.vercel.app";
   const now = new Date();
   const [
-    landing,
     showAnnouncements,
     showStats,
     showFeatures,
@@ -68,11 +60,6 @@ export default async function Home() {
     approvedCommunityFeedback,
     currentUserFeedback,
   ] = await Promise.all([
-    getCmsValue<LandingContent>("landing.home", {
-      heroTitle: "Earn by completing verified tasks.",
-      heroSubtitle:
-        "FreeEarnHub helps people earn from verified tasks while businesses grow through simple, trackable campaigns.",
-    }),
     getFeatureFlag("home.announcements", true),
     getFeatureFlag("home.stats", true),
     getFeatureFlag("home.features", true),
@@ -127,8 +114,8 @@ export default async function Home() {
       : Promise.resolve(null),
   ]);
 
-  const heroTitle = locale === "en" ? landing.heroTitle : tHome("landing.heroTitle");
-  const heroSubtitle = locale === "en" ? landing.heroSubtitle : tHome("landing.heroSubtitle");
+  const heroTitle = tHome("landing.heroTitle");
+  const heroSubtitle = tHome("landing.heroSubtitle");
   const howItWorksSteps = tHome.raw("sections.howItWorksSteps") as string[];
   const forBusinessesSteps = tHome.raw("sections.forBusinessesSteps") as string[];
   const guidedVideos = tHome.raw("guidedVideos.items") as Array<{
@@ -206,13 +193,13 @@ export default async function Home() {
       light: "#ffffff",
     },
   });
-  const heroMetrics = getDisplayMetrics({
+  const heroMetrics = {
     totalPayout: Math.round(totalPayout._sum.amount || 0),
     totalUsers,
     businessAccounts,
     totalCampaigns,
     tasksCompleted,
-  });
+  };
   const homeEarnVideoUrl = process.env.NEXT_PUBLIC_HOME_EARNING_VIDEO_URL || null;
   const homeCampaignVideoUrl = process.env.NEXT_PUBLIC_HOME_CAMPAIGN_VIDEO_URL || null;
 

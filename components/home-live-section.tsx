@@ -1,15 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLiveRefresh } from "@/lib/live-refresh";
 import HeroLiveMetrics from "@/components/hero-live-metrics";
 import { useTranslations } from "next-intl";
 import { mergeMetricMaximums } from "@/lib/display-metrics";
-import {
-  generateActivityItem,
-  type FakeLiveFeedItem,
-} from "@/lib/fake-live-feed";
-import { getMetricsDayKey } from "@/lib/fake-metrics";
 
 type LivePayload = {
   stats: {
@@ -25,17 +20,15 @@ type LivePayload = {
   }>;
 };
 
+const WITHDRAW_ROTATION_MS = 12000;
+const ACTIVITY_ROTATION_MS = 15000;
+
 export default function HomeLiveSection() {
-  const WITHDRAW_ROTATION_MS = 12000;
-  const ACTIVITY_ROTATION_MS = 15000;
   const t = useTranslations("home.live");
   const [data, setData] = useState<LivePayload | null>(null);
-  const [feed, setFeed] = useState<FakeLiveFeedItem[]>([]);
   const [error, setError] = useState("");
-  const [, setFeedSequence] = useState(0);
   const [withdrawIndex, setWithdrawIndex] = useState(0);
   const [activityIndex, setActivityIndex] = useState(0);
-  const [currentActivityText, setCurrentActivityText] = useState("");
 
   const load = useCallback(async () => {
     const res = await fetch("/api/public/live");
@@ -66,93 +59,15 @@ export default function HomeLiveSection() {
 
   useLiveRefresh(load, 10000);
 
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      try {
-        const res = await fetch("/api/live-feed", { cache: "no-store" });
-        if (!res.ok) return;
-        const initial = (await res.json()) as FakeLiveFeedItem[];
-        if (!cancelled) {
-          setFeed(initial);
-        }
-      } catch {
-        // ignore: the stats panel still works even if synthetic feed fails initially
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    let timer: number | null = null;
-    const dayKey = getMetricsDayKey();
-
-    const schedule = () => {
-      const delay = 5000 + Math.floor(Math.random() * 4000);
-      timer = window.setTimeout(() => {
-        setFeedSequence((currentSequence) => {
-          const nextSequence = currentSequence + 1;
-          setFeed((current) => {
-            const recentTexts = current.slice(0, 6).map((item) => item.text);
-            const next = generateActivityItem({
-              recentTexts,
-              dayKey,
-              sequence: nextSequence,
-            });
-            return [next, ...current].slice(0, 15);
-          });
-          return nextSequence;
-        });
-        schedule();
-      }, delay);
-    };
-
-    schedule();
-
-    return () => {
-      if (timer !== null) window.clearTimeout(timer);
-    };
-  }, []);
-
-  const realFeed = useMemo<FakeLiveFeedItem[]>(
-    () =>
-      (data?.events ?? []).map((event, index) => ({
-        id: `real:${event.kind}:${event.createdAt}:${index}`,
-        type:
-          event.kind === "WITHDRAW"
-            ? "withdrawal"
-            : event.kind === "TASK"
-              ? "campaign"
-              : "signup",
-        text: event.message,
-        createdAt: new Date(event.createdAt).getTime(),
-      })),
+  const withdrawalItems = useMemo(
+    () => (data?.events ?? []).filter((item) => item.kind === "WITHDRAW"),
     [data]
   );
 
-  const mergedFeed = useMemo(
-    () => [...realFeed, ...feed].sort((left, right) => right.createdAt - left.createdAt).slice(0, 15),
-    [feed, realFeed]
-  );
-
-  const withdrawalItems = useMemo(
-    () => mergedFeed.filter((item) => item.type === "withdrawal").slice(0, 8),
-    [mergedFeed]
-  );
-
   const activityItems = useMemo(
-    () => mergedFeed.filter((item) => item.type !== "withdrawal").slice(0, 10),
-    [mergedFeed]
+    () => (data?.events ?? []).filter((item) => item.kind !== "WITHDRAW"),
+    [data]
   );
-  const activityItemsRef = useRef<FakeLiveFeedItem[]>([]);
-
-  useEffect(() => {
-    activityItemsRef.current = activityItems;
-  }, [activityItems]);
 
   useEffect(() => {
     if (withdrawalItems.length <= 1) return;
@@ -160,36 +75,20 @@ export default function HomeLiveSection() {
       setWithdrawIndex((current) => (current + 1) % withdrawalItems.length);
     }, WITHDRAW_ROTATION_MS);
     return () => window.clearInterval(timer);
-  }, [withdrawalItems]);
-
-  useEffect(() => {
-    if (!currentActivityText && activityItems.length > 0) {
-      const timer = window.setTimeout(() => {
-        setCurrentActivityText(activityItems[0].text);
-      }, 0);
-      return () => window.clearTimeout(timer);
-    }
-  }, [activityItems, currentActivityText]);
+  }, [withdrawalItems.length]);
 
   useEffect(() => {
     if (activityItems.length <= 1) return;
     const timer = window.setInterval(() => {
-      setActivityIndex((current) => {
-        const nextItems = activityItemsRef.current;
-        const nextIndex = (current + 1) % nextItems.length;
-        setCurrentActivityText(nextItems[nextIndex]?.text || "");
-        return nextIndex;
-      });
+      setActivityIndex((current) => (current + 1) % activityItems.length);
     }, ACTIVITY_ROTATION_MS);
     return () => window.clearInterval(timer);
-  }, [ACTIVITY_ROTATION_MS, activityItems.length]);
+  }, [activityItems.length]);
 
   const currentWithdrawalText =
-    withdrawalItems[withdrawIndex % Math.max(1, withdrawalItems.length)]?.text || t("noLiveWithdraw");
-  const activityDisplayText =
-    currentActivityText ||
-    activityItems[activityIndex % Math.max(1, activityItems.length)]?.text ||
-    "No recent activity yet. New events will appear here.";
+    withdrawalItems[withdrawIndex % Math.max(1, withdrawalItems.length)]?.message || t("noLiveWithdraw");
+  const currentActivityText =
+    activityItems[activityIndex % Math.max(1, activityItems.length)]?.message || t("noActivity");
 
   return (
     <div className="mx-auto w-full rounded-2xl border border-foreground/15 bg-foreground/5 p-4 backdrop-blur-none sm:rounded-3xl sm:p-6 sm:backdrop-blur-xl">
@@ -215,9 +114,9 @@ export default function HomeLiveSection() {
 
           <div className="mt-4 rounded-xl border border-sky-400/20 bg-sky-500/10 px-3 py-2">
             <p className="mb-1 text-[11px] uppercase tracking-wide text-sky-600 dark:text-sky-300/80">
-              Live Withdraw Requests ({Math.max(data.stats.liveWithdraws, withdrawalItems.length)})
+              {t("withdrawRequests")} ({data.stats.liveWithdraws})
             </p>
-            <div className="rounded-lg border border-white/10 bg-background/60 px-3 py-2 min-h-[52px] flex items-center overflow-hidden whitespace-nowrap">
+            <div className="min-h-[52px] overflow-hidden whitespace-nowrap rounded-lg border border-white/10 bg-background/60 px-3 py-2 flex items-center">
               <div
                 key={`withdraw-${withdrawIndex}-${currentWithdrawalText}`}
                 className="inline-block min-w-full pr-8 text-sm leading-6 text-sky-700 dark:text-sky-200 [animation:marquee_12s_linear_forwards]"
@@ -229,14 +128,14 @@ export default function HomeLiveSection() {
 
           <div className="mt-3 rounded-xl border border-emerald-400/20 bg-emerald-500/10 px-3 py-2">
             <p className="mb-1 text-[11px] uppercase tracking-wide text-emerald-600 dark:text-emerald-300/80">
-              Activity History
+              {t("activityHistory")}
             </p>
-            <div className="rounded-lg border border-white/10 bg-background/60 px-3 py-2 min-h-[52px] flex items-center overflow-hidden whitespace-nowrap">
+            <div className="min-h-[52px] overflow-hidden whitespace-nowrap rounded-lg border border-white/10 bg-background/60 px-3 py-2 flex items-center">
               <div
-                key={`activity-${activityIndex}-${activityDisplayText}`}
+                key={`activity-${activityIndex}-${currentActivityText}`}
                 className="inline-block min-w-full pr-8 text-sm leading-6 text-emerald-700 dark:text-emerald-200 [animation:marquee_15s_linear_forwards]"
               >
-                {activityDisplayText}
+                {currentActivityText}
               </div>
             </div>
           </div>

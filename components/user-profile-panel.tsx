@@ -17,6 +17,11 @@ type SettingsPayload = {
     createdAt: string;
     timezone: string;
     address: string | null;
+    city: string | null;
+    state: string | null;
+    pincode: string | null;
+    latitude: number | null;
+    longitude: number | null;
     gender: string | null;
     religion: string | null;
     dateOfBirth: string | null;
@@ -68,6 +73,11 @@ export default function UserProfilePanel() {
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
   const [gender, setGender] = useState("");
   const [religion, setReligion] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
@@ -127,6 +137,11 @@ export default function UserProfilePanel() {
       setName(settingsPayload.profile.name || "");
       setMobile(settingsPayload.profile.mobile || "");
       setAddress(settingsPayload.profile.address || "");
+      setCity(settingsPayload.profile.city || "");
+      setState(settingsPayload.profile.state || "");
+      setPincode(settingsPayload.profile.pincode || "");
+      setLatitude(settingsPayload.profile.latitude?.toString() || "");
+      setLongitude(settingsPayload.profile.longitude?.toString() || "");
       setGender(settingsPayload.profile.gender || "");
       setReligion(settingsPayload.profile.religion || "");
       setDateOfBirth(settingsPayload.profile.dateOfBirth || "");
@@ -176,6 +191,11 @@ export default function UserProfilePanel() {
           name,
           mobile,
           address,
+          city,
+          state,
+          pincode,
+          latitude: latitude || null,
+          longitude: longitude || null,
           gender: gender || null,
           religion,
           dateOfBirth: dateOfBirth || null,
@@ -267,6 +287,42 @@ export default function UserProfilePanel() {
             placeholder={t("placeholders.address")}
             className="min-h-[110px] w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none transition focus:border-foreground/30"
           />
+
+          <div className="grid gap-3 md:grid-cols-3">
+            <Input
+              placeholder={t("placeholders.city")}
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className="min-h-11"
+            />
+            <Input
+              placeholder={t("placeholders.state")}
+              value={state}
+              onChange={(e) => setState(e.target.value)}
+              className="min-h-11"
+            />
+            <Input
+              placeholder={t("placeholders.pincode")}
+              value={pincode}
+              onChange={(e) => setPincode(e.target.value)}
+              className="min-h-11"
+            />
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-2">
+            <Input
+              placeholder={t("placeholders.latitude")}
+              value={latitude}
+              onChange={(e) => setLatitude(e.target.value)}
+              className="min-h-11"
+            />
+            <Input
+              placeholder={t("placeholders.longitude")}
+              value={longitude}
+              onChange={(e) => setLongitude(e.target.value)}
+              className="min-h-11"
+            />
+          </div>
 
           <div className="grid gap-3 md:grid-cols-2">
             <select

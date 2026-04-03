@@ -85,20 +85,22 @@ export default function CreateCampaign() {
     }
 
     async function loadTaskCategories() {
-      const res = await fetch("/api/task-categories", { credentials: "include" });
+      const res = await fetch("/api/task-categories", { credentials: "include", cache: "no-store" });
       const raw = await res.text();
       if (!active) return;
       try {
         const data = raw ? (JSON.parse(raw) as { taskCategories?: TaskCategoryOption[] }) : {};
         if (data.taskCategories?.length) {
+          const nextTaskCategory = isValidTaskCategory(DEFAULT_TASK_CATEGORY, data.taskCategories)
+            ? DEFAULT_TASK_CATEGORY
+            : data.taskCategories[0]?.name || "Other";
+          const defaultTaskType = getTaskTypesForCategory(DEFAULT_TASK_CATEGORY, DEFAULT_TASK_CATEGORIES)[0] || "Other";
+          const nextTaskType = isValidTaskType(nextTaskCategory, defaultTaskType, data.taskCategories)
+            ? defaultTaskType
+            : getTaskTypesForCategory(nextTaskCategory, data.taskCategories)[0] || "Other";
           setTaskCategories(data.taskCategories);
-          if (!isValidTaskCategory(taskCategory, data.taskCategories)) {
-            const nextTaskCategory = data.taskCategories[0]?.name || "Other";
-            setTaskCategory(nextTaskCategory);
-            setTaskType(getTaskTypesForCategory(nextTaskCategory, data.taskCategories)[0] || "Other");
-          } else if (!isValidTaskType(taskCategory, taskType, data.taskCategories)) {
-            setTaskType(getTaskTypesForCategory(taskCategory, data.taskCategories)[0] || "Other");
-          }
+          setTaskCategory(nextTaskCategory);
+          setTaskType(nextTaskType);
         }
       } catch {
         // keep fallback defaults
@@ -112,7 +114,7 @@ export default function CreateCampaign() {
     return () => {
       active = false;
     };
-  }, [taskCategory, taskType]);
+  }, []);
 
   async function handleSubmit() {
     if (kycStatus && kycStatus !== "VERIFIED") {
@@ -188,8 +190,9 @@ export default function CreateCampaign() {
     setTitle("");
     setDescription("");
     setCategory(DEFAULT_CATEGORY);
-    setTaskCategory(DEFAULT_TASK_CATEGORY);
-    setTaskType(getTaskTypesForCategory(DEFAULT_TASK_CATEGORY, taskCategories)[0] || "Other");
+    const resetTaskCategory = taskCategories[0]?.name || DEFAULT_TASK_CATEGORY;
+    setTaskCategory(resetTaskCategory);
+    setTaskType(getTaskTypesForCategory(resetTaskCategory, taskCategories)[0] || "Other");
     setCustomTask("");
     setTaskLink("");
     setTaskDetails("");

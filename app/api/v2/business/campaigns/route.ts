@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
 import { CAMPAIGN_CATEGORY_OPTIONS } from "@/lib/campaign-options";
 import { canManageBusinessCampaigns, getBusinessContext } from "@/lib/business-context";
+import { validateCampaignPolicy } from "@/lib/campaign-policy";
 import { normalizeExternalUrl } from "@/lib/external-url";
 import { normalizeTaskSelection } from "@/lib/task-categories";
 import { getAppSettings } from "@/lib/system-settings";
@@ -88,6 +89,21 @@ export async function POST(req: Request) {
 
   if ("error" in normalizedTaskSelection) {
     return NextResponse.json({ error: normalizedTaskSelection.error }, { status: 400 });
+  }
+
+  const policyError = validateCampaignPolicy({
+    title: title.trim(),
+    description: description.trim(),
+    category: normalizedCategory,
+    taskCategory: normalizedTaskSelection.taskCategory,
+    taskType: normalizedTaskSelection.taskType,
+    customTask: normalizedTaskSelection.customTask,
+    taskLink: normalizeExternalUrl(taskLink),
+    instructions,
+  });
+
+  if (policyError) {
+    return NextResponse.json({ error: policyError.error }, { status: 400 });
   }
 
   const wallet = await ensureBusinessWalletSynced(context.businessUserId);

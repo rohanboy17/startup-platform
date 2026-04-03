@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Copy, Save } from "lucide-react";
@@ -53,6 +53,10 @@ export default function BusinessCampaignEditor({
   const t = useTranslations("business.campaignEditor");
   const tCategories = useTranslations("business.categories");
   const router = useRouter();
+  const initialTaskSelectionRef = useRef({
+    taskCategory: campaign.taskCategory,
+    taskType: campaign.taskType,
+  });
   const [taskCategories, setTaskCategories] = useState<TaskCategoryOption[]>(DEFAULT_TASK_CATEGORIES);
   const [title, setTitle] = useState(campaign.title);
   const [description, setDescription] = useState(campaign.description);
@@ -85,20 +89,21 @@ export default function BusinessCampaignEditor({
   useEffect(() => {
     let active = true;
     async function loadTaskCategories() {
-      const res = await fetch("/api/task-categories", { credentials: "include" });
+      const res = await fetch("/api/task-categories", { credentials: "include", cache: "no-store" });
       const raw = await res.text();
       if (!active) return;
       try {
         const data = raw ? (JSON.parse(raw) as { taskCategories?: TaskCategoryOption[] }) : {};
         if (data.taskCategories?.length) {
+          const nextTaskCategory = isValidTaskCategory(initialTaskSelectionRef.current.taskCategory, data.taskCategories)
+            ? initialTaskSelectionRef.current.taskCategory
+            : data.taskCategories[0]?.name || "Other";
+          const nextTaskType = isValidTaskType(nextTaskCategory, initialTaskSelectionRef.current.taskType, data.taskCategories)
+            ? initialTaskSelectionRef.current.taskType
+            : getTaskTypesForCategory(nextTaskCategory, data.taskCategories)[0] || "Other";
           setTaskCategories(data.taskCategories);
-          if (!isValidTaskCategory(taskCategory, data.taskCategories)) {
-            const nextTaskCategory = data.taskCategories[0]?.name || "Other";
-            setTaskCategory(nextTaskCategory);
-            setTaskType(getTaskTypesForCategory(nextTaskCategory, data.taskCategories)[0] || "Other");
-          } else if (!isValidTaskType(taskCategory, taskType, data.taskCategories)) {
-            setTaskType(getTaskTypesForCategory(taskCategory, data.taskCategories)[0] || "Other");
-          }
+          setTaskCategory(nextTaskCategory);
+          setTaskType(nextTaskType);
         }
       } catch {
         // keep defaults
@@ -108,7 +113,7 @@ export default function BusinessCampaignEditor({
     return () => {
       active = false;
     };
-  }, [taskCategory, taskType]);
+  }, []);
 
   const stats = useMemo(() => {
     const projectedSlots = reward > 0 ? Math.floor(budget / reward) : 0;

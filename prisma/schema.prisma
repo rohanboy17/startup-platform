@@ -31,6 +31,8 @@ model User {
   level       UserLevel    @default(L1)
   balance     Float        @default(0)
   coinBalance Int          @default(0)
+  perkCreditBalance Int    @default(0)
+  recommendationBoostExpiresAt DateTime?
   dailySubmits Int         @default(0)
   dailyApproved Int        @default(0)
   totalApproved Int        @default(0)
@@ -50,6 +52,7 @@ model User {
   flaggedAt   DateTime?
   submissions Submission[]
   campaigns   Campaign[]   @relation("BusinessCampaignsV2")
+  jobs        JobPosting[] @relation("BusinessJobs")
   businessOwner User?      @relation("BusinessTeam", fields: [businessOwnerId], references: [id])
   teamMembers  User[]      @relation("BusinessTeam")
   transactions WalletTransaction[]
@@ -78,6 +81,7 @@ model User {
   referralInviteReceived ReferralInvite? @relation("ReferralInviteReceived")
   coinTransactions CoinTransaction[]
   coinRedemptions CoinRedemption[]
+  perkTransactions PerkTransaction[]
   skills UserSkill[]
   campaignAssignments CampaignAssignment[]
   campaignAssignmentsAssignedBy CampaignAssignment[] @relation("CampaignAssignmentAssignedBy")
@@ -85,6 +89,7 @@ model User {
   adWatchSessions AdWatchSession[]
   communityFeedback CommunityFeedback[] @relation("CommunityFeedbackAuthor")
   reviewedCommunityFeedback CommunityFeedback[] @relation("CommunityFeedbackReviewer")
+  jobApplications JobApplication[]
   deletedAt DateTime?
   deletedByUserId String?
   deletionReason String?
@@ -305,6 +310,65 @@ model CampaignInstruction {
   campaign        Campaign @relation(fields: [campaignId], references: [id])
   instructionText String
   sequence        Int
+}
+
+model JobPosting {
+  id                  String             @id @default(cuid())
+  businessId          String
+  business            User               @relation("BusinessJobs", fields: [businessId], references: [id])
+  title               String
+  description         String
+  jobCategory         String
+  jobType             String
+  customJobType       String?
+  workMode            JobWorkMode
+  employmentType      JobEmploymentType
+  city                String
+  state               String
+  pincode             String?
+  addressLine         String?
+  latitude            Float?
+  longitude           Float?
+  hiringRadiusKm      Int?
+  openings            Int                @default(1)
+  payAmount           Float
+  payUnit             JobPayUnit
+  shiftSummary        String?
+  startDate           DateTime?
+  applicationDeadline DateTime?
+  requiredSkills      String[]           @default([])
+  requiredLanguages   String[]           @default([])
+  minEducation        String?
+  status              JobPostingStatus   @default(OPEN)
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+
+  applications        JobApplication[]
+
+  @@index([businessId, status, createdAt])
+  @@index([status, city, state, createdAt])
+}
+
+model JobApplication {
+  id               String               @id @default(cuid())
+  jobId            String
+  userId           String
+  status           JobApplicationStatus @default(APPLIED)
+  coverNote        String?
+  businessNote     String?
+  interviewAt      DateTime?
+  joinedAt         DateTime?
+  reviewedByUserId String?
+  reviewedAt       DateTime?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  job              JobPosting           @relation(fields: [jobId], references: [id])
+  user             User                 @relation(fields: [userId], references: [id])
+
+  @@unique([jobId, userId])
+  @@index([jobId, status, createdAt])
+  @@index([userId, status, createdAt])
 }
 
 model AdWatchSession {
@@ -614,9 +678,21 @@ model CoinRedemption {
   id           String               @id @default(uuid())
   userId       String
   coinsUsed    Int
-  walletAmount Float
+  perkCreditsGranted Float
   status       CoinRedemptionStatus @default(APPROVED)
   createdAt    DateTime             @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model PerkTransaction {
+  id        String          @id @default(uuid())
+  userId    String
+  amount    Int
+  type      TransactionType
+  source    String
+  note      String?
+  createdAt DateTime        @default(now())
 
   user User @relation(fields: [userId], references: [id])
 }
@@ -815,4 +891,42 @@ enum AdWatchSessionStatus {
   PENDING
   REWARDED
   EXPIRED
+}
+
+enum JobWorkMode {
+  WORK_FROM_OFFICE
+  WORK_IN_FIELD
+  HYBRID
+}
+
+enum JobEmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  DAILY_GIG
+}
+
+enum JobPayUnit {
+  HOURLY
+  DAILY
+  WEEKLY
+  MONTHLY
+  FIXED
+}
+
+enum JobPostingStatus {
+  OPEN
+  PAUSED
+  CLOSED
+  FILLED
+}
+
+enum JobApplicationStatus {
+  APPLIED
+  SHORTLISTED
+  INTERVIEW_SCHEDULED
+  REJECTED
+  HIRED
+  JOINED
+  WITHDRAWN
 }

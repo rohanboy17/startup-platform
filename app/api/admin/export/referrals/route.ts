@@ -43,7 +43,7 @@ export async function GET(req: Request) {
         "userEmail",
         "isSuspicious",
         "coinsUsed",
-        "walletAmount",
+        "perkCreditsGranted",
         "status",
         "createdAt",
       ].join(","),
@@ -55,7 +55,7 @@ export async function GET(req: Request) {
           escapeCsv(item.user.email),
           escapeCsv(item.user.isSuspicious),
           escapeCsv(item.coinsUsed),
-          escapeCsv(item.walletAmount),
+          escapeCsv(item.perkCreditsGranted),
           escapeCsv(item.status),
           escapeCsv(item.createdAt.toISOString()),
         ].join(",")

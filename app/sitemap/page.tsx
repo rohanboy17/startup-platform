@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
 import { getLocale, getTranslations } from "next-intl/server";
 
@@ -34,6 +34,8 @@ export default async function SitemapPage() {
         ["/cookie-policy", tFooterLinks("cookie")],
         ["/disclaimer", tFooterLinks("disclaimer")],
         ["/kyc-policy", tFooterLinks("kyc")],
+        ["/business-guidelines", tFooterLinks("businessGuidelines")],
+        ["/compliance", tFooterLinks("compliancePage")],
       ],
     },
     {
@@ -41,7 +43,10 @@ export default async function SitemapPage() {
       links: [
         ["/login", tHeader("signIn")],
         ["/register", tHeader("register")],
-        ["/forgot-password", locale === "hi" ? "पासवर्ड भूल गए" : locale === "bn" ? "পাসওয়ার্ড ভুলে গেছেন" : "Forgot Password"],
+        [
+          "/forgot-password",
+          locale === "hi" ? "पासवर्ड भूल गए" : locale === "bn" ? "পাসওয়ার্ড ভুলে গেছেন" : "Forgot Password",
+        ],
         ["/dashboard", locale === "hi" ? "डैशबोर्ड" : locale === "bn" ? "ড্যাশবোর্ড" : "Dashboard"],
       ],
     },
@@ -53,11 +58,12 @@ export default async function SitemapPage() {
       title={locale === "hi" ? "साइटमैप" : locale === "bn" ? "সাইটম্যাপ" : "Sitemap"}
       description={
         locale === "hi"
-          ? "FreeEarnHub प्लेटफ़ॉर्म के प्रमुख पेजों तक त्वरित पहुंच।"
+          ? "FreeEarnHub प्लेटफ़ॉर्म के प्रमुख पेजों तक त्वरित पहुँच।"
           : locale === "bn"
             ? "FreeEarnHub প্ল্যাটফর্মের প্রধান পেজগুলোতে দ্রুত অ্যাক্সেস।"
             : "Quick access to the major pages across the FreeEarnHub platform."
       }
+      lastUpdated="April 3, 2026"
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {localizedGroups.map((group) => (
@@ -80,4 +86,3 @@ export default async function SitemapPage() {
     </PublicPageShell>
   );
 }
-

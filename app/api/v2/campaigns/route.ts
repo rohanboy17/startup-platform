@@ -5,6 +5,7 @@ import { getDailyResetState } from "@/lib/level";
 import { prisma } from "@/lib/prisma";
 import { getCampaignRepeatAccess, getIndiaDateKey } from "@/lib/campaign-repeat";
 import { getAppSettings } from "@/lib/system-settings";
+import { isRecommendationBoostActive } from "@/lib/ad-rewards";
 
 export async function GET() {
   const session = await auth();
@@ -18,6 +19,7 @@ export async function GET() {
       select: {
         level: true,
         lastLevelResetAt: true,
+        recommendationBoostExpiresAt: true,
       },
     }),
     getAppSettings(),
@@ -47,6 +49,7 @@ export async function GET() {
         rewardPerTask: true,
         remainingBudget: true,
         totalBudget: true,
+        createdAt: true,
         submissionMode: true,
         repeatAccessMode: true,
       },
@@ -60,6 +63,7 @@ export async function GET() {
 
   const { resetNeeded } = getDailyResetState(user.lastLevelResetAt);
   const effectiveLevel = resetNeeded ? "L1" : user.level;
+  const boostActive = isRecommendationBoostActive(user.recommendationBoostExpiresAt);
 
   const campaignIds = campaigns.map((campaign) => campaign.id);
   const todayKey = getIndiaDateKey();
@@ -162,9 +166,20 @@ export async function GET() {
     };
   });
 
-  const visibleCampaigns = campaignsWithLimits.filter(
-    (campaign) => campaign.leftSubmissions > 0
-  );
+  const visibleCampaigns = campaignsWithLimits
+    .filter((campaign) => campaign.leftSubmissions > 0)
+    .sort((a, b) => {
+      if (!boostActive) return 0;
+      if (b.leftSubmissions !== a.leftSubmissions) return b.leftSubmissions - a.leftSubmissions;
+      if (b.netRewardPerTask !== a.netRewardPerTask) return b.netRewardPerTask - a.netRewardPerTask;
+      return b.createdAt.getTime() - a.createdAt.getTime();
+    });
 
-  return NextResponse.json({ campaigns: visibleCampaigns });
+  return NextResponse.json({
+    campaigns: visibleCampaigns,
+    recommendationBoost: {
+      active: boostActive,
+      endsAt: user.recommendationBoostExpiresAt?.toISOString() ?? null,
+    },
+  });
 }

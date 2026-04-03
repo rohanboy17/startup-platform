@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useTranslations } from "next-intl";
 import HomeHeroFloats from "@/components/home-hero-floats";
 import MotionSection from "@/components/motion-section";
 import MetricCounter from "@/components/metric-counter";
@@ -25,6 +26,7 @@ export default function HomeLiveFloatsAndStats({
   initial: HeroMetrics;
   showStats: boolean;
 }) {
+  const t = useTranslations("home.stats");
   const [metrics, setMetrics] = useState<HeroMetrics>(initial);
 
   const load = useCallback(async () => {
@@ -52,30 +54,30 @@ export default function HomeLiveFloatsAndStats({
             <MotionStagger className="grid w-full grid-cols-2 gap-3 auto-rows-fr sm:grid-cols-3 lg:grid-cols-5">
               <MotionItem>
                 <KpiCard
-                  label="Total Platform Payout"
+                  label={t("totalPayout")}
                   value={<MetricCounter value={metrics.totalPayout} formatter="inr" />}
                   tone="success"
                 />
               </MotionItem>
 
               <MotionItem>
-                <KpiCard label="Tasks Completed" value={<MetricCounter value={metrics.tasksCompleted} />} />
+                <KpiCard label={t("tasksCompleted")} value={<MetricCounter value={metrics.tasksCompleted} />} />
               </MotionItem>
 
               <MotionItem>
                 <KpiCard
-                  label="Campaigns Completed"
+                  label={t("campaignsCompleted")}
                   value={<MetricCounter value={metrics.totalCampaigns} />}
                   tone="info"
                 />
               </MotionItem>
 
               <MotionItem>
-                <KpiCard label="Business Accounts" value={<MetricCounter value={metrics.businessAccounts} />} />
+                <KpiCard label={t("businessAccounts")} value={<MetricCounter value={metrics.businessAccounts} />} />
               </MotionItem>
 
               <MotionItem>
-                <KpiCard label="Total Users" value={<MetricCounter value={metrics.totalUsers} />} />
+                <KpiCard label={t("totalUsers")} value={<MetricCounter value={metrics.totalUsers} />} />
               </MotionItem>
             </MotionStagger>
           </SectionCard>

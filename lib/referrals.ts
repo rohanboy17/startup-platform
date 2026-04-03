@@ -5,7 +5,7 @@ const REFERRAL_REWARD_COINS = Number(process.env.REFERRAL_REWARD_COINS ?? 100);
 const REFERRAL_NEW_USER_BONUS_COINS = Number(process.env.REFERRAL_NEW_USER_BONUS_COINS ?? 25);
 const COIN_REDEEM_MIN = Number(process.env.COIN_REDEEM_MIN ?? 500);
 const COIN_REDEEM_MONTHLY_LIMIT = Number(process.env.COIN_REDEEM_MONTHLY_LIMIT ?? 2000);
-const COIN_TO_INR_RATE = Number(process.env.COIN_TO_INR_RATE ?? 0.02);
+const COIN_TO_PERK_RATE = Number(process.env.COIN_TO_PERK_RATE ?? process.env.COIN_TO_INR_RATE ?? 0.02);
 
 type PrismaLike = PrismaClient | Prisma.TransactionClient;
 
@@ -19,7 +19,7 @@ export function getReferralSettings() {
     newUserBonusCoins: REFERRAL_NEW_USER_BONUS_COINS,
     redeemMinCoins: COIN_REDEEM_MIN,
     redeemMonthlyLimit: COIN_REDEEM_MONTHLY_LIMIT,
-    coinToInrRate: COIN_TO_INR_RATE,
+    coinToPerkRate: COIN_TO_PERK_RATE,
   };
 }
 

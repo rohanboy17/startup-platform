@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { DEFAULT_TASK_CATEGORIES, normalizeTaskCategoryConfig, type TaskCategoryOption } from "@/lib/task-categories";
+import { DEFAULT_TASK_CATEGORIES, getLaunchSafeTaskCategories, type TaskCategoryOption } from "@/lib/task-categories";
 
 export type AppSettings = {
   commissionRateDefault: number;
@@ -9,12 +9,17 @@ export type AppSettings = {
   businessRefundFeeRate: number;
   levelResetHours: number;
   maintenanceMode: boolean;
+  bonusAdsEnabled: boolean;
   adRewardPerView: number;
   adMaxViewsPerDay: number;
   adCooldownSeconds: number;
   adWatchSeconds: number;
   taskCategories: TaskCategoryOption[];
 };
+
+export function isBonusAdsLockedForLaunch() {
+  return process.env.NODE_ENV === "production" && process.env.ALLOW_BONUS_ADS_PUBLIC !== "true";
+}
 
 const DEFAULT_SETTINGS: AppSettings = {
   commissionRateDefault: 0.3,
@@ -24,7 +29,8 @@ const DEFAULT_SETTINGS: AppSettings = {
   businessRefundFeeRate: 0.03,
   levelResetHours: 24,
   maintenanceMode: false,
-  adRewardPerView: 0.5,
+  bonusAdsEnabled: false,
+  adRewardPerView: 1,
   adMaxViewsPerDay: 5,
   adCooldownSeconds: 60,
   adWatchSeconds: 20,
@@ -36,6 +42,7 @@ export async function getAppSettings(): Promise<AppSettings> {
   if (!row) return DEFAULT_SETTINGS;
 
   const raw = row.value as Partial<AppSettings>;
+  const bonusAdsLockedForLaunch = isBonusAdsLockedForLaunch();
   return {
     commissionRateDefault:
       typeof raw.commissionRateDefault === "number"
@@ -63,9 +70,15 @@ export async function getAppSettings(): Promise<AppSettings> {
         : DEFAULT_SETTINGS.levelResetHours,
     maintenanceMode:
       typeof raw.maintenanceMode === "boolean" ? raw.maintenanceMode : DEFAULT_SETTINGS.maintenanceMode,
+    bonusAdsEnabled:
+      bonusAdsLockedForLaunch
+        ? false
+        : typeof raw.bonusAdsEnabled === "boolean"
+          ? raw.bonusAdsEnabled
+          : DEFAULT_SETTINGS.bonusAdsEnabled,
     adRewardPerView:
       typeof raw.adRewardPerView === "number" && raw.adRewardPerView > 0
-        ? Math.min(Math.max(raw.adRewardPerView, 0.1), 100)
+        ? Math.min(Math.max(Math.floor(raw.adRewardPerView), 1), 25)
         : DEFAULT_SETTINGS.adRewardPerView,
     adMaxViewsPerDay:
       typeof raw.adMaxViewsPerDay === "number" && raw.adMaxViewsPerDay >= 1
@@ -79,15 +92,21 @@ export async function getAppSettings(): Promise<AppSettings> {
       typeof raw.adWatchSeconds === "number" && raw.adWatchSeconds >= 5
         ? Math.min(Math.max(Math.floor(raw.adWatchSeconds), 5), 300)
         : DEFAULT_SETTINGS.adWatchSeconds,
-    taskCategories: normalizeTaskCategoryConfig(raw.taskCategories),
+    taskCategories: getLaunchSafeTaskCategories(raw.taskCategories),
   };
 }
 
 export async function updateAppSettings(value: Partial<AppSettings>) {
   const current = await getAppSettings();
+  const bonusAdsLockedForLaunch = isBonusAdsLockedForLaunch();
   const merged: AppSettings = {
     ...current,
     ...value,
+    bonusAdsEnabled: bonusAdsLockedForLaunch ? false : Boolean(value.bonusAdsEnabled ?? current.bonusAdsEnabled),
+    taskCategories:
+      value.taskCategories !== undefined
+        ? getLaunchSafeTaskCategories(value.taskCategories)
+        : current.taskCategories,
   };
 
   return prisma.systemSetting.upsert({

@@ -1,126 +1,150 @@
-import { getCmsValue } from "@/lib/cms";
-import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
+﻿import { PolicySection, PublicPageShell } from "@/components/public-page-shell";
 import { getLocale } from "next-intl/server";
 
-const FALLBACK_EN = `By using FreeEarnHub, you agree to these terms. FreeEarnHub is a micro-task marketplace for users and businesses.
+type Section = { title: string; body: string };
 
-Platform Description
-Businesses post campaigns and users submit task proofs. Admin moderation is required for approvals and payout flow.
+type Content = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  sections: Section[];
+};
 
-User Responsibilities
-Users must provide genuine submissions, avoid abuse, and comply with anti-fraud checks. One user may submit only within configured platform limits.
-
-Business Responsibilities
-Businesses must maintain adequate wallet balance, publish legitimate campaigns, and accept moderation decisions.
-
-Commission Structure
-FreeEarnHub charges a 30% platform commission on approved task rewards unless a different policy is formally announced.
-
-Submission & Fraud Policy
-Fraudulent, duplicate, or manipulated proofs may be rejected. Accounts can be flagged, suspended, or permanently disabled for abuse, suspicious IP activity, or policy violation.
-
-Refund & Disputes
-Refund eligibility is governed by the Refund Policy page. Disputes are reviewed by the platform team and resolved based on platform records and moderation logs.
-
-Liability Limitation
-FreeEarnHub is provided on a best-effort basis. We are not liable for indirect losses, third party downtime, or payment rail disruptions beyond our control.`;
+const CONTENT: Record<string, Content> = {
+  en: {
+    eyebrow: "Legal",
+    title: "Terms & Conditions",
+    description:
+      "These terms govern account access, campaign publishing, task participation, moderation, and settlement on FreeEarnHub.",
+    sections: [
+      {
+        title: "Platform scope",
+        body:
+          "FreeEarnHub operates as a moderated micro-work operations platform. The live service scope is limited to testing, feedback, content, research, data, moderation, and operational delivery tasks. The platform is not offered as a ratings marketplace, fake engagement exchange, artificial traffic source, or install-count service.",
+      },
+      {
+        title: "Accounts and verification",
+        body:
+          "Users and businesses must provide accurate account information and keep login credentials secure. We may require identity, business, payout, or KYC verification before enabling sensitive features such as campaign publishing, wallet operations, refunds, or withdrawals.",
+      },
+      {
+        title: "Allowed and prohibited campaigns",
+        body:
+          "Businesses may publish only lawful, clearly described tasks with legitimate operational outcomes. Prohibited campaigns include paid public reviews or ratings, ad-click or traffic manipulation, follower/like/share/comment inflation, install-count campaigns not tied to genuine testing, deceptive promotions, spam, and any task that violates third-party platform rules.",
+      },
+      {
+        title: "Review, approval, and settlement",
+        body:
+          "Submission review is moderated by the platform workflow. Manager and admin decisions, fraud checks, and proof verification determine whether work is approved, rejected, escalated, or held for manual review. Rewards are credited only after approval under the campaign rules and platform controls.",
+      },
+      {
+        title: "Wallets, commissions, and withdrawals",
+        body:
+          "Displayed balances inside FreeEarnHub are internal ledger balances used for platform operations. User take-home amounts and platform commission may vary by task type and published share rules. Withdrawal requests and business refunds may be delayed, limited, or rejected where fraud, abuse, compliance, reconciliation, or documentation review is required.",
+      },
+      {
+        title: "Suspension, reversals, and liability",
+        body:
+          "We may pause campaigns, suspend accounts, block withdrawals, or reverse unsettled credits when fraud, abuse, policy violations, or legal risk is detected. FreeEarnHub is provided on a best-effort basis and relies on third-party infrastructure and payment rails. Users and businesses remain responsible for local law, tax, and platform-rule compliance in their jurisdiction.",
+      },
+    ],
+  },
+  hi: {
+    eyebrow: "कानूनी",
+    title: "नियम और शर्तें",
+    description:
+      "ये शर्तें FreeEarnHub पर अकाउंट एक्सेस, कैंपेन पब्लिशिंग, टास्क भागीदारी, मॉडरेशन और सेटलमेंट को नियंत्रित करती हैं।",
+    sections: [
+      {
+        title: "प्लेटफ़ॉर्म का दायरा",
+        body:
+          "FreeEarnHub एक moderated micro-work operations platform के रूप में काम करता है। लाइव सर्विस स्कोप केवल testing, feedback, content, research, data, moderation और operational delivery tasks तक सीमित है। यह प्लेटफ़ॉर्म ratings marketplace, fake engagement exchange, artificial traffic source या install-count service के रूप में उपलब्ध नहीं है।",
+      },
+      {
+        title: "अकाउंट और verification",
+        body:
+          "यूज़र और बिज़नेस को सही अकाउंट जानकारी देनी होगी और login credentials सुरक्षित रखने होंगे। कैंपेन पब्लिशिंग, wallet operations, refunds या withdrawals जैसे sensitive features सक्षम करने से पहले हम identity, business, payout या KYC verification मांग सकते हैं।",
+      },
+      {
+        title: "अनुमत और प्रतिबंधित कैंपेन",
+        body:
+          "बिज़नेस केवल lawful, clearly described और legitimate operational outcome वाले task ही publish कर सकते हैं। Paid public reviews या ratings, ad-click या traffic manipulation, follower/like/share/comment inflation, genuine testing से अलग install-count campaigns, deceptive promotions, spam और third-party platform rules का उल्लंघन करने वाले task प्रतिबंधित हैं।",
+      },
+      {
+        title: "Review, approval और settlement",
+        body:
+          "Submission review platform workflow के तहत moderated तरीके से होती है। Manager और admin decisions, fraud checks और proof verification यह तय करते हैं कि work approved, rejected, escalated या manual review के लिए hold होगा। Reward केवल approval के बाद ही campaign rules और platform controls के अनुसार credit होता है।",
+      },
+      {
+        title: "Wallet, commission और withdrawals",
+        body:
+          "FreeEarnHub के अंदर दिखने वाले balances internal ledger balances हैं जिनका उपयोग platform operations के लिए होता है। User take-home amount और platform commission task type तथा published share rules के अनुसार बदल सकते हैं। Fraud, abuse, compliance, reconciliation या documentation review की स्थिति में withdrawal requests और business refunds में delay, limit या rejection हो सकता है।",
+      },
+      {
+        title: "Suspension, reversal और liability",
+        body:
+          "Fraud, abuse, policy violation या legal risk मिलने पर हम campaigns pause कर सकते हैं, accounts suspend कर सकते हैं, withdrawals block कर सकते हैं या unsettled credits reverse कर सकते हैं। FreeEarnHub best-effort basis पर उपलब्ध है और third-party infrastructure तथा payment rails पर निर्भर करता है। Local law, tax और platform-rule compliance की जिम्मेदारी यूज़र और बिज़नेस की ही रहती है।",
+      },
+    ],
+  },
+  bn: {
+    eyebrow: "আইনি",
+    title: "শর্তাবলি",
+    description:
+      "এই শর্তগুলো FreeEarnHub-এ অ্যাকাউন্ট অ্যাক্সেস, ক্যাম্পেইন প্রকাশ, টাস্ক অংশগ্রহণ, মডারেশন এবং সেটেলমেন্ট নিয়ন্ত্রণ করে।",
+    sections: [
+      {
+        title: "প্ল্যাটফর্মের পরিধি",
+        body:
+          "FreeEarnHub একটি moderated micro-work operations platform হিসেবে কাজ করে। লাইভ সার্ভিস স্কোপ শুধু testing, feedback, content, research, data, moderation এবং operational delivery tasks-এর মধ্যে সীমিত। এই প্ল্যাটফর্ম ratings marketplace, fake engagement exchange, artificial traffic source বা install-count service হিসেবে অফার করা হয় না।",
+      },
+      {
+        title: "অ্যাকাউন্ট ও verification",
+        body:
+          "ব্যবহারকারী ও ব্যবসাকে সঠিক অ্যাকাউন্ট তথ্য দিতে হবে এবং login credentials নিরাপদ রাখতে হবে। Campaign publishing, wallet operations, refunds বা withdrawals-এর মতো sensitive features চালুর আগে আমরা identity, business, payout বা KYC verification চাইতে পারি।",
+      },
+      {
+        title: "অনুমোদিত ও নিষিদ্ধ ক্যাম্পেইন",
+        body:
+          "ব্যবসা শুধুমাত্র lawful, clearly described এবং legitimate operational outcome-সহ task publish করতে পারবে। Paid public reviews বা ratings, ad-click বা traffic manipulation, follower/like/share/comment inflation, genuine testing-এর বাইরে install-count campaigns, deceptive promotions, spam এবং third-party platform rules ভঙ্গকারী task নিষিদ্ধ।",
+      },
+      {
+        title: "Review, approval ও settlement",
+        body:
+          "Submission review প্ল্যাটফর্ম workflow-এর মাধ্যমে moderated ভাবে হয়। Manager ও admin decisions, fraud checks এবং proof verification ঠিক করে work approved, rejected, escalated বা manual review-এ hold হবে কি না। Reward শুধুমাত্র approval-এর পরে campaign rules এবং platform controls অনুযায়ী credit করা হয়।",
+      },
+      {
+        title: "Wallet, commission ও withdrawals",
+        body:
+          "FreeEarnHub-এর ভেতরে দেখানো balances internal ledger balances, যা platform operations-এর জন্য ব্যবহৃত হয়। User take-home amount এবং platform commission task type ও published share rules অনুযায়ী পরিবর্তিত হতে পারে। Fraud, abuse, compliance, reconciliation বা documentation review লাগলে withdrawal requests এবং business refunds delay, limit বা reject হতে পারে।",
+      },
+      {
+        title: "Suspension, reversal ও liability",
+        body:
+          "Fraud, abuse, policy violation বা legal risk ধরা পড়লে আমরা campaigns pause করতে পারি, accounts suspend করতে পারি, withdrawals block করতে পারি অথবা unsettled credits reverse করতে পারি। FreeEarnHub best-effort basis-এ প্রদান করা হয় এবং third-party infrastructure ও payment rails-এর উপর নির্ভরশীল। Local law, tax এবং platform-rule compliance-এর দায় ব্যবহারকারী ও ব্যবসার উপরই থাকে।",
+      },
+    ],
+  },
+};
 
 export default async function TermsPage() {
   const locale = await getLocale();
-  const content = await getCmsValue<{ body: string }>("legal.terms", { body: "" });
-  const body = content.body?.trim();
-
-  const meta =
-    locale === "hi"
-      ? {
-          eyebrow: "कानूनी",
-          title: "नियम और शर्तें",
-          description: "ये शर्तें FreeEarnHub पर प्लेटफ़ॉर्म एक्सेस, टास्क भागीदारी, कैंपेन पब्लिशिंग और पेआउट संचालन को नियंत्रित करती हैं।",
-        }
-      : locale === "bn"
-        ? {
-            eyebrow: "আইনি",
-            title: "শর্তাবলি",
-            description: "এই শর্তগুলো FreeEarnHub প্ল্যাটফর্মে অ্যাক্সেস, টাস্ক অংশগ্রহণ, ক্যাম্পেইন প্রকাশ এবং পেআউট অপারেশন নিয়ন্ত্রণ করে।",
-          }
-        : {
-            eyebrow: "Legal",
-            title: "Terms & Conditions",
-            description: "These terms govern platform access, task participation, campaign publishing, and payout operations on FreeEarnHub.",
-          };
-
-  const fallback =
-    locale === "hi"
-      ? `FreeEarnHub का उपयोग करके, आप इन शर्तों से सहमत होते हैं। FreeEarnHub यूज़र्स और बिज़नेस के लिए एक माइक्रो-टास्क मार्केटप्लेस है।
-
-प्लेटफ़ॉर्म विवरण
-बिज़नेस कैंपेन पोस्ट करते हैं और यूज़र्स टास्क प्रूफ सबमिट करते हैं। अप्रूवल और पेआउट फ्लो के लिए एडमिन मॉडरेशन आवश्यक है।
-
-यूज़र जिम्मेदारियां
-यूज़र्स को वास्तविक सबमिशन देना होगा, दुरुपयोग से बचना होगा और एंटी-फ्रॉड चेक्स का पालन करना होगा। एक यूज़र कॉन्फ़िगर प्लेटफ़ॉर्म लिमिट्स के भीतर ही सबमिट कर सकता है।
-
-बिज़नेस जिम्मेदारियां
-बिज़नेस को पर्याप्त वॉलेट बैलेंस रखना होगा, वैध कैंपेन पब्लिश करने होंगे और मॉडरेशन निर्णय स्वीकार करने होंगे।
-
-कमीशन संरचना
-FreeEarnHub अप्रूव्ड टास्क रिवॉर्ड पर 30% प्लेटफ़ॉर्म कमीशन चार्ज करता है, जब तक कि किसी आधिकारिक घोषणा में अलग नीति न बताई जाए।
-
-सबमिशन और फ्रॉड नीति
-फ्रॉड, डुप्लिकेट या मैनिपुलेटेड प्रूफ रिजेक्ट हो सकते हैं। दुरुपयोग, संदिग्ध IP गतिविधि या नीति उल्लंघन पर अकाउंट फ्लैग/सस्पेंड/डिसेबल किया जा सकता है।
-
-रिफंड और विवाद
-रिफंड पात्रता Refund Policy पेज के अनुसार है। विवाद प्लेटफ़ॉर्म रिकॉर्ड और मॉडरेशन लॉग के आधार पर रिव्यू/रिज़ॉल्व किए जाते हैं।
-
-देयता सीमा
-FreeEarnHub best-effort आधार पर प्रदान किया जाता है। अप्रत्यक्ष नुकसान, थर्ड-पार्टी डाउनटाइम या भुगतान नेटवर्क बाधाओं के लिए हम जिम्मेदार नहीं हैं।`
-      : locale === "bn"
-        ? `FreeEarnHub ব্যবহার করে আপনি এই শর্তগুলিতে সম্মত হন। FreeEarnHub হলো ব্যবহারকারী ও ব্যবসার জন্য একটি মাইক্রো-টাস্ক মার্কেটপ্লেস।
-
-প্ল্যাটফর্ম বিবরণ
-ব্যবসা ক্যাম্পেইন পোস্ট করে এবং ব্যবহারকারীরা টাস্ক প্রুফ সাবমিট করে। অনুমোদন ও পেআউট ফ্লোর জন্য অ্যাডমিন মডারেশন প্রয়োজন।
-
-ব্যবহারকারীর দায়িত্ব
-ব্যবহারকারীকে সত্য প্রুফ জমা দিতে হবে, অপব্যবহার এড়িয়ে চলতে হবে এবং অ্যান্টি-ফ্রড চেক মেনে চলতে হবে। একজন ব্যবহারকারী কনফিগার করা প্ল্যাটফর্ম লিমিটের মধ্যে সাবমিট করতে পারবেন।
-
-ব্যবসার দায়িত্ব
-ব্যবসাকে পর্যাপ্ত ওয়ালেট ব্যালান্স রাখতে হবে, বৈধ ক্যাম্পেইন প্রকাশ করতে হবে এবং মডারেশন সিদ্ধান্ত গ্রহণ করতে হবে।
-
-কমিশন কাঠামো
-আনুষ্ঠানিক ঘোষণা ছাড়া FreeEarnHub অনুমোদিত টাস্ক রিওয়ার্ডে ৩০% প্ল্যাটফর্ম কমিশন নেয়।
-
-সাবমিশন ও ফ্রড নীতি
-ফ্রড, ডুপ্লিকেট বা ম্যানিপুলেটেড প্রুফ প্রত্যাখ্যান হতে পারে। অপব্যবহার, সন্দেহজনক IP অ্যাক্টিভিটি বা নীতি লঙ্ঘনে অ্যাকাউন্ট ফ্ল্যাগ/সাসপেন্ড/ডিসেবল করা হতে পারে।
-
-রিফান্ড ও বিরোধ
-রিফান্ড যোগ্যতা Refund Policy পেজ অনুযায়ী। বিরোধ প্ল্যাটফর্ম রেকর্ড এবং মডারেশন লগের ভিত্তিতে রিভিউ ও সমাধান করা হয়।
-
-দায়বদ্ধতার সীমা
-FreeEarnHub best-effort ভিত্তিতে দেওয়া হয়। পরোক্ষ ক্ষতি, তৃতীয় পক্ষের ডাউনটাইম বা পেমেন্ট নেটওয়ার্ক সমস্যার জন্য আমরা দায়ী নই।`
-        : FALLBACK_EN;
+  const content = CONTENT[locale] ?? CONTENT.en;
 
   return (
     <PublicPageShell
-      eyebrow={meta.eyebrow}
-      title={meta.title}
-      description={meta.description}
-      lastUpdated="March 11, 2026"
+      eyebrow={content.eyebrow}
+      title={content.title}
+      description={content.description}
+      lastUpdated="April 3, 2026"
     >
       <div className="space-y-4">
-        {locale === "en" && body ? (
-          <PolicySection title="Terms">
-            {body.split("\n\n").map((paragraph, idx) => (
-              <p key={idx}>{paragraph}</p>
-            ))}
+        {content.sections.map((section) => (
+          <PolicySection key={section.title} title={section.title}>
+            <p>{section.body}</p>
           </PolicySection>
-        ) : (
-          fallback.split("\n\n").map((paragraph, idx) => (
-            <PolicySection key={idx} title={`Section ${idx + 1}`}>
-              <p>{paragraph}</p>
-            </PolicySection>
-          ))
-        )}
+        ))}
       </div>
     </PublicPageShell>
   );
 }
-

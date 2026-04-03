@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getDisplayMetrics } from "@/lib/display-metrics";
 
 export async function GET() {
   try {
@@ -17,16 +16,16 @@ export async function GET() {
       }),
     ]);
 
-    const displayMetrics = getDisplayMetrics({
+    const metrics = {
       totalPayout: Math.round(totalPayout._sum.amount || 0),
       totalUsers,
       businessAccounts,
       totalCampaigns,
       tasksCompleted,
-    });
+    };
 
     return NextResponse.json({
-      ...displayMetrics,
+      ...metrics,
       generatedAt: new Date().toISOString(),
     });
   } catch {

@@ -386,7 +386,8 @@ export default function AdminCmsPanel({
         <div className="space-y-1">
           <h3 className="text-lg font-semibold">Task Categories & Types</h3>
           <p className="text-sm text-white/65">
-            Edit the master campaign category list used by business create/edit and admin campaign management.
+            Edit the safe service catalog used by business create/edit and admin campaign management.
+            Keep this list focused on testing, feedback, content, research, data work, moderation, and operational delivery.
             Use one category block at a time. First line is the category name, next lines are task types. Leave one blank line between categories.
           </p>
         </div>

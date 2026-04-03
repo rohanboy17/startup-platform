@@ -1,18 +1,17 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BadgeIndianRupee, Clock3, Film, Gift, PlayCircle } from "lucide-react";
+import { Clock3, Film, PlayCircle, Sparkles, Zap } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
-import { formatMoney } from "@/lib/format-money";
 import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
 
 type EarnAdsResponse = {
   settings: {
-    rewardPerAd: number;
+    perkCreditsPerAd: number;
     maxAdsPerDay: number;
     cooldownSeconds: number;
     watchSeconds: number;
@@ -21,14 +20,21 @@ type EarnAdsResponse = {
     availableAdsToday: number;
     adsWatchedToday: number;
     remainingAds: number;
-    rewardPerAd: number;
+    perkCreditsPerAd: number;
+  };
+  perks: {
+    balance: number;
+    recommendationBoostCost: number;
+    recommendationBoostHours: number;
+    recommendationBoostActive: boolean;
+    recommendationBoostEndsAt: string | null;
   };
   cooldownLeftSeconds: number;
   cooldownEndsAt: string | null;
   canStart: boolean;
   activeSession: {
     id: string;
-    reward: number;
+    perkCredits: number;
     status: "PENDING";
     startedAt: string;
     expiresAt: string;
@@ -37,9 +43,12 @@ type EarnAdsResponse = {
     remainingSeconds: number;
     progressPercent: number;
   } | null;
-  recentRewards: Array<{
+  recentPerkActivity: Array<{
     id: string;
-    reward: number;
+    amount: number;
+    type: "CREDIT" | "DEBIT";
+    source: string;
+    note: string | null;
     createdAt: string;
   }>;
   error?: string;
@@ -62,7 +71,7 @@ export default function UserEarnAdsPanel() {
   const [data, setData] = useState<EarnAdsResponse | null>(null);
   const [error, setError] = useState("");
   const [feedback, setFeedback] = useState("");
-  const [loadingAction, setLoadingAction] = useState<"start" | "complete" | null>(null);
+  const [loadingAction, setLoadingAction] = useState<"start" | "complete" | "boost" | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [nowTs, setNowTs] = useState(() => Date.now());
   const [pageActive, setPageActive] = useState(getPageActiveState);
@@ -101,17 +110,22 @@ export default function UserEarnAdsPanel() {
   }, []);
 
   useEffect(() => {
-    if (!data?.cooldownEndsAt) return;
+    if (!data?.cooldownEndsAt && !data?.perks.recommendationBoostEndsAt) return;
     const timer = window.setInterval(() => {
       setNowTs(Date.now());
     }, 1000);
     return () => window.clearInterval(timer);
-  }, [data?.cooldownEndsAt]);
+  }, [data?.cooldownEndsAt, data?.perks.recommendationBoostEndsAt]);
 
   const cooldownLeft = useMemo(() => {
     if (!data?.cooldownEndsAt || data.activeSession) return 0;
     return Math.max(0, Math.ceil((new Date(data.cooldownEndsAt).getTime() - nowTs) / 1000));
   }, [data?.cooldownEndsAt, data?.activeSession, nowTs]);
+
+  const boostSecondsLeft = useMemo(() => {
+    if (!data?.perks.recommendationBoostEndsAt) return 0;
+    return Math.max(0, Math.ceil((new Date(data.perks.recommendationBoostEndsAt).getTime() - nowTs) / 1000));
+  }, [data?.perks.recommendationBoostEndsAt, nowTs]);
 
   const activeSecondsLeft = data?.activeSession?.remainingSeconds ?? 0;
   const adProgress = data?.activeSession?.progressPercent ?? 0;
@@ -178,6 +192,38 @@ export default function UserEarnAdsPanel() {
     },
     [load, t]
   );
+
+  const activateBoost = useCallback(async () => {
+    setLoadingAction("boost");
+    setFeedback("");
+    const res = await fetch("/api/v2/users/me/earn-ads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ action: "activateBoost" }),
+    });
+    const raw = await res.text();
+    const parsed = raw
+      ? (JSON.parse(raw) as { error?: string; message?: string; payload?: EarnAdsResponse })
+      : {};
+
+    setLoadingAction(null);
+    if (!res.ok) {
+      setFeedback(parsed.error || t("errors.activateBoost"));
+      if (parsed.payload) {
+        setData(parsed.payload);
+      }
+      return;
+    }
+
+    if (parsed.payload) {
+      setData(parsed.payload);
+    } else {
+      await load();
+    }
+    setFeedback(parsed.message || t("messages.boostActivated"));
+    emitDashboardLiveRefresh();
+  }, [load, t]);
 
   const expireActiveSession = useCallback(
     async (sessionId: string) => {
@@ -320,11 +366,7 @@ export default function UserEarnAdsPanel() {
         <KpiCard label={t("kpis.availableAds")} value={data.summary.availableAdsToday} tone="info" />
         <KpiCard label={t("kpis.watchedToday")} value={data.summary.adsWatchedToday} tone="success" />
         <KpiCard label={t("kpis.remainingAds")} value={data.summary.remainingAds} tone="warning" />
-        <KpiCard
-          label={t("kpis.rewardPerAd")}
-          value={`INR ${formatMoney(data.summary.rewardPerAd)}`}
-          tone="success"
-        />
+        <KpiCard label={t("kpis.perkCreditsPerAd")} value={data.summary.perkCreditsPerAd} tone="success" />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
@@ -382,13 +424,59 @@ export default function UserEarnAdsPanel() {
             </div>
           </div>
 
+          <div className="rounded-2xl border border-sky-400/20 bg-sky-400/[0.08] p-4">
+            <div className="flex items-start gap-3">
+              <div className="rounded-2xl border border-sky-400/20 bg-sky-400/10 p-3 text-sky-700 dark:text-sky-200">
+                <Sparkles size={18} />
+              </div>
+              <div className="w-full space-y-3">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="text-sm text-foreground/60">{t("perks.eyebrow")}</p>
+                    <h3 className="text-xl font-semibold text-foreground">{t("perks.title")}</h3>
+                    <p className="mt-1 text-sm text-foreground/70">{t("perks.body")}</p>
+                  </div>
+                  <div className="rounded-2xl border border-sky-400/25 bg-background/70 px-4 py-3 sm:min-w-40">
+                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("perks.balance")}</p>
+                    <p className="mt-2 text-2xl font-semibold text-foreground">{data.perks.balance}</p>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4 text-sm text-foreground/70">
+                  <p className="font-medium text-foreground">{t("perks.boostTitle")}</p>
+                  <p className="mt-1">{t("perks.boostBody", { hours: data.perks.recommendationBoostHours })}</p>
+                  <p className="mt-2 text-xs text-foreground/60">
+                    {data.perks.recommendationBoostActive && boostSecondsLeft > 0
+                      ? t("perks.boostActive", {
+                          date: new Date(data.perks.recommendationBoostEndsAt as string).toLocaleString(resolveIntlLocale(locale)),
+                        })
+                      : t("perks.boostInactive", { count: data.perks.recommendationBoostCost })}
+                  </p>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => void activateBoost()}
+                  disabled={loadingAction !== null || data.perks.balance < data.perks.recommendationBoostCost}
+                  className="w-full sm:w-auto"
+                >
+                  <Zap size={16} />
+                  {loadingAction === "boost"
+                    ? t("actions.activatingBoost")
+                    : t("actions.activateBoost", { count: data.perks.recommendationBoostCost })}
+                </Button>
+              </div>
+            </div>
+          </div>
+
           {feedback ? <p className="text-sm text-emerald-700 dark:text-emerald-200">{feedback}</p> : null}
         </SectionCard>
 
         <SectionCard elevated className="space-y-5 p-4 sm:p-6">
           <div className="flex items-start gap-3">
             <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-3 text-cyan-700 dark:text-cyan-200">
-              <Gift size={18} />
+              <Sparkles size={18} />
             </div>
             <div>
               <p className="text-sm text-foreground/60">{t("historyEyebrow")}</p>
@@ -397,22 +485,26 @@ export default function UserEarnAdsPanel() {
           </div>
 
           <div className="space-y-3">
-            {data.recentRewards.length ? (
-              data.recentRewards.map((item) => (
-                <div
-                  key={item.id}
-                  className="rounded-2xl border border-foreground/10 bg-background/60 px-4 py-3"
-                >
+            {data.recentPerkActivity.length ? (
+              data.recentPerkActivity.map((item) => (
+                <div key={item.id} className="rounded-2xl border border-foreground/10 bg-background/60 px-4 py-3">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-sm font-medium text-foreground">{t("history.rewardRow")}</p>
+                      <p className="text-sm font-medium text-foreground">{item.note || item.source}</p>
                       <p className="mt-1 text-xs text-foreground/60">
                         {new Date(item.createdAt).toLocaleString(resolveIntlLocale(locale))}
                       </p>
                     </div>
-                    <div className="inline-flex items-center gap-1 rounded-full border border-emerald-400/25 bg-emerald-400/10 px-3 py-1 text-sm font-medium text-emerald-700 dark:text-emerald-200">
-                      <BadgeIndianRupee size={14} />
-                      {formatMoney(item.reward)}
+                    <div
+                      className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm font-medium ${
+                        item.type === "CREDIT"
+                          ? "border-emerald-400/25 bg-emerald-400/10 text-emerald-700 dark:text-emerald-200"
+                          : "border-amber-400/25 bg-amber-400/10 text-amber-800 dark:text-amber-200"
+                      }`}
+                    >
+                      {item.type === "CREDIT" ? "+" : "-"}
+                      {item.amount}
+                      <span>{t("history.creditsUnit")}</span>
                     </div>
                   </div>
                 </div>
@@ -448,7 +540,10 @@ export default function UserEarnAdsPanel() {
               {!pageActive
                 ? t("modal.expiring")
                 : activeSecondsLeft > 0
-                  ? t("modal.keepOpen", { seconds: activeSecondsLeft })
+                  ? t("modal.keepOpen", {
+                      seconds: activeSecondsLeft,
+                      count: data.activeSession?.perkCredits ?? data.summary.perkCreditsPerAd,
+                    })
                   : t("modal.claiming")}
             </div>
 

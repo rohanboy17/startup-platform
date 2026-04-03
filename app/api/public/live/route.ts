@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getDisplayLiveStats } from "@/lib/display-metrics";
 
 type LiveEvent = {
   kind: "USER" | "BUSINESS" | "TASK" | "WITHDRAW";
@@ -108,12 +107,10 @@ export async function GET() {
 
     return NextResponse.json({
       stats: {
-        ...getDisplayLiveStats({
-          activeOnlineUsers,
-          activeOnlineBusinesses,
-          liveTasks,
-          liveWithdraws,
-        }),
+        activeOnlineUsers,
+        activeOnlineBusinesses,
+        liveTasks,
+        liveWithdraws,
       },
       events,
       generatedAt: new Date().toISOString(),

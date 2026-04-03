@@ -39,13 +39,17 @@ export default async function BusinessLayout({
     redirect("/maintenance");
   }
 
-    const items = [
+  const items = [
       { key: "business.overview", href: "/dashboard/business", label: "Overview", labelKey: "overview", icon: "overview" as const },
       { key: "business.campaigns", href: "/dashboard/business/campaigns", label: "Campaigns", labelKey: "campaigns", icon: "campaigns" as const },
+      { key: "business.jobs", href: "/dashboard/business/jobs", label: "Jobs", labelKey: "jobs", icon: "jobs" as const },
       { key: "business.reviews", href: "/dashboard/business/reviews", label: "Reviews", labelKey: "reviews", icon: "reviews" as const },
       { key: "business.kyc", href: "/dashboard/business/kyc", label: "KYC", labelKey: "kyc", icon: "trust" as const },
     ...(canManageBusinessCampaigns(context.accessRole)
-      ? [{ key: "business.create", href: "/dashboard/business/create", label: "Create Campaign", labelKey: "createCampaign", icon: "create" as const }]
+      ? [
+          { key: "business.create", href: "/dashboard/business/create", label: "Create Campaign", labelKey: "createCampaign", icon: "create" as const },
+          { key: "business.createJob", href: "/dashboard/business/jobs/create", label: "Create Job", labelKey: "createJob", icon: "create" as const },
+        ]
       : []),
     { key: "business.analytics", href: "/dashboard/business/analytics", label: "Analytics", labelKey: "analytics", icon: "analytics" as const },
     ...(canManageBusinessBilling(context.accessRole)

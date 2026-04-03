@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { validateCampaignPolicy } from "@/lib/campaign-policy";
 import { prisma } from "@/lib/prisma";
 import { normalizeTutorialVideoUrl } from "@/lib/tutorial-video";
 import { normalizeTaskSelection } from "@/lib/task-categories";
@@ -47,6 +48,15 @@ export async function PATCH(
       status: true,
       businessId: true,
       title: true,
+      description: true,
+      category: true,
+      taskCategory: true,
+      taskType: true,
+      customTask: true,
+      taskLink: true,
+      instructions: {
+        orderBy: { sequence: "asc" },
+      },
       escalatedAt: true,
       escalationReason: true,
     },
@@ -138,6 +148,23 @@ export async function PATCH(
   const status = nextStatusByAction[action as keyof typeof nextStatusByAction];
   if (!status) {
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
+  }
+
+  if (["APPROVE", "LIVE", "RESUME"].includes(action)) {
+    const policyError = validateCampaignPolicy({
+      title: campaign.title,
+      description: campaign.description,
+      category: campaign.category,
+      taskCategory: campaign.taskCategory,
+      taskType: campaign.taskType,
+      customTask: campaign.customTask,
+      taskLink: campaign.taskLink,
+      instructions: campaign.instructions.map((item) => item.instructionText),
+    });
+
+    if (policyError) {
+      return NextResponse.json({ error: policyError.error }, { status: 400 });
+    }
   }
 
   const updated = await prisma.$transaction(async (tx) => {
@@ -257,6 +284,19 @@ export async function PUT(
   }
   if ("error" in normalizedTaskSelection) {
     return NextResponse.json({ error: normalizedTaskSelection.error }, { status: 400 });
+  }
+  const policyError = validateCampaignPolicy({
+    title,
+    description,
+    category,
+    taskCategory: normalizedTaskSelection.taskCategory,
+    taskType: normalizedTaskSelection.taskType,
+    customTask: normalizedTaskSelection.customTask,
+    taskLink,
+    instructions,
+  });
+  if (policyError) {
+    return NextResponse.json({ error: policyError.error }, { status: 400 });
   }
   if (Number.isNaN(rewardPerTask) || rewardPerTask <= 0) {
     return NextResponse.json({ error: "Invalid reward per task" }, { status: 400 });

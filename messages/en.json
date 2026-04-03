@@ -17,9 +17,9 @@
     "platform": "Platform",
     "compliance": "Compliance",
     "marketplace": "Marketplace",
-    "tagline": "A secure two-sided marketplace where users complete verified tasks and businesses launch measurable growth campaigns.",
+    "tagline": "A verified micro-work operations platform for testing, feedback, content, research, and data tasks.",
     "rights": "All rights reserved.",
-    "builtFor": "Built for secure payouts, moderation, and campaign analytics.",
+    "builtFor": "Built for moderated workflows, payout controls, and accountable delivery.",
     "links": {
       "home": "Home",
       "about": "About",
@@ -32,7 +32,9 @@
       "refund": "Refund Policy",
       "cookie": "Cookie Policy",
       "disclaimer": "Disclaimer",
-      "kyc": "KYC Policy"
+      "kyc": "KYC Policy",
+      "businessGuidelines": "Business Guidelines",
+      "compliancePage": "Compliance & Grievance"
     },
     "socialTitle": "Follow us",
     "socialDescription": "Stay close to new launches, support updates, and community news.",
@@ -193,8 +195,8 @@
   },
   "home": {
     "landing": {
-      "heroTitle": "Earn by completing verified tasks.",
-      "heroSubtitle": "FreeEarnHub is a simple earning platform where users complete verified tasks and businesses run trackable growth campaigns."
+      "heroTitle": "Verified micro-work for people. Controlled delivery for businesses.",
+      "heroSubtitle": "FreeEarnHub connects businesses with moderated micro-work for testing, feedback, content, research, and data operations."
     },
     "announcements": {
       "learnMore": "Learn more"
@@ -210,18 +212,18 @@
     },
     "sections": {
       "howItWorksEyebrow": "How it works",
-      "howItWorksTitle": "Earn in three simple steps",
+      "howItWorksTitle": "Start earning in three clear steps",
       "howItWorksSteps": [
-        "Pick a verified task and follow the instructions.",
-        "Submit proof and track your status in real time.",
-        "Get approved and receive wallet credits quickly."
+        "Pick an approved micro-task and read the work brief carefully.",
+        "Complete the task, attach proof, and track review status.",
+        "Get approved and receive wallet credit under the platform rules."
       ],
       "forBusinessesEyebrow": "For businesses",
-      "forBusinessesTitle": "Launch campaigns without noise",
+      "forBusinessesTitle": "Run verified micro-work without chaos",
       "forBusinessesSteps": [
-        "Fund your wallet, set budget and reward per task.",
-        "Receive moderated submissions with fraud signals.",
-        "Track ROI with live analytics and export-ready reports."
+        "Fund your wallet and launch testing, feedback, content, or data tasks.",
+        "Receive moderated submissions with fraud checks and review trails.",
+        "Measure approvals, spend, and delivery quality from one dashboard."
       ]
     },
     "live": {
@@ -237,7 +239,8 @@
       "statsError": "Failed to load live stats",
       "activityError": "Failed to load live activity",
       "noLiveWithdraw": "No live withdraw requests right now.",
-      "noActivity": "No recent activity yet. New events will appear here."
+      "noActivity": "No recent activity yet. New events will appear here.",
+      "withdrawRequests": "Live Withdraw Requests"
     },
     "features": {
       "items": [
@@ -302,14 +305,14 @@
         },
         {
           "id": "campaign",
-          "tabLabel": "Run campaigns",
+          "tabLabel": "Run work ops",
           "eyebrow": "Business walkthrough",
-          "title": "Learn how businesses launch campaigns",
-          "body": "This guide shows the full campaign flow from funding the wallet to creating tasks, getting reviewed submissions, and tracking campaign performance clearly.",
+          "title": "Learn how businesses run verified work operations",
+          "body": "This guide shows the flow from funding the wallet to launching testing, feedback, content, and data tasks with clear review and delivery tracking.",
           "bullets": [
             "Understand wallet funding, budget setup, and reward planning.",
-            "See how submissions are reviewed before results are approved.",
-            "Follow how to measure spend, approvals, and campaign health from the dashboard."
+            "See how moderated submissions move through review before settlement.",
+            "Follow approvals, spend, and delivery quality from the dashboard."
           ]
         }
       ]
@@ -317,7 +320,7 @@
     "testimonials": {
       "eyebrow": "Community feedback",
       "title": "Why people stay with FreeEarnHub",
-      "subtitle": "Clear reviews, simple steps, and visible earnings help both users and businesses trust the platform from day one.",
+      "subtitle": "Clear reviews, moderated workflows, and visible payout rules help both users and businesses trust the platform from day one.",
       "items": [
         {
           "quote": "The task flow feels easy to understand. I can see what to do, submit proof, and track the result without guessing what happens next.",
@@ -363,16 +366,23 @@
     "channels": {
       "whatsapp": "Join WhatsApp",
       "telegram": "Join Telegram"
+    },
+    "stats": {
+      "totalPayout": "Total Platform Payout",
+      "tasksCompleted": "Tasks Completed",
+      "campaignsCompleted": "Campaigns Completed",
+      "businessAccounts": "Business Accounts",
+      "totalUsers": "Total Users"
     }
   },
   "about": {
     "eyebrow": "About",
     "title": "About FreeEarnHub",
-    "description": "FreeEarnHub is a trusted earning platform where businesses launch campaigns and users earn from verified work.",
+    "description": "FreeEarnHub is a verified micro-work operations platform for businesses and delivery users.",
     "sections": {
       "build": {
         "title": "What We Build",
-        "body": "Businesses create campaigns, users complete the tasks, and we review each submission before rewards are released."
+        "body": "Businesses launch testing, feedback, content, research, and data tasks. Users complete the work and every submission is reviewed before settlement."
       },
       "trust": {
         "title": "How Trust Is Maintained",
@@ -385,7 +395,7 @@
       },
       "direction": {
         "title": "Our Product Direction",
-        "body": "FreeEarnHub is built for long-term trust. We focus on clear payouts, useful business results, and simple rules people can understand."
+        "body": "FreeEarnHub is being shaped as a moderated operations marketplace, not a growth-hack exchange."
       }
     }
   },
@@ -397,7 +407,7 @@
     "items": [
       {
         "q": "What is FreeEarnHub?",
-        "a": "FreeEarnHub is a task platform where businesses launch campaigns and users earn by completing verified tasks."
+        "a": "FreeEarnHub is a verified micro-work operations platform where businesses launch structured tasks and users complete approved work."
       },
       {
         "q": "When do users receive rewards?",
@@ -467,7 +477,7 @@
       "openTasksDesc": "Find available campaigns with open slots.",
       "openWalletDesc": "Review credits, debits, and payout history.",
       "openNotificationsDesc": "Check approval, rejection, and payout updates.",
-      "openReferralsDesc": "Share your code, earn coins, and redeem them to wallet.",
+      "openReferralsDesc": "Share your code, earn coins, and convert them into internal perk credits.",
       "recentNotifications": "Recent notifications",
       "attentionTitle": "What needs your attention",
       "openInbox": "Open inbox",
@@ -482,10 +492,10 @@
       "unexpected": "Unexpected server response",
       "subtitle": "Track your balance, approvals, withdrawal status, and current level without switching between tabs.",
       "kpiCurrentLevel": "Current level",
-      "levelGuideSubtitle": "Your daily level changes your take-home reward on marketing tasks.",
+      "levelGuideSubtitle": "Your daily level changes your wallet share on Type A insight and QA campaigns.",
       "levelBenefitsEyebrow": "Level benefits",
       "levelBenefitsTitle": "See exactly how each level pays",
-      "levelBenefitsBody": "Marketing tasks pay your current level share. Right now that is {marketing}% to your wallet. Work tasks stay fixed at {work}% to your wallet.",
+      "levelBenefitsBody": "Type A campaigns pay your current level share. Right now that is {marketing}% to your wallet. Type B operations tasks stay fixed at {work}% to your wallet.",
       "currentBadge": "Current",
       "levelRange": "{min} to {max} approved today",
       "levelRangeOpen": "{min}+ approved today",
@@ -642,7 +652,8 @@
       "budgetTotal": "Wallet budget total: INR {amount}",
       "walletRewardHint": "Wallet credit on approval for {level}: {percent}% share",
       "freshCampaignOnly": "Fresh users only for this campaign.",
-      "freshPlatformOnly": "Fresh platform users only."
+      "freshPlatformOnly": "Fresh platform users only.",
+      "recommendationBoostActive": "Recommendation boost active until {date}. High-availability tasks are pinned first in your task feed."
     },
     "taskDetail": {
       "loading": "Loading campaign details...",
@@ -718,13 +729,13 @@
       "loading": "Loading referrals...",
       "eyebrow": "Referral rewards",
       "title": "Coins and referrals",
-      "subtitle": "Invite new users, earn FreeEarnHub Coins after their first approved task, and redeem coins into your wallet balance.",
+      "subtitle": "Invite new users, earn FreeEarnHub Coins after their first approved task, and convert coins into internal perk credits for recommendation boosts.",
       "kpiCoin": "Coin balance",
-      "kpiEstimated": "Estimated wallet value",
+      "kpiEstimated": "Estimated Perk Credits",
       "kpiTotalInvites": "Total invites",
       "kpiRewardedInvites": "Rewarded invites",
       "kpiPendingInvites": "Pending invites",
-      "kpiMonthlyRedeemed": "Redeemed this month",
+      "kpiMonthlyRedeemed": "Coins Converted This Month",
       "shareEyebrow": "Your referral code",
       "shareTitle": "Share this with new users",
       "codeLabel": "Referral code",
@@ -743,26 +754,26 @@
       "rewardTrigger": "Reward trigger",
       "rewardTriggerValue": "First admin-approved submission",
       "coinsUnit": "coins",
-      "redeemEyebrow": "Redeem coins",
-      "redeemTitle": "Convert coins into wallet balance",
-      "copy": "Copied to clipboard",
+      "redeemEyebrow": "Convert coins",
+      "redeemTitle": "Convert coins into perk credits",
+      "copy": "Copied",
       "copyFail": "Unable to copy automatically",
-      "redeem": "Redeem Coins",
-      "redeeming": "Redeeming...",
-      "redeemed": "Coins redeemed",
-      "redeemFailed": "Redemption failed",
+      "redeem": "Convert to Perk Credits",
+      "redeeming": "Converting...",
+      "redeemed": "Coins converted",
+      "redeemFailed": "Conversion failed",
       "status": {
         "PENDING": "Pending",
         "QUALIFIED": "Qualified",
         "REWARDED": "Rewarded",
         "REJECTED": "Rejected"
       },
-      "rules": "Current rules",
+      "rules": "Conversion rules",
       "minRedeem": "Minimum redeem: {count} coins",
       "monthlyLimit": "Monthly limit: {count} coins",
-      "rate": "Conversion rate: 1 coin = INR {amount}",
-      "redeemedThisMonth": "Redeemed this month: {count} coins",
-      "redeemPlaceholder": "Enter coins (min {count})",
+      "rate": "Rate: 100 coins = {count} perk credits",
+      "redeemedThisMonth": "Coins converted this month: {count}",
+      "redeemPlaceholder": "Enter coins to convert (min {count})",
       "historyEyebrow": "Referral history",
       "historyTitle": "Users you invited",
       "noInvites": "No referrals yet. Share your code to start earning coins.",
@@ -771,7 +782,9 @@
       "coinActivityTitle": "Credits and redemptions",
       "noCoinTx": "No coin transactions yet.",
       "failed": "Failed to load referrals",
-      "unexpected": "Unexpected server response"
+      "unexpected": "Unexpected server response",
+      "kpiPerkCredits": "Perk Credits",
+      "perkCreditsThisMonth": "Perk credits granted this month: {count}"
     },
     "settings": {
       "eyebrow": "User settings",
@@ -837,7 +850,12 @@
         "educationQualification": "Education qualification",
         "courseAndCertificate": "Course and certificate details",
         "addSkill": "Add a skill",
-        "addLanguage": "Add a language"
+        "addLanguage": "Add a language",
+        "city": "City",
+        "state": "State",
+        "pincode": "Pincode",
+        "latitude": "Latitude (optional)",
+        "longitude": "Longitude (optional)"
       },
       "genderOptions": {
         "MALE": "Male",
@@ -1042,77 +1060,237 @@
       }
     },
     "earnAds": {
-      "loading": "Loading bonus ads...",
-      "eyebrow": "Bonus rewards",
-      "title": "Watch Ads & Earn",
-      "subtitle": "Earn small bonus by watching short simulated ads. Daily limits and cooldown keep this separate from your main task income.",
-      "bonusEyebrow": "Bonus system",
-      "bonusTitle": "Small rewards, controlled safely",
-      "bonusBody": "This page is only for lightweight bonus earning. Rewards are added to your wallet only after the ad stays active in the foreground until the timer completes.",
-      "historyEyebrow": "Reward history",
-      "historyTitle": "Recent ad rewards",
+      "loading": "Loading perk trials...",
+      "eyebrow": "Experimental bonus layer",
+      "title": "Earn Beta Perk Credits",
+      "subtitle": "Optional ad trials award non-cash internal perk credits. These credits stay inside FreeEarnHub and cannot be withdrawn, transferred, or converted into INR.",
+      "bonusEyebrow": "Internal perks only",
+      "bonusTitle": "Safe perk credits, not wallet money",
+      "bonusBody": "Complete an ad trial while this tab stays active in the foreground. Completed trials add internal perk credits that can only be used for platform perks such as recommendation boost.",
+      "historyEyebrow": "Perk activity",
+      "historyTitle": "Recent perk credit activity",
       "kpis": {
-        "availableAds": "Available ads today",
-        "watchedToday": "Ads watched today",
-        "remainingAds": "Remaining ads",
-        "rewardPerAd": "Reward per ad"
+        "availableAds": "Available trials today",
+        "watchedToday": "Completed today",
+        "remainingAds": "Remaining trials",
+        "perkCreditsPerAd": "Perk credits per trial"
       },
       "rules": {
         "maxPerDay": "Daily limit",
         "cooldown": "Cooldown",
-        "watchTime": "Ad duration"
+        "watchTime": "Trial watch time"
+      },
+      "perks": {
+        "eyebrow": "Perk balance",
+        "title": "Use credits for recommendation boost",
+        "body": "Perk credits are internal-only. They cannot be withdrawn as cash, transferred to other users, or redeemed into wallet balance.",
+        "balance": "Available perk credits",
+        "boostTitle": "Recommendation boost",
+        "boostBody": "Spend credits to activate a {hours}-hour boost. While active, high-availability tasks are pinned first in your task feed.",
+        "boostActive": "Boost active until {date}",
+        "boostInactive": "Activate boost with {count} credits"
       },
       "status": {
-        "title": "Current status",
-        "ready": "You can start a new bonus ad right now.",
-        "playing": "An ad is currently playing. Reward unlocks in {seconds}s.",
-        "cooldown": "Please wait {seconds}s before the next ad.",
-        "limitReached": "You already used today's bonus ad limit.",
-        "adRunning": "Ad in progress",
-        "remaining": "{count} ads remaining today",
-        "paused": "The ad is paused because this tab is not active.",
+        "title": "Trial status",
+        "ready": "You can start a new ad trial now.",
+        "playing": "Keep this ad trial active for {seconds}s to unlock credits.",
+        "cooldown": "Next trial will unlock in {seconds}s.",
+        "limitReached": "You already reached today?s trial limit.",
+        "adRunning": "Trial running",
+        "remaining": "{count} trials left today",
+        "paused": "This trial is paused",
         "keepTabActive": "Keep this tab active",
-        "expiring": "The ad is expiring because this tab is no longer active.",
-        "expiringBadge": "Ad expiring"
+        "expiring": "This trial is expiring because the tab is no longer active.",
+        "expiringBadge": "Expiring"
       },
       "actions": {
-        "watch": "Watch Ad",
-        "starting": "Starting ad...",
-        "rewarding": "Adding reward..."
+        "watch": "Start Ad Trial",
+        "starting": "Starting trial...",
+        "rewarding": "Finalizing perk credits...",
+        "activateBoost": "Activate Boost ({count} credits)",
+        "activatingBoost": "Activating boost..."
       },
       "states": {
         "loading": "Loading...",
-        "playing": "Ad playing...",
+        "playing": "Trial running...",
         "limitReached": "Daily limit reached",
         "wait": "Wait {seconds}s",
-        "paused": "Ad paused",
-        "expiring": "Ad expiring"
+        "paused": "Trial paused",
+        "expiring": "Trial expiring"
       },
       "messages": {
-        "started": "Ad started.",
-        "rewarded": "Bonus reward added to your wallet.",
-        "expiredOnHide": "The ad expired because the page lost focus."
+        "started": "Ad trial started.",
+        "rewarded": "Perk credits were added to your balance.",
+        "boostActivated": "Recommendation boost activated.",
+        "expiredOnHide": "The ad trial expired because the page lost focus."
       },
       "errors": {
-        "failed": "Failed to load bonus ads",
-        "start": "Unable to start ad right now",
-        "complete": "Unable to complete ad right now",
-        "heartbeat": "Unable to keep the ad active right now",
-        "expire": "Unable to expire the ad session cleanly"
+        "failed": "Unable to load perk trials right now.",
+        "start": "Unable to start a new ad trial.",
+        "complete": "Unable to complete this ad trial.",
+        "heartbeat": "Unable to confirm active watch progress.",
+        "expire": "Unable to expire the ad trial cleanly.",
+        "activateBoost": "Unable to activate the recommendation boost right now."
       },
       "history": {
-        "rewardRow": "Bonus reward credited",
-        "empty": "No ad rewards yet. Watch your first bonus ad when you are ready."
+        "rewardRow": "Perk credits activity",
+        "creditsUnit": "credits",
+        "empty": "No perk activity yet. Start an ad trial to begin earning internal credits."
       },
       "modal": {
-        "title": "Ad is playing...",
-        "body": "Keep this tab open and active while the timer finishes. Background or hidden time will not count.",
-        "progressLabel": "Ad progress",
-        "keepOpen": "Please wait {seconds}s. We will credit the reward when the timer finishes.",
-        "claiming": "Finalizing your reward now...",
-        "paused": "This ad is paused. Return to this tab and keep it active to continue earning progress.",
-        "expiring": "This ad is expiring because the page is no longer active. You will need to start a fresh ad when you return."
+        "title": "Ad trial in progress",
+        "body": "The timer only advances while this tab stays visible, focused, and active. Hidden or background time does not count.",
+        "progressLabel": "Trial progress",
+        "keepOpen": "Keep this tab active for the next {seconds}s to unlock {count} perk credits.",
+        "claiming": "Finalizing your perk credits...",
+        "paused": "This trial is paused. Progress will not continue until the tab becomes active again.",
+        "expiring": "This trial is expiring because the page is no longer active. Start a new trial when you return."
       }
+    },
+    "panel": {
+      "earnAds": "Beta Perks"
+    },
+    "jobs": {
+      "pageTitle": "Local Jobs",
+      "eyebrow": "Physical work",
+      "title": "Browse nearby jobs and field-work roles",
+      "subtitle": "These roles use applications and shortlisting, not task submissions.",
+      "loading": "Loading jobs...",
+      "empty": "No open jobs match your current search yet.",
+      "search": "Search by title, business, city, state, or type",
+      "matchScore": "Match score: {score}",
+      "noStrongMatchYet": "Add more profile details and skills to improve matching.",
+      "noDeadline": "No deadline shared yet.",
+      "deadline": "Apply by {date}",
+      "applying": "Applying...",
+      "apply": "Apply now",
+      "notSpecified": "Not specified",
+      "kpis": {
+        "totalOpen": "Open jobs",
+        "strongMatches": "Strong matches",
+        "applied": "Applied",
+        "nearby": "Nearby"
+      },
+      "card": {
+        "pay": "Compensation",
+        "openings": "Openings",
+        "workMode": "Work mode",
+        "employmentType": "Employment type",
+        "requiredSkills": "Required skills",
+        "requiredLanguages": "Required languages"
+      },
+      "workModes": {
+        "WORK_FROM_OFFICE": "Office",
+        "WORK_IN_FIELD": "Field",
+        "HYBRID": "Hybrid"
+      },
+      "employmentTypes": {
+        "FULL_TIME": "Full-time",
+        "PART_TIME": "Part-time",
+        "CONTRACT": "Contract",
+        "DAILY_GIG": "Daily gig"
+      },
+      "payUnits": {
+        "HOURLY": "Hourly",
+        "DAILY": "Daily",
+        "WEEKLY": "Weekly",
+        "MONTHLY": "Monthly",
+        "FIXED": "Fixed"
+      },
+      "applicationStatus": {
+        "APPLIED": "Applied",
+        "SHORTLISTED": "Shortlisted",
+        "REJECTED": "Rejected",
+        "HIRED": "Hired",
+        "WITHDRAWN": "Withdrawn",
+        "INTERVIEW_SCHEDULED": "Interview scheduled",
+        "JOINED": "Joined"
+      },
+      "messages": {
+        "applied": "Application submitted"
+      },
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoad": "Failed to load jobs",
+        "applyFailed": "Failed to apply for this job"
+      },
+      "filters": {
+        "city": "Filter by city",
+        "anyRadius": "Any radius"
+      },
+      "distance": "Distance {value} km",
+      "radius": "Radius {value} km"
+    },
+    "jobApplications": {
+      "pageTitle": "My Applications",
+      "loading": "Loading applications...",
+      "eyebrow": "Applications",
+      "title": "Track every job you applied for",
+      "subtitle": "Watch shortlist, hiring, and rejection updates without losing track of open roles.",
+      "locationHint": "Your current job match location is {city}, {state}.",
+      "missingLocationHint": "Add your city and state in profile to improve local job matching.",
+      "empty": "You have not applied to any jobs yet.",
+      "withdrawing": "Withdrawing...",
+      "withdraw": "Withdraw application",
+      "coverNote": "Your application note",
+      "businessNote": "Business update",
+      "openApplicationsHint": "You still have {count} active application(s) in progress.",
+      "kpis": {
+        "total": "Total",
+        "applied": "Applied",
+        "shortlisted": "Shortlisted",
+        "hired": "Hired",
+        "rejected": "Rejected",
+        "interviewed": "Interviewed"
+      },
+      "status": {
+        "APPLIED": "Applied",
+        "SHORTLISTED": "Shortlisted",
+        "REJECTED": "Rejected",
+        "HIRED": "Hired",
+        "WITHDRAWN": "Withdrawn",
+        "INTERVIEW_SCHEDULED": "Interview scheduled",
+        "JOINED": "Joined"
+      },
+      "workModes": {
+        "WORK_FROM_OFFICE": "Office",
+        "WORK_IN_FIELD": "Field",
+        "HYBRID": "Hybrid"
+      },
+      "employmentTypes": {
+        "FULL_TIME": "Full-time",
+        "PART_TIME": "Part-time",
+        "CONTRACT": "Contract",
+        "DAILY_GIG": "Daily gig"
+      },
+      "payUnits": {
+        "HOURLY": "Hourly",
+        "DAILY": "Daily",
+        "WEEKLY": "Weekly",
+        "MONTHLY": "Monthly",
+        "FIXED": "Fixed"
+      },
+      "jobStatus": {
+        "OPEN": "Open",
+        "PAUSED": "Paused",
+        "CLOSED": "Closed",
+        "FILLED": "Filled"
+      },
+      "card": {
+        "pay": "Pay",
+        "jobStatus": "Job status",
+        "appliedAt": "Applied at"
+      },
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoad": "Failed to load job applications",
+        "withdrawFailed": "Failed to withdraw this application"
+      },
+      "messages": {
+        "withdrawn": "Application withdrawn"
+      },
+      "interviewAt": "Interview schedule",
+      "joinedAt": "Joined at"
     }
   },
   "business": {
@@ -1130,8 +1308,8 @@
     "kycEyebrow": "Verification",
     "kycSubtitle": "Submit your business verification details for review before launching campaigns.",
     "categories": {
-      "marketing": "Type A - Marketing Task",
-      "work": "Type B - Work-Based Task"
+      "marketing": "Type A - Insight & QA Campaign",
+      "work": "Type B - Operations & Delivery Task"
     },
     "loading": {
       "dashboard": "Loading business dashboard..."
@@ -1445,7 +1623,8 @@
         "totalBudget": "Total Budget",
         "campaignCategory": "Campaign Category",
         "taskCategory": "Task Category",
-        "customTask": "Custom Task"
+        "customTask": "Custom Task",
+        "commissionHint": "Type A campaigns use the level-based share system. Type B operations tasks use the fixed platform share."
       },
       "placeholders": {
         "title": "Enter task title",
@@ -1478,7 +1657,7 @@
         "checking": "Checking...",
         "sufficient": "Sufficient",
         "insufficient": "Insufficient",
-        "commissionHint": "Marketing campaigns use the marketing commission rules. Work-based campaigns use the default non-marketing commission rules already configured in the platform.",
+        "commissionHint": "Type A campaigns use the level-based share system. Type B operations tasks use the fixed platform share.",
         "taskCategoryLabel": "Task category",
         "taskTypeLabel": "Task type"
       }
@@ -1973,6 +2152,233 @@
         "waitingFinalApproval": "Submission is waiting for final approval.",
         "waitingReview": "Submission received and waiting for review."
       }
+    },
+    "jobsPageTitle": "Your Jobs",
+    "createJobPageTitle": "Create Job",
+    "jobDetailPageTitle": "Job Details",
+    "jobsPanel": {
+      "loading": "Loading jobs...",
+      "empty": "No jobs posted yet. Add your first local hiring requirement to start receiving applications.",
+      "search": "Search jobs by title, city, state, or type",
+      "kpis": {
+        "totalJobs": "Total jobs",
+        "open": "Open",
+        "paused": "Paused",
+        "applicants": "Applicants"
+      },
+      "header": {
+        "eyebrow": "Physical jobs",
+        "title": "Manage your local hiring pipeline",
+        "createJob": "Create Job"
+      },
+      "filters": {
+        "ALL": "All",
+        "OPEN": "Open",
+        "PAUSED": "Paused",
+        "FILLED": "Filled",
+        "CLOSED": "Closed"
+      },
+      "actions": {
+        "pause": "Pause",
+        "reopen": "Reopen",
+        "close": "Close",
+        "view": "View applicants"
+      },
+      "card": {
+        "pay": "Compensation",
+        "openings": "Openings",
+        "applications": "Applications",
+        "hired": "Hired"
+      },
+      "messages": {
+        "jobUpdated": "Job updated"
+      },
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoad": "Failed to load jobs",
+        "actionFailed": "Failed to update job"
+      }
+    },
+    "jobForm": {
+      "eyebrow": "Physical hiring",
+      "title": "Post a local job or field-work requirement",
+      "subtitle": "Use jobs for office, field, shift, and local hiring. Keep campaigns for digital task delivery.",
+      "fields": {
+        "title": "Job title",
+        "description": "Describe the work, shift, expectations, and any on-ground requirement",
+        "city": "City",
+        "state": "State",
+        "pincode": "Pincode",
+        "addressLine": "Work address or landmark (optional)",
+        "customJobType": "Custom job type",
+        "openings": "Openings",
+        "payAmount": "Pay amount",
+        "shiftSummary": "Shift summary (for example 10 AM - 6 PM)",
+        "startDate": "Start date",
+        "applicationDeadline": "Application deadline",
+        "minEducation": "Minimum education or background",
+        "requiredSkills": "Required skills",
+        "addSkill": "Add required skill",
+        "requiredLanguages": "Required languages",
+        "addLanguage": "Add required language",
+        "latitude": "Latitude (optional)",
+        "longitude": "Longitude (optional)",
+        "hiringRadiusKm": "Hiring radius in km (optional)"
+      },
+      "workModes": {
+        "WORK_FROM_OFFICE": "Office",
+        "WORK_IN_FIELD": "Field",
+        "HYBRID": "Hybrid"
+      },
+      "employmentTypes": {
+        "FULL_TIME": "Full-time",
+        "PART_TIME": "Part-time",
+        "CONTRACT": "Contract",
+        "DAILY_GIG": "Daily gig"
+      },
+      "payUnits": {
+        "HOURLY": "Hourly",
+        "DAILY": "Daily",
+        "WEEKLY": "Weekly",
+        "MONTHLY": "Monthly",
+        "FIXED": "Fixed"
+      },
+      "requiredSkillsHelp": "Add the skills a person should already have before applying.",
+      "requiredLanguagesHelp": "Add spoken or working languages needed for this role.",
+      "emptySkills": "No required skills added yet.",
+      "emptyLanguages": "No required languages added yet.",
+      "previewEyebrow": "Quick preview",
+      "preview": {
+        "jobType": "Job type",
+        "workSetup": "Work setup",
+        "location": "Location",
+        "pay": "Compensation"
+      },
+      "footerNote": "Job payouts and final joining workflow should be handled with your operational hiring process, not the task wallet system.",
+      "actions": {
+        "add": "Add",
+        "posting": "Posting...",
+        "postJob": "Post Job"
+      },
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToCreate": "Failed to create job"
+      }
+    },
+    "jobDetail": {
+      "loading": "Loading job details...",
+      "applicationsEyebrow": "Applicants",
+      "applicationsTitle": "Review applicants and move them forward",
+      "noApplications": "No applicants yet for this role.",
+      "kpis": {
+        "totalApplications": "Total applications",
+        "newApplications": "New applications",
+        "shortlisted": "Shortlisted",
+        "hired": "Hired",
+        "interviewed": "Interviewed"
+      },
+      "status": {
+        "OPEN": "Open",
+        "PAUSED": "Paused",
+        "CLOSED": "Closed",
+        "FILLED": "Filled"
+      },
+      "applicationStatus": {
+        "APPLIED": "Applied",
+        "SHORTLISTED": "Shortlisted",
+        "REJECTED": "Rejected",
+        "HIRED": "Hired",
+        "WITHDRAWN": "Withdrawn",
+        "INTERVIEW_SCHEDULED": "Interview scheduled",
+        "JOINED": "Joined"
+      },
+      "workModes": {
+        "WORK_FROM_OFFICE": "Office",
+        "WORK_IN_FIELD": "Field",
+        "HYBRID": "Hybrid"
+      },
+      "employmentTypes": {
+        "FULL_TIME": "Full-time",
+        "PART_TIME": "Part-time",
+        "CONTRACT": "Contract",
+        "DAILY_GIG": "Daily gig"
+      },
+      "payUnits": {
+        "HOURLY": "Hourly",
+        "DAILY": "Daily",
+        "WEEKLY": "Weekly",
+        "MONTHLY": "Monthly",
+        "FIXED": "Fixed"
+      },
+      "profileWorkModes": {
+        "WORK_FROM_HOME": "Work from home",
+        "WORK_FROM_OFFICE": "Work from office",
+        "WORK_IN_FIELD": "Work in field"
+      },
+      "profileWorkTimes": {
+        "FULL_TIME": "Full time",
+        "PART_TIME": "Part time"
+      },
+      "profilePreferences": {
+        "SALARIED": "Salaried",
+        "FREELANCE_CONTRACTUAL": "Freelance / Contractual",
+        "DAY_BASIS": "Day basis"
+      },
+      "actions": {
+        "pause": "Pause",
+        "reopen": "Reopen",
+        "close": "Close",
+        "markFilled": "Mark filled",
+        "shortlist": "Shortlist",
+        "hire": "Hire",
+        "reject": "Reject",
+        "edit": "Edit",
+        "closeEdit": "Close edit",
+        "scheduleInterview": "Schedule interview",
+        "markJoined": "Mark joined",
+        "saveNote": "Save note",
+        "savingNote": "Saving note..."
+      },
+      "job": {
+        "payLine": "INR {amount} / {unit}",
+        "openings": "Openings",
+        "workMode": "Work mode",
+        "employmentType": "Employment type",
+        "location": "Location",
+        "requiredSkills": "Required skills",
+        "requiredLanguages": "Required languages",
+        "notSpecified": "Not specified",
+        "radius": "Radius {value} km"
+      },
+      "application": {
+        "skills": "Skills",
+        "languages": "Languages",
+        "workMode": "Work mode",
+        "workTime": "Work time",
+        "preference": "Work preference",
+        "education": "Education",
+        "notProvided": "Not provided",
+        "businessNote": "Business note",
+        "businessNotePlaceholder": "Add interview details, location notes, or follow-up instructions",
+        "interview": "Interview schedule",
+        "interviewScheduledAt": "Scheduled for {value}",
+        "joinedAt": "Joined on {value}"
+      },
+      "messages": {
+        "updated": "Update saved"
+      },
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoad": "Failed to load job details",
+        "actionFailed": "Failed to update this record"
+      },
+      "edit": {
+        "eyebrow": "Edit job",
+        "title": "Update this hiring post",
+        "subtitle": "Adjust the role details, location, payout, and hiring requirements.",
+        "save": "Save changes",
+        "saving": "Saving..."
+      }
     }
   },
   "dashboard": {
@@ -2017,7 +2423,10 @@
       "auditLogs": "Audit Logs",
       "systemSettings": "System Settings",
       "profile": "Profile",
-      "earnAds": "Watch Ads & Earn"
+      "earnAds": "Beta Perks",
+      "jobs": "Jobs",
+      "createJob": "Create Job",
+      "jobApplications": "My Applications"
     },
     "shell": {
       "signedInAs": "Signed in as",
@@ -2832,6 +3241,92 @@
       "notePlaceholder": "Note (optional)",
       "submitting": "Submitting...",
       "create": "Create Payout Request"
+    },
+    "jobsPage": {
+      "pageTitle": "Jobs Oversight",
+      "pageDescription": "Review every local or physical hiring post, monitor applicant flow, and step in when a role needs admin action.",
+      "empty": "No jobs match the current filters.",
+      "kpis": {
+        "open": "Open jobs",
+        "paused": "Paused",
+        "filled": "Filled",
+        "closed": "Closed"
+      },
+      "filters": {
+        "searchPlaceholder": "Search job, business, city, or state",
+        "allStatuses": "All statuses",
+        "show5": "Show 5",
+        "show10": "Show 10",
+        "show20": "Show 20",
+        "showAll": "Show all",
+        "apply": "Apply"
+      },
+      "status": {
+        "OPEN": "Open",
+        "PAUSED": "Paused",
+        "FILLED": "Filled",
+        "CLOSED": "Closed"
+      },
+      "labels": {
+        "category": "Category",
+        "location": "Location",
+        "pay": "Pay",
+        "workType": "Work type",
+        "createdAt": "Created"
+      },
+      "cards": {
+        "openings": "Openings",
+        "applied": "Applied",
+        "shortlisted": "Shortlisted",
+        "hired": "Hired"
+      },
+      "fallback": {
+        "business": "Business"
+      },
+      "payUnits": {
+        "HOURLY": "Hourly",
+        "DAILY": "Daily",
+        "WEEKLY": "Weekly",
+        "MONTHLY": "Monthly",
+        "FIXED": "Fixed"
+      },
+      "workModes": {
+        "WORK_FROM_OFFICE": "Office",
+        "WORK_IN_FIELD": "Field",
+        "HYBRID": "Hybrid"
+      },
+      "employmentTypes": {
+        "FULL_TIME": "Full-time",
+        "PART_TIME": "Part-time",
+        "CONTRACT": "Contract",
+        "DAILY_GIG": "Daily gig"
+      },
+      "actions": {
+        "pause": "Pause",
+        "pausing": "Pausing...",
+        "reopen": "Reopen",
+        "reopening": "Reopening...",
+        "markFilled": "Mark filled",
+        "markingFilled": "Marking...",
+        "close": "Close",
+        "closing": "Closing...",
+        "edit": "Edit",
+        "closeEdit": "Close edit"
+      },
+      "messages": {
+        "updated": "Job updated"
+      },
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "updateFailed": "Failed to update this job"
+      },
+      "edit": {
+        "eyebrow": "Edit job",
+        "title": "Update this hiring post",
+        "subtitle": "Adjust role details, location coordinates, radius, and hiring requirements.",
+        "save": "Save changes",
+        "saving": "Saving..."
+      }
     }
   },
   "manager": {

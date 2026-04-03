@@ -31,6 +31,30 @@ export default async function UserLayout({
     redirect("/maintenance");
   }
 
+  const items = [
+    { key: "user.overview", href: "/dashboard/user", label: "Overview", labelKey: "overview", icon: "overview" as const },
+    { key: "user.tasks", href: "/dashboard/user/tasks", label: "Tasks", labelKey: "tasks", icon: "tasks" as const },
+    { key: "user.jobs", href: "/dashboard/user/jobs", label: "Jobs", labelKey: "jobs", icon: "jobs" as const },
+    { key: "user.jobApplications", href: "/dashboard/user/job-applications", label: "My Applications", labelKey: "jobApplications", icon: "jobs" as const },
+    { key: "user.submissions", href: "/dashboard/user/submissions", label: "Submissions", labelKey: "submissions", icon: "submissions" as const },
+    { key: "user.wallet", href: "/dashboard/user/wallet", label: "Wallet", labelKey: "wallet", icon: "wallet" as const },
+    { key: "user.withdrawals", href: "/dashboard/user/withdrawals", label: "Withdrawals", labelKey: "withdrawals", icon: "withdrawals" as const },
+    ...(settings.bonusAdsEnabled
+      ? [{
+          key: "user.earnAds",
+          href: "/dashboard/user/earn-ads",
+          label: "Beta Perks",
+          labelKey: "earnAds",
+          icon: "earnAds" as const,
+        }]
+      : []),
+    { key: "user.referrals", href: "/dashboard/user/referrals", label: "Referrals", labelKey: "referrals", icon: "referrals" as const },
+    { key: "user.notifications", href: "/dashboard/user/notifications", label: "Notifications", labelKey: "notifications", icon: "notifications" as const },
+    { key: "user.profile", href: "/dashboard/user/profile", label: "Profile", labelKey: "profile", icon: "profile" as const },
+    { key: "user.settings", href: "/dashboard/user/settings", label: "Settings", labelKey: "settings", icon: "settings" as const },
+    { key: "user.help", href: "/dashboard/user/help", label: "Help", labelKey: "help", icon: "help" as const },
+  ];
+
   return (
     <div className="dashboard-shell min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.12),transparent_30%),radial-gradient(circle_at_top_right,rgba(59,130,246,0.1),transparent_28%)] bg-background text-foreground">
       <PresenceHeartbeat />
@@ -41,19 +65,7 @@ export default async function UserLayout({
             displayName={displayName}
             role="USER"
             userId={session.user.id}
-            items={[
-              { key: "user.overview", href: "/dashboard/user", label: "Overview", labelKey: "overview", icon: "overview" },
-              { key: "user.tasks", href: "/dashboard/user/tasks", label: "Tasks", labelKey: "tasks", icon: "tasks" },
-              { key: "user.submissions", href: "/dashboard/user/submissions", label: "Submissions", labelKey: "submissions", icon: "submissions" },
-              { key: "user.wallet", href: "/dashboard/user/wallet", label: "Wallet", labelKey: "wallet", icon: "wallet" },
-              { key: "user.withdrawals", href: "/dashboard/user/withdrawals", label: "Withdrawals", labelKey: "withdrawals", icon: "withdrawals" },
-              { key: "user.earnAds", href: "/dashboard/user/earn-ads", label: "Watch Ads & Earn", labelKey: "earnAds", icon: "earnAds" },
-              { key: "user.referrals", href: "/dashboard/user/referrals", label: "Referrals", labelKey: "referrals", icon: "referrals" },
-              { key: "user.notifications", href: "/dashboard/user/notifications", label: "Notifications", labelKey: "notifications", icon: "notifications" },
-              { key: "user.profile", href: "/dashboard/user/profile", label: "Profile", labelKey: "profile", icon: "profile" },
-              { key: "user.settings", href: "/dashboard/user/settings", label: "Settings", labelKey: "settings", icon: "settings" },
-              { key: "user.help", href: "/dashboard/user/help", label: "Help", labelKey: "help", icon: "help" },
-            ]}
+            items={items}
           />
         </aside>
 

@@ -1,12 +1,16 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import { AdWatchSessionStatus, NotificationType, TransactionType } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import {
+  DEFAULT_RECOMMENDATION_BOOST_COST,
+  DEFAULT_RECOMMENDATION_BOOST_HOURS,
   getAdSessionExpiry,
   getIndiaDayEnd,
   getIndiaDayStart,
+  getRecommendationBoostExpiry,
   getSecondsRemaining,
+  isRecommendationBoostActive,
   resolveAdRewardSettings,
 } from "@/lib/ad-rewards";
 import { getAppSettings } from "@/lib/system-settings";
@@ -33,7 +37,14 @@ async function buildEarnAdsPayload(userId: string) {
 
   await expireStalePendingSessions(userId, now);
 
-  const [rewardedToday, activeSession, latestRewarded, recentRewards] = await Promise.all([
+  const [user, rewardedToday, activeSession, latestRewarded, recentPerkActivity] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        perkCreditBalance: true,
+        recommendationBoostExpiresAt: true,
+      },
+    }),
     prisma.adWatchSession.count({
       where: {
         userId,
@@ -55,21 +66,24 @@ async function buildEarnAdsPayload(userId: string) {
       },
       orderBy: { completedAt: "desc" },
     }),
-    prisma.adWatchSession.findMany({
-      where: {
-        userId,
-        status: "REWARDED",
-      },
+    prisma.perkTransaction.findMany({
+      where: { userId },
       orderBy: { createdAt: "desc" },
-      take: 5,
+      take: 6,
       select: {
         id: true,
-        reward: true,
-        completedAt: true,
+        amount: true,
+        type: true,
+        source: true,
+        note: true,
         createdAt: true,
       },
     }),
   ]);
+
+  if (!user) {
+    throw new Error("User not found");
+  }
 
   const remainingAds = Math.max(0, settings.maxAdsPerDay - rewardedToday);
   const cooldownUntil = latestRewarded?.completedAt
@@ -86,7 +100,14 @@ async function buildEarnAdsPayload(userId: string) {
       availableAdsToday: settings.maxAdsPerDay,
       adsWatchedToday: rewardedToday,
       remainingAds,
-      rewardPerAd: settings.rewardPerAd,
+      perkCreditsPerAd: settings.perkCreditsPerAd,
+    },
+    perks: {
+      balance: user.perkCreditBalance,
+      recommendationBoostCost: DEFAULT_RECOMMENDATION_BOOST_COST,
+      recommendationBoostHours: DEFAULT_RECOMMENDATION_BOOST_HOURS,
+      recommendationBoostActive: isRecommendationBoostActive(user.recommendationBoostExpiresAt, now),
+      recommendationBoostEndsAt: user.recommendationBoostExpiresAt?.toISOString() ?? null,
     },
     cooldownLeftSeconds,
     cooldownEndsAt: cooldownUntil?.toISOString() ?? null,
@@ -94,7 +115,7 @@ async function buildEarnAdsPayload(userId: string) {
     activeSession: activeSession
       ? {
           id: activeSession.id,
-          reward: activeSession.reward,
+          perkCredits: activeSession.reward,
           status: activeSession.status,
           startedAt: activeSession.createdAt.toISOString(),
           expiresAt: activeSession.expiresAt.toISOString(),
@@ -104,10 +125,13 @@ async function buildEarnAdsPayload(userId: string) {
           progressPercent: Math.round((activeSession.watchedSeconds / Math.max(1, activeSession.requiredSeconds)) * 100),
         }
       : null,
-    recentRewards: recentRewards.map((item) => ({
+    recentPerkActivity: recentPerkActivity.map((item) => ({
       id: item.id,
-      reward: item.reward,
-      createdAt: (item.completedAt ?? item.createdAt).toISOString(),
+      amount: item.amount,
+      type: item.type,
+      source: item.source,
+      note: item.note,
+      createdAt: item.createdAt.toISOString(),
     })),
   };
 }
@@ -116,6 +140,14 @@ export async function GET() {
   const session = await auth();
   if (!session || session.user.role !== "USER") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+
+  const appSettings = await getAppSettings();
+  if (!appSettings.bonusAdsEnabled) {
+    return NextResponse.json(
+      { error: "Beta perk trials are disabled while launch hardening is in progress." },
+      { status: 403 }
+    );
   }
 
   const payload = await buildEarnAdsPayload(session.user.id);
@@ -130,7 +162,7 @@ export async function POST(req: Request) {
 
   const userId = session.user.id;
   const body = (await req.json().catch(() => ({}))) as {
-    action?: "start" | "heartbeat" | "complete" | "expire";
+    action?: "start" | "heartbeat" | "complete" | "expire" | "activateBoost";
     sessionId?: string;
   };
 
@@ -138,7 +170,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Missing action" }, { status: 400 });
   }
 
-  const settings = resolveAdRewardSettings(await getAppSettings());
+  const appSettings = await getAppSettings();
+  if (!appSettings.bonusAdsEnabled) {
+    return NextResponse.json(
+      { error: "Beta perk trials are disabled while launch hardening is in progress." },
+      { status: 403 }
+    );
+  }
+
+  const settings = resolveAdRewardSettings(appSettings);
   const now = new Date();
   const dayStart = getIndiaDayStart(now);
   const dayEnd = getIndiaDayEnd(now);
@@ -208,7 +248,7 @@ export async function POST(req: Request) {
     await prisma.adWatchSession.create({
       data: {
         userId,
-        reward: settings.rewardPerAd,
+        reward: settings.perkCreditsPerAd,
         requiredSeconds: settings.watchSeconds,
         watchedSeconds: 0,
         lastHeartbeatAt: now,
@@ -290,7 +330,7 @@ export async function POST(req: Request) {
     if (sessionRow.status === "REWARDED") {
       return NextResponse.json(
         {
-          message: "Reward already claimed.",
+          message: "Perk credits already claimed.",
           payload: await buildEarnAdsPayload(userId),
         },
         { status: 200 }
@@ -369,36 +409,39 @@ export async function POST(req: Request) {
           throw new Error("SESSION_ALREADY_PROCESSED");
         }
 
+        const perkCredits = Math.max(1, Math.floor(freshSession.reward));
+
         await tx.user.update({
           where: { id: userId },
           data: {
-            balance: { increment: freshSession.reward },
+            perkCreditBalance: { increment: perkCredits },
           },
         });
 
-        await tx.walletTransaction.create({
+        await tx.perkTransaction.create({
           data: {
             userId,
-            amount: freshSession.reward,
+            amount: perkCredits,
             type: TransactionType.CREDIT,
-            note: "Bonus ad reward",
+            source: "AD_REWARD_PERK",
+            note: `Earned ${perkCredits} perk credit${perkCredits === 1 ? "" : "s"} from a completed ad trial`,
           },
         });
 
         await tx.activityLog.create({
           data: {
             userId,
-            action: "BONUS_AD_REWARDED",
+            action: "BONUS_AD_PERK_REWARDED",
             entity: "AD_WATCH",
-            details: `Rewarded INR ${freshSession.reward.toFixed(2)} from bonus ad session ${freshSession.id}`,
+            details: `Rewarded ${perkCredits} perk credits from bonus ad session ${freshSession.id}`,
           },
         });
 
         await tx.notification.create({
           data: {
             userId,
-            title: "Bonus reward added",
-            message: `INR ${freshSession.reward.toFixed(2)} was added to your wallet after the ad finished.`,
+            title: "Perk credits added",
+            message: `${perkCredits} perk credit${perkCredits === 1 ? " was" : "s were"} added after the ad finished. These credits stay inside FreeEarnHub and cannot be withdrawn as cash.`,
             type: NotificationType.SUCCESS,
           },
         });
@@ -423,7 +466,7 @@ export async function POST(req: Request) {
       if (message === "SESSION_ALREADY_PROCESSED" || message === "SESSION_NOT_PENDING") {
         return NextResponse.json(
           {
-            message: "Reward already claimed.",
+            message: "Perk credits already claimed.",
             payload: await buildEarnAdsPayload(userId),
           },
           { status: 200 }
@@ -433,7 +476,89 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({
-      message: "Bonus reward added.",
+      message: "Perk credits added.",
+      payload: await buildEarnAdsPayload(userId),
+    });
+  }
+
+  if (body.action === "activateBoost") {
+    try {
+      await prisma.$transaction(async (tx) => {
+        const user = await tx.user.findUnique({
+          where: { id: userId },
+          select: {
+            perkCreditBalance: true,
+            recommendationBoostExpiresAt: true,
+          },
+        });
+
+        if (!user) {
+          throw new Error("USER_NOT_FOUND");
+        }
+
+        if (user.perkCreditBalance < DEFAULT_RECOMMENDATION_BOOST_COST) {
+          throw new Error("INSUFFICIENT_PERK_CREDITS");
+        }
+
+        const baseTime =
+          user.recommendationBoostExpiresAt && user.recommendationBoostExpiresAt.getTime() > now.getTime()
+            ? user.recommendationBoostExpiresAt
+            : now;
+        const nextExpiry = getRecommendationBoostExpiry(baseTime);
+
+        await tx.user.update({
+          where: { id: userId },
+          data: {
+            perkCreditBalance: { decrement: DEFAULT_RECOMMENDATION_BOOST_COST },
+            recommendationBoostExpiresAt: nextExpiry,
+          },
+        });
+
+        await tx.perkTransaction.create({
+          data: {
+            userId,
+            amount: DEFAULT_RECOMMENDATION_BOOST_COST,
+            type: TransactionType.DEBIT,
+            source: "RECOMMENDATION_BOOST",
+            note: `Activated recommendation boost for ${DEFAULT_RECOMMENDATION_BOOST_HOURS} hours`,
+          },
+        });
+
+        await tx.activityLog.create({
+          data: {
+            userId,
+            action: "RECOMMENDATION_BOOST_ACTIVATED",
+            entity: "PERK",
+            details: `Spent ${DEFAULT_RECOMMENDATION_BOOST_COST} perk credits; boost active until ${nextExpiry.toISOString()}`,
+          },
+        });
+
+        await tx.notification.create({
+          data: {
+            userId,
+            title: "Recommendation boost active",
+            message: `Your recommendation boost is active for ${DEFAULT_RECOMMENDATION_BOOST_HOURS} hours. High-availability tasks will be pinned first while it stays active.`,
+            type: NotificationType.SUCCESS,
+          },
+        });
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      if (message === "INSUFFICIENT_PERK_CREDITS") {
+        return NextResponse.json(
+          {
+            error: `You need ${DEFAULT_RECOMMENDATION_BOOST_COST} perk credits to activate the boost.`,
+            payload: await buildEarnAdsPayload(userId),
+          },
+          { status: 400 }
+        );
+      }
+
+      return NextResponse.json({ error: "Unable to activate the recommendation boost right now." }, { status: 500 });
+    }
+
+    return NextResponse.json({
+      message: "Recommendation boost activated.",
       payload: await buildEarnAdsPayload(userId),
     });
   }

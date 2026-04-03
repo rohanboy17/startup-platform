@@ -19,7 +19,7 @@ export async function POST(req: Request) {
 
   if (requestedCoins < settings.redeemMinCoins) {
     return NextResponse.json(
-      { error: `Minimum redemption is ${settings.redeemMinCoins} coins` },
+      { error: `Minimum conversion is ${settings.redeemMinCoins} coins` },
       { status: 400 }
     );
   }
@@ -34,7 +34,6 @@ export async function POST(req: Request) {
           select: {
             id: true,
             coinBalance: true,
-            balance: true,
             accountStatus: true,
             isSuspicious: true,
           },
@@ -54,7 +53,7 @@ export async function POST(req: Request) {
       }
 
       if (user.accountStatus !== "ACTIVE" || user.isSuspicious) {
-        throw new Error("Account is not eligible for coin redemption");
+        throw new Error("Account is not eligible for coin conversion");
       }
 
       if (user.coinBalance < requestedCoins) {
@@ -63,16 +62,16 @@ export async function POST(req: Request) {
 
       const monthUsed = monthlyRedemption._sum.coinsUsed ?? 0;
       if (monthUsed + requestedCoins > settings.redeemMonthlyLimit) {
-        throw new Error(`Monthly redemption limit is ${settings.redeemMonthlyLimit} coins`);
+        throw new Error(`Monthly conversion limit is ${settings.redeemMonthlyLimit} coins`);
       }
 
-      const walletAmount = Number((requestedCoins * settings.coinToInrRate).toFixed(2));
+      const perkCreditsGranted = Math.max(1, Math.floor(requestedCoins * settings.coinToPerkRate));
 
       await tx.user.update({
         where: { id: user.id },
         data: {
           coinBalance: { decrement: requestedCoins },
-          balance: { increment: walletAmount },
+          perkCreditBalance: { increment: perkCreditsGranted },
         },
       });
 
@@ -82,7 +81,7 @@ export async function POST(req: Request) {
           amount: requestedCoins,
           type: "DEBIT",
           source: "COIN_REDEMPTION",
-          note: `Redeemed ${requestedCoins} coins into wallet`,
+          note: `Converted ${requestedCoins} coins into ${perkCreditsGranted} perk credits`,
         },
       });
 
@@ -90,25 +89,26 @@ export async function POST(req: Request) {
         data: {
           userId: user.id,
           coinsUsed: requestedCoins,
-          walletAmount,
+          perkCreditsGranted,
           status: "APPROVED",
         },
       });
 
-      await tx.walletTransaction.create({
+      await tx.perkTransaction.create({
         data: {
           userId: user.id,
-          amount: walletAmount,
+          amount: perkCreditsGranted,
           type: "CREDIT",
-          note: `Coin redemption (${requestedCoins} coins)`,
+          source: "REFERRAL_CONVERSION",
+          note: `Referral conversion (${requestedCoins} coins to ${perkCreditsGranted} perk credits)`,
         },
       });
 
       const notification = await tx.notification.create({
         data: {
           userId: user.id,
-          title: "Coins redeemed",
-          message: `${requestedCoins} coins were redeemed into INR ${walletAmount.toFixed(2)} in your wallet.`,
+          title: "Coins converted",
+          message: `${requestedCoins} coins were converted into ${perkCreditsGranted} internal perk credits. These credits stay inside FreeEarnHub and cannot be withdrawn as cash.`,
           type: "SUCCESS",
         },
       });
@@ -117,19 +117,19 @@ export async function POST(req: Request) {
         data: {
           userId: user.id,
           notificationId: notification.id,
-          templateKey: "coins.redeemed",
+          templateKey: "coins.converted_to_perks",
           channel: "IN_APP",
           status: "SENT",
-          payload: { requestedCoins, walletAmount },
+          payload: { requestedCoins, perkCreditsGranted },
         },
       });
 
-      return { walletAmount };
+      return { perkCreditsGranted };
     });
 
     return NextResponse.json({
-      message: "Coins redeemed successfully",
-      walletAmount: result.walletAmount,
+      message: "Coins converted into perk credits",
+      perkCreditsGranted: result.perkCreditsGranted,
     });
   } catch (error) {
     return NextResponse.json(
