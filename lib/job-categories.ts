@@ -134,6 +134,7 @@ export const JOB_EMPLOYMENT_TYPE_OPTIONS = [
   { value: "PART_TIME", label: "Part-time" },
   { value: "CONTRACT", label: "Contract" },
   { value: "DAILY_GIG", label: "Daily gig" },
+  { value: "INTERNSHIP", label: "Internship" },
 ] as const;
 
 export const JOB_PAY_UNIT_OPTIONS = [

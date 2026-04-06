@@ -13,6 +13,7 @@ export type UserProfileDetails = {
   courseAndCertificate: string | null;
   workTime: string | null;
   workingPreference: string | null;
+  internshipPreference: string | null;
   languages: string[];
 };
 
@@ -31,6 +32,7 @@ export const EMPTY_PROFILE_DETAILS: UserProfileDetails = {
   courseAndCertificate: null,
   workTime: null,
   workingPreference: null,
+  internshipPreference: null,
   languages: [],
 };
 
@@ -97,6 +99,7 @@ export function parseProfileDetails(input: unknown): UserProfileDetails {
     courseAndCertificate: normalizeText(source.courseAndCertificate, 240) || null,
     workTime: normalizeText(source.workTime, 48) || null,
     workingPreference: normalizeText(source.workingPreference, 64) || null,
+    internshipPreference: normalizeText(source.internshipPreference, 64) || null,
     languages: normalizeStringArray(source.languages, 10, 40),
   };
 }
@@ -130,6 +133,7 @@ export type ProfileCompletionSource = {
   courseAndCertificate?: string | null;
   workTime?: string | null;
   workingPreference?: string | null;
+  internshipPreference?: string | null;
   languages?: string[];
 };
 
@@ -146,6 +150,7 @@ export type ProfileCompletionItem = {
     | "courseAndCertificate"
     | "workTime"
     | "workingPreference"
+    | "internshipPreference"
     | "languages";
   complete: boolean;
 };
@@ -167,6 +172,7 @@ export function getUserProfileCompletion(profile: ProfileCompletionSource, skill
     { key: "courseAndCertificate", complete: hasValue(profile.courseAndCertificate) },
     { key: "workTime", complete: hasValue(profile.workTime) },
     { key: "workingPreference", complete: hasValue(profile.workingPreference) },
+    { key: "internshipPreference", complete: hasValue(profile.internshipPreference) },
     { key: "languages", complete: Array.isArray(profile.languages) && profile.languages.length > 0 },
   ];
 

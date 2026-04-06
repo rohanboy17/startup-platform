@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getPhysicalWorkPayoutBreakdown } from "@/lib/commission";
 import { getUserJobMatch } from "@/lib/jobs";
 import { parseProfileDetails } from "@/lib/user-profile";
 
@@ -76,7 +77,9 @@ export async function GET(req: Request) {
         longitude: job.longitude,
         hiringRadiusKm: job.hiringRadiusKm,
         workMode: job.workMode,
+        employmentType: job.employmentType,
       });
+      const payout = getPhysicalWorkPayoutBreakdown(job.payAmount);
 
       return {
         id: job.id,
@@ -97,6 +100,10 @@ export async function GET(req: Request) {
         addressLine: job.addressLine,
         openings: job.openings,
         payAmount: job.payAmount,
+        workerPayAmount: payout.workerAmount,
+        commissionAmount: payout.commissionAmount,
+        commissionRate: payout.commissionRate,
+        budgetRequired: job.budgetRequired,
         payUnit: job.payUnit,
         shiftSummary: job.shiftSummary,
         startDate: job.startDate?.toISOString() || null,

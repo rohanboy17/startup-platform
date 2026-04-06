@@ -45,6 +45,8 @@ export async function GET() {
         unreadAdminNotifications,
         latestUnreadAdminNotification,
         legalEvidence,
+        pendingJobs,
+        pendingJobApplications,
       ] =
         await Promise.all([
           prisma.campaign.findMany({
@@ -134,6 +136,18 @@ export async function GET() {
             orderBy: { createdAt: "desc" },
             take: 100,
           }),
+          prisma.jobPosting.findMany({
+            where: { status: "PENDING_REVIEW" },
+            select: { createdAt: true },
+            orderBy: { createdAt: "desc" },
+            take: 100,
+          }),
+          prisma.jobApplication.findMany({
+            where: { managerStatus: "MANAGER_APPROVED", adminStatus: "PENDING" },
+            select: { createdAt: true, managerReviewedAt: true },
+            orderBy: { createdAt: "desc" },
+            take: 100,
+          }),
         ]);
 
       const tabs = {
@@ -148,6 +162,13 @@ export async function GET() {
           )
         ),
         "admin.reviews": token(reviewSubmissions.length, reviewSubmissions[0]?.createdAt),
+        "admin.jobs": token(
+          pendingJobs.length + pendingJobApplications.length,
+          maxDate(
+            pendingJobs[0]?.createdAt,
+            pendingJobApplications[0]?.managerReviewedAt || pendingJobApplications[0]?.createdAt
+          )
+        ),
         "admin.users": token(usersTotal.length, maxDate(usersTotal[0]?.createdAt, usersTotal[0]?.flaggedAt)),
         "admin.businesses": token(
           businessesPendingKyc.length,
@@ -326,7 +347,7 @@ export async function GET() {
     }
 
     if (role === "MANAGER") {
-      const [queue, suspiciousQueue, decisions, openSecurityEvents, unreadManagerNotifications, latestUnreadManagerNotification] = await Promise.all([
+      const [queue, suspiciousQueue, decisions, openSecurityEvents, unreadManagerNotifications, latestUnreadManagerNotification, pendingJobApplications] = await Promise.all([
         prisma.submission.findMany({
           where: { managerStatus: "PENDING", managerEscalatedAt: null },
           select: { createdAt: true },
@@ -363,10 +384,17 @@ export async function GET() {
           select: { createdAt: true },
           orderBy: { createdAt: "desc" },
         }),
+        prisma.jobApplication.findMany({
+          where: { managerStatus: "PENDING", adminStatus: "PENDING", status: "APPLIED" },
+          select: { createdAt: true },
+          orderBy: { createdAt: "desc" },
+          take: 100,
+        }),
       ]);
 
       const tabs = {
         "manager.submissions": token(queue.length, queue[0]?.createdAt),
+        "manager.jobs": token(pendingJobApplications.length, pendingJobApplications[0]?.createdAt),
         "manager.history": token(decisions.length, decisions[0]?.createdAt),
         "manager.risk": token(
           suspiciousQueue.length + openSecurityEvents.length,

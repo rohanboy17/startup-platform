@@ -28,6 +28,10 @@ type Job = {
   addressLine: string | null;
   openings: number;
   payAmount: number;
+  workerPayAmount: number;
+  commissionAmount: number;
+  commissionRate: number;
+  budgetRequired: number;
   payUnit: string;
   shiftSummary: string | null;
   startDate: string | null;
@@ -224,6 +228,9 @@ export default function UserJobsPanel() {
                       {job.applicationStatus ? (
                         <StatusBadge label={t(`applicationStatus.${job.applicationStatus}`)} tone={applicationTone(job.applicationStatus)} />
                       ) : null}
+                      {job.employmentType === "INTERNSHIP" ? (
+                        <StatusBadge label={t("internship")} tone="info" />
+                      ) : null}
                     </div>
                     <p className="text-sm text-foreground/60">{job.businessName}</p>
                     <p className="text-sm text-foreground/70">{job.description}</p>
@@ -249,6 +256,11 @@ export default function UserJobsPanel() {
                     <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("card.pay")}</p>
                     <p className="mt-2 text-lg font-semibold text-foreground">INR {formatMoney(job.payAmount)}</p>
                     <p className="mt-1 text-xs text-foreground/60">{t(`payUnits.${job.payUnit}`)}</p>
+                  </div>
+                  <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("card.workerPay")}</p>
+                    <p className="mt-2 text-lg font-semibold text-foreground">INR {formatMoney(job.workerPayAmount)}</p>
+                    <p className="mt-1 text-xs text-foreground/60">{t("card.platformCut", { percent: Math.round(job.commissionRate * 100) })}</p>
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("card.openings")}</p>

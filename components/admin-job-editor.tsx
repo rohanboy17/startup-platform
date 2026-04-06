@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SectionCard } from "@/components/ui/section-card";
+import { formatMoney } from "@/lib/format-money";
 import {
   DEFAULT_JOB_CATEGORIES,
   getJobTypesForCategory,
@@ -13,6 +14,8 @@ import {
   JOB_PAY_UNIT_OPTIONS,
   JOB_WORK_MODE_OPTIONS,
 } from "@/lib/job-categories";
+import { getPhysicalWorkPayoutBreakdown } from "@/lib/commission";
+import { getJobBudgetRequired } from "@/lib/jobs";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
 type JobShape = {
@@ -91,6 +94,14 @@ export default function AdminJobEditor({
 
   const jobTypes = useMemo(() => getJobTypesForCategory(jobCategory), [jobCategory]);
   const needsCustomType = jobType === "Other";
+  const payoutPreview = useMemo(
+    () => getPhysicalWorkPayoutBreakdown(Number(payAmount) || 0),
+    [payAmount]
+  );
+  const budgetPreview = useMemo(
+    () => getJobBudgetRequired(Number(payAmount) || 0, Number(openings) || 0),
+    [openings, payAmount]
+  );
 
   function addChip(
     value: string,
@@ -259,6 +270,23 @@ export default function AdminJobEditor({
           ))}
         </select>
         <Input value={shiftSummary} onChange={(e) => setShiftSummary(e.target.value)} placeholder={tForm("fields.shiftSummary")} className="min-h-11" />
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-3">
+        <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/55">{tForm("preview.workerTakeHome")}</p>
+          <p className="mt-2 text-lg font-semibold text-foreground">INR {formatMoney(payoutPreview.workerAmount)}</p>
+        </div>
+        <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/55">{tForm("preview.platformCut")}</p>
+          <p className="mt-2 text-lg font-semibold text-foreground">
+            {Math.round(payoutPreview.commissionRate * 100)}% | INR {formatMoney(payoutPreview.commissionAmount)}
+          </p>
+        </div>
+        <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/55">{tForm("preview.fundRequired")}</p>
+          <p className="mt-2 text-lg font-semibold text-foreground">INR {formatMoney(budgetPreview)}</p>
+        </div>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2">

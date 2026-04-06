@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import AdminJobEditor from "@/components/admin-job-editor";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 
-type JobStatus = "OPEN" | "PAUSED" | "CLOSED" | "FILLED";
-type JobAction = "PAUSE" | "REOPEN" | "CLOSE" | "FILL";
+type JobStatus = "PENDING_REVIEW" | "OPEN" | "REJECTED" | "PAUSED" | "CLOSED" | "FILLED";
+type JobAction = "APPROVE" | "REJECT" | "PAUSE" | "REOPEN" | "CLOSE" | "FILL";
 
 export default function AdminJobActions({
   jobId,
@@ -85,6 +85,16 @@ export default function AdminJobActions({
         <Button variant="outline" onClick={() => setEditOpen((prev) => !prev)} disabled={loading !== ""}>
           {editOpen ? t("actions.closeEdit") : t("actions.edit")}
         </Button>
+        {["PENDING_REVIEW", "REJECTED"].includes(currentStatus) ? (
+          <>
+            <Button variant="outline" onClick={() => void update("APPROVE")} disabled={loading !== ""}>
+              {loading === "APPROVE" ? t("actions.approving") : t("actions.approve")}
+            </Button>
+            <Button variant="outline" onClick={() => void update("REJECT")} disabled={loading !== ""}>
+              {loading === "REJECT" ? t("actions.rejecting") : t("actions.reject")}
+            </Button>
+          </>
+        ) : null}
         {currentStatus === "OPEN" ? (
           <Button variant="outline" onClick={() => void update("PAUSE")} disabled={loading !== ""}>
             {loading === "PAUSE" ? t("actions.pausing") : t("actions.pause")}

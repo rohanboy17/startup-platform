@@ -78,6 +78,12 @@ export function normalizeJobSkills(input: unknown) {
   return normalizeStringArray(input, 12, 48);
 }
 
+export function getJobBudgetRequired(payAmount: number, openings: number) {
+  const safePay = Number.isFinite(payAmount) ? Math.max(0, Number(payAmount)) : 0;
+  const safeOpenings = Number.isFinite(openings) ? Math.max(0, Math.floor(Number(openings))) : 0;
+  return Number((safePay * safeOpenings).toFixed(2));
+}
+
 function toRadians(value: number) {
   return (value * Math.PI) / 180;
 }
@@ -111,6 +117,7 @@ export function getUserJobMatch(input: {
   longitude?: number | null;
   hiringRadiusKm?: number | null;
   workMode: "WORK_FROM_OFFICE" | "WORK_IN_FIELD" | "HYBRID";
+  employmentType?: string;
 }) {
   const profile = parseProfileDetails(input.userProfile);
   let score = 0;
@@ -140,6 +147,16 @@ export function getUserJobMatch(input: {
     } else if (profile.workMode === input.workMode) {
       score += 2;
       reasons.push("work mode match");
+    }
+  }
+
+  if (input.employmentType === "INTERNSHIP") {
+    if (profile.internshipPreference === "INTERNSHIP_ONLY") {
+      score += 3;
+      reasons.push("internship ready");
+    } else if (profile.internshipPreference === "OPEN_TO_INTERNSHIP") {
+      score += 2;
+      reasons.push("open to internship");
     }
   }
 

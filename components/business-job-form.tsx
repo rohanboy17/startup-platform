@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SectionCard } from "@/components/ui/section-card";
+import { formatMoney } from "@/lib/format-money";
 import {
   DEFAULT_JOB_CATEGORIES,
   getEffectiveJobTypeLabel,
@@ -14,6 +15,8 @@ import {
   JOB_PAY_UNIT_OPTIONS,
   JOB_WORK_MODE_OPTIONS,
 } from "@/lib/job-categories";
+import { getPhysicalWorkPayoutBreakdown } from "@/lib/commission";
+import { getJobBudgetRequired } from "@/lib/jobs";
 
 function normalizeChip(value: string, max = 48) {
   return value.trim().slice(0, max);
@@ -54,6 +57,10 @@ export default function BusinessJobForm() {
   const jobTypes = useMemo(() => getJobTypesForCategory(jobCategory), [jobCategory]);
   const needsCustomType = jobType === "Other";
   const effectiveTypeLabel = getEffectiveJobTypeLabel(jobType, customJobType);
+  const numericOpenings = Number(openings) > 0 ? Number(openings) : 0;
+  const numericPayAmount = Number(payAmount) > 0 ? Number(payAmount) : 0;
+  const payout = getPhysicalWorkPayoutBreakdown(numericPayAmount);
+  const budgetRequired = getJobBudgetRequired(numericPayAmount, numericOpenings);
 
   function addChip(
     value: string,
@@ -455,6 +462,19 @@ export default function BusinessJobForm() {
             <p className="text-xs uppercase tracking-[0.2em] text-foreground/55">{t("preview.pay")}</p>
             <p className="mt-2 text-sm font-semibold text-foreground">
               {payAmount || "-"} / {t(`payUnits.${payUnit}`)}
+            </p>
+          </div>
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-foreground/55">{t("preview.workerTakeHome")}</p>
+            <p className="mt-2 text-sm font-semibold text-foreground">
+              {numericPayAmount > 0 ? formatMoney(payout.workerAmount) : "-"}
+            </p>
+            <p className="mt-1 text-xs text-foreground/60">{t("preview.platformCut", { percent: Math.round(payout.commissionRate * 100) })}</p>
+          </div>
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-foreground/55">{t("preview.fundRequired")}</p>
+            <p className="mt-2 text-sm font-semibold text-foreground">
+              {budgetRequired > 0 ? formatMoney(budgetRequired) : "-"}
             </p>
           </div>
         </div>

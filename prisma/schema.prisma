@@ -332,6 +332,8 @@ model JobPosting {
   hiringRadiusKm      Int?
   openings            Int                @default(1)
   payAmount           Float
+  commissionRate      Float              @default(0.15)
+  budgetRequired      Float              @default(0)
   payUnit             JobPayUnit
   shiftSummary        String?
   startDate           DateTime?
@@ -339,7 +341,12 @@ model JobPosting {
   requiredSkills      String[]           @default([])
   requiredLanguages   String[]           @default([])
   minEducation        String?
-  status              JobPostingStatus   @default(OPEN)
+  reviewNote          String?
+  approvedAt          DateTime?
+  approvedByUserId    String?
+  rejectedAt          DateTime?
+  rejectedByUserId    String?
+  status              JobPostingStatus   @default(PENDING_REVIEW)
   createdAt           DateTime           @default(now())
   updatedAt           DateTime           @updatedAt
 
@@ -356,8 +363,16 @@ model JobApplication {
   status           JobApplicationStatus @default(APPLIED)
   coverNote        String?
   businessNote     String?
+  managerStatus    SubmissionStatus     @default(PENDING)
+  adminStatus      SubmissionStatus     @default(PENDING)
+  managerReason    String?
+  adminReason      String?
   interviewAt      DateTime?
   joinedAt         DateTime?
+  managerReviewedAt DateTime?
+  adminReviewedAt  DateTime?
+  managerReviewedByUserId String?
+  adminReviewedByUserId String?
   reviewedByUserId String?
   reviewedAt       DateTime?
   createdAt        DateTime             @default(now())
@@ -904,6 +919,7 @@ enum JobEmploymentType {
   PART_TIME
   CONTRACT
   DAILY_GIG
+  INTERNSHIP
 }
 
 enum JobPayUnit {
@@ -915,7 +931,9 @@ enum JobPayUnit {
 }
 
 enum JobPostingStatus {
+  PENDING_REVIEW
   OPEN
+  REJECTED
   PAUSED
   CLOSED
   FILLED

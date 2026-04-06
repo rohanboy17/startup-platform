@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
 import { canManageBusinessCampaigns, getBusinessContext } from "@/lib/business-context";
+import { PHYSICAL_WORK_COMMISSION_RATE } from "@/lib/commission";
 import {
   DEFAULT_JOB_CATEGORIES,
   JOB_EMPLOYMENT_TYPE_OPTIONS,
@@ -12,6 +14,7 @@ import {
 import {
   normalizeCoordinate,
   normalizeJobDate,
+  getJobBudgetRequired,
   normalizeJobSkills,
   normalizeOptionalText,
   normalizePincode,
@@ -19,6 +22,7 @@ import {
   normalizeStringArray,
 } from "@/lib/jobs";
 import { parseProfileDetails } from "@/lib/user-profile";
+import { getWorkExperienceMap } from "@/lib/work-experience";
 
 const WORK_MODES = new Set<string>(JOB_WORK_MODE_OPTIONS.map((item) => item.value));
 const EMPLOYMENT_TYPES = new Set<string>(JOB_EMPLOYMENT_TYPE_OPTIONS.map((item) => item.value));
@@ -72,33 +76,35 @@ export async function GET(
     return NextResponse.json({ error: "Job not found" }, { status: 404 });
   }
 
+  const experienceMap = await getWorkExperienceMap(job.applications.map((application) => application.user.id));
+
   return NextResponse.json({
     accessRole: context.accessRole,
     job: {
       ...job,
       applications: job.applications.map((application) => {
         const profile = parseProfileDetails(application.user.profileDetails);
+        const experience = experienceMap.get(application.user.id);
         return {
           ...application,
           user: {
             id: application.user.id,
             name: application.user.name,
-            email: application.user.email,
-            mobile: application.user.mobile,
             profile: {
               city: profile.city,
               state: profile.state,
               pincode: profile.pincode,
               latitude: profile.latitude,
               longitude: profile.longitude,
-              address: profile.address,
               workMode: profile.workMode,
               workTime: profile.workTime,
               workingPreference: profile.workingPreference,
+              internshipPreference: profile.internshipPreference,
               educationQualification: profile.educationQualification,
               languages: profile.languages,
             },
             skills: application.user.skills.map((item) => item.skill.label),
+            experience,
           },
         };
       }),
@@ -149,6 +155,12 @@ export async function PATCH(
   }
   if (action === "REOPEN" && !["PAUSED", "CLOSED"].includes(job.status)) {
     return NextResponse.json({ error: "Only paused or closed jobs can be reopened" }, { status: 400 });
+  }
+  if (["PENDING_REVIEW", "REJECTED"].includes(job.status)) {
+    return NextResponse.json(
+      { error: "This job is waiting for admin review and cannot be managed yet." },
+      { status: 400 }
+    );
   }
   if (action === "CLOSE" && ["CLOSED", "FILLED"].includes(job.status)) {
     return NextResponse.json({ error: "Job is already closed" }, { status: 400 });
@@ -326,6 +338,20 @@ export async function PUT(
     return NextResponse.json({ error: "Longitude must be between -180 and 180." }, { status: 400 });
   }
 
+  const budgetRequired = getJobBudgetRequired(Number(payAmount), Number(openings));
+  const wallet = await ensureBusinessWalletSynced(context.businessUserId);
+  if (!wallet || wallet.balance < budgetRequired) {
+    return NextResponse.json(
+      {
+        error: `Add at least INR ${budgetRequired.toFixed(2)} to your business wallet before updating this job.`,
+      },
+      { status: 400 }
+    );
+  }
+
+  const nextStatus =
+    existing.status === "CLOSED" || existing.status === "FILLED" ? existing.status : "PENDING_REVIEW";
+
   const updated = await prisma.$transaction(async (tx) => {
     const next = await tx.jobPosting.update({
       where: { id: jobId },
@@ -336,7 +362,7 @@ export async function PUT(
         jobType: selection.jobType,
         customJobType: selection.customJobType,
         workMode: workMode as "WORK_FROM_OFFICE" | "WORK_IN_FIELD" | "HYBRID",
-        employmentType: employmentType as "FULL_TIME" | "PART_TIME" | "CONTRACT" | "DAILY_GIG",
+        employmentType: employmentType as "FULL_TIME" | "PART_TIME" | "CONTRACT" | "DAILY_GIG" | "INTERNSHIP",
         city,
         state,
         pincode,
@@ -346,6 +372,8 @@ export async function PUT(
         hiringRadiusKm,
         openings: Number(openings),
         payAmount: Number(payAmount),
+        commissionRate: PHYSICAL_WORK_COMMISSION_RATE,
+        budgetRequired,
         payUnit: payUnit as "HOURLY" | "DAILY" | "WEEKLY" | "MONTHLY" | "FIXED",
         shiftSummary,
         startDate,
@@ -353,6 +381,7 @@ export async function PUT(
         requiredSkills,
         requiredLanguages,
         minEducation,
+        status: nextStatus as "PENDING_REVIEW" | "CLOSED" | "FILLED",
       },
     });
 
@@ -361,12 +390,18 @@ export async function PUT(
         userId: context.actorUserId,
         action: "JOB_UPDATED",
         entity: "JobPosting",
-        details: `jobId=${jobId}, city=${city}, state=${state}, status=${next.status}`,
+        details: `jobId=${jobId}, city=${city}, state=${state}, status=${next.status}, budgetRequired=${budgetRequired}`,
       },
     });
 
     return next;
   });
 
-  return NextResponse.json({ message: "Job updated", job: updated });
+  return NextResponse.json({
+    message:
+      nextStatus === "PENDING_REVIEW"
+        ? "Job updated and sent back for admin verification"
+        : "Job updated",
+    job: updated,
+  });
 }

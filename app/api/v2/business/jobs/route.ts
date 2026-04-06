@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
+import { PHYSICAL_WORK_COMMISSION_RATE } from "@/lib/commission";
 import { canManageBusinessCampaigns, getBusinessContext } from "@/lib/business-context";
 import {
   DEFAULT_JOB_CATEGORIES,
@@ -12,6 +14,7 @@ import {
 import {
   normalizeCoordinate,
   normalizeJobDate,
+  getJobBudgetRequired,
   normalizeJobSkills,
   normalizeOptionalText,
   normalizePincode,
@@ -48,8 +51,8 @@ export async function GET() {
     ...job,
     metrics: {
       totalApplications: job.applications.length,
-      applied: job.applications.filter((item) => item.status === "APPLIED").length,
-      shortlisted: job.applications.filter((item) => item.status === "SHORTLISTED").length,
+      pendingManager: job.applications.filter((item) => item.status === "APPLIED").length,
+      approvedForBusiness: job.applications.filter((item) => item.status === "SHORTLISTED").length,
       hired: job.applications.filter((item) => ["HIRED", "JOINED"].includes(item.status)).length,
     },
   }));
@@ -191,6 +194,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Longitude must be between -180 and 180." }, { status: 400 });
   }
 
+  const budgetRequired = getJobBudgetRequired(payAmount, openings);
+  const wallet = await ensureBusinessWalletSynced(context.businessUserId);
+  if (!wallet || wallet.balance < budgetRequired) {
+    return NextResponse.json(
+      {
+        error: `Add at least INR ${budgetRequired.toFixed(2)} to your business wallet before posting this job.`,
+      },
+      { status: 400 }
+    );
+  }
+
   const job = await prisma.$transaction(async (tx) => {
     const created = await tx.jobPosting.create({
       data: {
@@ -201,7 +215,7 @@ export async function POST(req: Request) {
         jobType: selection.jobType,
         customJobType: selection.customJobType,
         workMode: workMode as "WORK_FROM_OFFICE" | "WORK_IN_FIELD" | "HYBRID",
-        employmentType: employmentType as "FULL_TIME" | "PART_TIME" | "CONTRACT" | "DAILY_GIG",
+        employmentType: employmentType as "FULL_TIME" | "PART_TIME" | "CONTRACT" | "DAILY_GIG" | "INTERNSHIP",
         city,
         state,
         pincode,
@@ -211,6 +225,8 @@ export async function POST(req: Request) {
         hiringRadiusKm,
         openings,
         payAmount,
+        commissionRate: PHYSICAL_WORK_COMMISSION_RATE,
+        budgetRequired,
         payUnit: payUnit as "HOURLY" | "DAILY" | "WEEKLY" | "MONTHLY" | "FIXED",
         shiftSummary,
         startDate,
@@ -218,7 +234,7 @@ export async function POST(req: Request) {
         requiredSkills,
         requiredLanguages,
         minEducation,
-        status: "OPEN",
+        status: "PENDING_REVIEW",
       },
     });
 
@@ -227,7 +243,7 @@ export async function POST(req: Request) {
         userId: context.actorUserId,
         action: "JOB_CREATED",
         entity: "JobPosting",
-        details: `jobId=${created.id}, businessId=${context.businessUserId}, city=${city}, openings=${openings}`,
+        details: `jobId=${created.id}, businessId=${context.businessUserId}, city=${city}, openings=${openings}, budgetRequired=${budgetRequired}`,
       },
     });
 
@@ -236,12 +252,12 @@ export async function POST(req: Request) {
         actorUserId: context.actorUserId,
         actorRole: session.user.role,
         action: "JOB_CREATED",
-        details: `jobId=${created.id}, title=${title}, city=${city}, state=${state}, workMode=${workMode}, employmentType=${employmentType}`,
+        details: `jobId=${created.id}, title=${title}, city=${city}, state=${state}, workMode=${workMode}, employmentType=${employmentType}, budgetRequired=${budgetRequired}`,
       },
     });
 
     return created;
   });
 
-  return NextResponse.json({ message: "Job posted", job }, { status: 201 });
+  return NextResponse.json({ message: "Job submitted for admin verification", job }, { status: 201 });
 }

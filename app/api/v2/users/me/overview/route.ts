@@ -2,9 +2,10 @@ import { NextResponse } from "next/server";
 import type { UserLevel } from "@prisma/client";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { MARKETING_COMMISSION_BY_LEVEL } from "@/lib/commission";
+import { MARKETING_COMMISSION_BY_LEVEL, PHYSICAL_WORK_COMMISSION_RATE } from "@/lib/commission";
 import { LEVEL_BENEFIT_STEPS, getDailyResetState } from "@/lib/level";
 import { getAppSettings } from "@/lib/system-settings";
+import { getWorkExperienceMap } from "@/lib/work-experience";
 
 function levelTarget(level: string) {
   switch (level) {
@@ -200,6 +201,7 @@ export async function GET() {
       isCurrent: step.level === effectiveLevel,
     };
   });
+  const experience = (await getWorkExperienceMap([userId])).get(userId);
 
   return NextResponse.json({
     profile: {
@@ -226,7 +228,9 @@ export async function GET() {
       currentLevel: effectiveLevel as UserLevel,
       marketingShareRate: Number((1 - MARKETING_COMMISSION_BY_LEVEL[effectiveLevel as UserLevel]).toFixed(2)),
       fixedWorkShareRate: Number((1 - workCommissionRate).toFixed(2)),
+      physicalWorkShareRate: Number((1 - PHYSICAL_WORK_COMMISSION_RATE).toFixed(2)),
     },
+    experience,
     recentNotifications: recentNotifications.map((item) => ({
       id: item.id,
       title: item.title,

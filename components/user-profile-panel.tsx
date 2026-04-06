@@ -30,8 +30,18 @@ type SettingsPayload = {
     courseAndCertificate: string | null;
     workTime: string | null;
     workingPreference: string | null;
+    internshipPreference: string | null;
     languages: string[];
   };
+  experience?: {
+    totalWorkDays: number;
+    digitalWorkDays: number;
+    physicalWorkDays: number;
+    approvedTaskCount: number;
+    joinedJobsCount: number;
+    activeSince: string | null;
+    experienceLabel: string;
+  } | null;
   error?: string;
 };
 
@@ -86,6 +96,8 @@ export default function UserProfilePanel() {
   const [courseAndCertificate, setCourseAndCertificate] = useState("");
   const [workTime, setWorkTime] = useState("");
   const [workingPreference, setWorkingPreference] = useState("");
+  const [internshipPreference, setInternshipPreference] = useState("");
+  const [experience, setExperience] = useState<SettingsPayload["experience"]>(null);
   const [languages, setLanguages] = useState<string[]>([]);
   const [languageInput, setLanguageInput] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
@@ -129,6 +141,7 @@ export default function UserProfilePanel() {
     setError("");
     const settingsPayload = settingsParsed as SettingsPayload;
     const skillsPayload = skillsParsed as SkillsResponse;
+    setExperience(settingsPayload.experience || null);
 
     if (!initialized) {
       setEmail(settingsPayload.profile.email);
@@ -150,6 +163,7 @@ export default function UserProfilePanel() {
       setCourseAndCertificate(settingsPayload.profile.courseAndCertificate || "");
       setWorkTime(settingsPayload.profile.workTime || "");
       setWorkingPreference(settingsPayload.profile.workingPreference || "");
+      setInternshipPreference(settingsPayload.profile.internshipPreference || "");
       setLanguages(settingsPayload.profile.languages || []);
       setSkills(skillsPayload.skills.map((item) => item.label));
       setInitialized(true);
@@ -204,6 +218,7 @@ export default function UserProfilePanel() {
           courseAndCertificate,
           workTime: workTime || null,
           workingPreference: workingPreference || null,
+          internshipPreference: internshipPreference || null,
           languages,
         },
       }),
@@ -411,6 +426,17 @@ export default function UserProfilePanel() {
             <option value="DAY_BASIS">{t("workingPreferenceOptions.DAY_BASIS")}</option>
           </select>
 
+          <select
+            value={internshipPreference}
+            onChange={(e) => setInternshipPreference(e.target.value)}
+            className="min-h-11 w-full rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground"
+          >
+            <option value="">{t("internshipPreferenceOptions.default")}</option>
+            <option value="OPEN_TO_INTERNSHIP">{t("internshipPreferenceOptions.OPEN_TO_INTERNSHIP")}</option>
+            <option value="INTERNSHIP_ONLY">{t("internshipPreferenceOptions.INTERNSHIP_ONLY")}</option>
+            <option value="NOT_INTERESTED">{t("internshipPreferenceOptions.NOT_INTERESTED")}</option>
+          </select>
+
           <Input
             placeholder={t("placeholders.educationQualification")}
             value={educationQualification}
@@ -548,6 +574,40 @@ export default function UserProfilePanel() {
           </div>
         </SectionCard>
       </div>
+
+      <SectionCard elevated className="space-y-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/60">{t("experienceEyebrow")}</p>
+          <h3 className="mt-2 text-xl font-semibold tracking-tight">{t("experienceTitle")}</h3>
+          <p className="mt-1 text-sm text-foreground/70">{t("experienceSubtitle")}</p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("experienceCards.totalDays")}</p>
+            <p className="mt-2 text-lg font-semibold text-foreground">{experience?.totalWorkDays ?? 0}</p>
+          </div>
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("experienceCards.digitalDays")}</p>
+            <p className="mt-2 text-lg font-semibold text-foreground">{experience?.digitalWorkDays ?? 0}</p>
+          </div>
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("experienceCards.physicalDays")}</p>
+            <p className="mt-2 text-lg font-semibold text-foreground">{experience?.physicalWorkDays ?? 0}</p>
+          </div>
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("experienceCards.joinedJobs")}</p>
+            <p className="mt-2 text-lg font-semibold text-foreground">{experience?.joinedJobsCount ?? 0}</p>
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4 text-sm text-foreground/70">
+          {t("experienceSummary", {
+            label: experience?.experienceLabel || t("experienceNoData"),
+            tasks: experience?.approvedTaskCount ?? 0,
+          })}
+        </div>
+      </SectionCard>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <Button onClick={saveProfile} disabled={saving} className="w-full sm:w-auto">

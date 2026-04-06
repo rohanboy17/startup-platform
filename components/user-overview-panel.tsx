@@ -47,7 +47,17 @@ type OverviewResponse = {
     currentLevel: "L1" | "L2" | "L3" | "L4" | "L5";
     marketingShareRate: number;
     fixedWorkShareRate: number;
+    physicalWorkShareRate: number;
   };
+  experience?: {
+    totalWorkDays: number;
+    digitalWorkDays: number;
+    physicalWorkDays: number;
+    approvedTaskCount: number;
+    joinedJobsCount: number;
+    activeSince: string | null;
+    experienceLabel: string;
+  } | null;
   recentNotifications: Array<{
     id: string;
     title: string;
@@ -319,6 +329,50 @@ export default function UserOverviewPanel() {
                 </div>
               </div>
             </div>
+
+            <div className="rounded-2xl border border-violet-400/20 bg-violet-400/[0.08] p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-violet-700/80 dark:text-violet-200/75">
+                {t("physicalCommissionEyebrow")}
+              </p>
+              <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h4 className="text-lg font-semibold text-foreground">{t("physicalCommissionTitle")}</h4>
+                  <p className="mt-2 max-w-2xl text-sm text-foreground/70">
+                    {t("physicalCommissionBody", {
+                      percent: Math.round(data.levelSystem.physicalWorkShareRate * 100),
+                    })}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-violet-400/25 bg-background/70 px-4 py-3 sm:min-w-48">
+                  <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">
+                    {t("physicalCommissionWalletShare")}
+                  </p>
+                  <p className="mt-2 text-2xl font-semibold text-foreground">
+                    {Math.round(data.levelSystem.physicalWorkShareRate * 100)}%
+                  </p>
+                  <p className="mt-1 text-xs text-foreground/55">
+                    {t("physicalCommissionPlatformCut", {
+                      percent: Math.round((1 - data.levelSystem.physicalWorkShareRate) * 100),
+                    })}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {data.experience ? (
+              <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">{t("experienceEyebrow")}</p>
+                <h4 className="mt-2 text-lg font-semibold text-foreground">{t("experienceTitle")}</h4>
+                <p className="mt-2 text-sm text-foreground/70">
+                  {t("experienceBody", {
+                    label: data.experience.experienceLabel,
+                    days: data.experience.totalWorkDays,
+                    digital: data.experience.digitalWorkDays,
+                    physical: data.experience.physicalWorkDays,
+                  })}
+                </p>
+              </div>
+            ) : null}
 
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               <Link href="/dashboard/user/tasks" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">

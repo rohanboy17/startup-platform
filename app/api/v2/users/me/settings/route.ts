@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { EMPTY_PROFILE_DETAILS, parseProfileDetails } from "@/lib/user-profile";
+import { getWorkExperienceMap } from "@/lib/work-experience";
 
 const ALLOWED_GENDERS = ["MALE", "FEMALE", "OTHER", "PREFER_NOT_TO_SAY"] as const;
 const ALLOWED_WORK_MODES = ["WORK_FROM_HOME", "WORK_FROM_OFFICE", "WORK_IN_FIELD"] as const;
 const ALLOWED_WORK_TIMES = ["FULL_TIME", "PART_TIME"] as const;
 const ALLOWED_WORKING_PREFERENCES = ["SALARIED", "FREELANCE_CONTRACTUAL", "DAY_BASIS"] as const;
+const ALLOWED_INTERNSHIP_PREFERENCES = ["OPEN_TO_INTERNSHIP", "INTERNSHIP_ONLY", "NOT_INTERESTED"] as const;
 
 function normalizeMobile(input: unknown) {
   if (typeof input !== "string") return null;
@@ -88,6 +90,7 @@ export async function GET() {
   const currentMonthKey = new Date().toISOString().slice(0, 7);
   const emergencyUsed = user.emergencyWithdrawMonthKey === currentMonthKey ? user.monthlyEmergencyWithdrawCount : 0;
   const profileDetails = parseProfileDetails(user.profileDetails);
+  const experience = (await getWorkExperienceMap([session.user.id])).get(session.user.id);
 
   return NextResponse.json({
     profile: {
@@ -112,8 +115,10 @@ export async function GET() {
       courseAndCertificate: profileDetails.courseAndCertificate,
       workTime: profileDetails.workTime,
       workingPreference: profileDetails.workingPreference,
+      internshipPreference: profileDetails.internshipPreference,
       languages: profileDetails.languages,
     },
+    experience,
     withdrawals: {
       defaultUpiId: user.defaultUpiId,
       defaultUpiName: user.defaultUpiName,
@@ -158,6 +163,7 @@ export async function POST(req: Request) {
           courseAndCertificate?: unknown;
           workTime?: unknown;
           workingPreference?: unknown;
+          internshipPreference?: unknown;
           languages?: unknown;
         };
         withdrawals?: { defaultUpiId?: unknown; defaultUpiName?: unknown };
@@ -189,6 +195,7 @@ export async function POST(req: Request) {
           "courseAndCertificate",
           "workTime",
           "workingPreference",
+          "internshipPreference",
           "languages",
         ].some((key) => typeof (body.profile as Record<string, unknown>)[key] !== "undefined")
     );
@@ -307,6 +314,13 @@ export async function POST(req: Request) {
       }
       nextProfileDetails.workingPreference = value;
     }
+    if (typeof body.profile?.internshipPreference !== "undefined") {
+      const value = normalizeOption(body.profile.internshipPreference, ALLOWED_INTERNSHIP_PREFERENCES);
+      if (value === "__INVALID__") {
+        return NextResponse.json({ error: "Invalid internship preference" }, { status: 400 });
+      }
+      nextProfileDetails.internshipPreference = value;
+    }
     if (typeof body.profile?.languages !== "undefined") {
       nextProfileDetails.languages = normalizeStringArray(body.profile.languages, 10, 40);
     }
@@ -383,6 +397,7 @@ export async function POST(req: Request) {
     const emergencyUsed =
       updated.emergencyWithdrawMonthKey === currentMonthKey ? updated.monthlyEmergencyWithdrawCount : 0;
     const profileDetails = parseProfileDetails(updated.profileDetails);
+    const experience = (await getWorkExperienceMap([session.user.id])).get(session.user.id);
 
     return NextResponse.json({
       message: "Settings updated",
@@ -407,8 +422,10 @@ export async function POST(req: Request) {
         courseAndCertificate: profileDetails.courseAndCertificate,
         workTime: profileDetails.workTime,
         workingPreference: profileDetails.workingPreference,
+        internshipPreference: profileDetails.internshipPreference,
         languages: profileDetails.languages,
       },
+      experience,
       withdrawals: {
         defaultUpiId: updated.defaultUpiId,
         defaultUpiName: updated.defaultUpiName,

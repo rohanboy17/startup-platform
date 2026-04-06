@@ -9,6 +9,7 @@ export const MARKETING_COMMISSION_BY_LEVEL: Record<UserLevel, number> = {
 };
 
 const ONE_TIME_COMMISSION = 0.3;
+export const PHYSICAL_WORK_COMMISSION_RATE = 0.15;
 
 export function getSubmissionCommissionRate(params: {
   category: string;
@@ -32,4 +33,17 @@ export function applyFundingFee(amount: number, feeRateOverride?: number) {
   const fee = Number((amount * feeRate).toFixed(2));
   const net = Number((amount - fee).toFixed(2));
   return { fee, net, feeRate };
+}
+
+export function getPhysicalWorkPayoutBreakdown(grossAmount: number) {
+  const safeGross = Number.isFinite(grossAmount) ? Math.max(0, grossAmount) : 0;
+  const commissionAmount = Number((safeGross * PHYSICAL_WORK_COMMISSION_RATE).toFixed(2));
+  const workerAmount = Number((safeGross - commissionAmount).toFixed(2));
+  return {
+    grossAmount: safeGross,
+    commissionRate: PHYSICAL_WORK_COMMISSION_RATE,
+    commissionAmount,
+    workerAmount,
+    workerShareRate: Number((1 - PHYSICAL_WORK_COMMISSION_RATE).toFixed(2)),
+  };
 }

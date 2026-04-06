@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getPhysicalWorkPayoutBreakdown } from "@/lib/commission";
 import { parseProfileDetails } from "@/lib/user-profile";
+import { getWorkExperienceMap } from "@/lib/work-experience";
 
 export async function GET() {
   const session = await auth();
@@ -34,11 +36,17 @@ export async function GET() {
   });
 
   const parsedProfile = parseProfileDetails(profile?.profileDetails);
+  const experience = (await getWorkExperienceMap([session.user.id])).get(session.user.id);
 
   return NextResponse.json({
     applications: applications.map((application) => ({
+      ...(getPhysicalWorkPayoutBreakdown(application.job.payAmount)),
       id: application.id,
       status: application.status,
+      managerStatus: application.managerStatus,
+      adminStatus: application.adminStatus,
+      managerReason: application.managerReason,
+      adminReason: application.adminReason,
       coverNote: application.coverNote,
       businessNote: application.businessNote,
       interviewAt: application.interviewAt?.toISOString() || null,
@@ -56,6 +64,7 @@ export async function GET() {
         workMode: application.job.workMode,
         employmentType: application.job.employmentType,
         payAmount: application.job.payAmount,
+        commissionRate: application.job.commissionRate,
         payUnit: application.job.payUnit,
         status: application.job.status,
       },
@@ -74,5 +83,6 @@ export async function GET() {
       state: parsedProfile.state,
       pincode: parsedProfile.pincode,
     },
+    experience,
   });
 }

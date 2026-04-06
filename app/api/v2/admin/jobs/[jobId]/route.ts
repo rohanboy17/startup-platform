@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendInAppNotification } from "@/lib/notify";
+import { PHYSICAL_WORK_COMMISSION_RATE } from "@/lib/commission";
 import {
   DEFAULT_JOB_CATEGORIES,
   JOB_EMPLOYMENT_TYPE_OPTIONS,
@@ -12,6 +13,7 @@ import {
 import {
   normalizeCoordinate,
   normalizeJobDate,
+  getJobBudgetRequired,
   normalizeJobSkills,
   normalizeOptionalText,
   normalizePincode,
@@ -19,7 +21,7 @@ import {
   normalizeStringArray,
 } from "@/lib/jobs";
 
-type JobAction = "PAUSE" | "REOPEN" | "CLOSE" | "FILL";
+type JobAction = "APPROVE" | "REJECT" | "PAUSE" | "REOPEN" | "CLOSE" | "FILL";
 const WORK_MODES = new Set<string>(JOB_WORK_MODE_OPTIONS.map((item) => item.value));
 const EMPLOYMENT_TYPES = new Set<string>(JOB_EMPLOYMENT_TYPE_OPTIONS.map((item) => item.value));
 const PAY_UNITS = new Set<string>(JOB_PAY_UNIT_OPTIONS.map((item) => item.value));
@@ -34,8 +36,9 @@ export async function PATCH(
   }
 
   const { jobId } = await params;
-  const body = (await req.json().catch(() => null)) as { action?: JobAction } | null;
+  const body = (await req.json().catch(() => null)) as { action?: JobAction; reviewNote?: string } | null;
   const action = body?.action;
+  const reviewNote = typeof body?.reviewNote === "string" ? body.reviewNote.trim().slice(0, 500) : "";
 
   if (!action) {
     return NextResponse.json({ error: "Action is required" }, { status: 400 });
@@ -56,8 +59,24 @@ export async function PATCH(
   }
 
   const nextStatus =
-    action === "PAUSE" ? "PAUSED" : action === "REOPEN" ? "OPEN" : action === "FILL" ? "FILLED" : "CLOSED";
+    action === "APPROVE"
+      ? "OPEN"
+      : action === "REJECT"
+        ? "REJECTED"
+        : action === "PAUSE"
+          ? "PAUSED"
+          : action === "REOPEN"
+            ? "OPEN"
+            : action === "FILL"
+              ? "FILLED"
+              : "CLOSED";
 
+  if (action === "APPROVE" && !["PENDING_REVIEW", "REJECTED"].includes(job.status)) {
+    return NextResponse.json({ error: "Only pending or rejected jobs can be approved." }, { status: 400 });
+  }
+  if (action === "REJECT" && !["PENDING_REVIEW", "OPEN"].includes(job.status)) {
+    return NextResponse.json({ error: "Only pending or live jobs can be rejected." }, { status: 400 });
+  }
   if (action === "PAUSE" && job.status !== "OPEN") {
     return NextResponse.json({ error: "Only open jobs can be paused." }, { status: 400 });
   }
@@ -74,7 +93,24 @@ export async function PATCH(
   const updated = await prisma.$transaction(async (tx) => {
     const next = await tx.jobPosting.update({
       where: { id: jobId },
-      data: { status: nextStatus as "OPEN" | "PAUSED" | "CLOSED" | "FILLED" },
+      data: {
+        status: nextStatus as "PENDING_REVIEW" | "OPEN" | "REJECTED" | "PAUSED" | "CLOSED" | "FILLED",
+        reviewNote: reviewNote || null,
+        ...(action === "APPROVE"
+          ? {
+              approvedAt: new Date(),
+              approvedByUserId: session.user.id,
+              rejectedAt: null,
+              rejectedByUserId: null,
+            }
+          : {}),
+        ...(action === "REJECT"
+          ? {
+              rejectedAt: new Date(),
+              rejectedByUserId: session.user.id,
+            }
+          : {}),
+      },
     });
 
     await tx.activityLog.create({
@@ -101,22 +137,30 @@ export async function PATCH(
   await sendInAppNotification({
     userId: job.businessId,
     title:
-      action === "PAUSE"
-        ? "Job paused by admin"
-        : action === "REOPEN"
-          ? "Job reopened by admin"
-          : action === "FILL"
-            ? "Job marked filled by admin"
-            : "Job closed by admin",
+      action === "APPROVE"
+        ? "Job approved by admin"
+        : action === "REJECT"
+          ? "Job rejected by admin"
+          : action === "PAUSE"
+            ? "Job paused by admin"
+            : action === "REOPEN"
+              ? "Job reopened by admin"
+              : action === "FILL"
+                ? "Job marked filled by admin"
+                : "Job closed by admin",
     message:
-      action === "PAUSE"
-        ? `Your job "${job.title}" was paused by admin review.`
-        : action === "REOPEN"
-          ? `Your job "${job.title}" was reopened by admin review.`
-          : action === "FILL"
-            ? `Your job "${job.title}" was marked filled by admin.`
-            : `Your job "${job.title}" was closed by admin review.`,
-    type: action === "REOPEN" ? "SUCCESS" : action === "PAUSE" ? "WARNING" : "INFO",
+      action === "APPROVE"
+        ? `Your job "${job.title}" passed admin verification and is now live for users.`
+        : action === "REJECT"
+          ? `Your job "${job.title}" was rejected by admin review.${reviewNote ? ` Note: ${reviewNote}` : ""}`
+          : action === "PAUSE"
+            ? `Your job "${job.title}" was paused by admin review.`
+            : action === "REOPEN"
+              ? `Your job "${job.title}" was reopened by admin review.`
+              : action === "FILL"
+                ? `Your job "${job.title}" was marked filled by admin.`
+                : `Your job "${job.title}" was closed by admin review.`,
+    type: action === "APPROVE" || action === "REOPEN" ? "SUCCESS" : action === "REJECT" || action === "PAUSE" ? "WARNING" : "INFO",
     templateKey: `admin.job_${action.toLowerCase()}`,
     payload: {
       jobId,
@@ -126,13 +170,17 @@ export async function PATCH(
 
   return NextResponse.json({
     message:
-      action === "PAUSE"
-        ? "Job paused"
-        : action === "REOPEN"
-          ? "Job reopened"
-          : action === "FILL"
-            ? "Job marked as filled"
-            : "Job closed",
+      action === "APPROVE"
+        ? "Job approved"
+        : action === "REJECT"
+          ? "Job rejected"
+          : action === "PAUSE"
+            ? "Job paused"
+            : action === "REOPEN"
+              ? "Job reopened"
+              : action === "FILL"
+                ? "Job marked as filled"
+                : "Job closed",
     job: updated,
   });
 }
@@ -267,6 +315,8 @@ export async function PUT(
     return NextResponse.json({ error: "Longitude must be between -180 and 180." }, { status: 400 });
   }
 
+  const budgetRequired = getJobBudgetRequired(Number(payAmount), Number(openings));
+
   const updated = await prisma.$transaction(async (tx) => {
     const next = await tx.jobPosting.update({
       where: { id: jobId },
@@ -277,7 +327,7 @@ export async function PUT(
         jobType: selection.jobType,
         customJobType: selection.customJobType,
         workMode: workMode as "WORK_FROM_OFFICE" | "WORK_IN_FIELD" | "HYBRID",
-        employmentType: employmentType as "FULL_TIME" | "PART_TIME" | "CONTRACT" | "DAILY_GIG",
+        employmentType: employmentType as "FULL_TIME" | "PART_TIME" | "CONTRACT" | "DAILY_GIG" | "INTERNSHIP",
         city,
         state,
         pincode,
@@ -287,6 +337,8 @@ export async function PUT(
         hiringRadiusKm,
         openings: Number(openings),
         payAmount: Number(payAmount),
+        commissionRate: PHYSICAL_WORK_COMMISSION_RATE,
+        budgetRequired,
         payUnit: payUnit as "HOURLY" | "DAILY" | "WEEKLY" | "MONTHLY" | "FIXED",
         shiftSummary,
         startDate,
@@ -302,7 +354,7 @@ export async function PUT(
         userId: session.user.id,
         action: "ADMIN_JOB_UPDATED",
         entity: "JobPosting",
-        details: `jobId=${jobId}, businessId=${existing.businessId}, city=${city}, state=${state}`,
+        details: `jobId=${jobId}, businessId=${existing.businessId}, city=${city}, state=${state}, budgetRequired=${budgetRequired}`,
       },
     });
 
@@ -311,7 +363,7 @@ export async function PUT(
         actorUserId: session.user.id,
         actorRole: session.user.role,
         action: "ADMIN_JOB_UPDATED",
-        details: `jobId=${jobId}, businessId=${existing.businessId}, city=${city}, state=${state}, status=${existing.status}`,
+        details: `jobId=${jobId}, businessId=${existing.businessId}, city=${city}, state=${state}, status=${existing.status}, budgetRequired=${budgetRequired}`,
       },
     });
 

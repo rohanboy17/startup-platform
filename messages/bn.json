@@ -505,7 +505,15 @@
       "workCommissionTitle": "Flat payout for work-based jobs",
       "workCommissionBody": "Work jobs do not change with your daily level. They currently credit a fixed {percent}% share to your wallet after approval.",
       "workCommissionWalletShare": "Wallet share",
-      "workCommissionPlatformCut": "Platform commission: {percent}%"
+      "workCommissionPlatformCut": "Platform commission: {percent}%",
+      "physicalCommissionEyebrow": "Physical job commission",
+      "physicalCommissionTitle": "Flat payout for physical and field work",
+      "physicalCommissionBody": "Physical jobs use a fixed payout split. Right now {percent}% is declared for the worker and 15% stays with the platform.",
+      "physicalCommissionWalletShare": "Worker share",
+      "physicalCommissionPlatformCut": "Platform commission: {percent}%",
+      "experienceEyebrow": "Experience snapshot",
+      "experienceTitle": "How much work you have already done",
+      "experienceBody": "Recorded platform experience: {label} ({days} work days total, {digital} digital, {physical} physical)."
     },
     "wallet": {
       "eyebrow": "Money center",
@@ -911,7 +919,24 @@
         "failedToLoadSkills": "Failed to load skills",
         "failedToSaveProfile": "Failed to save profile",
         "failedToSaveSkills": "Failed to save skills"
-      }
+      },
+      "internshipPreferenceOptions": {
+        "default": "Internship preference",
+        "OPEN_TO_INTERNSHIP": "Open to internship roles",
+        "INTERNSHIP_ONLY": "Internship only",
+        "NOT_INTERESTED": "Not interested in internships"
+      },
+      "experienceEyebrow": "Platform experience",
+      "experienceTitle": "Your work record on FreeEarnHub",
+      "experienceSubtitle": "This summary is built from approved digital work and active joined physical jobs recorded on the platform.",
+      "experienceCards": {
+        "totalDays": "Total work days",
+        "digitalDays": "Digital work days",
+        "physicalDays": "Physical work days",
+        "joinedJobs": "Joined jobs"
+      },
+      "experienceSummary": "Current experience: {label}. Approved tasks completed: {tasks}.",
+      "experienceNoData": "No recorded work yet"
     },
     "notificationsPage": {
       "eyebrow": "Inbox",
@@ -1177,7 +1202,9 @@
         "workMode": "Work mode",
         "employmentType": "Employment type",
         "requiredSkills": "Required skills",
-        "requiredLanguages": "Required languages"
+        "requiredLanguages": "Required languages",
+        "workerPay": "Take-home pay",
+        "platformCut": "Platform cut {percent}%"
       },
       "workModes": {
         "WORK_FROM_OFFICE": "Office",
@@ -1188,7 +1215,8 @@
         "FULL_TIME": "Full-time",
         "PART_TIME": "Part-time",
         "CONTRACT": "Contract",
-        "DAILY_GIG": "Daily gig"
+        "DAILY_GIG": "Daily gig",
+        "INTERNSHIP": "Internship"
       },
       "payUnits": {
         "HOURLY": "Hourly",
@@ -1207,7 +1235,7 @@
         "JOINED": "Joined"
       },
       "messages": {
-        "applied": "Application submitted"
+        "applied": "Application sent for manager review"
       },
       "errors": {
         "unexpectedServerResponse": "Unexpected server response",
@@ -1219,7 +1247,8 @@
         "anyRadius": "Any radius"
       },
       "distance": "Distance {value} km",
-      "radius": "Radius {value} km"
+      "radius": "Radius {value} km",
+      "internship": "Internship"
     },
     "jobApplications": {
       "pageTitle": "My Applications",
@@ -1261,7 +1290,8 @@
         "FULL_TIME": "Full-time",
         "PART_TIME": "Part-time",
         "CONTRACT": "Contract",
-        "DAILY_GIG": "Daily gig"
+        "DAILY_GIG": "Daily gig",
+        "INTERNSHIP": "Internship"
       },
       "payUnits": {
         "HOURLY": "Hourly",
@@ -1274,12 +1304,16 @@
         "OPEN": "Open",
         "PAUSED": "Paused",
         "CLOSED": "Closed",
-        "FILLED": "Filled"
+        "FILLED": "Filled",
+        "PENDING_REVIEW": "Pending review",
+        "REJECTED": "Rejected"
       },
       "card": {
         "pay": "Pay",
         "jobStatus": "Job status",
-        "appliedAt": "Applied at"
+        "appliedAt": "Applied at",
+        "grossPay": "Gross pay",
+        "platformCut": "Platform cut {percent}%"
       },
       "errors": {
         "unexpectedServerResponse": "Unexpected server response",
@@ -1290,7 +1324,17 @@
         "withdrawn": "Application withdrawn"
       },
       "interviewAt": "Interview schedule",
-      "joinedAt": "Joined at"
+      "joinedAt": "Joined at",
+      "moderation": {
+        "pendingManager": "Pending manager review",
+        "pendingAdmin": "Pending admin review",
+        "adminApproved": "Approved for business review",
+        "managerRejected": "Rejected by manager",
+        "adminRejected": "Rejected by admin"
+      },
+      "experienceLine": "Your platform experience: {label} ({days} days)",
+      "managerReason": "Manager note",
+      "adminReason": "Admin note"
     }
   },
   "business": {
@@ -2164,7 +2208,8 @@
         "totalJobs": "Total jobs",
         "open": "Open",
         "paused": "Paused",
-        "applicants": "Applicants"
+        "applicants": "Applicants",
+        "pending": "Pending review"
       },
       "header": {
         "eyebrow": "Physical jobs",
@@ -2176,7 +2221,9 @@
         "OPEN": "Open",
         "PAUSED": "Paused",
         "FILLED": "Filled",
-        "CLOSED": "Closed"
+        "CLOSED": "Closed",
+        "PENDING_REVIEW": "Pending review",
+        "REJECTED": "Rejected"
       },
       "actions": {
         "pause": "Pause",
@@ -2188,10 +2235,14 @@
         "pay": "Compensation",
         "openings": "Openings",
         "applications": "Applications",
-        "hired": "Hired"
+        "hired": "Hired",
+        "workerPayout": "Worker take-home",
+        "platformCut": "15% platform commission"
       },
       "messages": {
-        "jobUpdated": "Job updated"
+        "jobUpdated": "Job updated",
+        "awaitingAdminReview": "This job is waiting for admin verification before it becomes visible to users.",
+        "rejectedByAdmin": "This job was rejected by admin review and can be edited before resubmission."
       },
       "errors": {
         "unexpectedServerResponse": "Unexpected server response",
@@ -2234,7 +2285,8 @@
         "FULL_TIME": "Full-time",
         "PART_TIME": "Part-time",
         "CONTRACT": "Contract",
-        "DAILY_GIG": "Daily gig"
+        "DAILY_GIG": "Daily gig",
+        "INTERNSHIP": "Internship"
       },
       "payUnits": {
         "HOURLY": "Hourly",
@@ -2252,13 +2304,16 @@
         "jobType": "Job type",
         "workSetup": "Work setup",
         "location": "Location",
-        "pay": "Compensation"
+        "pay": "Compensation",
+        "workerTakeHome": "Worker take-home",
+        "platformCut": "Platform cut {percent}%",
+        "fundRequired": "Fund required"
       },
       "footerNote": "Job payouts and final joining workflow should be handled with your operational hiring process, not the task wallet system.",
       "actions": {
         "add": "Add",
         "posting": "Posting...",
-        "postJob": "Post Job"
+        "postJob": "Submit Job for Review"
       },
       "errors": {
         "unexpectedServerResponse": "Unexpected server response",
@@ -2281,7 +2336,9 @@
         "OPEN": "Open",
         "PAUSED": "Paused",
         "CLOSED": "Closed",
-        "FILLED": "Filled"
+        "FILLED": "Filled",
+        "PENDING_REVIEW": "Pending admin review",
+        "REJECTED": "Rejected"
       },
       "applicationStatus": {
         "APPLIED": "Applied",
@@ -2301,7 +2358,8 @@
         "FULL_TIME": "Full-time",
         "PART_TIME": "Part-time",
         "CONTRACT": "Contract",
-        "DAILY_GIG": "Daily gig"
+        "DAILY_GIG": "Daily gig",
+        "INTERNSHIP": "Internship"
       },
       "payUnits": {
         "HOURLY": "Hourly",
@@ -2348,7 +2406,12 @@
         "requiredSkills": "Required skills",
         "requiredLanguages": "Required languages",
         "notSpecified": "Not specified",
-        "radius": "Radius {value} km"
+        "radius": "Radius {value} km",
+        "workerTakeHome": "Worker take-home INR {amount}",
+        "fundRequired": "Fund requirement",
+        "physicalCommission": "Platform commission {percent}%",
+        "awaitingAdminReview": "This job is waiting for final admin verification before it goes live for users.",
+        "rejectedByAdmin": "This job is currently rejected. Edit it and send it back for admin review."
       },
       "application": {
         "skills": "Skills",
@@ -2362,7 +2425,15 @@
         "businessNotePlaceholder": "Add interview details, location notes, or follow-up instructions",
         "interview": "Interview schedule",
         "interviewScheduledAt": "Scheduled for {value}",
-        "joinedAt": "Joined on {value}"
+        "joinedAt": "Joined on {value}",
+        "moderationRejectedManager": "Rejected by manager",
+        "moderationRejectedAdmin": "Rejected by admin",
+        "moderationApproved": "Approved for business review",
+        "moderationPendingAdmin": "Pending admin review",
+        "moderationPendingManager": "Pending manager review",
+        "unnamed": "Unnamed applicant",
+        "experienceLine": "Experience: {label} ({days} days)",
+        "internship": "Internship preference"
       },
       "messages": {
         "updated": "Update saved"
@@ -3250,7 +3321,9 @@
         "open": "Open jobs",
         "paused": "Paused",
         "filled": "Filled",
-        "closed": "Closed"
+        "closed": "Closed",
+        "pending": "Pending review",
+        "rejected": "Rejected"
       },
       "filters": {
         "searchPlaceholder": "Search job, business, city, or state",
@@ -3265,14 +3338,23 @@
         "OPEN": "Open",
         "PAUSED": "Paused",
         "FILLED": "Filled",
-        "CLOSED": "Closed"
+        "CLOSED": "Closed",
+        "PENDING_REVIEW": "Pending review",
+        "REJECTED": "Rejected"
       },
       "labels": {
         "category": "Category",
         "location": "Location",
         "pay": "Pay",
         "workType": "Work type",
-        "createdAt": "Created"
+        "createdAt": "Created",
+        "workerPayout": "Worker take-home",
+        "internship": "Internship",
+        "experience": "Experience",
+        "experienceLine": "{label} ? {days} days total ? {digital} digital ? {physical} physical",
+        "noExperience": "No recorded experience yet",
+        "noSkills": "No skills added yet",
+        "notProvided": "Not provided"
       },
       "cards": {
         "openings": "Openings",
@@ -3299,7 +3381,8 @@
         "FULL_TIME": "Full-time",
         "PART_TIME": "Part-time",
         "CONTRACT": "Contract",
-        "DAILY_GIG": "Daily gig"
+        "DAILY_GIG": "Daily gig",
+        "INTERNSHIP": "Internship"
       },
       "actions": {
         "pause": "Pause",
@@ -3311,7 +3394,11 @@
         "close": "Close",
         "closing": "Closing...",
         "edit": "Edit",
-        "closeEdit": "Close edit"
+        "closeEdit": "Close edit",
+        "approve": "Approve",
+        "approving": "Approving...",
+        "reject": "Reject",
+        "rejecting": "Rejecting..."
       },
       "messages": {
         "updated": "Job updated"
@@ -3326,6 +3413,19 @@
         "subtitle": "Adjust role details, location coordinates, radius, and hiring requirements.",
         "save": "Save changes",
         "saving": "Saving..."
+      },
+      "pendingApplicationsEyebrow": "Final review queue",
+      "pendingApplicationsTitle": "Manager-approved applicants waiting for final admin verification",
+      "pendingApplicationsEmpty": "No manager-approved job applications are waiting right now.",
+      "applicationActions": {
+        "reasonPlaceholder": "Optional review note. A reason is required if you reject.",
+        "approve": "Approve for business review",
+        "approving": "Approving...",
+        "reject": "Reject",
+        "rejecting": "Rejecting...",
+        "saved": "Review saved",
+        "actionFailed": "Failed to update application",
+        "unexpected": "Unexpected server response"
       }
     }
   },
@@ -3688,6 +3788,53 @@
       "errors": {
         "unexpected": "Unexpected server response",
         "actionFailed": "Action failed"
+      }
+    },
+    "jobsPage": {
+      "eyebrow": "Job application queue",
+      "title": "Manager Job Reviews",
+      "subtitle": "Review incoming job applications before they move to final admin verification."
+    },
+    "jobApplications": {
+      "loading": "Loading job applications...",
+      "failed": "Failed to load job applications",
+      "unexpected": "Unexpected server response",
+      "eyebrow": "First-pass review",
+      "title": "Applications waiting for manager review",
+      "show": "Show",
+      "showAll": "Show all",
+      "search": "Search job, applicant, skill, location, or note",
+      "empty": "No job applications are waiting for manager review right now.",
+      "flagged": "Flagged",
+      "internship": "Internship",
+      "fallbackBusiness": "Business",
+      "candidate": "Candidate profile",
+      "experienceLine": "Experience: {label} ({days} total work days)",
+      "experienceBreakdown": "Digital days: {digital}, physical days: {physical}, approved tasks: {tasks}",
+      "noExperience": "No recorded experience yet",
+      "noSkills": "No skills added yet",
+      "grossPay": "Gross pay",
+      "workerShare": "Worker take-home",
+      "platformCut": "Platform cut",
+      "workMode": "Work mode: {value}",
+      "employmentType": "Employment type: {value}",
+      "languages": "Languages: {value}",
+      "education": "Education: {value}",
+      "notProvided": "Not provided",
+      "kpis": {
+        "waiting": "Waiting for review",
+        "flagged": "Flagged applicants",
+        "internships": "Internship roles"
+      },
+      "actions": {
+        "reasonPlaceholder": "Add a review reason. A reason is required when rejecting.",
+        "approve": "Approve for admin review",
+        "approving": "Approving...",
+        "reject": "Reject",
+        "rejecting": "Rejecting...",
+        "saved": "Review saved",
+        "actionFailed": "Failed to save review",
+        "unexpected": "Unexpected server response"
       }
     }
   },

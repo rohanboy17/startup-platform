@@ -10,10 +10,11 @@ import { Input } from "@/components/ui/input";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { getPhysicalWorkPayoutBreakdown } from "@/lib/commission";
 import { formatMoney } from "@/lib/format-money";
 import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
 
-type JobStatus = "OPEN" | "PAUSED" | "CLOSED" | "FILLED";
+type JobStatus = "PENDING_REVIEW" | "OPEN" | "REJECTED" | "PAUSED" | "CLOSED" | "FILLED";
 
 type Job = {
   id: string;
@@ -38,7 +39,9 @@ type Job = {
 };
 
 function statusTone(status: JobStatus) {
+  if (status === "PENDING_REVIEW") return "warning";
   if (status === "OPEN") return "success";
+  if (status === "REJECTED") return "danger";
   if (status === "PAUSED") return "warning";
   if (status === "FILLED") return "info";
   return "neutral";
@@ -80,6 +83,7 @@ export default function BusinessJobsPanel() {
   const stats = useMemo(
     () => ({
       total: jobs.length,
+      pending: jobs.filter((job) => job.status === "PENDING_REVIEW").length,
       open: jobs.filter((job) => job.status === "OPEN").length,
       paused: jobs.filter((job) => job.status === "PAUSED").length,
       applicants: jobs.reduce((sum, job) => sum + job.metrics.totalApplications, 0),
@@ -139,6 +143,7 @@ export default function BusinessJobsPanel() {
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard label={t("kpis.totalJobs")} value={stats.total} />
+        <KpiCard label={t("kpis.pending")} value={stats.pending} tone="warning" />
         <KpiCard label={t("kpis.open")} value={stats.open} tone="success" />
         <KpiCard label={t("kpis.paused")} value={stats.paused} tone="warning" />
         <KpiCard label={t("kpis.applicants")} value={stats.applicants} tone="info" />
@@ -172,7 +177,7 @@ export default function BusinessJobsPanel() {
             />
           </div>
           <div className="flex flex-wrap gap-2">
-            {(["ALL", "OPEN", "PAUSED", "FILLED", "CLOSED"] as const).map((filter) => (
+            {(["ALL", "PENDING_REVIEW", "OPEN", "REJECTED", "PAUSED", "FILLED", "CLOSED"] as const).map((filter) => (
               <button
                 key={filter}
                 type="button"
@@ -257,6 +262,11 @@ export default function BusinessJobsPanel() {
                     </Link>
                   </div>
                 </div>
+                {["PENDING_REVIEW", "REJECTED"].includes(job.status) ? (
+                  <div className="rounded-2xl border border-amber-400/20 bg-amber-500/10 p-4 text-sm text-amber-100/90">
+                    {job.status === "PENDING_REVIEW" ? t("messages.awaitingAdminReview") : t("messages.rejectedByAdmin")}
+                  </div>
+                ) : null}
 
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                   <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
@@ -265,6 +275,13 @@ export default function BusinessJobsPanel() {
                       INR {formatMoney(job.payAmount)}
                     </p>
                     <p className="mt-1 text-xs text-foreground/60">{job.payUnit}</p>
+                  </div>
+                  <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                    <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">{t("card.workerPayout")}</p>
+                    <p className="mt-2 text-lg font-semibold text-foreground">
+                      INR {formatMoney(getPhysicalWorkPayoutBreakdown(job.payAmount).workerAmount)}
+                    </p>
+                    <p className="mt-1 text-xs text-foreground/60">{t("card.platformCut")}</p>
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                     <p className="text-xs uppercase tracking-[0.2em] text-foreground/60">{t("card.openings")}</p>

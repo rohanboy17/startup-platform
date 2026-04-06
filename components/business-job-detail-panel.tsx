@@ -18,7 +18,7 @@ type ApplicationStatus =
   | "HIRED"
   | "JOINED"
   | "WITHDRAWN";
-type JobStatus = "OPEN" | "PAUSED" | "CLOSED" | "FILLED";
+type JobStatus = "PENDING_REVIEW" | "OPEN" | "REJECTED" | "PAUSED" | "CLOSED" | "FILLED";
 
 type JobPayload = {
   accessRole: "OWNER" | "EDITOR" | "VIEWER";
@@ -40,6 +40,8 @@ type JobPayload = {
     hiringRadiusKm: number | null;
     openings: number;
     payAmount: number;
+    commissionRate: number;
+    budgetRequired: number;
     payUnit: string;
     shiftSummary: string | null;
     startDate: string | null;
@@ -48,9 +50,14 @@ type JobPayload = {
     requiredLanguages: string[];
     minEducation: string | null;
     status: JobStatus;
+    reviewNote: string | null;
     applications: Array<{
       id: string;
       status: ApplicationStatus;
+      managerStatus: string;
+      adminStatus: string;
+      managerReason: string | null;
+      adminReason: string | null;
       coverNote: string | null;
       businessNote: string | null;
       interviewAt: string | null;
@@ -59,22 +66,29 @@ type JobPayload = {
       user: {
         id: string;
         name: string | null;
-        email: string;
-        mobile: string | null;
         profile: {
           city: string | null;
           state: string | null;
           pincode: string | null;
           latitude: number | null;
           longitude: number | null;
-          address: string | null;
           workMode: string | null;
           workTime: string | null;
           workingPreference: string | null;
+          internshipPreference: string | null;
           educationQualification: string | null;
           languages: string[];
         };
         skills: string[];
+        experience: {
+          totalWorkDays: number;
+          digitalWorkDays: number;
+          physicalWorkDays: number;
+          approvedTaskCount: number;
+          joinedJobsCount: number;
+          activeSince: string | null;
+          experienceLabel: string;
+        } | null;
       };
     }>;
   };
@@ -84,9 +98,17 @@ type JobPayload = {
 function statusTone(status: JobStatus | ApplicationStatus) {
   if (status === "OPEN" || status === "SHORTLISTED" || status === "HIRED" || status === "JOINED") return "success";
   if (status === "INTERVIEW_SCHEDULED") return "info";
-  if (status === "PAUSED" || status === "APPLIED") return "warning";
+  if (status === "PAUSED" || status === "APPLIED" || status === "PENDING_REVIEW") return "warning";
   if (status === "REJECTED") return "danger";
   return "neutral";
+}
+
+function moderationLabel(application: JobPayload["job"]["applications"][number], t: ReturnType<typeof useTranslations>) {
+  if (application.managerStatus === "MANAGER_REJECTED") return t("application.moderationRejectedManager");
+  if (application.adminStatus === "ADMIN_REJECTED") return t("application.moderationRejectedAdmin");
+  if (application.adminStatus === "ADMIN_APPROVED") return t("application.moderationApproved");
+  if (application.managerStatus === "MANAGER_APPROVED") return t("application.moderationPendingAdmin");
+  return t("application.moderationPendingManager");
 }
 
 export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
@@ -144,8 +166,8 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
     const applications = data?.job.applications || [];
     return {
       total: applications.length,
-      applied: applications.filter((item) => item.status === "APPLIED").length,
-      shortlisted: applications.filter((item) => item.status === "SHORTLISTED").length,
+      applied: applications.filter((item) => item.managerStatus === "PENDING").length,
+      shortlisted: applications.filter((item) => item.adminStatus === "ADMIN_APPROVED").length,
       interviewed: applications.filter((item) => item.status === "INTERVIEW_SCHEDULED").length,
       hired: applications.filter((item) => ["HIRED", "JOINED"].includes(item.status)).length,
       joined: applications.filter((item) => item.status === "JOINED").length,
@@ -242,6 +264,7 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
               <span>{job.city}, {job.state}</span>
               {job.hiringRadiusKm ? <span>{t("job.radius", { value: job.hiringRadiusKm })}</span> : null}
               <span>{t("job.payLine", { amount: formatMoney(job.payAmount), unit: t(`payUnits.${job.payUnit}`) })}</span>
+              <span>{t("job.workerTakeHome", { amount: formatMoney(job.payAmount * (1 - job.commissionRate)) })}</span>
             </div>
           </div>
 
@@ -275,6 +298,12 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
         </div>
 
         {message ? <p className="text-sm text-foreground/70">{message}</p> : null}
+        {["PENDING_REVIEW", "REJECTED"].includes(job.status) ? (
+          <div className="rounded-2xl border border-amber-400/20 bg-amber-500/10 p-4 text-sm text-amber-100/90">
+            {job.status === "PENDING_REVIEW" ? t("job.awaitingAdminReview") : t("job.rejectedByAdmin")}
+            {job.reviewNote ? <p className="mt-2 text-xs text-amber-50/80">{job.reviewNote}</p> : null}
+          </div>
+        ) : null}
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
@@ -293,6 +322,11 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
             <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("job.location")}</p>
             <p className="mt-2 text-sm font-semibold text-foreground">{job.city}, {job.state}</p>
             {job.pincode ? <p className="mt-1 text-xs text-foreground/60">{job.pincode}</p> : null}
+          </div>
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("job.fundRequired")}</p>
+            <p className="mt-2 text-sm font-semibold text-foreground">{formatMoney(job.budgetRequired)}</p>
+            <p className="mt-1 text-xs text-foreground/60">{t("job.physicalCommission", { percent: Math.round(job.commissionRate * 100) })}</p>
           </div>
         </div>
 
@@ -380,16 +414,16 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
-                      <h4 className="text-lg font-semibold text-foreground">
-                        {application.user.name || application.user.email}
-                      </h4>
+                      <h4 className="text-lg font-semibold text-foreground">{application.user.name || t("application.unnamed")}</h4>
                       <StatusBadge label={t(`applicationStatus.${application.status}`)} tone={statusTone(application.status)} />
+                      <StatusBadge label={moderationLabel(application, t)} tone={application.adminStatus === "ADMIN_APPROVED" ? "success" : application.managerStatus === "MANAGER_REJECTED" || application.adminStatus === "ADMIN_REJECTED" ? "danger" : "warning"} />
                     </div>
                     <div className="flex flex-wrap gap-3 text-xs text-foreground/60">
-                      <span>{application.user.email}</span>
-                      {application.user.mobile ? <span>{application.user.mobile}</span> : null}
                       {application.user.profile.city ? (
                         <span>{application.user.profile.city}, {application.user.profile.state || "-"}</span>
+                      ) : null}
+                      {application.user.experience ? (
+                        <span>{t("application.experienceLine", { label: application.user.experience.experienceLabel, days: application.user.experience.totalWorkDays })}</span>
                       ) : null}
                     </div>
                     {application.coverNote ? (
@@ -397,7 +431,7 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
                     ) : null}
                   </div>
 
-                  {canManage ? (
+                  {canManage && application.adminStatus === "ADMIN_APPROVED" ? (
                     <div className="flex flex-wrap gap-2">
                       {application.status === "APPLIED" ? (
                         <Button
@@ -478,6 +512,13 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
                     </div>
                   ) : null}
                 </div>
+                {application.adminStatus !== "ADMIN_APPROVED" ? (
+                  <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4 text-sm text-foreground/70">
+                    {moderationLabel(application, t)}
+                    {application.managerReason ? <p className="mt-2 text-xs text-foreground/55">{application.managerReason}</p> : null}
+                    {application.adminReason ? <p className="mt-2 text-xs text-foreground/55">{application.adminReason}</p> : null}
+                  </div>
+                ) : null}
 
                 <div className="mt-4 grid gap-4 xl:grid-cols-2">
                   <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
@@ -529,6 +570,10 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
                     <span className="text-foreground/50">{t("application.education")}:</span>{" "}
                     {application.user.profile.educationQualification || t("application.notProvided")}
                   </div>
+                  <div>
+                    <span className="text-foreground/50">{t("application.internship")}:</span>{" "}
+                    {application.user.profile.internshipPreference || t("application.notProvided")}
+                  </div>
                 </div>
 
                 <div className="mt-4 grid gap-4 xl:grid-cols-2">
@@ -542,6 +587,7 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
                           [application.id]: e.target.value.slice(0, 500),
                         }))
                       }
+                      disabled={application.adminStatus !== "ADMIN_APPROVED"}
                       placeholder={t("application.businessNotePlaceholder")}
                       className="mt-3 min-h-[92px] w-full rounded-xl border border-foreground/15 bg-background/70 px-3 py-2 text-sm text-foreground outline-none transition focus:border-foreground/30"
                     />
@@ -549,7 +595,7 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
                       <Button
                         type="button"
                         variant="secondary"
-                        disabled={busyKey === `application:${application.id}:NOTE`}
+                        disabled={busyKey === `application:${application.id}:NOTE` || application.adminStatus !== "ADMIN_APPROVED"}
                         onClick={() =>
                           void updateApplication(application.id, {
                             businessNote: applicationNotes[application.id] || "",
@@ -571,6 +617,7 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
                           [application.id]: e.target.value,
                         }))
                       }
+                      disabled={application.adminStatus !== "ADMIN_APPROVED"}
                       className="mt-3 min-h-11 w-full rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground outline-none transition focus:border-foreground/30"
                     />
                     {application.interviewAt ? (

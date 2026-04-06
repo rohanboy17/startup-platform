@@ -71,6 +71,13 @@ export async function PATCH(
     return NextResponse.json({ error: "Application not found" }, { status: 404 });
   }
 
+  if (application.adminStatus !== "ADMIN_APPROVED") {
+    return NextResponse.json(
+      { error: "This applicant is still waiting for manager and admin verification." },
+      { status: 400 }
+    );
+  }
+
   if (status === "JOINED" && !["HIRED", "JOINED"].includes(application.status)) {
     return NextResponse.json({ error: "Only hired applicants can be marked as joined." }, { status: 400 });
   }

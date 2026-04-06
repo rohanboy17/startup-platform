@@ -91,8 +91,8 @@ export async function POST(
 
   await sendInAppNotification({
     userId: job.businessId,
-    title: "New job application received",
-    message: `A user applied for "${job.title}".`,
+    title: "New job application awaiting review",
+    message: `A user applied for "${job.title}". The application is now waiting for manager and admin verification.`,
     type: "INFO",
     templateKey: "job.application_received",
     payload: {

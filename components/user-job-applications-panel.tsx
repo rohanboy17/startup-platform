@@ -12,12 +12,20 @@ import { useLiveRefresh } from "@/lib/live-refresh";
 type Application = {
   id: string;
   status: "APPLIED" | "SHORTLISTED" | "INTERVIEW_SCHEDULED" | "REJECTED" | "HIRED" | "JOINED" | "WITHDRAWN";
+  managerStatus: string;
+  adminStatus: string;
+  managerReason: string | null;
+  adminReason: string | null;
   coverNote: string | null;
   businessNote: string | null;
   interviewAt: string | null;
   joinedAt: string | null;
   reviewedAt: string | null;
   createdAt: string;
+  grossAmount: number;
+  workerAmount: number;
+  commissionRate: number;
+  commissionAmount: number;
   job: {
     id: string;
     title: string;
@@ -30,7 +38,8 @@ type Application = {
     employmentType: string;
     payAmount: number;
     payUnit: string;
-    status: "OPEN" | "PAUSED" | "CLOSED" | "FILLED";
+    commissionRate: number;
+    status: "PENDING_REVIEW" | "OPEN" | "REJECTED" | "PAUSED" | "CLOSED" | "FILLED";
   };
 };
 
@@ -50,6 +59,15 @@ type Payload = {
     state: string | null;
     pincode: string | null;
   };
+  experience?: {
+    totalWorkDays: number;
+    digitalWorkDays: number;
+    physicalWorkDays: number;
+    approvedTaskCount: number;
+    joinedJobsCount: number;
+    activeSince: string | null;
+    experienceLabel: string;
+  } | null;
   error?: string;
 };
 
@@ -59,6 +77,14 @@ function tone(status: Application["status"]) {
   if (status === "APPLIED") return "warning";
   if (status === "REJECTED") return "danger";
   return "neutral";
+}
+
+function moderationStage(application: Application, t: ReturnType<typeof useTranslations>) {
+  if (application.managerStatus === "MANAGER_REJECTED") return t("moderation.managerRejected");
+  if (application.adminStatus === "ADMIN_REJECTED") return t("moderation.adminRejected");
+  if (application.adminStatus === "ADMIN_APPROVED") return t("moderation.adminApproved");
+  if (application.managerStatus === "MANAGER_APPROVED") return t("moderation.pendingAdmin");
+  return t("moderation.pendingManager");
 }
 
 export default function UserJobApplicationsPanel() {
@@ -150,6 +176,11 @@ export default function UserJobApplicationsPanel() {
             ? t("locationHint", { city: data.profile.city, state: data.profile.state })
             : t("missingLocationHint")}
         </p>
+        {data.experience ? (
+          <p className="text-sm text-foreground/65">
+            {t("experienceLine", { label: data.experience.experienceLabel, days: data.experience.totalWorkDays })}
+          </p>
+        ) : null}
         {message ? <p className="text-sm text-foreground/70">{message}</p> : null}
       </SectionCard>
 
@@ -166,6 +197,7 @@ export default function UserJobApplicationsPanel() {
                   <div className="flex flex-wrap items-center gap-2">
                     <h4 className="text-lg font-semibold text-foreground">{application.job.title}</h4>
                     <StatusBadge label={t(`status.${application.status}`)} tone={tone(application.status)} />
+                    <StatusBadge label={moderationStage(application, t)} tone={application.adminStatus === "ADMIN_APPROVED" ? "success" : application.managerStatus === "MANAGER_REJECTED" || application.adminStatus === "ADMIN_REJECTED" ? "danger" : "warning"} />
                   </div>
                   <p className="text-sm text-foreground/60">{application.job.businessName}</p>
                   <p className="text-sm text-foreground/70">{application.job.description}</p>
@@ -187,10 +219,15 @@ export default function UserJobApplicationsPanel() {
               </div>
 
               <div className="grid gap-4 md:grid-cols-3">
+                  <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("card.pay")}</p>
+                    <p className="mt-2 text-lg font-semibold text-foreground">INR {formatMoney(application.workerAmount)}</p>
+                    <p className="mt-1 text-xs text-foreground/60">{t(`payUnits.${application.job.payUnit}`)}</p>
+                  </div>
                 <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("card.pay")}</p>
-                  <p className="mt-2 text-lg font-semibold text-foreground">INR {formatMoney(application.job.payAmount)}</p>
-                  <p className="mt-1 text-xs text-foreground/60">{t(`payUnits.${application.job.payUnit}`)}</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("card.grossPay")}</p>
+                  <p className="mt-2 text-sm font-semibold text-foreground">INR {formatMoney(application.job.payAmount)}</p>
+                  <p className="mt-1 text-xs text-foreground/60">{t("card.platformCut", { percent: Math.round(application.job.commissionRate * 100) })}</p>
                 </div>
                 <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                   <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("card.jobStatus")}</p>
@@ -213,6 +250,18 @@ export default function UserJobApplicationsPanel() {
                 <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
                   <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("businessNote")}</p>
                   <p className="mt-2 text-sm text-foreground/75">{application.businessNote}</p>
+                </div>
+              ) : null}
+              {application.managerReason ? (
+                <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("managerReason")}</p>
+                  <p className="mt-2 text-sm text-foreground/75">{application.managerReason}</p>
+                </div>
+              ) : null}
+              {application.adminReason ? (
+                <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("adminReason")}</p>
+                  <p className="mt-2 text-sm text-foreground/75">{application.adminReason}</p>
                 </div>
               ) : null}
 
