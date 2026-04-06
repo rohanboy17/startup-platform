@@ -52,6 +52,19 @@ export default function HomeHeroText({ title, subtitle, avgApprovalTimeLabel }: 
         >
           {t("createCampaign")}
         </Link>
+        <span className="inline-flex w-full items-center justify-center gap-3 rounded-full border border-foreground/25 bg-background/70 px-5 py-2.5 text-sm text-foreground/90 transition hover:bg-foreground/10 sm:w-auto sm:px-6 sm:py-3 sm:text-base">
+          <span className="flex items-center gap-2 whitespace-nowrap">
+            <CheckCircle2 size={16} className="text-emerald-500" />
+            {t("payoutsProtected")}
+          </span>
+          <Link
+            href="/dashboard"
+            className="flex items-center gap-1 whitespace-nowrap font-medium text-foreground transition hover:opacity-80"
+          >
+            {t("viewDashboard")}
+            <ArrowUpRight size={16} />
+          </Link>
+        </span>
       </motion.div>
 
       <motion.div
@@ -71,16 +84,6 @@ export default function HomeHeroText({ title, subtitle, avgApprovalTimeLabel }: 
         <span className="inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1">
           <Timer size={14} />
           {t("avgApproval", { time: avgApprovalTimeLabel })}
-        </span>
-        <span className="inline-flex w-full flex-wrap items-center justify-between gap-2 rounded-2xl border border-foreground/15 bg-background/70 px-3 py-1.5 text-xs text-foreground/70 sm:w-auto sm:flex-nowrap sm:gap-3 sm:rounded-full sm:py-1">
-          <span className="flex items-center gap-2">
-            <CheckCircle2 size={14} className="text-emerald-500" />
-            {t("payoutsProtected")}
-          </span>
-          <Link href="/dashboard" className="flex items-center gap-1 text-foreground transition hover:opacity-80">
-            {t("viewDashboard")}
-            <ArrowUpRight size={14} />
-          </Link>
         </span>
       </motion.div>
     </div>
