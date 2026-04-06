@@ -202,6 +202,58 @@ export default async function Home() {
   };
   const homeEarnVideoUrl = process.env.NEXT_PUBLIC_HOME_EARNING_VIDEO_URL || null;
   const homeCampaignVideoUrl = process.env.NEXT_PUBLIC_HOME_CAMPAIGN_VIDEO_URL || null;
+  const featureCards = [
+    {
+      title: tHome("features.items.0.title"),
+      body: tHome("features.items.0.body"),
+      image: "/illustrations/home-cards/safe-payouts.svg",
+      alt: "Illustration of protected payouts and tracked money flow",
+      icon: ShieldCheck,
+      iconClassName: "text-emerald-500",
+    },
+    {
+      title: tHome("features.items.1.title"),
+      body: tHome("features.items.1.body"),
+      image: "/illustrations/home-cards/digital-work-local-hiring.svg",
+      alt: "Illustration of digital work and local hiring from one platform",
+      icon: Zap,
+      iconClassName: "text-sky-500",
+    },
+    {
+      title: tHome("features.items.2.title"),
+      body: tHome("features.items.2.body"),
+      image: "/illustrations/home-cards/performance-tracking.svg",
+      alt: "Illustration of performance tracking across approvals, applicants, and spending",
+      icon: TrendingUp,
+      iconClassName: "text-violet-500",
+    },
+  ];
+  const trustCards = [
+    {
+      title: tHome("trust.items.0.title"),
+      body: tHome("trust.items.0.body"),
+      image: "/illustrations/home-cards/real-users-real-work.svg",
+      alt: "Illustration of verified users and moderated work activity",
+      icon: Users,
+      iconClassName: "text-emerald-500",
+    },
+    {
+      title: tHome("trust.items.1.title"),
+      body: tHome("trust.items.1.body"),
+      image: "/illustrations/home-cards/transparent-costs.svg",
+      alt: "Illustration of transparent costs and commission breakdowns",
+      icon: Briefcase,
+      iconClassName: "text-sky-500",
+    },
+    {
+      title: tHome("trust.items.2.title"),
+      body: tHome("trust.items.2.body", { time: avgApprovalTimeLabel }),
+      image: "/illustrations/home-cards/reliable-approvals.svg",
+      alt: "Illustration of reliable approvals and clear review timing",
+      icon: Timer,
+      iconClassName: "text-violet-500",
+    },
+  ];
 
   return (
     <div className="home-shell relative min-h-screen overflow-x-clip bg-background text-foreground">
@@ -327,54 +379,62 @@ export default async function Home() {
       {showFeatures ? (
         <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-12 sm:px-6 sm:pb-16">
           <MotionStagger className="grid gap-5 sm:gap-6 md:grid-cols-3 auto-rows-fr">
-            <MotionItem className="flex h-full flex-col rounded-2xl border border-foreground/10 bg-foreground/5 p-5 backdrop-blur-none sm:p-6 sm:backdrop-blur-md">
-              <ShieldCheck className="text-emerald-500" />
-              <h3 className="mt-4 text-xl font-semibold">{tHome("features.items.0.title")}</h3>
-              <p className="mt-2 text-foreground/65">
-                {tHome("features.items.0.body")}
-              </p>
-            </MotionItem>
-            <MotionItem className="flex h-full flex-col rounded-2xl border border-foreground/10 bg-foreground/5 p-5 backdrop-blur-none sm:p-6 sm:backdrop-blur-md">
-              <Zap className="text-sky-500" />
-              <h3 className="mt-4 text-xl font-semibold">{tHome("features.items.1.title")}</h3>
-              <p className="mt-2 text-foreground/65">
-                {tHome("features.items.1.body")}
-              </p>
-            </MotionItem>
-            <MotionItem className="flex h-full flex-col rounded-2xl border border-foreground/10 bg-foreground/5 p-5 backdrop-blur-none sm:p-6 sm:backdrop-blur-md">
-              <TrendingUp className="text-violet-500" />
-              <h3 className="mt-4 text-xl font-semibold">{tHome("features.items.2.title")}</h3>
-              <p className="mt-2 text-foreground/65">
-                {tHome("features.items.2.body")}
-              </p>
-            </MotionItem>
+            {featureCards.map((item) => {
+              const Icon = item.icon;
+              return (
+                <MotionItem
+                  key={item.title}
+                  className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-foreground/10 bg-foreground/5 shadow-[0_24px_70px_-42px_rgba(15,23,42,0.42)]"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden border-b border-foreground/10 bg-foreground/[0.04]">
+                    <Image
+                      src={item.image}
+                      alt={item.alt}
+                      fill
+                      className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                    />
+                    <div className="absolute left-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 bg-background/80 shadow-lg backdrop-blur-md">
+                      <Icon className={item.iconClassName} />
+                    </div>
+                  </div>
+                  <div className="flex flex-1 flex-col p-5 sm:p-6">
+                    <h3 className="text-xl font-semibold">{item.title}</h3>
+                    <p className="mt-3 text-foreground/65">{item.body}</p>
+                  </div>
+                </MotionItem>
+              );
+            })}
           </MotionStagger>
         </section>
       ) : null}
 
       <section id="trust" className="relative mx-auto w-full max-w-screen-2xl px-4 pb-12 sm:px-6 sm:pb-16">
         <MotionStagger className="grid gap-6 md:grid-cols-3 auto-rows-fr">
-          <MotionItem className="flex h-full flex-col rounded-3xl border border-foreground/10 bg-foreground/5 p-6 sm:p-7">
-            <Users className="text-emerald-500" />
-            <h3 className="mt-4 text-lg font-semibold">{tHome("trust.items.0.title")}</h3>
-            <p className="mt-2 text-sm text-foreground/70">
-              {tHome("trust.items.0.body")}
-            </p>
-          </MotionItem>
-          <MotionItem className="flex h-full flex-col rounded-3xl border border-foreground/10 bg-foreground/5 p-6 sm:p-7">
-            <Briefcase className="text-sky-500" />
-            <h3 className="mt-4 text-lg font-semibold">{tHome("trust.items.1.title")}</h3>
-            <p className="mt-2 text-sm text-foreground/70">
-              {tHome("trust.items.1.body")}
-            </p>
-          </MotionItem>
-          <MotionItem className="flex h-full flex-col rounded-3xl border border-foreground/10 bg-foreground/5 p-6 sm:p-7">
-            <Timer className="text-violet-500" />
-            <h3 className="mt-4 text-lg font-semibold">{tHome("trust.items.2.title")}</h3>
-            <p className="mt-2 text-sm text-foreground/70">
-              {tHome("trust.items.2.body", { time: avgApprovalTimeLabel })}
-            </p>
-          </MotionItem>
+          {trustCards.map((item) => {
+            const Icon = item.icon;
+            return (
+              <MotionItem
+                key={item.title}
+                className="group flex h-full flex-col overflow-hidden rounded-[1.9rem] border border-foreground/10 bg-foreground/5 shadow-[0_24px_70px_-42px_rgba(15,23,42,0.42)]"
+              >
+                <div className="relative aspect-[16/10] overflow-hidden border-b border-foreground/10 bg-foreground/[0.04]">
+                  <Image
+                    src={item.image}
+                    alt={item.alt}
+                    fill
+                    className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                  />
+                  <div className="absolute left-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 bg-background/80 shadow-lg backdrop-blur-md">
+                    <Icon className={item.iconClassName} />
+                  </div>
+                </div>
+                <div className="flex flex-1 flex-col p-6 sm:p-7">
+                  <h3 className="text-lg font-semibold">{item.title}</h3>
+                  <p className="mt-3 text-sm text-foreground/70">{item.body}</p>
+                </div>
+              </MotionItem>
+            );
+          })}
         </MotionStagger>
       </section>
 

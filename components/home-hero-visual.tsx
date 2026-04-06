@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
 export type HeroStats = {
@@ -11,14 +11,15 @@ export type HeroStats = {
 };
 
 export default function HomeHeroVisual({ stats }: { stats: HeroStats }) {
+  const reduceMotion = useReducedMotion();
   const approvalRate =
     stats.totalUsers > 0 ? Math.min(99, Math.round((stats.tasksCompleted / stats.totalUsers) * 100)) : 0;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 22 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
+      transition={{ duration: 0.45, ease: "easeOut" }}
       className="relative mx-auto flex w-full min-w-0 flex-col items-center gap-4 pb-6"
     >
       <div className="relative w-full min-w-0 rounded-[28px] border border-foreground/10 bg-foreground/5 p-4 text-left shadow-[0_20px_60px_rgba(0,0,0,0.25)] sm:rounded-[32px] sm:p-6">

@@ -42,6 +42,9 @@ export default function SiteFooter({ year }: { year: number }) {
                   <Link href="/" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("home")}
                   </Link>
+                  <Link href="/services" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                    {tLinks("services")}
+                  </Link>
                   <Link href="/about" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("about")}
                   </Link>

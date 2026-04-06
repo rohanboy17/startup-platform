@@ -19,6 +19,7 @@ export default async function SitemapPage() {
       title: groupTitles.main,
       links: [
         ["/", tHeader("home")],
+        ["/services", tHeader("services")],
         ["/about", tHeader("about")],
         ["/faq", tHeader("faq")],
         ["/contact", tHeader("contact")],

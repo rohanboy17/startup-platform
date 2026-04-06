@@ -11,15 +11,16 @@
     "signIn": "Sign In",
     "register": "Register",
     "dashboardHome": "Home",
-    "toggleNavigation": "Toggle navigation"
+    "toggleNavigation": "Toggle navigation",
+    "services": "Services"
   },
   "footer": {
     "platform": "Platform",
     "compliance": "Compliance",
     "marketplace": "Marketplace",
-    "tagline": "A verified micro-work operations platform for testing, feedback, content, research, and data tasks.",
+    "tagline": "A verified operations platform for digital work, internships, local jobs, testing, feedback, content, research, and data tasks.",
     "rights": "All rights reserved.",
-    "builtFor": "Built for moderated workflows, payout controls, and accountable delivery.",
+    "builtFor": "Built for moderated workflows, hiring review, payout controls, and accountable delivery.",
     "links": {
       "home": "Home",
       "about": "About",
@@ -34,7 +35,8 @@
       "disclaimer": "Disclaimer",
       "kyc": "KYC Policy",
       "businessGuidelines": "Business Guidelines",
-      "compliancePage": "Compliance & Grievance"
+      "compliancePage": "Compliance & Grievance",
+      "services": "Services"
     },
     "socialTitle": "Follow us",
     "socialDescription": "Stay close to new launches, support updates, and community news.",
@@ -195,15 +197,15 @@
   },
   "home": {
     "landing": {
-      "heroTitle": "Verified micro-work for people. Controlled delivery for businesses.",
-      "heroSubtitle": "FreeEarnHub connects businesses with moderated micro-work for testing, feedback, content, research, and data operations."
+      "heroTitle": "Verified micro-work and local jobs for people. Controlled delivery and hiring for businesses.",
+      "heroSubtitle": "FreeEarnHub connects businesses with moderated digital work, internships, and location-based jobs for testing, feedback, content, research, data operations, and field teams."
     },
     "announcements": {
       "learnMore": "Learn more"
     },
     "hero": {
-      "startEarning": "Start Earning",
-      "createCampaign": "Create Campaign",
+      "startEarning": "Start Working",
+      "createCampaign": "Launch Work",
       "secureApprovals": "Secure approvals",
       "manualFraud": "Manual fraud checks",
       "avgApproval": "Avg approval: {time}",
@@ -212,18 +214,18 @@
     },
     "sections": {
       "howItWorksEyebrow": "How it works",
-      "howItWorksTitle": "Start earning in three clear steps",
+      "howItWorksTitle": "Start working in three clear steps",
       "howItWorksSteps": [
-        "Pick an approved micro-task and read the work brief carefully.",
-        "Complete the task, attach proof, and track review status.",
-        "Get approved and receive wallet credit under the platform rules."
+        "Pick a verified digital task or apply for a local job or internship.",
+        "Follow the work brief or submit your application and track the review stage.",
+        "Get approved, complete the work, and receive wallet credit or hiring updates under the platform rules."
       ],
       "forBusinessesEyebrow": "For businesses",
-      "forBusinessesTitle": "Run verified micro-work without chaos",
+      "forBusinessesTitle": "Run verified work ops and local hiring without chaos",
       "forBusinessesSteps": [
-        "Fund your wallet and launch testing, feedback, content, or data tasks.",
-        "Receive moderated submissions with fraud checks and review trails.",
-        "Measure approvals, spend, and delivery quality from one dashboard."
+        "Fund your wallet and launch digital tasks, internships, or moderated local jobs.",
+        "Use admin review, manager checks, and privacy controls before work goes live.",
+        "Track delivery quality, applicants, spend, and approvals from one dashboard."
       ]
     },
     "live": {
@@ -249,12 +251,12 @@
           "body": "Every approved task is tracked clearly so users and businesses can trust the money flow."
         },
         {
-          "title": "Fast campaign launch",
-          "body": "Add funds, publish a campaign, and start getting responses without a complicated setup."
+          "title": "Digital work and local hiring",
+          "body": "Launch moderated micro-work, internships, and location-based jobs from one place without mixing up delivery and hiring flows."
         },
         {
           "title": "Clear performance tracking",
-          "body": "See approvals, spending, and campaign results in one place without guessing what is working."
+          "body": "See approvals, applicants, spending, and delivery quality in one place without guessing what is working."
         }
       ]
     },
@@ -262,7 +264,7 @@
       "items": [
         {
           "title": "Real users, real work",
-          "body": "We show only anonymized activity and verified submissions to protect privacy."
+          "body": "We show only anonymized public activity, moderated applications, and verified submissions to protect privacy."
         },
         {
           "title": "Transparent costs",
@@ -275,8 +277,8 @@
       ]
     },
     "cta": {
-      "title": "Ready to start earning?",
-      "body": "Create an account, complete verified tasks, and grow your earnings with confidence."
+      "title": "Ready to work or hire?",
+      "body": "Create an account to start with verified tasks, internships, local jobs, and controlled hiring workflows."
     },
     "offlineInvite": {
       "eyebrow": "Offline Invite",
@@ -378,52 +380,60 @@
   "about": {
     "eyebrow": "About",
     "title": "About FreeEarnHub",
-    "description": "FreeEarnHub is a verified micro-work operations platform for businesses and delivery users.",
+    "description": "FreeEarnHub is a verified operations platform for digital work, local jobs, internships, and moderated delivery.",
     "sections": {
       "build": {
         "title": "What We Build",
-        "body": "Businesses launch testing, feedback, content, research, and data tasks. Users complete the work and every submission is reviewed before settlement."
+        "body": "Businesses launch testing, feedback, content, research, data tasks, and moderated local jobs. Users complete digital work or apply for verified roles, and every payout or hiring step is reviewed before it moves forward."
       },
       "trust": {
         "title": "How Trust Is Maintained",
         "bullets": [
-          "Human review before rewards are approved",
-          "Clear wallet records for credits, debits, and withdrawals",
-          "Fraud and abuse checks before payouts",
-          "Recorded decisions for support and dispute handling"
+          "Human review before rewards are approved or job applications move forward",
+          "Clear wallet records for credits, debits, funding, and withdrawals",
+          "Fraud, privacy, and abuse checks before payouts or applicant release",
+          "Recorded decisions for support, disputes, moderation, and audit handling"
         ]
       },
       "direction": {
         "title": "Our Product Direction",
-        "body": "FreeEarnHub is being shaped as a moderated operations marketplace, not a growth-hack exchange."
+        "body": "FreeEarnHub is being shaped as a moderated operations and hiring marketplace, not a growth-hack exchange."
       }
     }
   },
   "faq": {
     "eyebrow": "Help Center",
     "title": "Frequently Asked Questions",
-    "description": "Clear answers about accounts, rewards, withdrawals, campaigns, and platform safety.",
+    "description": "Clear answers about accounts, rewards, withdrawals, campaigns, jobs, internships, and platform safety.",
     "sectionTitle": "FAQ",
     "items": [
       {
         "q": "What is FreeEarnHub?",
-        "a": "FreeEarnHub is a verified micro-work operations platform where businesses launch structured tasks and users complete approved work."
+        "a": "FreeEarnHub is a verified operations platform where businesses launch structured digital work and moderated local jobs, and users complete approved work or apply for verified roles."
       },
       {
-        "q": "When do users receive rewards?",
-        "a": "Rewards are added after the submission is reviewed and approved under the campaign rules."
+        "q": "Does FreeEarnHub support local jobs and internships?",
+        "a": "Yes. Businesses can now run moderated local jobs and internship roles separately from digital work campaigns so hiring and task delivery stay controlled."
+      },
+      {
+        "q": "When do users receive rewards or hiring updates?",
+        "a": "Task rewards are added after the submission is reviewed and approved. Job applications move through manager and admin review before the business can take hiring actions."
+      },
+      {
+        "q": "Do businesses need approval before campaigns or jobs go live?",
+        "a": "Yes. Business accounts may require KYC approval, and campaigns or jobs can be held for admin review before they go live."
+      },
+      {
+        "q": "Do businesses see full applicant contact details immediately?",
+        "a": "No. Job applications move through moderated review stages first, and sensitive applicant contact access is restricted during the early workflow."
       },
       {
         "q": "How long do withdrawals take?",
-        "a": "Most withdrawal requests are processed within 3 to 5 business days, subject to fraud and compliance checks."
-      },
-      {
-        "q": "Can businesses launch campaigns immediately?",
-        "a": "Business accounts may require KYC approval before campaign creation and budget deployment."
+        "a": "Most withdrawal requests are processed within 3 to 5 business days, subject to fraud, reconciliation, and compliance checks."
       },
       {
         "q": "Do you share personal data?",
-        "a": "We do not sell personal data. Data sharing is limited to essential service providers and legal/regulatory obligations."
+        "a": "We do not sell personal data. Data sharing is limited to essential service providers, necessary platform operations, and legal or regulatory obligations."
       }
     ]
   },
@@ -1031,6 +1041,7 @@
         "courseAndCertificate": "Course & certificate",
         "workTime": "Work time",
         "workingPreference": "Working preference",
+        "internshipPreference": "Internship preference",
         "languages": "Languages"
       }
     },

@@ -46,7 +46,7 @@ export default function HomeHeroFloats({
 
   return (
     <div className="grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 lg:grid-cols-3">
-      <div className="motion-safe:animate-[floatSlow_14s_ease-in-out_infinite]">
+      <div className="lg:motion-safe:animate-[floatSlow_18s_ease-in-out_infinite]">
         <FloatCard
           title="Wallet"
           value={
@@ -57,7 +57,7 @@ export default function HomeHeroFloats({
           caption="Total approved payouts"
         />
       </div>
-      <div className="motion-safe:animate-[floatWide_16s_ease-in-out_infinite]">
+      <div className="lg:motion-safe:animate-[floatWide_20s_ease-in-out_infinite]">
         <FloatCard
           title="Approval"
           value={`${approvalRate}% verified`}
@@ -65,7 +65,7 @@ export default function HomeHeroFloats({
           className="border-emerald-400/30"
         />
       </div>
-      <div className="motion-safe:animate-[floatSlow_18s_ease-in-out_infinite]">
+      <div className="lg:motion-safe:animate-[floatSlow_22s_ease-in-out_infinite]">
         <FloatCard
           title="Growth"
           value={`${growthRate}x`}

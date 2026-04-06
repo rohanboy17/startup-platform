@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, CheckCircle2, ShieldCheck, Timer, ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -13,30 +13,31 @@ type HomeHeroTextProps = {
 
 export default function HomeHeroText({ title, subtitle, avgApprovalTimeLabel }: HomeHeroTextProps) {
   const t = useTranslations("home.hero");
+  const reduceMotion = useReducedMotion();
   return (
     <div className="space-y-5 sm:space-y-8">
       <motion.h1
-        initial={{ opacity: 0, y: 24 }}
+        initial={reduceMotion ? false : { opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.45, ease: "easeOut" }}
         className="max-w-[20ch] text-balance text-2xl font-bold leading-tight min-[360px]:text-3xl sm:max-w-none sm:text-4xl md:text-6xl whitespace-pre-line"
       >
         {title}
       </motion.h1>
 
       <motion.p
-        initial={{ opacity: 0, y: 14 }}
+        initial={reduceMotion ? false : { opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
+        transition={{ duration: 0.45, ease: "easeOut", delay: 0.05 }}
         className="max-w-[44ch] text-pretty text-sm text-foreground/70 min-[360px]:text-base md:max-w-2xl md:text-lg"
       >
         {subtitle}
       </motion.p>
 
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={reduceMotion ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+        transition={{ duration: 0.45, ease: "easeOut", delay: 0.08 }}
         className="flex flex-wrap items-center gap-3 sm:gap-4"
       >
         <Link
@@ -54,9 +55,9 @@ export default function HomeHeroText({ title, subtitle, avgApprovalTimeLabel }: 
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0 }}
+        initial={reduceMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
+        transition={{ duration: 0.45, ease: "easeOut", delay: 0.12 }}
         className="flex flex-wrap items-center gap-2 text-[11px] text-foreground/60 sm:gap-3 sm:text-xs"
       >
         <span className="inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1">

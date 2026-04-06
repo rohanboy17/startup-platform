@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
@@ -21,17 +21,23 @@ const container: Variants = {
     opacity: 1,
     transition: {
       delay,
-      staggerChildren: 0.12,
+      staggerChildren: 0.08,
     },
   }),
 };
 
 const item: Variants = {
-  hidden: { opacity: 0, y: 18, scale: 0.98 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
 };
 
 export function MotionStagger({ children, className, delay = 0 }: MotionStaggerProps) {
+  const reduceMotion = useReducedMotion();
+
+  if (reduceMotion) {
+    return <div className={cn(className)}>{children}</div>;
+  }
+
   return (
     <motion.div
       className={cn(className)}
@@ -47,6 +53,12 @@ export function MotionStagger({ children, className, delay = 0 }: MotionStaggerP
 }
 
 export function MotionItem({ children, className }: MotionItemProps) {
+  const reduceMotion = useReducedMotion();
+
+  if (reduceMotion) {
+    return <div className={cn(className)}>{children}</div>;
+  }
+
   return (
     <motion.div className={cn(className)} variants={item}>
       {children}

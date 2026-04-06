@@ -32,6 +32,7 @@ export default function SiteHeader() {
   const primaryLinks = useMemo(
     () => [
       { label: t("home"), href: "/" },
+      { label: t("services"), href: "/services" },
       { label: t("about"), href: "/about" },
       { label: t("faq"), href: "/faq" },
       { label: t("contact"), href: "/contact" },
