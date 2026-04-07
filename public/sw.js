@@ -1,4 +1,4 @@
-const CACHE_NAME = "earnhub-shell-v1";
+const CACHE_NAME = "earnhub-shell-v2";
 const OFFLINE_URL = "/offline";
 const SHELL_ASSETS = ["/", OFFLINE_URL, "/manifest.webmanifest", "/icons/icon-192.svg", "/icons/icon-512.svg"];
 
