@@ -41,13 +41,13 @@ export default function AdminCampaignEscalationControls() {
   }
 
   return (
-    <div className="space-y-2 rounded-2xl border border-white/10 bg-white/5 p-4">
+    <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
       <div className="flex flex-wrap items-center gap-2">
         <Button onClick={escalateBreached} disabled={loading} variant="outline">
           {loading ? t("escalating") : t("button")}
         </Button>
       </div>
-      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }

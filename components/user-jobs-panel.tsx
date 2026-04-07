@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
+import EmptyJobsPushNudge from "@/components/empty-jobs-push-nudge";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
 
@@ -215,7 +216,8 @@ export default function UserJobsPanel() {
       <div className="grid gap-6 2xl:grid-cols-2">
         {filteredJobs.length === 0 ? (
           <div className="rounded-3xl border border-dashed border-foreground/15 bg-foreground/[0.03] p-10 text-center text-foreground/60 2xl:col-span-2">
-            {t("empty")}
+            <p>{t(data.jobs.length === 0 ? "empty" : "emptyFiltered")}</p>
+            {data.jobs.length === 0 ? <EmptyJobsPushNudge /> : null}
           </div>
         ) : (
           filteredJobs.map((job) => (
@@ -254,13 +256,10 @@ export default function UserJobsPanel() {
                 <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
                   <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("card.pay")}</p>
-                    <p className="mt-2 text-lg font-semibold text-foreground">INR {formatMoney(job.payAmount)}</p>
-                    <p className="mt-1 text-xs text-foreground/60">{t(`payUnits.${job.payUnit}`)}</p>
-                  </div>
-                  <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("card.workerPay")}</p>
                     <p className="mt-2 text-lg font-semibold text-foreground">INR {formatMoney(job.workerPayAmount)}</p>
-                    <p className="mt-1 text-xs text-foreground/60">{t("card.platformCut", { percent: Math.round(job.commissionRate * 100) })}</p>
+                    <p className="mt-1 text-xs text-foreground/60">
+                      {t(`payUnits.${job.payUnit}`)} | {t("card.platformCut", { percent: Math.round(job.commissionRate * 100) })}
+                    </p>
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("card.openings")}</p>

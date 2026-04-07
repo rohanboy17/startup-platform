@@ -137,7 +137,7 @@ export default async function AdminRevenuePage({
         <div className="surface-card premium-ring-hover rounded-2xl p-6">
           <p className="text-xs font-medium uppercase tracking-wide text-foreground/60">{t("kpis.treasuryAvailable")}</p>
           <p className="kpi-value mt-2 text-2xl font-semibold text-foreground">INR {formatMoney(reconciledBalance)}</p>
-          <p className="mt-2 text-xs text-white/50">
+          <p className="mt-2 text-xs text-foreground/50">
             {t("kpis.payoutLimits", {
               perRequest: formatMoney(payoutPerRequestLimit),
               daily: formatMoney(payoutDailyLimit),
@@ -149,7 +149,7 @@ export default async function AdminRevenuePage({
 
       {!delegates.platformTreasury || !delegates.platformPayout ? (
         <Card className="rounded-2xl border-amber-300/20 bg-amber-500/10">
-          <CardContent className="p-6 text-sm text-amber-200">
+          <CardContent className="p-6 text-sm text-amber-800 dark:text-amber-200">
             {t("unavailable")}
           </CardContent>
         </Card>
@@ -161,11 +161,11 @@ export default async function AdminRevenuePage({
         <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <h3 className="text-xl font-semibold">{t("adjustments.title")}</h3>
           <form className="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <label className="text-sm text-white/65">{t("filters.show")}</label>
+            <label className="text-sm text-foreground/65">{t("filters.show")}</label>
             <select
               name="limit"
               defaultValue={limit ? String(limit) : "ALL"}
-              className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-sm text-white"
+              className="rounded-md border border-foreground/15 bg-foreground/[0.04] px-3 py-2 text-sm text-foreground"
             >
               <option value="5">5</option>
               <option value="10">10</option>
@@ -174,41 +174,41 @@ export default async function AdminRevenuePage({
             </select>
             <button
               type="submit"
-              className="rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/20"
+              className="rounded-md border border-foreground/15 bg-foreground/[0.06] px-3 py-2 text-sm text-foreground hover:bg-foreground/[0.12]"
             >
               {t("filters.apply")}
             </button>
             <Link
               href="/dashboard/admin/revenue"
-              className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-sm text-white hover:bg-white/10"
+              className="rounded-md border border-foreground/15 bg-foreground/[0.04] px-3 py-2 text-sm text-foreground hover:bg-foreground/[0.08]"
             >
               {t("filters.clear")}
             </Link>
           </form>
         </div>
         {pendingAdjustments.length === 0 ? (
-          <Card className="rounded-2xl border-white/10 bg-white/5">
-            <CardContent className="p-6 text-sm text-white/60">
+          <Card className="rounded-2xl border-foreground/10 bg-background/60">
+            <CardContent className="p-6 text-sm text-foreground/60">
               {t("adjustments.empty")}
             </CardContent>
           </Card>
         ) : (
           pendingAdjustments.map((item) => (
-            <Card key={item.id} className="rounded-2xl border-white/10 bg-white/5">
+            <Card key={item.id} className="rounded-2xl border-foreground/10 bg-background/60">
               <CardContent className="space-y-3 p-6">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <p className="font-medium">
                     {item.type} INR {formatMoney(item.amount)}
                   </p>
-                  <p className="text-sm text-white/70">{formatDateTime(item.createdAt, locale)}</p>
+                  <p className="text-sm text-foreground/70">{formatDateTime(item.createdAt, locale)}</p>
                 </div>
-                <p className="text-sm text-white/70">
+                <p className="text-sm text-foreground/70">
                   {t("adjustments.target", { name: item.targetUser.name || t("fallbacks.unnamed"), email: item.targetUser.email })}
                 </p>
-                <p className="text-sm text-white/70">
+                <p className="text-sm text-foreground/70">
                   {t("adjustments.requestedBy", { name: item.requestedByUser.name || t("fallbacks.unnamed"), email: item.requestedByUser.email })}
                 </p>
-                <p className="text-sm text-white/70">{t("adjustments.reason", { value: item.reason })}</p>
+                <p className="text-sm text-foreground/70">{t("adjustments.reason", { value: item.reason })}</p>
                 <AdminWalletAdjustmentReviewActions requestId={item.id} />
               </CardContent>
             </Card>
@@ -221,31 +221,31 @@ export default async function AdminRevenuePage({
           <h3 className="text-xl font-semibold">{t("payouts.title")}</h3>
           <Link
             href="/api/admin/revenue/payouts/export?status=ALL"
-            className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-center text-sm text-white hover:bg-white/10"
+            className="rounded-md border border-foreground/15 bg-foreground/[0.04] px-3 py-2 text-center text-sm text-foreground hover:bg-foreground/[0.08]"
           >
             {t("payouts.export")}
           </Link>
         </div>
         {payouts.length === 0 ? (
-          <Card className="rounded-2xl border-white/10 bg-white/5">
-            <CardContent className="p-6 text-sm text-white/60">
+          <Card className="rounded-2xl border-foreground/10 bg-background/60">
+            <CardContent className="p-6 text-sm text-foreground/60">
               {t("payouts.empty")}
             </CardContent>
           </Card>
         ) : (
           payouts.map((payout) => (
-            <Card key={payout.id} className="rounded-2xl border-white/10 bg-white/5">
+            <Card key={payout.id} className="rounded-2xl border-foreground/10 bg-background/60">
               <CardContent className="space-y-3 p-6">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <p className="font-medium">INR {formatMoney(payout.amount)}</p>
                   <StatusBadge label={payout.status} tone={payout.status === "APPROVED" ? "success" : payout.status === "REJECTED" ? "danger" : "warning"} />
                 </div>
-                {payout.note ? <p className="text-sm text-white/70">{payout.note}</p> : null}
-                <p className="text-xs text-white/50">
+                {payout.note ? <p className="text-sm text-foreground/70">{payout.note}</p> : null}
+                <p className="text-xs text-foreground/50">
                   {t("payouts.requested", { value: formatDateTime(payout.createdAt, locale) })}
                 </p>
                 {payout.processedAt ? (
-                  <p className="text-xs text-white/50">
+                  <p className="text-xs text-foreground/50">
                     {t("payouts.processed", { value: formatDateTime(payout.processedAt, locale) })}
                   </p>
                 ) : null}

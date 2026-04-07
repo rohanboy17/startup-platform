@@ -68,14 +68,14 @@ export default function AdminCompliancePanel({ initialEvidence }: { initialEvide
 
   return (
     <div className="space-y-6">
-      <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+      <div className="space-y-3 rounded-2xl border border-foreground/10 bg-background/60 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Privacy Compliance: User Export/Delete</h3>
         <Input placeholder="User ID" value={userId} onChange={(e) => setUserId(e.target.value)} />
         <Input placeholder="Reason" value={reason} onChange={(e) => setReason(e.target.value)} />
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           <a
             href={userId ? `/api/admin/compliance/users/${userId}/export` : "#"}
-            className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-center text-sm"
+            className="rounded-md border border-foreground/15 bg-foreground/[0.04] px-3 py-2 text-center text-sm"
           >
             Export JSON
           </a>
@@ -85,14 +85,14 @@ export default function AdminCompliancePanel({ initialEvidence }: { initialEvide
         </div>
       </div>
 
-      <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+      <div className="space-y-3 rounded-2xl border border-foreground/10 bg-background/60 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Legal Evidence Logs</h3>
         <Input placeholder="Entity type (e.g. WITHDRAWAL_DISPUTE)" value={entityType} onChange={(e) => setEntityType(e.target.value)} />
         <Input placeholder="Entity ID" value={entityId} onChange={(e) => setEntityId(e.target.value)} />
         <textarea
           value={note}
           onChange={(e) => setNote(e.target.value)}
-          className="min-h-[80px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm"
+          className="min-h-[80px] w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm"
           placeholder="Evidence note"
         />
         <Input placeholder="File URL (optional)" value={fileUrl} onChange={(e) => setFileUrl(e.target.value)} />
@@ -100,17 +100,17 @@ export default function AdminCompliancePanel({ initialEvidence }: { initialEvide
 
         <div className="space-y-2">
           {initialEvidence.map((item) => (
-            <div key={item.id} className="rounded-md border border-white/10 bg-black/20 p-3 text-sm">
+            <div key={item.id} className="rounded-md border border-foreground/10 bg-foreground/[0.04] p-3 text-sm">
               <p className="break-all font-medium">{item.entityType} | {item.entityId}</p>
-              <p className="text-xs text-white/60">{new Date(item.createdAt).toLocaleString()}</p>
-              {item.note ? <p className="text-xs text-white/70">{item.note}</p> : null}
+              <p className="text-xs text-foreground/60">{new Date(item.createdAt).toLocaleString()}</p>
+              {item.note ? <p className="text-xs text-foreground/70">{item.note}</p> : null}
               {item.fileUrl ? <p className="break-all text-xs text-sky-300">{item.fileUrl}</p> : null}
             </div>
           ))}
         </div>
       </div>
 
-      {message ? <p className="text-sm text-white/70">{message}</p> : null}
+      {message ? <p className="text-sm text-foreground/70">{message}</p> : null}
     </div>
   );
 }

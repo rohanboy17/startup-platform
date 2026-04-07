@@ -26,7 +26,6 @@ export async function GET() {
             select: {
               id: true,
               name: true,
-              email: true,
             },
           },
         },
@@ -108,7 +107,6 @@ export async function GET() {
           business: {
             id: application.job.business.id,
             name: application.job.business.name,
-            email: application.job.business.email,
           },
         },
       };

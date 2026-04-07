@@ -55,7 +55,7 @@ export default function ManagerJobApplicationActions({
         onChange={(e) => setReason(e.target.value)}
         placeholder={t("reasonPlaceholder")}
         rows={3}
-        className="w-full resize-none rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35"
+        className="w-full resize-none rounded-xl border border-foreground/15 bg-background px-4 py-3 text-sm text-foreground outline-none placeholder:text-foreground/35"
       />
       <div className="flex flex-col gap-3 sm:flex-row">
         <Button onClick={() => void review("APPROVE")} disabled={loading !== null} className="min-h-11 w-full sm:w-auto">
@@ -70,7 +70,7 @@ export default function ManagerJobApplicationActions({
           {loading === "REJECT" ? t("rejecting") : t("reject")}
         </Button>
       </div>
-      {message ? <p className="text-xs text-white/70">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/70">{message}</p> : null}
     </div>
   );
 }

@@ -161,14 +161,12 @@ export async function GET() {
             openSecurityEvents[0]?.createdAt
           )
         ),
-        "admin.reviews": token(reviewSubmissions.length, reviewSubmissions[0]?.createdAt),
-        "admin.jobs": token(
-          pendingJobs.length + pendingJobApplications.length,
-          maxDate(
-            pendingJobs[0]?.createdAt,
-            pendingJobApplications[0]?.managerReviewedAt || pendingJobApplications[0]?.createdAt
-          )
+        "admin.campaignApplicants": token(reviewSubmissions.length, reviewSubmissions[0]?.createdAt),
+        "admin.jobApplicants": token(
+          pendingJobApplications.length,
+          pendingJobApplications[0]?.managerReviewedAt || pendingJobApplications[0]?.createdAt
         ),
+        "admin.jobs": token(pendingJobs.length, maxDate(pendingJobs[0]?.createdAt)),
         "admin.users": token(usersTotal.length, maxDate(usersTotal[0]?.createdAt, usersTotal[0]?.flaggedAt)),
         "admin.businesses": token(
           businessesPendingKyc.length,
@@ -200,6 +198,8 @@ export async function GET() {
         counts: {
           "admin.risk":
             escalatedCampaigns.length + riskyWithdrawals.length + flaggedUsers.length + openSecurityEvents.length,
+          "admin.campaignApplicants": reviewSubmissions.length,
+          "admin.jobApplicants": pendingJobApplications.length,
           "admin.revenue": pendingAdjustments.length,
           "admin.notifications": unreadAdminNotifications,
           "admin.compliance": legalEvidence.length,
@@ -215,6 +215,8 @@ export async function GET() {
       const [
         campaigns,
         submissions,
+        jobs,
+        jobApplications,
         txs,
         payments,
         unreadNotifications,
@@ -231,8 +233,29 @@ export async function GET() {
         }),
         prisma.submission.findMany({
           where: { campaign: { businessId: context.businessUserId } },
-          select: { createdAt: true },
+          select: { createdAt: true, managerStatus: true, adminStatus: true },
           orderBy: { createdAt: "desc" },
+          take: 100,
+        }),
+        prisma.jobPosting.findMany({
+          where: { businessId: context.businessUserId },
+          select: { createdAt: true, updatedAt: true, status: true },
+          orderBy: { updatedAt: "desc" },
+          take: 100,
+        }),
+        prisma.jobApplication.findMany({
+          where: { job: { businessId: context.businessUserId } },
+          select: {
+            createdAt: true,
+            updatedAt: true,
+            managerReviewedAt: true,
+            adminReviewedAt: true,
+            interviewAt: true,
+            joinedAt: true,
+            status: true,
+            adminStatus: true,
+          },
+          orderBy: { updatedAt: "desc" },
           take: 100,
         }),
         prisma.walletTransaction.findMany({
@@ -285,12 +308,42 @@ export async function GET() {
         (campaign) => campaign.remainingBudget < campaign.rewardPerTask
       ).length;
       const failedPayments = payments.filter((item) => item.status === "FAILED").length;
-      const activeAlertCount = exhaustedLiveCampaigns + breachedPendingCampaigns.length + failedPayments;
+      const pendingJobReviews = jobs.filter((job) => job.status === "PENDING_REVIEW").length;
+      const pendingCampaignApplicants = submissions.filter(
+        (submission) =>
+          submission.managerStatus === "PENDING" ||
+          (submission.managerStatus === "MANAGER_APPROVED" && submission.adminStatus === "PENDING")
+      ).length;
+      const actionableApplicants = jobApplications.filter(
+        (application) =>
+          application.adminStatus === "ADMIN_APPROVED" &&
+          ["APPLIED", "SHORTLISTED", "INTERVIEW_SCHEDULED", "HIRED"].includes(application.status)
+      ).length;
+      const activeAlertCount =
+        exhaustedLiveCampaigns +
+        breachedPendingCampaigns.length +
+        failedPayments +
+        pendingJobReviews +
+        pendingCampaignApplicants +
+        actionableApplicants;
 
       const tabs = {
         "business.campaigns": token(campaigns.length, campaigns[0]?.createdAt),
-        "business.reviews": token(submissions.length, submissions[0]?.createdAt),
+        "business.jobs": token(jobs.length, maxDate(jobs[0]?.updatedAt || jobs[0]?.createdAt)),
+        "business.campaignApplicants": token(submissions.length, submissions[0]?.createdAt),
+        "business.jobApplicants": token(
+          jobApplications.length,
+          maxDate(
+            jobApplications[0]?.updatedAt,
+            jobApplications[0]?.createdAt,
+            jobApplications[0]?.managerReviewedAt,
+            jobApplications[0]?.adminReviewedAt,
+            jobApplications[0]?.interviewAt,
+            jobApplications[0]?.joinedAt
+          )
+        ),
         "business.create": token(0, null),
+        "business.createJob": token(0, null),
         "business.analytics": token(submissions.length, submissions[0]?.createdAt),
         "business.kyc": token(
           businessProfile?.kycStatus === "VERIFIED" ? 0 : 1,
@@ -310,20 +363,31 @@ export async function GET() {
           maxDate(
             campaigns[0]?.createdAt,
             submissions[0]?.createdAt,
+            jobs[0]?.updatedAt || jobs[0]?.createdAt,
+            jobApplications[0]?.updatedAt,
+            jobApplications[0]?.createdAt,
             txs[0]?.createdAt,
             payments[0]?.updatedAt,
             payments[0]?.createdAt
           )
         ),
         "business.trust": token(
-          breachedPendingCampaigns.length + failedPayments,
-          maxDate(campaigns[0]?.createdAt, payments[0]?.updatedAt, payments[0]?.createdAt)
+          breachedPendingCampaigns.length + failedPayments + pendingJobReviews,
+          maxDate(
+            campaigns[0]?.createdAt,
+            jobs[0]?.updatedAt || jobs[0]?.createdAt,
+            payments[0]?.updatedAt,
+            payments[0]?.createdAt
+          )
         ),
         "business.activity": token(
-          campaigns.length + submissions.length + txs.length + payments.length,
+          campaigns.length + submissions.length + jobs.length + jobApplications.length + txs.length + payments.length,
           maxDate(
             campaigns[0]?.createdAt,
             submissions[0]?.createdAt,
+            jobs[0]?.updatedAt || jobs[0]?.createdAt,
+            jobApplications[0]?.updatedAt,
+            jobApplications[0]?.createdAt,
             txs[0]?.createdAt,
             payments[0]?.updatedAt,
             payments[0]?.createdAt
@@ -340,6 +404,9 @@ export async function GET() {
           ...tabs,
         },
         counts: {
+          "business.jobs": pendingJobReviews,
+          "business.campaignApplicants": pendingCampaignApplicants,
+          "business.jobApplicants": actionableApplicants,
           "business.notifications": unreadNotifications + activeAlertCount,
           "business.kyc": businessProfile?.kycStatus === "VERIFIED" ? 0 : 1,
         },
@@ -347,7 +414,7 @@ export async function GET() {
     }
 
     if (role === "MANAGER") {
-      const [queue, suspiciousQueue, decisions, openSecurityEvents, unreadManagerNotifications, latestUnreadManagerNotification, pendingJobApplications] = await Promise.all([
+      const [queue, suspiciousQueue, decisions, openSecurityEvents, unreadManagerNotifications, latestUnreadManagerNotification, pendingJobApplications, suspiciousJobApplications] = await Promise.all([
         prisma.submission.findMany({
           where: { managerStatus: "PENDING", managerEscalatedAt: null },
           select: { createdAt: true },
@@ -390,6 +457,17 @@ export async function GET() {
           orderBy: { createdAt: "desc" },
           take: 100,
         }),
+        prisma.jobApplication.findMany({
+          where: {
+            managerStatus: "PENDING",
+            adminStatus: "PENDING",
+            status: "APPLIED",
+            user: { isSuspicious: true },
+          },
+          select: { createdAt: true },
+          orderBy: { createdAt: "desc" },
+          take: 100,
+        }),
       ]);
 
       const tabs = {
@@ -397,8 +475,8 @@ export async function GET() {
         "manager.jobs": token(pendingJobApplications.length, pendingJobApplications[0]?.createdAt),
         "manager.history": token(decisions.length, decisions[0]?.createdAt),
         "manager.risk": token(
-          suspiciousQueue.length + openSecurityEvents.length,
-          maxDate(suspiciousQueue[0]?.createdAt, openSecurityEvents[0]?.createdAt)
+          suspiciousQueue.length + suspiciousJobApplications.length + openSecurityEvents.length,
+          maxDate(suspiciousQueue[0]?.createdAt, suspiciousJobApplications[0]?.createdAt, openSecurityEvents[0]?.createdAt)
         ),
         "manager.notifications": token(unreadManagerNotifications, latestUnreadManagerNotification?.createdAt),
       };
@@ -410,16 +488,39 @@ export async function GET() {
           ...tabs,
         },
         counts: {
+          "manager.submissions": queue.length,
+          "manager.jobs": pendingJobApplications.length,
+          "manager.risk": suspiciousQueue.length + suspiciousJobApplications.length + openSecurityEvents.length,
           "manager.notifications": unreadManagerNotifications,
         },
       });
     }
 
-    const [liveCampaigns, submissions, txs, withdrawals, notifications] = await Promise.all([
+    const [liveCampaigns, openJobs, jobApplications, submissions, txs, withdrawals, notifications, referralInvites] = await Promise.all([
       prisma.campaign.findMany({
         where: { status: "LIVE" },
         select: { createdAt: true },
         orderBy: { createdAt: "desc" },
+        take: 100,
+      }),
+      prisma.jobPosting.findMany({
+        where: { status: "OPEN" },
+        select: { createdAt: true },
+        orderBy: { createdAt: "desc" },
+        take: 100,
+      }),
+      prisma.jobApplication.findMany({
+        where: { userId },
+        select: {
+          createdAt: true,
+          updatedAt: true,
+          status: true,
+          interviewAt: true,
+          joinedAt: true,
+          managerReviewedAt: true,
+          adminReviewedAt: true,
+        },
+        orderBy: { updatedAt: "desc" },
         take: 100,
       }),
       prisma.submission.findMany({
@@ -446,14 +547,40 @@ export async function GET() {
         orderBy: { createdAt: "desc" },
         take: 100,
       }),
+      prisma.referralInvite.findMany({
+        where: { referrerUserId: userId },
+        select: { createdAt: true, qualifiedAt: true, rewardedAt: true, status: true },
+        orderBy: { createdAt: "desc" },
+        take: 100,
+      }),
     ]);
 
     const unread = notifications.filter((n) => !n.isRead).length;
+    const activeJobApplications = jobApplications.filter((item) =>
+      item.status === "APPLIED" || item.status === "SHORTLISTED" || item.status === "INTERVIEW_SCHEDULED"
+    ).length;
+    const pendingReferralRewards = referralInvites.filter((item) => item.status === "PENDING").length;
     const tabs = {
       "user.tasks": token(liveCampaigns.length, liveCampaigns[0]?.createdAt),
+      "user.jobs": token(openJobs.length, openJobs[0]?.createdAt),
+      "user.jobApplications": token(
+        jobApplications.length,
+        maxDate(
+          jobApplications[0]?.updatedAt,
+          jobApplications[0]?.createdAt,
+          jobApplications[0]?.interviewAt,
+          jobApplications[0]?.joinedAt,
+          jobApplications[0]?.managerReviewedAt,
+          jobApplications[0]?.adminReviewedAt
+        )
+      ),
       "user.submissions": token(submissions.length, maxDate(submissions[0]?.createdAt, notifications[0]?.createdAt)),
       "user.wallet": token(txs.length, txs[0]?.createdAt),
       "user.withdrawals": token(withdrawals.length, maxDate(withdrawals[0]?.createdAt, notifications[0]?.createdAt)),
+      "user.referrals": token(
+        referralInvites.length,
+        maxDate(referralInvites[0]?.createdAt, referralInvites[0]?.qualifiedAt, referralInvites[0]?.rewardedAt)
+      ),
       "user.notifications": token(unread, notifications[0]?.createdAt),
     };
 
@@ -464,6 +591,8 @@ export async function GET() {
         ...tabs,
       },
       counts: {
+        "user.jobApplications": activeJobApplications,
+        "user.referrals": pendingReferralRewards,
         "user.notifications": unread,
       },
     });

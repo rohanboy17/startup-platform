@@ -43,7 +43,20 @@ export default async function BusinessLayout({
       { key: "business.overview", href: "/dashboard/business", label: "Overview", labelKey: "overview", icon: "overview" as const },
       { key: "business.campaigns", href: "/dashboard/business/campaigns", label: "Campaigns", labelKey: "campaigns", icon: "campaigns" as const },
       { key: "business.jobs", href: "/dashboard/business/jobs", label: "Jobs", labelKey: "jobs", icon: "jobs" as const },
-      { key: "business.reviews", href: "/dashboard/business/reviews", label: "Reviews", labelKey: "reviews", icon: "reviews" as const },
+      {
+        key: "business.campaignApplicants",
+        href: "/dashboard/business/campaign-applicants",
+        label: "Campaign Applicants",
+        labelKey: "campaignApplicants",
+        icon: "reviews" as const,
+      },
+      {
+        key: "business.jobApplicants",
+        href: "/dashboard/business/job-applicants",
+        label: "Job Applicants",
+        labelKey: "jobApplicants",
+        icon: "users" as const,
+      },
       { key: "business.kyc", href: "/dashboard/business/kyc", label: "KYC", labelKey: "kyc", icon: "trust" as const },
     ...(canManageBusinessCampaigns(context.accessRole)
       ? [

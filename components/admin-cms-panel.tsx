@@ -348,13 +348,13 @@ export default function AdminCmsPanel({
 
   return (
     <div className="space-y-8">
-      <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+      <section className="space-y-3 rounded-2xl border border-foreground/10 bg-background/60 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Landing Editor</h3>
         <Input value={landingHero} onChange={(e) => setLandingHero(e.target.value)} placeholder="Hero title" />
         <textarea
           value={landingSubtitle}
           onChange={(e) => setLandingSubtitle(e.target.value)}
-          className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          className="min-h-[90px] w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
           placeholder="Hero subtitle"
         />
         <Button onClick={() => saveContent("landing.home", { heroTitle: landingHero, heroSubtitle: landingSubtitle })} disabled={loading !== null} className="w-full sm:w-auto">
@@ -362,30 +362,30 @@ export default function AdminCmsPanel({
         </Button>
       </section>
 
-      <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+      <section className="space-y-3 rounded-2xl border border-foreground/10 bg-background/60 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">FAQ & Legal Editor</h3>
-        <textarea value={termsBody} onChange={(e) => setTermsBody(e.target.value)} className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white" placeholder="Terms body" />
+        <textarea value={termsBody} onChange={(e) => setTermsBody(e.target.value)} className="min-h-[90px] w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground" placeholder="Terms body" />
         <Button onClick={() => saveContent("legal.terms", { body: termsBody })} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "legal.terms" ? "Saving..." : "Save Terms"}
         </Button>
-        <textarea value={privacyBody} onChange={(e) => setPrivacyBody(e.target.value)} className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white" placeholder="Privacy body" />
+        <textarea value={privacyBody} onChange={(e) => setPrivacyBody(e.target.value)} className="min-h-[90px] w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground" placeholder="Privacy body" />
         <Button onClick={() => saveContent("legal.privacy", { body: privacyBody })} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "legal.privacy" ? "Saving..." : "Save Privacy"}
         </Button>
-        <textarea value={refundBody} onChange={(e) => setRefundBody(e.target.value)} className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white" placeholder="Refund policy body" />
+        <textarea value={refundBody} onChange={(e) => setRefundBody(e.target.value)} className="min-h-[90px] w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground" placeholder="Refund policy body" />
         <Button onClick={() => saveContent("legal.refund", { body: refundBody })} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "legal.refund" ? "Saving..." : "Save Refund Policy"}
         </Button>
-        <textarea value={faqBody} onChange={(e) => setFaqBody(e.target.value)} className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white" placeholder="FAQ body" />
+        <textarea value={faqBody} onChange={(e) => setFaqBody(e.target.value)} className="min-h-[90px] w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground" placeholder="FAQ body" />
         <Button onClick={() => saveContent("legal.faq", { body: faqBody })} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "legal.faq" ? "Saving..." : "Save FAQ"}
         </Button>
       </section>
 
-      <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+      <section className="space-y-3 rounded-2xl border border-foreground/10 bg-background/60 p-4 sm:p-5">
         <div className="space-y-1">
           <h3 className="text-lg font-semibold">Task Categories & Types</h3>
-          <p className="text-sm text-white/65">
+          <p className="text-sm text-foreground/65">
             Edit the safe service catalog used by business create/edit and admin campaign management.
             Keep this list focused on testing, feedback, content, research, data work, moderation, and operational delivery.
             Use one category block at a time. First line is the category name, next lines are task types. Leave one blank line between categories.
@@ -394,21 +394,21 @@ export default function AdminCmsPanel({
         <textarea
           value={taskCategoryText}
           onChange={(e) => setTaskCategoryText(e.target.value)}
-          className="min-h-[360px] w-full rounded-xl border border-white/20 bg-black/30 px-4 py-3 text-sm text-white outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20"
+          className="min-h-[360px] w-full rounded-xl border border-foreground/15 bg-background/60 px-4 py-3 text-sm text-foreground outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20"
         />
         <Button onClick={saveTaskCategories} disabled={loading !== null} className="w-full sm:w-auto">
           {loading === "task-categories" ? "Saving..." : "Save Task Categories"}
         </Button>
       </section>
 
-      <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+      <section className="space-y-3 rounded-2xl border border-foreground/10 bg-background/60 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Feature Flags</h3>
         <div className="space-y-2">
           {flags.map((flag) => (
-            <div key={flag.key} className="flex flex-col gap-3 rounded-md border border-white/10 bg-black/20 p-3 sm:flex-row sm:items-center sm:justify-between">
+            <div key={flag.key} className="flex flex-col gap-3 rounded-md border border-foreground/10 bg-foreground/[0.04] p-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="break-all text-sm font-medium">{flag.key}</p>
-                <p className="text-xs text-white/60">{flag.description || "No description"}</p>
+                <p className="text-xs text-foreground/60">{flag.description || "No description"}</p>
               </div>
               <Button onClick={() => toggleFlag(flag)} disabled={loading !== null} variant="outline" className="w-full sm:w-auto">
                 {flag.enabled ? "Disable" : "Enable"}
@@ -418,10 +418,10 @@ export default function AdminCmsPanel({
         </div>
       </section>
 
-      <section className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+      <section className="space-y-3 rounded-2xl border border-foreground/10 bg-background/60 p-4 sm:p-5">
         <h3 className="text-lg font-semibold">Banners & Announcements</h3>
         {editingAnnouncementId ? (
-          <p className="text-xs text-emerald-300/80">
+          <p className="text-xs text-emerald-700/80 dark:text-emerald-300/80">
             Editing selected announcement. Save changes or cancel to return to create mode.
           </p>
         ) : null}
@@ -429,14 +429,14 @@ export default function AdminCmsPanel({
         <textarea
           value={newAnnMessage}
           onChange={(e) => setNewAnnMessage(e.target.value)}
-          className="min-h-[90px] w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          className="min-h-[90px] w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
           placeholder="Announcement message"
         />
         <Input value={newAnnLink} onChange={(e) => setNewAnnLink(e.target.value)} placeholder="Optional link" />
         <select
           value={announcementSegment}
           onChange={(e) => setAnnouncementSegment(e.target.value)}
-          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          className="w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
         >
           <option value="ALL">Broadcast to all users</option>
           <option value="USER">Users only</option>
@@ -454,7 +454,7 @@ export default function AdminCmsPanel({
           ] as const).map(([channel, label]) => (
             <label
               key={channel}
-              className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 px-3 py-3 text-sm text-white/80"
+              className="flex items-center gap-3 rounded-xl border border-foreground/10 bg-foreground/[0.04] px-3 py-3 text-sm text-foreground/80"
             >
               <input
                 type="checkbox"
@@ -466,7 +466,7 @@ export default function AdminCmsPanel({
             </label>
           ))}
         </div>
-        <p className="text-xs text-white/55">
+        <p className="text-xs text-foreground/55">
           Email uses SMTP. Mobile delivery uses the SMS webhook. Push uses Firebase. Telegram uses the bot link flow.
         </p>
         <div className="flex flex-col gap-3 sm:flex-row">
@@ -496,12 +496,12 @@ export default function AdminCmsPanel({
 
         <div className="space-y-2">
           <div className="flex justify-end">
-            <label className="flex items-center gap-2 text-sm text-white/60">
+            <label className="flex items-center gap-2 text-sm text-foreground/60">
               <span>Show</span>
               <select
                 value={announcementLimit}
                 onChange={(e) => setAnnouncementLimit(e.target.value as "5" | "10" | "20" | "ALL")}
-                className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+                className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
               >
                 <option value="5">5</option>
                 <option value="10">10</option>
@@ -511,10 +511,10 @@ export default function AdminCmsPanel({
             </label>
           </div>
           {(announcementLimit === "ALL" ? announcements : announcements.slice(0, Number(announcementLimit))).map((item) => (
-            <div key={item.id} className="rounded-md border border-white/10 bg-black/20 p-3">
+            <div key={item.id} className="rounded-md border border-foreground/10 bg-foreground/[0.04] p-3">
               <p className="font-medium">{item.title}</p>
-              <p className="text-sm text-white/70">{item.message}</p>
-              {item.link ? <p className="break-all text-xs text-white/50">{item.link}</p> : null}
+              <p className="text-sm text-foreground/70">{item.message}</p>
+              {item.link ? <p className="break-all text-xs text-foreground/50">{item.link}</p> : null}
               <div className="mt-2 flex flex-col gap-2 sm:flex-row">
                 <Button
                   variant="outline"
@@ -546,42 +546,42 @@ export default function AdminCmsPanel({
         </div>
       </section>
 
-      <section className="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
+      <section className="space-y-4 rounded-2xl border border-foreground/10 bg-background/60 p-4 sm:p-5">
         <div className="space-y-1">
           <h3 className="text-lg font-semibold">Community Feedback Review</h3>
-          <p className="text-sm text-white/65">
+          <p className="text-sm text-foreground/65">
             New feedback stays hidden on the homepage until an admin approves it.
           </p>
-          <p className="text-xs text-white/50">
-            You can review submitted feedback in <span className="font-semibold text-white/80">Admin &gt; Content &amp; CMS</span>.
+          <p className="text-xs text-foreground/50">
+            You can review submitted feedback in <span className="font-semibold text-foreground/80">Admin &gt; Content &amp; CMS</span>.
           </p>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="rounded-2xl border border-amber-500/15 bg-amber-500/8 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-200/80">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-amber-800 dark:text-amber-200/80">
               Pending Review
             </p>
-            <p className="mt-3 text-3xl font-semibold text-white">{feedbackCounts.PENDING}</p>
-            <p className="mt-2 text-sm text-white/60">
+            <p className="mt-3 text-3xl font-semibold text-foreground">{feedbackCounts.PENDING}</p>
+            <p className="mt-2 text-sm text-foreground/60">
               Feedback waiting for an admin decision before it can appear publicly.
             </p>
           </div>
           <div className="rounded-2xl border border-emerald-500/15 bg-emerald-500/8 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-200/80">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-200/80">
               Approved Live
             </p>
-            <p className="mt-3 text-3xl font-semibold text-white">{feedbackCounts.APPROVED}</p>
-            <p className="mt-2 text-sm text-white/60">
+            <p className="mt-3 text-3xl font-semibold text-foreground">{feedbackCounts.APPROVED}</p>
+            <p className="mt-2 text-sm text-foreground/60">
               Approved feedback that can be shown in the homepage community section.
             </p>
           </div>
           <div className="rounded-2xl border border-rose-500/15 bg-rose-500/8 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-200/80">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-rose-700 dark:text-rose-200/80">
               Rejected
             </p>
-            <p className="mt-3 text-3xl font-semibold text-white">{feedbackCounts.REJECTED}</p>
-            <p className="mt-2 text-sm text-white/60">
+            <p className="mt-3 text-3xl font-semibold text-foreground">{feedbackCounts.REJECTED}</p>
+            <p className="mt-2 text-sm text-foreground/60">
               Reviewed feedback that was not approved for public display.
             </p>
           </div>
@@ -596,20 +596,20 @@ export default function AdminCmsPanel({
                 onClick={() => setFeedbackFilter(status)}
                 className={`rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] transition ${
                   feedbackFilter === status
-                    ? "border-emerald-400/40 bg-emerald-500/15 text-emerald-200"
-                    : "border-white/10 bg-black/20 text-white/55 hover:bg-white/8 hover:text-white/80"
+                    ? "border-emerald-400/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-200"
+                    : "border-foreground/10 bg-foreground/[0.04] text-foreground/55 hover:bg-foreground/[0.08] hover:text-foreground/80"
                 }`}
               >
                 {status === "ALL" ? "All" : status.charAt(0) + status.slice(1).toLowerCase()} ({feedbackCounts[status]})
               </button>
             ))}
           </div>
-          <label className="flex items-center gap-2 text-sm text-white/60">
+          <label className="flex items-center gap-2 text-sm text-foreground/60">
             <span>Show</span>
             <select
               value={feedbackLimit}
               onChange={(e) => setFeedbackLimit(e.target.value as "5" | "10" | "20" | "ALL")}
-              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             >
               <option value="5">5</option>
               <option value="10">10</option>
@@ -621,41 +621,41 @@ export default function AdminCmsPanel({
 
         <div className="space-y-3">
           {visibleFeedback.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-white/10 bg-black/20 px-4 py-5 text-sm text-white/60">
+            <div className="rounded-xl border border-dashed border-foreground/10 bg-foreground/[0.04] px-4 py-5 text-sm text-foreground/60">
               No feedback found for this filter yet.
             </div>
           ) : null}
           {visibleFeedback.map((item) => (
-            <div key={item.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+            <div key={item.id} className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
               <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                 <div className="space-y-2">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-semibold text-white">{item.displayName}</p>
-                    <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-white/55">
+                    <p className="font-semibold text-foreground">{item.displayName}</p>
+                    <span className="rounded-full border border-foreground/10 bg-background/60 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-foreground/55">
                       {item.roleLabel}
                     </span>
                     <span
                       className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] ${
                         item.status === "APPROVED"
-                          ? "bg-emerald-500/15 text-emerald-300"
+                          ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
                           : item.status === "REJECTED"
-                            ? "bg-rose-500/15 text-rose-300"
-                            : "bg-amber-500/15 text-amber-200"
+                            ? "bg-rose-500/15 text-rose-700 dark:text-rose-300"
+                            : "bg-amber-500/15 text-amber-800 dark:text-amber-200"
                       }`}
                     >
                       {item.status}
                     </span>
                   </div>
-                  <p className="text-xs uppercase tracking-[0.18em] text-white/45">
+                  <p className="text-xs uppercase tracking-[0.18em] text-foreground/45">
                     Submitted by {item.user.name?.trim() || item.user.email} ({item.user.role})
                   </p>
-                  <p className="text-sm leading-7 text-white/80">{item.quote}</p>
-                  <p className="text-xs text-white/45">
+                  <p className="text-sm leading-7 text-foreground/80">{item.quote}</p>
+                  <p className="text-xs text-foreground/45">
                     Submitted {new Date(item.createdAt).toLocaleString("en-IN")}
-                    {item.reviewedAt ? ` • Reviewed ${new Date(item.reviewedAt).toLocaleString("en-IN")}` : ""}
+                    {item.reviewedAt ? ` | Reviewed ${new Date(item.reviewedAt).toLocaleString("en-IN")}` : ""}
                   </p>
                   <div className="space-y-2">
-                    <label className="text-xs uppercase tracking-[0.18em] text-white/45">Admin note</label>
+                    <label className="text-xs uppercase tracking-[0.18em] text-foreground/45">Admin note</label>
                     <textarea
                       value={feedbackNotes[item.id] || ""}
                       onChange={(event) =>
@@ -664,7 +664,7 @@ export default function AdminCmsPanel({
                           [item.id]: event.target.value,
                         }))
                       }
-                      className="min-h-[72px] w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none transition focus:border-emerald-400/35 focus:ring-2 focus:ring-emerald-400/15"
+                      className="min-h-[72px] w-full rounded-xl border border-foreground/10 bg-background/60 px-3 py-2 text-sm text-foreground outline-none transition focus:border-emerald-400/35 focus:ring-2 focus:ring-emerald-400/15"
                       placeholder="Optional internal note for this review"
                     />
                   </div>
@@ -706,7 +706,7 @@ export default function AdminCmsPanel({
         </div>
       </section>
 
-      {message ? <p className="text-sm text-white/70">{message}</p> : null}
+      {message ? <p className="text-sm text-foreground/70">{message}</p> : null}
     </div>
   );
 }

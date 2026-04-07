@@ -10,12 +10,12 @@ export default async function AdminSettingsPage() {
   return (
     <div className="space-y-6">
       <h2 className="text-3xl font-semibold">System Settings</h2>
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/70">
-        <p className="font-medium text-white">Account Security</p>
+      <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4 text-sm text-foreground/70">
+        <p className="font-medium text-foreground">Account Security</p>
         <p className="mt-1">Need to rotate your password? Use secure reset.</p>
         <Link
           href="/forgot-password"
-          className="mt-2 inline-block text-emerald-300 underline underline-offset-4"
+          className="mt-2 inline-block text-emerald-600 dark:text-emerald-300 underline underline-offset-4"
         >
           Forgot password
         </Link>

@@ -150,8 +150,8 @@ export default function ManagerSubmissionQueuePanel() {
     { value: "HIGH_LEVEL", label: t("filters.highLevel") },
   ];
 
-  if (loading) return <p className="text-sm text-white/60">{t("loading")}</p>;
-  if (error) return <p className="text-sm text-rose-300">{error}</p>;
+  if (loading) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
+  if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
 
   return (
     <div className="space-y-6">
@@ -164,16 +164,16 @@ export default function ManagerSubmissionQueuePanel() {
       <SectionCard elevated className="space-y-4 p-4 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm text-white/60">{t("filters.eyebrow")}</p>
-              <h3 className="text-xl font-semibold text-white">{t("filters.title")}</h3>
+              <p className="text-sm text-foreground/60">{t("filters.eyebrow")}</p>
+              <h3 className="text-xl font-semibold text-foreground">{t("filters.title")}</h3>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <label className="flex items-center gap-2 text-sm text-white/60">
+              <label className="flex items-center gap-2 text-sm text-foreground/60">
                 <span>{t("filters.show")}</span>
                 <select
                   value={limit}
                   onChange={(e) => setLimit(e.target.value as "5" | "10" | "20" | "ALL")}
-                  className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white"
+                  className="rounded-xl border border-foreground/15 bg-background px-3 py-2 text-sm text-foreground"
                 >
                   <option value="5">5</option>
                   <option value="10">10</option>
@@ -185,7 +185,7 @@ export default function ManagerSubmissionQueuePanel() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder={t("filters.searchPlaceholder")}
-                className="min-h-11 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-sm text-white outline-none placeholder:text-white/35 lg:max-w-sm"
+                className="min-h-11 w-full rounded-xl border border-foreground/15 bg-background px-4 py-2 text-sm text-foreground outline-none placeholder:text-foreground/35 lg:max-w-sm"
               />
             </div>
           </div>
@@ -201,8 +201,8 @@ export default function ManagerSubmissionQueuePanel() {
                     onClick={() => setFilter(item.value)}
                     className={`shrink-0 rounded-full border px-3 py-2 text-sm transition ${
                       active
-                        ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-100"
-                        : "border-white/10 bg-black/20 text-white/65 hover:bg-black/30 hover:text-white"
+                        ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-800 dark:text-emerald-100"
+                        : "border-foreground/10 bg-background/60 text-foreground/65 hover:bg-background/80 hover:text-foreground"
                     }`}
                   >
                     {item.label}
@@ -214,26 +214,26 @@ export default function ManagerSubmissionQueuePanel() {
       </SectionCard>
 
       {filtered.length === 0 ? (
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-6 text-sm text-white/60">
+        <Card className="rounded-2xl border-foreground/10 bg-background/50">
+          <CardContent className="p-6 text-sm text-foreground/60">
             {t("empty")}
           </CardContent>
         </Card>
       ) : (
         <div className="space-y-4">
           {visibleRows.map((submission) => (
-            <Card key={submission.id} className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+            <Card key={submission.id} className="rounded-3xl border-foreground/10 bg-background/50 shadow-xl shadow-black/10 dark:shadow-black/20 backdrop-blur-md">
               <CardContent className="space-y-4 p-4 sm:p-6">
                 <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                   <div>
-                    <p className="text-lg font-semibold text-white break-words">
+                    <p className="text-lg font-semibold text-foreground break-words">
                       {submission.campaign?.title || t("fallbacks.submission")}
                     </p>
-                    <p className="mt-1 text-sm text-white/60">
+                    <p className="mt-1 text-sm text-foreground/60">
                       {submission.campaign?.category || t("fallbacks.uncategorized")} | {t("reward", { amount: formatMoney(submission.campaign?.rewardPerTask) })}
                     </p>
                   </div>
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-white/60">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-foreground/60">
                       <span>{waitLabel(submission.createdAt, t)}</span>
                     <StatusBadge label={submission.user.level} tone="neutral" />
                     {submission.user.isSuspicious ? (
@@ -243,19 +243,19 @@ export default function ManagerSubmissionQueuePanel() {
                 </div>
 
                 <div className="grid gap-4 min-[1450px]:grid-cols-[0.72fr_1.28fr]">
-                  <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
-                      <p className="text-xs uppercase tracking-[0.16em] text-white/35">{t("user.title")}</p>
-                    <p className="text-sm text-white/80 break-words">
+                  <div className="space-y-3 rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
+                      <p className="text-xs uppercase tracking-[0.16em] text-foreground/35">{t("user.title")}</p>
+                    <p className="text-sm text-foreground/80 break-words">
                       {submission.user.name || t("fallbacks.unnamedUser")}
                     </p>
-                    <p className="text-sm text-white/60">
+                    <p className="text-sm text-foreground/60">
                       {t("user.approvedRejected", {
                         approved: submission.user.totalApproved,
                         rejected: submission.user.totalRejected,
                       })}
                     </p>
                     {submission.user.isSuspicious ? (
-                      <div className="rounded-xl border border-amber-400/20 bg-amber-500/10 p-3 text-sm text-amber-100/85">
+                      <div className="rounded-xl border border-amber-400/20 bg-amber-500/10 p-3 text-sm text-amber-800 dark:text-amber-100/85">
                         <div className="flex items-start gap-2">
                           <ShieldAlert size={16} className="mt-0.5 shrink-0" />
                           <p className="break-words">
@@ -266,17 +266,17 @@ export default function ManagerSubmissionQueuePanel() {
                     ) : null}
                   </div>
 
-                  <div className="space-y-4 rounded-2xl border border-white/10 bg-black/20 p-4">
+                  <div className="space-y-4 rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
                     {submission.campaign ? (
                       <div className="space-y-3">
                         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                          <p className="text-xs uppercase tracking-[0.16em] text-white/35">{t("task.title")}</p>
+                          <p className="text-xs uppercase tracking-[0.16em] text-foreground/35">{t("task.title")}</p>
                           {submission.campaign.taskLink ? (
                             <a
                               href={normalizeExternalUrl(submission.campaign.taskLink) ?? "#"}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex items-center gap-1 text-sm text-emerald-200 underline underline-offset-4"
+                              className="inline-flex items-center gap-1 text-sm text-emerald-700 underline underline-offset-4 dark:text-emerald-200"
                             >
                               <ExternalLink size={14} />
                               {t("task.openTaskLink")}
@@ -284,7 +284,7 @@ export default function ManagerSubmissionQueuePanel() {
                           ) : null}
                         </div>
 
-                        <p className="text-sm text-white/80 break-words">{submission.campaign.description}</p>
+                        <p className="text-sm text-foreground/80 break-words">{submission.campaign.description}</p>
 
                         <div className="rounded-2xl border border-emerald-400/15 bg-emerald-500/10 p-3">
                           <p className="text-xs uppercase tracking-[0.16em] text-emerald-100/70">
@@ -309,14 +309,14 @@ export default function ManagerSubmissionQueuePanel() {
                         </div>
 
                         {submission.campaign.instructions?.length ? (
-                          <details className="rounded-2xl border border-white/10 bg-white/5 p-3">
-                            <summary className="cursor-pointer text-sm text-white/70">
+                          <details className="rounded-2xl border border-foreground/10 bg-background/60 p-3">
+                            <summary className="cursor-pointer text-sm text-foreground/70">
                               {t("task.viewSteps", { count: submission.campaign.instructions.length })}
                             </summary>
-                            <div className="mt-3 space-y-2 text-sm text-white/75">
+                            <div className="mt-3 space-y-2 text-sm text-foreground/75">
                               {submission.campaign.instructions.map((row) => (
                                 <div key={row.sequence} className="flex gap-3">
-                                  <span className="mt-0.5 shrink-0 rounded-full border border-white/10 px-2 py-0.5 text-xs text-white/60">
+                                  <span className="mt-0.5 shrink-0 rounded-full border border-foreground/10 px-2 py-0.5 text-xs text-foreground/60">
                                     {row.sequence}
                                   </span>
                                   <span className="break-words">{row.instructionText}</span>
@@ -325,20 +325,20 @@ export default function ManagerSubmissionQueuePanel() {
                             </div>
                           </details>
                         ) : (
-                          <p className="text-sm text-white/55">{t("task.noSteps")}</p>
+                          <p className="text-sm text-foreground/55">{t("task.noSteps")}</p>
                         )}
                       </div>
                     ) : null}
 
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      <p className="text-xs uppercase tracking-[0.16em] text-white/35">{t("proof.title")}</p>
+                      <p className="text-xs uppercase tracking-[0.16em] text-foreground/35">{t("proof.title")}</p>
                       <div className="flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
                         {submission.proofLink ? (
                           <a
                             href={normalizeExternalUrl(submission.proofLink) ?? "#"}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex w-full items-center gap-1 text-sm text-emerald-200 underline underline-offset-4 lg:w-auto"
+                            className="inline-flex w-full items-center gap-1 text-sm text-emerald-700 underline underline-offset-4 dark:text-emerald-200 lg:w-auto"
                           >
                             <ExternalLink size={14} />
                             {t("proof.openProof")}
@@ -349,13 +349,13 @@ export default function ManagerSubmissionQueuePanel() {
                         ) : null}
                       </div>
                     </div>
-                    <div className="max-h-56 overflow-auto rounded-2xl border border-white/10 bg-white/5 p-3">
-                      <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-white/80">
+                    <div className="max-h-56 overflow-auto rounded-2xl border border-foreground/10 bg-background/60 p-3">
+                      <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground/80">
                         {proofPreview(submission, t)}
                       </p>
                     </div>
                     {!submission.proofLink && !submission.proofText && !submission.proofImage ? (
-                      <div className="rounded-xl border border-amber-400/20 bg-amber-500/10 p-3 text-sm text-amber-100/85">
+                      <div className="rounded-xl border border-amber-400/20 bg-amber-500/10 p-3 text-sm text-amber-800 dark:text-amber-100/85">
                         <div className="flex items-start gap-2">
                           <AlertTriangle size={16} className="mt-0.5 shrink-0" />
                           <p>{t("proof.onlyTextWarning")}</p>

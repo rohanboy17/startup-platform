@@ -79,13 +79,13 @@ export default function ManagerSubmissionActions({ submissionId }: { submissionI
 
   return (
     <div className="md:relative">
-      <div className="sticky bottom-4 z-20 space-y-3 rounded-2xl border border-white/10 bg-black/60 p-4 shadow-xl shadow-black/40 backdrop-blur-md md:static md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-0">
+      <div className="sticky bottom-4 z-20 space-y-3 rounded-2xl border border-foreground/10 bg-background/85 p-4 shadow-xl shadow-black/15 backdrop-blur-md dark:shadow-black/40 md:static md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none md:backdrop-blur-0">
         <textarea
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder={t("reasonPlaceholder")}
           rows={3}
-          className="w-full resize-none rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35 md:bg-black/20"
+          className="w-full resize-none rounded-xl border border-foreground/15 bg-background px-4 py-3 text-sm text-foreground outline-none placeholder:text-foreground/35"
         />
         <div className="flex flex-col gap-3 sm:flex-row">
           <Button
@@ -112,7 +112,7 @@ export default function ManagerSubmissionActions({ submissionId }: { submissionI
             {loading === "ESCALATE" ? t("escalating") : t("escalate")}
           </Button>
         </div>
-        {message ? <p className="text-xs text-white/70">{message}</p> : null}
+        {message ? <p className="text-xs text-foreground/70">{message}</p> : null}
       </div>
     </div>
   );

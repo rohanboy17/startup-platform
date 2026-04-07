@@ -36,12 +36,12 @@ export default function AdminTwoFactorToggleCard({
   }
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
-      <p className="text-sm text-white/60">Admin 2FA</p>
-      <p className="mt-1 text-sm text-white/80">
-        Status: <span className={enabled ? "text-emerald-300" : "text-amber-300"}>{enabled ? "Enabled" : "Disabled"}</span>
+    <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4 sm:p-5">
+      <p className="text-sm text-foreground/60">Admin 2FA</p>
+      <p className="mt-1 text-sm text-foreground/80">
+        Status: <span className={enabled ? "text-emerald-700 dark:text-emerald-300" : "text-amber-700 dark:text-amber-300"}>{enabled ? "Enabled" : "Disabled"}</span>
       </p>
-      <p className="mt-1 text-xs text-white/55">
+      <p className="mt-1 text-xs text-foreground/55">
         {enabledAt ? `Enabled at: ${new Date(enabledAt).toLocaleString()}` : "Not enabled yet"}
       </p>
       <div className="mt-3 flex flex-col gap-2 sm:flex-row">
@@ -52,7 +52,7 @@ export default function AdminTwoFactorToggleCard({
           Disable
         </Button>
       </div>
-      {message ? <p className="mt-2 text-xs text-white/70">{message}</p> : null}
+      {message ? <p className="mt-2 text-xs text-foreground/70">{message}</p> : null}
     </div>
   );
 }

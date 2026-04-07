@@ -48,7 +48,7 @@ export async function GET() {
     };
   }).notification;
 
-  const [business, campaigns, recentSubmissions, paymentOrders, notifications, unreadCount] = await Promise.all([
+  const [business, campaigns, jobs, recentSubmissions, jobApplications, paymentOrders, notifications, unreadCount] = await Promise.all([
     prisma.user.findUnique({
       where: { id: context.businessUserId },
       select: { balance: true },
@@ -65,6 +65,18 @@ export async function GET() {
       },
       orderBy: { createdAt: "desc" },
     }),
+    prisma.jobPosting.findMany({
+      where: { businessId: context.businessUserId },
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
+        reviewNote: true,
+      },
+      orderBy: { updatedAt: "desc" },
+    }),
     prisma.submission.findMany({
       where: {
         campaign: { businessId: context.businessUserId },
@@ -76,6 +88,26 @@ export async function GET() {
         adminStatus: true,
         campaign: { select: { title: true } },
       },
+    }),
+    prisma.jobApplication.findMany({
+      where: {
+        job: { businessId: context.businessUserId },
+      },
+      select: {
+        id: true,
+        status: true,
+        adminStatus: true,
+        createdAt: true,
+        updatedAt: true,
+        adminReviewedAt: true,
+        job: {
+          select: {
+            title: true,
+          },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
+      take: 40,
     }),
     prisma.paymentOrder.findMany({
       where: { userId: context.businessUserId },
@@ -147,6 +179,30 @@ export async function GET() {
     }
   }
 
+  for (const job of jobs) {
+    if (job.status === "PENDING_REVIEW" && job.createdAt < pendingCutoff) {
+      alerts.push({
+        id: `job-pending-too-long-${job.id}`,
+        title: "Job pending approval too long",
+        message: `Job "${job.title}" has been waiting for admin review for more than 24 hours.`,
+        severity: "WARNING",
+        createdAt: job.createdAt.toISOString(),
+      });
+    }
+
+    if (job.status === "REJECTED") {
+      alerts.push({
+        id: `job-rejected-${job.id}`,
+        title: "Job needs changes before relaunch",
+        message: job.reviewNote
+          ? `Job "${job.title}" was rejected. Admin note: ${job.reviewNote}`
+          : `Job "${job.title}" was rejected and should be updated before resubmission.`,
+        severity: "WARNING",
+        createdAt: (job.updatedAt || job.createdAt).toISOString(),
+      });
+    }
+  }
+
   const failedPayments = paymentOrders.filter((order) => order.status === "FAILED");
   for (const order of failedPayments.slice(0, 5)) {
     alerts.push({
@@ -182,6 +238,27 @@ export async function GET() {
         createdAt: now.toISOString(),
       });
     }
+  }
+
+  const readyApplicants = jobApplications.filter(
+    (application) => application.adminStatus === "ADMIN_APPROVED" && application.status === "APPLIED"
+  );
+  if (readyApplicants.length > 0) {
+    const latestReadyApplicant = readyApplicants[0];
+    alerts.push({
+      id: "verified-applicants-ready",
+      title: "Verified applicants are waiting",
+      message:
+        readyApplicants.length === 1
+          ? `1 verified applicant is waiting in Jobs for "${latestReadyApplicant.job?.title || "a job"}".`
+          : `${readyApplicants.length} verified applicants are waiting in Jobs for business action.`,
+      severity: "INFO",
+      createdAt: (
+        latestReadyApplicant.adminReviewedAt ||
+        latestReadyApplicant.updatedAt ||
+        latestReadyApplicant.createdAt
+      ).toISOString(),
+    });
   }
 
   alerts.sort((a, b) => b.createdAt.localeCompare(a.createdAt));

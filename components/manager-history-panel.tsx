@@ -11,13 +11,17 @@ import ProofImageDialog from "@/components/proof-image-dialog";
 
 type HistoryRow = {
   id: string;
+  kind: "SUBMISSION" | "JOB_APPLICATION";
   action:
     | "MANAGER_APPROVED_SUBMISSION"
     | "MANAGER_REJECTED_SUBMISSION"
     | "MANAGER_ESCALATED_SUBMISSION"
+    | "MANAGER_APPROVED_JOB_APPLICATION"
+    | "MANAGER_REJECTED_JOB_APPLICATION"
     | string;
   createdAt: string;
   submissionId: string | null;
+  applicationId: string | null;
   reason: string | null;
   submission: {
     id: string;
@@ -33,6 +37,23 @@ type HistoryRow = {
     managerEscalatedAt?: string | null;
     managerEscalationReason?: string | null;
   } | null;
+  application: {
+    id: string;
+    createdAt: string;
+    coverNote: string | null;
+    status: string;
+    managerReason: string | null;
+    user: { id: string; name: string | null; level: string; isSuspicious: boolean };
+    job: {
+      id: string;
+      title: string;
+      jobCategory: string;
+      city: string;
+      state: string;
+      payAmount: number;
+      business: { id: string; name: string | null };
+    };
+  } | null;
 };
 
 type HistoryResponse = { rows?: HistoryRow[]; error?: string };
@@ -41,9 +62,9 @@ type Filter = "ALL" | "APPROVED" | "REJECTED" | "ESCALATED";
 type Translator = (key: string, values?: Record<string, string | number>) => string;
 
 function statusLabel(action: string, t: Translator) {
-  return action === "MANAGER_APPROVED_SUBMISSION"
+  return action === "MANAGER_APPROVED_SUBMISSION" || action === "MANAGER_APPROVED_JOB_APPLICATION"
     ? t("status.approved")
-    : action === "MANAGER_REJECTED_SUBMISSION"
+    : action === "MANAGER_REJECTED_SUBMISSION" || action === "MANAGER_REJECTED_JOB_APPLICATION"
       ? t("status.rejected")
       : action === "MANAGER_ESCALATED_SUBMISSION"
         ? t("status.escalated")
@@ -97,24 +118,37 @@ export default function ManagerHistoryPanel() {
         filter === "ALL"
           ? true
           : filter === "APPROVED"
-            ? row.action === "MANAGER_APPROVED_SUBMISSION"
+            ? row.action === "MANAGER_APPROVED_SUBMISSION" || row.action === "MANAGER_APPROVED_JOB_APPLICATION"
             : filter === "REJECTED"
-              ? row.action === "MANAGER_REJECTED_SUBMISSION"
+              ? row.action === "MANAGER_REJECTED_SUBMISSION" || row.action === "MANAGER_REJECTED_JOB_APPLICATION"
               : row.action === "MANAGER_ESCALATED_SUBMISSION";
 
-      const haystack = [
-        row.submission?.campaign?.title,
-        row.submission?.campaign?.category,
-        row.submission?.user?.name,
-        row.reason,
-        row.submissionId,
-        row.submission?.managerEscalationReason,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
+      const haystack = row.kind === "JOB_APPLICATION"
+        ? [
+            row.application?.job?.title,
+            row.application?.job?.jobCategory,
+            row.application?.job?.business?.name,
+            row.application?.user?.name,
+            row.applicationId,
+            row.application?.coverNote,
+            row.reason,
+          ]
+        : [
+            row.submission?.campaign?.title,
+            row.submission?.campaign?.category,
+            row.submission?.user?.name,
+            row.reason,
+            row.submissionId,
+            row.submission?.managerEscalationReason,
+          ];
 
-      const matchesSearch = query ? haystack.includes(query) : true;
+      const matchesSearch = query
+        ? haystack
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase()
+            .includes(query)
+        : true;
       return matchesFilter && matchesSearch;
     });
   }, [filter, rows, search]);
@@ -197,22 +231,33 @@ export default function ManagerHistoryPanel() {
                     ? "border-amber-400/25 bg-amber-500/10 text-amber-900 dark:text-amber-100"
                     : "border-foreground/10 bg-background/50 text-foreground/75";
 
+            const isJob = row.kind === "JOB_APPLICATION";
+            const title = isJob
+              ? row.application?.job?.title || t("fallbacks.jobApplicationReview")
+              : row.submission?.campaign?.title || t("fallbacks.submissionReview");
+            const subtitle = isJob
+              ? `${row.application?.job?.jobCategory || t("fallbacks.uncategorized")} | ${
+                  row.application?.job?.business?.name || t("fallbacks.business")
+                }`
+              : `${row.submission?.campaign?.category || t("fallbacks.uncategorized")}`;
+            const flagged = isJob ? row.application?.user?.isSuspicious : row.submission?.user?.isSuspicious;
+
             return (
               <Card key={row.id} className="rounded-3xl border-foreground/10 bg-background/50 shadow-xl shadow-black/10 dark:shadow-black/20 backdrop-blur-md">
                 <CardContent className="space-y-4 p-4 sm:p-6">
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div className="min-w-0">
-                      <p className="text-lg font-semibold text-foreground break-words">
-                        {row.submission?.campaign?.title || t("fallbacks.submissionReview")}
-                      </p>
+                      <p className="text-lg font-semibold text-foreground break-words">{title}</p>
                       <p className="mt-1 text-sm text-foreground/60" suppressHydrationWarning>
-                        {row.submission?.campaign?.category || t("fallbacks.uncategorized")} |{" "}
-                        {hydrated ? new Date(row.createdAt).toLocaleString(locale) : ""}
+                        {subtitle} | {hydrated ? new Date(row.createdAt).toLocaleString(locale) : ""}
                       </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
                       <span className={`rounded-full border px-3 py-1 text-xs ${statusTone}`}>{status}</span>
-                      {row.submission?.user?.isSuspicious ? (
+                      <span className="rounded-full border border-foreground/10 bg-background/60 px-3 py-1 text-xs text-foreground/75">
+                        {isJob ? t("kind.jobApplication") : t("kind.submission")}
+                      </span>
+                      {flagged ? (
                         <span className="rounded-full border border-amber-400/25 bg-amber-500/10 px-3 py-1 text-xs text-amber-900 dark:text-amber-100">
                           {t("flagged")}
                         </span>
@@ -220,87 +265,127 @@ export default function ManagerHistoryPanel() {
                     </div>
                   </div>
 
-                  <div className="grid gap-4 lg:grid-cols-2">
-                    <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
-                      <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">{t("user.title")}</p>
-                      <p className="text-sm text-foreground/80 break-words">
-                        {row.submission?.user?.name || t("fallbacks.unnamedUser")}{" "}
-                        <span className="text-foreground/60">({row.submission?.user?.level || "L1"})</span>
-                      </p>
-                      <p className="text-xs text-foreground/60 break-all">{t("user.submissionId", { value: row.submissionId || t("fallbacks.unknown") })}</p>
-                    </div>
-                    <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
-                      <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">{t("instruction.title")}</p>
-                      {row.submission?.assignedInstructionText ? (
-                        <>
-                          <p className="text-sm text-foreground/60">
-                            {t("instruction.sequence", {
-                              sequence: row.submission.assignedInstructionSequence ?? 0,
-                            })}
+                  {isJob ? (
+                    <div className="grid gap-4 lg:grid-cols-2">
+                      <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                        <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">{t("user.title")}</p>
+                        <p className="text-sm text-foreground/80 break-words">
+                          {row.application?.user?.name || t("fallbacks.unnamedUser")}{" "}
+                          <span className="text-foreground/60">({row.application?.user?.level || "L1"})</span>
+                        </p>
+                        <p className="text-xs text-foreground/60 break-all">
+                          {t("user.applicationId", { value: row.applicationId || t("fallbacks.unknown") })}
+                        </p>
+                        {row.application?.job ? (
+                          <p className="text-xs text-foreground/60 break-words">
+                            {row.application.job.city}, {row.application.job.state}
                           </p>
+                        ) : null}
+                      </div>
+                      <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                        <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">{t("application.title")}</p>
+                        {row.application?.coverNote ? (
+                          <p className="text-sm text-foreground/80 break-words">{row.application.coverNote}</p>
+                        ) : (
+                          <p className="text-sm text-foreground/60">{t("application.noCoverNote")}</p>
+                        )}
+                        {row.reason || row.application?.managerReason ? (
+                          <div className="rounded-xl border border-foreground/10 bg-background/50 p-3 text-sm text-foreground/80">
+                            <div className="flex items-start gap-2">
+                              <ShieldAlert size={16} className="mt-0.5 shrink-0 text-rose-600 dark:text-rose-200" />
+                              <p className="break-words">{row.reason || row.application?.managerReason}</p>
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="grid gap-4 lg:grid-cols-2">
+                        <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                          <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">{t("user.title")}</p>
                           <p className="text-sm text-foreground/80 break-words">
-                            {row.submission.assignedInstructionText}
+                            {row.submission?.user?.name || t("fallbacks.unnamedUser")}{" "}
+                            <span className="text-foreground/60">({row.submission?.user?.level || "L1"})</span>
                           </p>
-                        </>
-                      ) : (
-                        <p className="text-sm text-foreground/60">{t("instruction.fallback")}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="grid gap-4 lg:grid-cols-1">
-                    <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
-                      <div className="flex items-center justify-between gap-3">
-                        <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">{t("proof.title")}</p>
-                        <div className="flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
-                          {row.submission?.proofLink ? (
-                            <a
-                              href={normalizeExternalUrl(row.submission.proofLink) ?? "#"}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex w-full items-center gap-1 text-sm text-emerald-700 underline underline-offset-4 dark:text-emerald-200 lg:w-auto"
-                            >
-                              <ExternalLink size={14} />
-                              {t("proof.openLink")}
-                            </a>
-                          ) : null}
-                          {(() => {
-                            const submission = row.submission;
-                            const screenshotUrl =
-                              submission?.proofImage ||
-                              (isLikelyScreenshotUrl(submission?.proof) ? submission?.proof : null);
-                            return screenshotUrl ? (
-                              <ProofImageDialog url={screenshotUrl} label={t("proof.previewScreenshot")} />
-                            ) : null;
-                          })()}
+                          <p className="text-xs text-foreground/60 break-all">
+                            {t("user.submissionId", { value: row.submissionId || t("fallbacks.unknown") })}
+                          </p>
+                        </div>
+                        <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                          <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">{t("instruction.title")}</p>
+                          {row.submission?.assignedInstructionText ? (
+                            <>
+                              <p className="text-sm text-foreground/60">
+                                {t("instruction.sequence", {
+                                  sequence: row.submission.assignedInstructionSequence ?? 0,
+                                })}
+                              </p>
+                              <p className="text-sm text-foreground/80 break-words">
+                                {row.submission.assignedInstructionText}
+                              </p>
+                            </>
+                          ) : (
+                            <p className="text-sm text-foreground/60">{t("instruction.fallback")}</p>
+                          )}
                         </div>
                       </div>
-                      {row.reason || row.submission?.managerEscalationReason ? (
-                        <div className="rounded-xl border border-foreground/10 bg-background/50 p-3 text-sm text-foreground/80">
-                          <div className="flex items-start gap-2">
-                            <ShieldAlert size={16} className="mt-0.5 shrink-0 text-rose-600 dark:text-rose-200" />
-                            <p className="break-words">{row.reason || row.submission?.managerEscalationReason}</p>
+
+                      <div className="grid gap-4 lg:grid-cols-1">
+                        <div className="space-y-2 rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="text-xs uppercase tracking-[0.16em] text-foreground/60">{t("proof.title")}</p>
+                            <div className="flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
+                              {row.submission?.proofLink ? (
+                                <a
+                                  href={normalizeExternalUrl(row.submission.proofLink) ?? "#"}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="inline-flex w-full items-center gap-1 text-sm text-emerald-700 underline underline-offset-4 dark:text-emerald-200 lg:w-auto"
+                                >
+                                  <ExternalLink size={14} />
+                                  {t("proof.openLink")}
+                                </a>
+                              ) : null}
+                              {(() => {
+                                const submission = row.submission;
+                                const screenshotUrl =
+                                  submission?.proofImage ||
+                                  (isLikelyScreenshotUrl(submission?.proof) ? submission?.proof : null);
+                                return screenshotUrl ? (
+                                  <ProofImageDialog url={screenshotUrl} label={t("proof.previewScreenshot")} />
+                                ) : null;
+                              })()}
+                            </div>
                           </div>
+                          {row.reason || row.submission?.managerEscalationReason ? (
+                            <div className="rounded-xl border border-foreground/10 bg-background/50 p-3 text-sm text-foreground/80">
+                              <div className="flex items-start gap-2">
+                                <ShieldAlert size={16} className="mt-0.5 shrink-0 text-rose-600 dark:text-rose-200" />
+                                <p className="break-words">{row.reason || row.submission?.managerEscalationReason}</p>
+                              </div>
+                            </div>
+                          ) : (
+                            <p className="text-sm text-foreground/70 break-words">
+                              {(() => {
+                                const submission = row.submission;
+                                if (!submission) return t("proof.noProofStored");
+                                const screenshotUrl =
+                                  submission.proofImage || (isLikelyScreenshotUrl(submission.proof) ? submission.proof : null);
+                                return (
+                                  submission.proofText ||
+                                  submission.proofLink ||
+                                  (screenshotUrl ? t("proof.screenshotUploaded") : null) ||
+                                  submission.proof ||
+                                  t("proof.noProofStored")
+                                );
+                              })()}
+                            </p>
+                          )}
                         </div>
-                      ) : (
-                        <p className="text-sm text-foreground/70 break-words">
-                          {(() => {
-                            const submission = row.submission;
-                            if (!submission) return t("proof.noProofStored");
-                            const screenshotUrl =
-                              submission.proofImage || (isLikelyScreenshotUrl(submission.proof) ? submission.proof : null);
-                            return (
-                              submission.proofText ||
-                              submission.proofLink ||
-                              (screenshotUrl ? t("proof.screenshotUploaded") : null) ||
-                              submission.proof ||
-                              t("proof.noProofStored")
-                            );
-                          })()}
-                        </p>
-                      )}
-                    </div>
-                  </div>
+                      </div>
+                    </>
+                  )}
                 </CardContent>
               </Card>
             );

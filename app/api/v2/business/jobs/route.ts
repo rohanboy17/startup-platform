@@ -51,8 +51,8 @@ export async function GET() {
     ...job,
     metrics: {
       totalApplications: job.applications.length,
-      pendingManager: job.applications.filter((item) => item.status === "APPLIED").length,
-      approvedForBusiness: job.applications.filter((item) => item.status === "SHORTLISTED").length,
+      applied: job.applications.filter((item) => item.status === "APPLIED").length,
+      shortlisted: job.applications.filter((item) => item.status === "SHORTLISTED").length,
       hired: job.applications.filter((item) => ["HIRED", "JOINED"].includes(item.status)).length,
     },
   }));

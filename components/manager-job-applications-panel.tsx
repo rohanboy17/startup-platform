@@ -64,7 +64,6 @@ type QueueItem = {
     business: {
       id: string;
       name: string | null;
-      email: string;
     };
   };
 };
@@ -138,8 +137,8 @@ export default function ManagerJobApplicationsPanel() {
     [rows]
   );
 
-  if (loading) return <p className="text-sm text-white/60">{t("loading")}</p>;
-  if (error) return <p className="text-sm text-rose-300">{error}</p>;
+  if (loading) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
+  if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
 
   return (
     <div className="space-y-6">
@@ -152,16 +151,16 @@ export default function ManagerJobApplicationsPanel() {
       <SectionCard elevated className="space-y-4 p-4 sm:p-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-sm text-white/60">{t("eyebrow")}</p>
-            <h3 className="text-xl font-semibold text-white">{t("title")}</h3>
+            <p className="text-sm text-foreground/60">{t("eyebrow")}</p>
+            <h3 className="text-xl font-semibold text-foreground">{t("title")}</h3>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <label className="flex items-center gap-2 text-sm text-white/60">
+            <label className="flex items-center gap-2 text-sm text-foreground/60">
               <span>{t("show")}</span>
               <select
                 value={limit}
                 onChange={(e) => setLimit(e.target.value as "10" | "20" | "ALL")}
-                className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white"
+                className="rounded-xl border border-foreground/15 bg-background px-3 py-2 text-sm text-foreground"
               >
                 <option value="10">10</option>
                 <option value="20">20</option>
@@ -172,27 +171,27 @@ export default function ManagerJobApplicationsPanel() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder={t("search")}
-              className="min-h-11 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-sm text-white outline-none placeholder:text-white/35 lg:w-80"
+              className="min-h-11 w-full rounded-xl border border-foreground/15 bg-background px-4 py-2 text-sm text-foreground outline-none placeholder:text-foreground/35 lg:w-80"
             />
           </div>
         </div>
       </SectionCard>
 
       {filtered.length === 0 ? (
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-6 text-sm text-white/60">{t("empty")}</CardContent>
+        <Card className="rounded-2xl border-foreground/10 bg-background/50">
+          <CardContent className="p-6 text-sm text-foreground/60">{t("empty")}</CardContent>
         </Card>
       ) : (
         <div className="space-y-4">
           {filtered.map((row) => {
             const payout = getPhysicalWorkPayoutBreakdown(row.job.payAmount);
             return (
-              <Card key={row.id} className="rounded-3xl border-white/10 bg-white/5 shadow-xl shadow-black/20 backdrop-blur-md">
+              <Card key={row.id} className="rounded-3xl border-foreground/10 bg-background/50 shadow-xl shadow-black/10 dark:shadow-black/20 backdrop-blur-md">
                 <CardContent className="space-y-4 p-4 sm:p-6">
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                     <div>
-                      <p className="text-lg font-semibold text-white">{row.job.title}</p>
-                      <p className="mt-1 text-sm text-white/60">
+                      <p className="text-lg font-semibold text-foreground">{row.job.title}</p>
+                      <p className="mt-1 text-sm text-foreground/60">
                         {row.job.business.name || t("fallbackBusiness")} | {row.job.city}, {row.job.state}
                       </p>
                     </div>
@@ -204,19 +203,19 @@ export default function ManagerJobApplicationsPanel() {
                   </div>
 
                   <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
-                    <div className="space-y-3 rounded-2xl border border-white/10 bg-black/20 p-4">
-                      <p className="text-xs uppercase tracking-[0.18em] text-white/45">{t("candidate")}</p>
-                      <p className="text-base font-semibold text-white">{row.user.name || row.user.email}</p>
-                      <p className="text-sm text-white/65">
+                    <div className="space-y-3 rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
+                      <p className="text-xs uppercase tracking-[0.18em] text-foreground/45">{t("candidate")}</p>
+                      <p className="text-base font-semibold text-foreground">{row.user.name || row.user.email}</p>
+                      <p className="text-sm text-foreground/65">
                         {row.user.profile.city || "-"}, {row.user.profile.state || "-"}
                       </p>
-                      <p className="text-sm text-white/65">
+                      <p className="text-sm text-foreground/65">
                         {t("experienceLine", {
                           label: row.user.experience?.experienceLabel || t("noExperience"),
                           days: row.user.experience?.totalWorkDays || 0,
                         })}
                       </p>
-                      <p className="text-xs text-white/50">
+                      <p className="text-xs text-foreground/50">
                         {t("experienceBreakdown", {
                           digital: row.user.experience?.digitalWorkDays || 0,
                           physical: row.user.experience?.physicalWorkDays || 0,
@@ -225,42 +224,42 @@ export default function ManagerJobApplicationsPanel() {
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {row.user.skills.length === 0 ? (
-                          <span className="text-sm text-white/50">{t("noSkills")}</span>
+                          <span className="text-sm text-foreground/50">{t("noSkills")}</span>
                         ) : (
                           row.user.skills.map((skill) => (
-                            <span key={skill} className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/80">
+                            <span key={skill} className="rounded-full border border-foreground/10 px-3 py-1 text-xs text-foreground/80">
                               {skill}
                             </span>
                           ))
                         )}
                       </div>
-                      {row.coverNote ? <p className="text-sm text-white/75">{row.coverNote}</p> : null}
+                      {row.coverNote ? <p className="text-sm text-foreground/75">{row.coverNote}</p> : null}
                     </div>
 
-                    <div className="space-y-4 rounded-2xl border border-white/10 bg-black/20 p-4">
-                      <p className="text-sm text-white/80">{row.job.description}</p>
+                    <div className="space-y-4 rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
+                      <p className="text-sm text-foreground/80">{row.job.description}</p>
                       <div className="grid gap-4 sm:grid-cols-3">
                         <div>
-                          <p className="text-xs uppercase tracking-[0.18em] text-white/45">{t("grossPay")}</p>
-                          <p className="mt-2 text-lg font-semibold text-white">{formatMoney(row.job.payAmount)}</p>
+                          <p className="text-xs uppercase tracking-[0.18em] text-foreground/45">{t("grossPay")}</p>
+                          <p className="mt-2 text-lg font-semibold text-foreground">{formatMoney(row.job.payAmount)}</p>
                         </div>
                         <div>
-                          <p className="text-xs uppercase tracking-[0.18em] text-white/45">{t("workerShare")}</p>
-                          <p className="mt-2 text-lg font-semibold text-white">{formatMoney(payout.workerAmount)}</p>
+                          <p className="text-xs uppercase tracking-[0.18em] text-foreground/45">{t("workerShare")}</p>
+                          <p className="mt-2 text-lg font-semibold text-foreground">{formatMoney(payout.workerAmount)}</p>
                         </div>
                         <div>
-                          <p className="text-xs uppercase tracking-[0.18em] text-white/45">{t("platformCut")}</p>
-                          <p className="mt-2 text-lg font-semibold text-white">
+                          <p className="text-xs uppercase tracking-[0.18em] text-foreground/45">{t("platformCut")}</p>
+                          <p className="mt-2 text-lg font-semibold text-foreground">
                             {Math.round(payout.commissionRate * 100)}%
                           </p>
                         </div>
                       </div>
                       <div className="grid gap-4 md:grid-cols-2">
-                        <div className="text-sm text-white/65">
+                        <div className="text-sm text-foreground/65">
                           <p>{t("workMode", { value: row.job.workMode.replaceAll("_", " ") })}</p>
                           <p className="mt-2">{t("employmentType", { value: row.job.employmentType.replaceAll("_", " ") })}</p>
                         </div>
-                        <div className="text-sm text-white/65">
+                        <div className="text-sm text-foreground/65">
                           <p>{t("languages", { value: row.user.profile.languages.join(", ") || t("notProvided") })}</p>
                           <p className="mt-2">{t("education", { value: row.user.profile.educationQualification || t("notProvided") })}</p>
                         </div>

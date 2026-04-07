@@ -151,57 +151,57 @@ export default async function BusinessTrustPage() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">Business trust layer</p>
+        <p className="text-sm uppercase tracking-[0.24em] text-emerald-600/80 dark:text-emerald-300/70">Business trust layer</p>
         <h2 className="mt-2 text-3xl font-semibold md:text-4xl">{t("trustPageTitle")}</h2>
-        <p className="mt-2 max-w-3xl text-sm text-white/65 md:text-base">
+        <p className="mt-2 max-w-3xl text-sm text-foreground/65 md:text-base">
           Commercial terms, review flow, safety controls, and service timing in one business-facing page.
         </p>
       </div>
 
       <div className="grid gap-6 2xl:grid-cols-[1.1fr_0.9fr]">
-        <section className="rounded-3xl border border-emerald-400/15 bg-gradient-to-br from-emerald-500/10 via-white/5 to-sky-500/10 p-4 shadow-[0_30px_100px_-52px_rgba(16,185,129,0.7)] backdrop-blur-md sm:p-6">
+        <section className="rounded-3xl border border-emerald-400/15 bg-gradient-to-br from-emerald-500/10 via-background/80 to-sky-500/10 p-4 shadow-[0_30px_100px_-52px_rgba(16,185,129,0.35)] backdrop-blur-md sm:p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.22em] text-emerald-200/70">Wallet pricing</p>
-              <h3 className="mt-2 text-2xl font-semibold text-white">Business wallet fee structure</h3>
-              <p className="mt-2 max-w-2xl text-sm text-white/65">
+              <p className="text-sm uppercase tracking-[0.22em] text-emerald-700/80 dark:text-emerald-200/70">Wallet pricing</p>
+              <h3 className="mt-2 text-2xl font-semibold text-foreground">Business wallet fee structure</h3>
+              <p className="mt-2 max-w-2xl text-sm text-foreground/65">
                 Top-ups stay free during launch, while approved refund requests use the refund fee shown below.
               </p>
             </div>
-            <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-emerald-200">
+            <div className="rounded-full border border-emerald-400/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-200">
               Launch model
             </div>
           </div>
 
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-3xl border border-emerald-300/15 bg-black/20 p-4 shadow-inner shadow-emerald-400/5 sm:p-5">
-              <p className="text-sm text-white/60">Add-fund fee</p>
-              <p className="mt-2 text-3xl font-semibold text-white">{(settings.fundingFeeRate * 100).toFixed(2)}%</p>
-              <p className="mt-2 text-xs text-white/45">Applied on wallet top-ups. Currently waived during launch.</p>
-              <p className="mt-4 inline-flex rounded-full border border-emerald-400/15 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-emerald-200">
+            <div className="rounded-3xl border border-emerald-300/15 bg-background/60 p-4 shadow-inner shadow-emerald-400/5 sm:p-5">
+              <p className="text-sm text-foreground/60">Add-fund fee</p>
+              <p className="mt-2 text-3xl font-semibold text-foreground">{(settings.fundingFeeRate * 100).toFixed(2)}%</p>
+              <p className="mt-2 text-xs text-foreground/45">Applied on wallet top-ups. Currently waived during launch.</p>
+              <p className="mt-4 inline-flex rounded-full border border-emerald-400/15 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-200">
                 Best for recharging budget
               </p>
             </div>
             <div className="rounded-3xl border border-cyan-400/15 bg-cyan-500/10 p-4 shadow-inner shadow-cyan-400/5 sm:p-5">
-              <p className="text-sm text-cyan-100/80">Refund fee</p>
-              <p className="mt-2 text-3xl font-semibold text-white">
+              <p className="text-sm text-cyan-800/80 dark:text-cyan-100/80">Refund fee</p>
+              <p className="mt-2 text-3xl font-semibold text-foreground">
                 {(settings.businessRefundFeeRate * 100).toFixed(2)}%
               </p>
-              <p className="mt-2 text-xs text-cyan-50/70">Applied only when a business refund request is approved.</p>
-              <p className="mt-4 inline-flex rounded-full border border-cyan-300/15 bg-cyan-950/30 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-cyan-100/80">
+              <p className="mt-2 text-xs text-cyan-800/70 dark:text-cyan-50/70">Applied only when a business refund request is approved.</p>
+              <p className="mt-4 inline-flex rounded-full border border-cyan-300/15 bg-cyan-500/10 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-cyan-800 dark:text-cyan-100/80">
                 Used for reviewed refunds
               </p>
             </div>
 
-            <div className="rounded-3xl border border-white/10 bg-black/20 p-4 sm:col-span-2 sm:p-5">
+            <div className="rounded-3xl border border-foreground/10 bg-background/60 p-4 sm:col-span-2 sm:p-5">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm font-medium text-white">How to read these wallet fees</p>
-                  <p className="mt-1 text-sm text-white/60">
+                  <p className="text-sm font-medium text-foreground">How to read these wallet fees</p>
+                  <p className="mt-1 text-sm text-foreground/60">
                     Add-fund pricing helps you top up campaigns, while refund pricing applies only when an approved refund is sent back out.
                   </p>
                 </div>
-                <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-white/55">
+                <div className="rounded-full border border-foreground/10 bg-background/50 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.16em] text-foreground/55">
                   Business wallet rules
                 </div>
               </div>
@@ -210,37 +210,37 @@ export default async function BusinessTrustPage() {
         </section>
 
         <div className="grid gap-4">
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
-            <p className="text-sm text-white/60">Locked campaign budget</p>
-            <p className="mt-2 text-3xl font-semibold text-white">INR {formatMoney(lockedBudget)}</p>
-            <p className="mt-2 text-xs text-white/45">Budget reserved across pending, approved, and live campaigns.</p>
+          <div className="rounded-3xl border border-foreground/10 bg-background/50 p-4 backdrop-blur-md sm:p-5">
+            <p className="text-sm text-foreground/60">Locked campaign budget</p>
+            <p className="mt-2 text-3xl font-semibold text-foreground">INR {formatMoney(lockedBudget)}</p>
+            <p className="mt-2 text-xs text-foreground/45">Budget reserved across pending, approved, and live campaigns.</p>
           </div>
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
-            <p className="text-sm text-white/60">Avg manager review time</p>
-            <p className="mt-2 text-3xl font-semibold text-white">{formatHours(avgManagerHours)}</p>
-            <p className="mt-2 text-xs text-white/45">Based on recent submissions reviewed by managers.</p>
+          <div className="rounded-3xl border border-foreground/10 bg-background/50 p-4 backdrop-blur-md sm:p-5">
+            <p className="text-sm text-foreground/60">Avg manager review time</p>
+            <p className="mt-2 text-3xl font-semibold text-foreground">{formatHours(avgManagerHours)}</p>
+            <p className="mt-2 text-xs text-foreground/45">Based on recent submissions reviewed by managers.</p>
           </div>
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-5">
-            <p className="text-sm text-white/60">Avg admin final review time</p>
-            <p className="mt-2 text-3xl font-semibold text-white">{formatHours(avgAdminHours)}</p>
-            <p className="mt-2 text-xs text-white/45">Measured from submission creation to final admin decision.</p>
+          <div className="rounded-3xl border border-foreground/10 bg-background/50 p-4 backdrop-blur-md sm:p-5">
+            <p className="text-sm text-foreground/60">Avg admin final review time</p>
+            <p className="mt-2 text-3xl font-semibold text-foreground">{formatHours(avgAdminHours)}</p>
+            <p className="mt-2 text-xs text-foreground/45">Measured from submission creation to final admin decision.</p>
           </div>
         </div>
       </div>
 
       <div className="grid gap-6 2xl:grid-cols-[1.05fr_0.95fr]">
-        <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
+        <section className="space-y-4 rounded-3xl border border-foreground/10 bg-background/50 p-4 backdrop-blur-md sm:p-6">
           <div>
-            <p className="text-sm text-white/60">Commercial model</p>
-            <h3 className="text-xl font-semibold text-white">How money moves</h3>
+            <p className="text-sm text-foreground/60">Commercial model</p>
+            <h3 className="text-xl font-semibold text-foreground">How money moves</h3>
           </div>
-          <div className="space-y-3 text-sm text-white/70">
+          <div className="space-y-3 text-sm text-foreground/70">
             <p>Campaign creation locks the full budget immediately from the business wallet.</p>
             <p>On final admin approval, the full per-task reward is deducted from campaign remaining budget.</p>
             <p>User payout and platform commission are split internally after approval. Businesses are charged only from campaign budget, not an extra approval fee.</p>
             <p>Campaign edit budget increases deduct only the difference. Budget reductions release unused budget back to the business wallet.</p>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/60">
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4 text-sm text-foreground/60">
             <p>Total campaign budget launched so far: INR {formatMoney(totalCampaignBudget)}</p>
             <p className="mt-2">
               Recent payment health: {successfulPayments.length} paid, {failedPayments.length} failed orders.
@@ -248,12 +248,12 @@ export default async function BusinessTrustPage() {
           </div>
         </section>
 
-        <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
+        <section className="space-y-4 rounded-3xl border border-foreground/10 bg-background/50 p-4 backdrop-blur-md sm:p-6">
           <div>
-            <p className="text-sm text-white/60">Review steps</p>
-            <h3 className="text-xl font-semibold text-white">What happens after your campaign goes live</h3>
+            <p className="text-sm text-foreground/60">Review steps</p>
+            <h3 className="text-xl font-semibold text-foreground">What happens after your campaign goes live</h3>
           </div>
-          <ol className="space-y-3 text-sm text-white/70">
+          <ol className="space-y-3 text-sm text-foreground/70">
             <li>1. Business creates the campaign and budget is reserved.</li>
             <li>2. Admin reviews the campaign before it can go live.</li>
             <li>3. Users submit proof against live campaigns only.</li>
@@ -262,66 +262,66 @@ export default async function BusinessTrustPage() {
             <li>6. On approval, wallet credit and platform commission are recorded atomically.</li>
           </ol>
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Waiting for first review</p>
-              <p className="mt-2 text-lg font-semibold text-white">{managerPending}</p>
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">Waiting for first review</p>
+              <p className="mt-2 text-lg font-semibold text-foreground">{managerPending}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Waiting for final approval</p>
-              <p className="mt-2 text-lg font-semibold text-white">{adminPending}</p>
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">Waiting for final approval</p>
+              <p className="mt-2 text-lg font-semibold text-foreground">{adminPending}</p>
             </div>
           </div>
         </section>
       </div>
 
       <div className="grid gap-6 2xl:grid-cols-[0.95fr_1.05fr]">
-        <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
+        <section className="space-y-4 rounded-3xl border border-foreground/10 bg-background/50 p-4 backdrop-blur-md sm:p-6">
           <div>
-            <p className="text-sm text-white/60">Fraud and safety controls</p>
-            <h3 className="text-xl font-semibold text-white">What protects campaign quality</h3>
+            <p className="text-sm text-foreground/60">Fraud and safety controls</p>
+            <h3 className="text-xl font-semibold text-foreground">What protects campaign quality</h3>
           </div>
-          <ul className="space-y-3 text-sm text-white/70">
+          <ul className="space-y-3 text-sm text-foreground/70">
             <li>Submission access is restricted to live campaigns with available budget.</li>
             <li>Proof passes through manager review and final admin review before payout.</li>
             <li>IP logging and suspicious-user monitoring support abuse detection.</li>
             <li>Wallet ledger entries and activity logs preserve a visible financial and moderation trail.</li>
             <li>Notification events are created on approval, rejection, and funding changes.</li>
           </ul>
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/60">
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4 text-sm text-foreground/60">
             <p>Current final rejection rate: {rejectionRate.toFixed(1)}%</p>
             <p className="mt-2">Approved submissions: {approvedSubmissions}</p>
             <p className="mt-2">Rejected submissions: {rejectedSubmissions}</p>
           </div>
         </section>
 
-        <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
+        <section className="space-y-4 rounded-3xl border border-foreground/10 bg-background/50 p-4 backdrop-blur-md sm:p-6">
           <div>
-            <p className="text-sm text-white/60">Service timing and status</p>
-            <h3 className="text-xl font-semibold text-white">Current review status</h3>
+            <p className="text-sm text-foreground/60">Service timing and status</p>
+            <h3 className="text-xl font-semibold text-foreground">Current review status</h3>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Pending campaign approvals</p>
-              <p className="mt-2 text-lg font-semibold text-white">{pendingCampaigns.length}</p>
-              <p className="mt-1 text-xs text-white/45">{delayedPendingCampaigns.length} older than 24 hours</p>
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">Pending campaign approvals</p>
+              <p className="mt-2 text-lg font-semibold text-foreground">{pendingCampaigns.length}</p>
+              <p className="mt-1 text-xs text-foreground/45">{delayedPendingCampaigns.length} older than 24 hours</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Failed funding payments</p>
-              <p className="mt-2 text-lg font-semibold text-white">{failedPayments.length}</p>
-              <p className="mt-1 text-xs text-white/45">Recent failed orders needing retry or review</p>
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">Failed funding payments</p>
+              <p className="mt-2 text-lg font-semibold text-foreground">{failedPayments.length}</p>
+              <p className="mt-1 text-xs text-foreground/45">Recent failed orders needing retry or review</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Live campaigns at zero budget</p>
-              <p className="mt-2 text-lg font-semibold text-white">{exhaustedCampaigns.length}</p>
-              <p className="mt-1 text-xs text-white/45">Top-up or close these campaigns to avoid dead traffic</p>
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">Live campaigns at zero budget</p>
+              <p className="mt-2 text-lg font-semibold text-foreground">{exhaustedCampaigns.length}</p>
+              <p className="mt-1 text-xs text-foreground/45">Top-up or close these campaigns to avoid dead traffic</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">Processing guidance</p>
-              <p className="mt-2 text-lg font-semibold text-white">24h target</p>
-              <p className="mt-1 text-xs text-white/45">Target time for campaign review and monitoring</p>
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">Processing guidance</p>
+              <p className="mt-2 text-lg font-semibold text-foreground">24h target</p>
+              <p className="mt-1 text-xs text-foreground/45">Target time for campaign review and monitoring</p>
             </div>
           </div>
-          <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/60">
+          <div className="rounded-2xl border border-dashed border-foreground/10 bg-background/60 p-4 text-sm text-foreground/60">
             If a campaign is pending too long, payment fails, or rejection spikes, the business notifications page surfaces it as an active alert.
           </div>
         </section>

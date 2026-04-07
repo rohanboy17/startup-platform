@@ -76,7 +76,7 @@ export default async function AdminCmsPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-semibold">Content & CMS</h1>
-      <p className="text-sm text-white/70">
+      <p className="text-sm text-foreground/70">
         Control landing text, legal pages, announcement banners, and feature flags from one place.
       </p>
       <AdminCmsPanel
@@ -94,4 +94,3 @@ export default async function AdminCmsPage() {
     </div>
   );
 }
-

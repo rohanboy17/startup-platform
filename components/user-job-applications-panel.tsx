@@ -22,10 +22,8 @@ type Application = {
   joinedAt: string | null;
   reviewedAt: string | null;
   createdAt: string;
-  grossAmount: number;
   workerAmount: number;
   commissionRate: number;
-  commissionAmount: number;
   job: {
     id: string;
     title: string;
@@ -36,7 +34,6 @@ type Application = {
     pincode: string | null;
     workMode: string;
     employmentType: string;
-    payAmount: number;
     payUnit: string;
     commissionRate: number;
     status: "PENDING_REVIEW" | "OPEN" | "REJECTED" | "PAUSED" | "CLOSED" | "FILLED";
@@ -156,12 +153,13 @@ export default function UserJobApplicationsPanel() {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-7">
         <KpiCard label={t("kpis.total")} value={data.summary.total} />
         <KpiCard label={t("kpis.applied")} value={data.summary.applied} tone="warning" />
         <KpiCard label={t("kpis.shortlisted")} value={data.summary.shortlisted} tone="success" />
         <KpiCard label={t("kpis.interviewed")} value={data.summary.interviewed} tone="info" />
         <KpiCard label={t("kpis.hired")} value={data.summary.hired} tone="info" />
+        <KpiCard label={t("kpis.joined")} value={data.summary.joined} tone="success" />
         <KpiCard label={t("kpis.rejected")} value={data.summary.rejected} tone="danger" />
       </div>
 
@@ -219,15 +217,12 @@ export default function UserJobApplicationsPanel() {
               </div>
 
               <div className="grid gap-4 md:grid-cols-3">
-                  <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
-                    <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("card.pay")}</p>
-                    <p className="mt-2 text-lg font-semibold text-foreground">INR {formatMoney(application.workerAmount)}</p>
-                    <p className="mt-1 text-xs text-foreground/60">{t(`payUnits.${application.job.payUnit}`)}</p>
-                  </div>
                 <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("card.grossPay")}</p>
-                  <p className="mt-2 text-sm font-semibold text-foreground">INR {formatMoney(application.job.payAmount)}</p>
-                  <p className="mt-1 text-xs text-foreground/60">{t("card.platformCut", { percent: Math.round(application.job.commissionRate * 100) })}</p>
+                  <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("card.pay")}</p>
+                  <p className="mt-2 text-lg font-semibold text-foreground">INR {formatMoney(application.workerAmount)}</p>
+                  <p className="mt-1 text-xs text-foreground/60">
+                    {t(`payUnits.${application.job.payUnit}`)} | {t("card.platformCut", { percent: Math.round(application.job.commissionRate * 100) })}
+                  </p>
                 </div>
                 <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                   <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("card.jobStatus")}</p>

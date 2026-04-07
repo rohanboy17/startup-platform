@@ -64,7 +64,7 @@ export default function AdminRiskBulkActions() {
           {loading === "RESOLVE_ALL_ESCALATIONS" ? t("resolving") : t("resolveAll")}
         </Button>
       </div>
-      {message ? <p className="text-xs text-amber-200 dark:text-foreground/60">{message}</p> : null}
+      {message ? <p className="text-xs text-amber-800 dark:text-amber-200 dark:text-foreground/60">{message}</p> : null}
     </div>
   );
 }

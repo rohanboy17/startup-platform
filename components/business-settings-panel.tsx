@@ -42,6 +42,7 @@ export default function BusinessSettingsPanel() {
   const locale = useLocale();
   const dateLocale = toDateLocale(locale);
   const [data, setData] = useState<ResponseShape | null>(null);
+  const [isDirty, setIsDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -62,8 +63,10 @@ export default function BusinessSettingsPanel() {
       return;
     }
     setError("");
-    setData(parsed);
-  }, [t]);
+    if (!data || (!isDirty && !saving)) {
+      setData(parsed);
+    }
+  }, [data, isDirty, saving, t]);
 
   useLiveRefresh(load, 15000);
 
@@ -93,7 +96,18 @@ export default function BusinessSettingsPanel() {
     }
 
     setMessage(payload.message || t("messages.updated"));
+    setIsDirty(false);
     void load();
+  }
+
+  function updateProfile<K extends keyof ResponseShape["profile"]>(key: K, value: ResponseShape["profile"][K]) {
+    setIsDirty(true);
+    setData((prev) => (prev ? { ...prev, profile: { ...prev.profile, [key]: value } } : prev));
+  }
+
+  function updateSettings<K extends keyof BusinessSettings>(key: K, value: BusinessSettings[K]) {
+    setIsDirty(true);
+    setData((prev) => (prev ? { ...prev, settings: { ...prev.settings, [key]: value } } : prev));
   }
 
   if (error && !data) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
@@ -112,29 +126,21 @@ export default function BusinessSettingsPanel() {
               <label className="text-sm text-foreground/70">{t("profile.displayName")}</label>
               <Input
                 value={data.profile.name}
-                onChange={(e) => setData((prev) => (prev ? { ...prev, profile: { ...prev.profile, name: e.target.value } } : prev))}
+                onChange={(e) => updateProfile("name", e.target.value)}
               />
             </div>
             <div className="space-y-2">
               <label className="text-sm text-foreground/70">{t("profile.brandName")}</label>
               <Input
                 value={data.settings.brandName}
-                onChange={(e) =>
-                  setData((prev) =>
-                    prev ? { ...prev, settings: { ...prev.settings, brandName: e.target.value } } : prev
-                  )
-                }
+                onChange={(e) => updateSettings("brandName", e.target.value)}
               />
             </div>
             <div className="space-y-2">
               <label className="text-sm text-foreground/70">{t("profile.companyName")}</label>
               <Input
                 value={data.settings.companyName}
-                onChange={(e) =>
-                  setData((prev) =>
-                    prev ? { ...prev, settings: { ...prev.settings, companyName: e.target.value } } : prev
-                  )
-                }
+                onChange={(e) => updateSettings("companyName", e.target.value)}
               />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -142,22 +148,14 @@ export default function BusinessSettingsPanel() {
                 <label className="text-sm text-foreground/70">{t("profile.contactEmail")}</label>
                 <Input
                   value={data.settings.contactEmail}
-                  onChange={(e) =>
-                    setData((prev) =>
-                      prev ? { ...prev, settings: { ...prev.settings, contactEmail: e.target.value } } : prev
-                    )
-                  }
+                  onChange={(e) => updateSettings("contactEmail", e.target.value)}
                 />
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-foreground/70">{t("profile.supportContact")}</label>
                 <Input
                   value={data.settings.supportContact}
-                  onChange={(e) =>
-                    setData((prev) =>
-                      prev ? { ...prev, settings: { ...prev.settings, supportContact: e.target.value } } : prev
-                    )
-                  }
+                  onChange={(e) => updateSettings("supportContact", e.target.value)}
                 />
               </div>
             </div>
@@ -186,37 +184,21 @@ export default function BusinessSettingsPanel() {
               <label className="text-sm text-foreground/70">{t("billing.defaultPayoutUpiId")}</label>
               <Input
                 value={data.settings.defaultPayoutUpiId}
-                onChange={(e) =>
-                  setData((prev) =>
-                    prev
-                      ? { ...prev, settings: { ...prev.settings, defaultPayoutUpiId: e.target.value } }
-                      : prev
-                  )
-                }
+                onChange={(e) => updateSettings("defaultPayoutUpiId", e.target.value)}
               />
             </div>
             <div className="space-y-2">
               <label className="text-sm text-foreground/70">{t("billing.defaultPayoutUpiName")}</label>
               <Input
                 value={data.settings.defaultPayoutUpiName}
-                onChange={(e) =>
-                  setData((prev) =>
-                    prev
-                      ? { ...prev, settings: { ...prev.settings, defaultPayoutUpiName: e.target.value } }
-                      : prev
-                  )
-                }
+                onChange={(e) => updateSettings("defaultPayoutUpiName", e.target.value)}
               />
             </div>
             <div className="space-y-2">
               <label className="text-sm text-foreground/70">{t("billing.billingDetails")}</label>
               <textarea
                 value={data.settings.billingDetails}
-                onChange={(e) =>
-                  setData((prev) =>
-                    prev ? { ...prev, settings: { ...prev.settings, billingDetails: e.target.value } } : prev
-                  )
-                }
+                onChange={(e) => updateSettings("billingDetails", e.target.value)}
                 className="min-h-28 w-full rounded-xl border border-foreground/20 bg-background/60 px-4 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20"
               />
             </div>
@@ -224,11 +206,7 @@ export default function BusinessSettingsPanel() {
               <label className="text-sm text-foreground/70">{t("billing.refundPreference")}</label>
               <textarea
                 value={data.settings.refundPreference}
-                onChange={(e) =>
-                  setData((prev) =>
-                    prev ? { ...prev, settings: { ...prev.settings, refundPreference: e.target.value } } : prev
-                  )
-                }
+                onChange={(e) => updateSettings("refundPreference", e.target.value)}
                 className="min-h-28 w-full rounded-xl border border-foreground/20 bg-background/60 px-4 py-3 text-sm text-foreground placeholder:text-foreground/50 outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20"
               />
             </div>
@@ -254,20 +232,10 @@ export default function BusinessSettingsPanel() {
                   type="checkbox"
                   checked={data.settings.notificationPreferences[key as keyof BusinessSettings["notificationPreferences"]]}
                   onChange={(e) =>
-                    setData((prev) =>
-                      prev
-                        ? {
-                            ...prev,
-                            settings: {
-                              ...prev.settings,
-                              notificationPreferences: {
-                                ...prev.settings.notificationPreferences,
-                                [key]: e.target.checked,
-                              },
-                            },
-                          }
-                        : prev
-                    )
+                    updateSettings("notificationPreferences", {
+                      ...data.settings.notificationPreferences,
+                      [key]: e.target.checked,
+                    })
                   }
                 />
                 {label}

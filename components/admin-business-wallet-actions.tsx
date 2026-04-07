@@ -62,7 +62,7 @@ export default function AdminBusinessWalletActions({
         <select
           value={action}
           onChange={(e) => setAction(e.target.value as WalletAction)}
-          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white sm:w-auto"
+          className="w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground sm:w-auto"
           disabled={loading}
         >
           <option value="CREDIT">{t("actions.credit")}</option>
@@ -86,7 +86,7 @@ export default function AdminBusinessWalletActions({
       <Button onClick={submit} disabled={loading} className="w-full sm:w-auto">
         {loading ? t("applying") : t("apply")}
       </Button>
-      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }

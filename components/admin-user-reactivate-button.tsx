@@ -42,7 +42,7 @@ export default function AdminUserReactivateButton({ userId }: { userId: string }
       <Button type="button" variant="outline" onClick={reactivate} disabled={loading}>
         {loading ? t("reactivating") : t("reactivate")}
       </Button>
-      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }

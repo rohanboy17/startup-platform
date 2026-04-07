@@ -40,8 +40,8 @@ export default async function ManagerLayout({
             userId={session.user.id}
             items={[
               { key: "manager.overview", href: "/dashboard/manager", label: "Overview", labelKey: "overview", icon: "overview" },
-              { key: "manager.submissions", href: "/dashboard/manager/submissions", label: "Submission Queue", labelKey: "submissionQueue", icon: "submissions" },
-              { key: "manager.jobs", href: "/dashboard/manager/jobs", label: "Job Applications", labelKey: "jobs", icon: "jobs" },
+              { key: "manager.submissions", href: "/dashboard/manager/submissions", label: "Campaigns Queue", labelKey: "submissionQueue", icon: "submissions" },
+              { key: "manager.jobs", href: "/dashboard/manager/jobs", label: "Jobs Queue", labelKey: "jobsQueue", icon: "jobs" },
               { key: "manager.notifications", href: "/dashboard/manager/notifications", label: "Notifications", labelKey: "notifications", icon: "notifications" },
               { key: "manager.settings", href: "/dashboard/manager/settings", label: "Settings", labelKey: "settings", icon: "settings" },
               { key: "manager.history", href: "/dashboard/manager/history", label: "History", labelKey: "history", icon: "audit" },

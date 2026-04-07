@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { Sparkles, Wallet } from "lucide-react";
+import {
+  Bell,
+  BriefcaseBusiness,
+  ClipboardList,
+  Gift,
+  ListChecks,
+  Sparkles,
+  Wallet,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
@@ -17,6 +25,7 @@ type OverviewResponse = {
     level: "L1" | "L2" | "L3" | "L4" | "L5";
     balance: number;
     coinBalance: number;
+    perkCreditBalance: number;
     dailyApproved: number;
     totalApproved: number;
     dailySubmits: number;
@@ -24,10 +33,12 @@ type OverviewResponse = {
   metrics: {
     availableBalance: number;
     coinBalance: number;
+    perkCreditBalance: number;
     pendingWithdrawalAmount: number;
     totalWithdrawn: number;
     approvedSubmissions: number;
     todayApprovedCount: number;
+    activeJobApplications: number;
     unreadNotifications: number;
   };
   progress: {
@@ -102,6 +113,51 @@ export default function UserOverviewPanel() {
   const [error, setError] = useState("");
   const hydrated = useHydrated();
 
+  const quickLinks = [
+    {
+      href: "/dashboard/user/tasks",
+      title: t("openTasks"),
+      description: t("openTasksDesc"),
+      Icon: ListChecks,
+      iconClassName: "border-emerald-400/25 bg-emerald-400/10 text-emerald-700 dark:text-emerald-200",
+    },
+    {
+      href: "/dashboard/user/jobs",
+      title: t("openJobs"),
+      description: t("openJobsDesc"),
+      Icon: BriefcaseBusiness,
+      iconClassName: "border-sky-400/25 bg-sky-400/10 text-sky-700 dark:text-sky-200",
+    },
+    {
+      href: "/dashboard/user/job-applications",
+      title: t("openJobApplications"),
+      description: t("openJobApplicationsDesc"),
+      Icon: ClipboardList,
+      iconClassName: "border-violet-400/25 bg-violet-400/10 text-violet-700 dark:text-violet-200",
+    },
+    {
+      href: "/dashboard/user/wallet",
+      title: t("openWallet"),
+      description: t("openWalletDesc"),
+      Icon: Wallet,
+      iconClassName: "border-amber-400/25 bg-amber-400/10 text-amber-700 dark:text-amber-200",
+    },
+    {
+      href: "/dashboard/user/notifications",
+      title: t("openNotifications"),
+      description: t("openNotificationsDesc"),
+      Icon: Bell,
+      iconClassName: "border-rose-400/25 bg-rose-400/10 text-rose-700 dark:text-rose-200",
+    },
+    {
+      href: "/dashboard/user/referrals",
+      title: t("openReferrals"),
+      description: t("openReferralsDesc"),
+      Icon: Gift,
+      iconClassName: "border-fuchsia-400/25 bg-fuchsia-400/10 text-fuchsia-700 dark:text-fuchsia-200",
+    },
+  ];
+
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/users/me/overview", { credentials: "include" });
     const raw = await res.text();
@@ -148,6 +204,13 @@ export default function UserOverviewPanel() {
             {t("ctaTasks")}
           </Link>
           <Link
+            href="/dashboard/user/jobs"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-sky-400/30 bg-sky-400/10 px-4 py-2 text-sm font-medium text-sky-700 transition hover:bg-sky-400/20 dark:text-sky-100 sm:w-auto"
+          >
+            <BriefcaseBusiness size={16} />
+            {t("ctaJobs")}
+          </Link>
+          <Link
             href="/dashboard/user/withdrawals"
             className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-foreground/15 bg-foreground/[0.04] px-4 py-2 text-sm font-medium text-foreground/85 transition hover:bg-foreground/10 sm:w-auto"
           >
@@ -157,7 +220,7 @@ export default function UserOverviewPanel() {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-6">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-8">
         <KpiCard
           label={t("kpiAvailable")}
           value={`INR ${formatMoney(data.metrics.availableBalance)}`}
@@ -168,6 +231,12 @@ export default function UserOverviewPanel() {
           label={t("kpiCoins")}
           value={data.metrics.coinBalance}
           tone="info"
+        />
+
+        <KpiCard
+          label={t("kpiPerkCredits")}
+          value={data.metrics.perkCreditBalance}
+          tone="success"
         />
 
         <KpiCard
@@ -185,6 +254,12 @@ export default function UserOverviewPanel() {
         <KpiCard
           label={t("kpiApprovedSubmissions")}
           value={data.metrics.approvedSubmissions}
+        />
+
+        <KpiCard
+          label={t("kpiActiveApplications")}
+          value={data.metrics.activeJobApplications}
+          tone="warning"
         />
 
         <KpiCard
@@ -374,23 +449,20 @@ export default function UserOverviewPanel() {
               </div>
             ) : null}
 
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              <Link href="/dashboard/user/tasks" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
-                  <p className="text-sm font-medium text-foreground">{t("openTasks")}</p>
-                <p className="mt-1 text-sm text-foreground/70">{t("openTasksDesc")}</p>
-              </Link>
-              <Link href="/dashboard/user/wallet" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
-                  <p className="text-sm font-medium text-foreground">{t("openWallet")}</p>
-                <p className="mt-1 text-sm text-foreground/70">{t("openWalletDesc")}</p>
-              </Link>
-              <Link href="/dashboard/user/notifications" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
-                  <p className="text-sm font-medium text-foreground">{t("openNotifications")}</p>
-                <p className="mt-1 text-sm text-foreground/70">{t("openNotificationsDesc")}</p>
-              </Link>
-              <Link href="/dashboard/user/referrals" className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80">
-                  <p className="text-sm font-medium text-foreground">{t("openReferrals")}</p>
-                <p className="mt-1 text-sm text-foreground/70">{t("openReferralsDesc")}</p>
-              </Link>
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
+              {quickLinks.map(({ href, title, description, Icon, iconClassName }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="rounded-2xl border border-foreground/10 bg-background/60 p-4 transition hover:border-foreground/20 hover:bg-background/80"
+                >
+                  <div className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl border ${iconClassName}`}>
+                    <Icon size={18} />
+                  </div>
+                  <p className="mt-4 text-sm font-medium text-foreground">{title}</p>
+                  <p className="mt-1 text-sm text-foreground/70">{description}</p>
+                </Link>
+              ))}
             </div>
         </SectionCard>
 

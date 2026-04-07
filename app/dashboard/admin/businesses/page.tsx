@@ -101,12 +101,12 @@ export default async function AdminBusinessesPage({
               name="q"
               defaultValue={q}
               placeholder="Search business name or email"
-              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             />
             <select
               name="kyc"
               defaultValue={kycFilter}
-              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             >
               <option value="ALL">All KYC Status</option>
               <option value="PENDING">PENDING</option>
@@ -116,7 +116,7 @@ export default async function AdminBusinessesPage({
             <select
               name="status"
               defaultValue={statusFilter}
-              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             >
               <option value="ALL">All Account Status</option>
               <option value="ACTIVE">ACTIVE</option>
@@ -126,7 +126,7 @@ export default async function AdminBusinessesPage({
             <select
               name="limit"
               defaultValue={limit ? String(limit) : "ALL"}
-              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             >
               <option value="5">Show 5</option>
               <option value="10">Show 10</option>
@@ -136,13 +136,13 @@ export default async function AdminBusinessesPage({
             <div className="flex flex-col gap-3 sm:flex-row">
               <button
                 type="submit"
-                className="rounded-md border border-white/20 bg-white/10 px-3 py-2 text-sm text-white hover:bg-white/20"
+                className="rounded-md border border-foreground/15 bg-foreground/[0.06] px-3 py-2 text-sm text-foreground hover:bg-foreground/[0.12]"
               >
                 Apply Filters
               </button>
               <a
                 href="/dashboard/admin/businesses"
-                className="rounded-md border border-white/20 bg-black/20 px-3 py-2 text-center text-sm text-white hover:bg-white/10"
+                className="rounded-md border border-foreground/15 bg-foreground/[0.04] px-3 py-2 text-center text-sm text-foreground hover:bg-foreground/[0.08]"
               >
                 Clear
               </a>
@@ -152,17 +152,17 @@ export default async function AdminBusinessesPage({
 
       <div className="grid gap-6 md:grid-cols-2">
         {businesses.length === 0 ? (
-          <Card className="rounded-2xl border-white/10 bg-white/5 md:col-span-2">
-            <CardContent className="p-6 text-sm text-white/60">
+          <Card className="rounded-2xl border-foreground/10 bg-background/60 md:col-span-2">
+            <CardContent className="p-6 text-sm text-foreground/60">
               No standalone business accounts found for the selected filters.
             </CardContent>
           </Card>
         ) : null}
         {businesses.map((business) => (
-          <Card key={business.id} className="rounded-2xl border-white/10 bg-white/5">
+          <Card key={business.id} className="rounded-2xl border-foreground/10 bg-background/60">
             <CardContent className="space-y-3 p-6">
               <h3 className="text-lg font-semibold">{business.name || "Unnamed Business"}</h3>
-              <p className="break-all text-sm text-white/70">{business.email}</p>
+              <p className="break-all text-sm text-foreground/70">{business.email}</p>
               <div className="flex flex-wrap gap-2">
                 <StatusBadge
                   label={`Account: ${business.accountStatus}`}
@@ -174,18 +174,18 @@ export default async function AdminBusinessesPage({
                 />
               </div>
               {business.statusReason ? (
-                <p className="text-xs text-white/60">Account reason: {business.statusReason}</p>
+                <p className="text-xs text-foreground/60">Account reason: {business.statusReason}</p>
               ) : null}
               {business.kycNotes ? (
-                <p className="text-xs text-white/60">KYC notes: {business.kycNotes}</p>
+                <p className="text-xs text-foreground/60">KYC notes: {business.kycNotes}</p>
               ) : null}
               {business.kycVerifiedAt ? (
-                <p className="text-xs text-white/50">
+                <p className="text-xs text-foreground/50">
                   KYC verified at: {new Date(business.kycVerifiedAt).toLocaleString()}
                 </p>
               ) : null}
               <p className="text-sm">Wallet: INR {formatMoney(business.balance)}</p>
-              <p className="text-xs text-white/50">
+              <p className="text-xs text-foreground/50">
                 Joined: {new Date(business.createdAt).toLocaleDateString()}
               </p>
 

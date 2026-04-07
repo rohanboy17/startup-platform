@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -57,7 +57,7 @@ export default function AdminCampaignEscalationButton({
             ? t("actions.escalate")
             : t("actions.clearEscalation")}
       </Button>
-      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }

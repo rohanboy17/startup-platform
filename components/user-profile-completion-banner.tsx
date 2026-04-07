@@ -11,6 +11,8 @@ type SettingsPayload = {
   profile: {
     name: string | null;
     address: string | null;
+    city: string | null;
+    state: string | null;
     gender: string | null;
     religion: string | null;
     dateOfBirth: string | null;

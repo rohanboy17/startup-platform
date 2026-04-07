@@ -295,29 +295,29 @@ export default function AdminCampaignActions({
         <input
           value={escalationNote}
           onChange={(e) => setEscalationNote(e.target.value)}
-          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+          className="w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
           placeholder={t("fields.escalationReason")}
         />
       ) : null}
       {escalatedAt ? (
-        <p className="text-xs text-amber-300">
+        <p className="text-xs text-amber-700 dark:text-amber-300">
           {t("labels.escalatedAt", { date: new Date(escalatedAt).toLocaleString() })}
           {escalationReason ? ` | ${escalationReason}` : ""}
         </p>
       ) : null}
 
       {editOpen ? (
-        <div className="grid gap-2 rounded-md border border-white/10 bg-black/20 p-3 md:grid-cols-2">
+        <div className="grid gap-2 rounded-md border border-foreground/10 bg-foreground/[0.04] p-3 md:grid-cols-2">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             placeholder={t("fields.title")}
           />
           <input
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             placeholder={t("fields.category")}
           />
           <select
@@ -328,7 +328,7 @@ export default function AdminCampaignActions({
               setTaskType(getTaskTypesForCategory(nextTaskCategory, taskCategories)[0] || "Other");
               setCustomTask("");
             }}
-            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
           >
             {taskCategories.map((option) => (
               <option key={option.name} value={option.name}>
@@ -339,7 +339,7 @@ export default function AdminCampaignActions({
           <select
             value={taskType}
             onChange={(e) => setTaskType(e.target.value)}
-            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
           >
             {getTaskTypesForCategory(taskCategory, taskCategories).map((option) => (
               <option key={option} value={option}>
@@ -351,32 +351,32 @@ export default function AdminCampaignActions({
             <input
               value={customTask}
               onChange={(e) => setCustomTask(e.target.value)}
-              className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
+              className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground md:col-span-2"
               placeholder={t("fields.customTask")}
             />
           ) : null}
           <input
             value={taskLink}
             onChange={(e) => setTaskLink(e.target.value)}
-            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
+            className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground md:col-span-2"
             placeholder={t("fields.taskLink")}
           />
           <input
             value={tutorialVideoUrl}
             onChange={(e) => setTutorialVideoUrl(e.target.value)}
-            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
+            className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground md:col-span-2"
             placeholder={t("fields.tutorialVideoUrl")}
           />
           <textarea
             value={instructionsText}
             onChange={(e) => setInstructionsText(e.target.value)}
-            className="min-h-[96px] rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
+            className="min-h-[96px] rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground md:col-span-2"
             placeholder={t("fields.instructions")}
           />
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="min-h-[70px] rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
+            className="min-h-[70px] rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground md:col-span-2"
             placeholder={t("fields.description")}
           />
           <input
@@ -385,7 +385,7 @@ export default function AdminCampaignActions({
             step="0.01"
             value={rewardPerTask}
             onChange={(e) => setRewardPerTask(e.target.value)}
-            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             placeholder={t("fields.rewardPerTask")}
           />
           <input
@@ -394,13 +394,13 @@ export default function AdminCampaignActions({
             step="0.01"
             value={totalBudget}
             onChange={(e) => setTotalBudget(e.target.value)}
-            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+            className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             placeholder={t("fields.totalBudget")}
           />
           <select
             value={submissionMode}
             onChange={(e) => setSubmissionMode(e.target.value as "ONE_PER_USER" | "MULTIPLE_PER_USER")}
-            className="rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white md:col-span-2"
+            className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground md:col-span-2"
           >
             <option value="ONE_PER_USER">{t("submissionModes.onePerUser")}</option>
             <option value="MULTIPLE_PER_USER">{t("submissionModes.multiplePerUser")}</option>
@@ -411,7 +411,7 @@ export default function AdminCampaignActions({
         </div>
       ) : null}
 
-      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }

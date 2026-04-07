@@ -207,29 +207,29 @@ export default function CreateCampaign() {
   return (
     <div className="space-y-8">
       <div>
-        <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">{t("header.eyebrow")}</p>
+        <p className="text-sm uppercase tracking-[0.24em] text-emerald-600/80 dark:text-emerald-300/70">{t("header.eyebrow")}</p>
         <h2 className="mt-2 text-3xl font-semibold md:text-4xl">{tBusiness("createPageTitle")}</h2>
-        <p className="mt-2 max-w-2xl text-sm text-white/65 md:text-base">
+        <p className="mt-2 max-w-2xl text-sm text-foreground/65 md:text-base">
           {t("header.subtitle")}
         </p>
       </div>
 
       {kycBlocked ? (
-        <div className="rounded-3xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm text-amber-100">
+        <div className="rounded-3xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-100">
           <p className="font-semibold">{t("kycBlocked.title")}</p>
-          <p className="mt-2 text-amber-100/80">
+          <p className="mt-2 text-amber-900/80 dark:text-amber-100/80">
             {t("kycBlocked.body", { status: kycStatus || "PENDING" })}
           </p>
           <div className="mt-3 flex flex-wrap gap-3">
             <Link
               href="/dashboard/business/settings"
-              className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 px-4 py-1 text-xs text-amber-100 hover:bg-amber-500/20"
+              className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 px-4 py-1 text-xs text-amber-900 transition hover:bg-amber-500/20 dark:text-amber-100"
             >
               {t("kycBlocked.reviewSettings")}
             </Link>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 px-4 py-1 text-xs text-amber-100 hover:bg-amber-500/20"
+              className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 px-4 py-1 text-xs text-amber-900 transition hover:bg-amber-500/20 dark:text-amber-100"
             >
               {t("kycBlocked.contactSupport")}
             </Link>
@@ -238,29 +238,29 @@ export default function CreateCampaign() {
       ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[1fr_0.9fr]">
-        <div className="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
+        <div className="space-y-5 rounded-3xl border border-foreground/10 bg-background/50 p-4 shadow-xl shadow-black/5 backdrop-blur-md sm:p-6">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">{t("form.title")}</label>
+            <label className="text-sm font-medium text-foreground/80">{t("form.title")}</label>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("placeholders.title")} />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">{t("form.description")}</label>
+            <label className="text-sm font-medium text-foreground/80">{t("form.description")}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder={t("placeholders.description")}
-              className="min-h-28 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35"
+              className="min-h-28 w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none placeholder:text-foreground/45"
             />
           </div>
 
           <div className="grid gap-5 md:grid-cols-3">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("form.campaignCategory")}</label>
+              <label className="text-sm font-medium text-foreground/80">{t("form.campaignCategory")}</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
+                className="w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none"
               >
                 {CAMPAIGN_CATEGORY_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -271,7 +271,7 @@ export default function CreateCampaign() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("form.taskCategory")}</label>
+              <label className="text-sm font-medium text-foreground/80">{t("form.taskCategory")}</label>
               <select
                 value={taskCategory}
                 onChange={(e) => {
@@ -280,7 +280,7 @@ export default function CreateCampaign() {
                   setTaskType(getTaskTypesForCategory(nextTaskCategory, taskCategories)[0] || "Other");
                   setCustomTask("");
                 }}
-                className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
+                className="w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none"
               >
                 {taskCategories.map((option) => (
                   <option key={option.name} value={option.name}>
@@ -291,11 +291,11 @@ export default function CreateCampaign() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("form.taskType")}</label>
+              <label className="text-sm font-medium text-foreground/80">{t("form.taskType")}</label>
               <select
                 value={taskType}
                 onChange={(e) => setTaskType(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
+                className="w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none"
               >
                 {taskOptions.map((option) => (
                   <option key={option} value={option}>
@@ -308,7 +308,7 @@ export default function CreateCampaign() {
 
           {needsCustomTask ? (
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("form.customTask")}</label>
+              <label className="text-sm font-medium text-foreground/80">{t("form.customTask")}</label>
               <Input
                 value={customTask}
                 onChange={(e) => setCustomTask(e.target.value)}
@@ -318,7 +318,7 @@ export default function CreateCampaign() {
           ) : null}
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">{t("form.taskLink")}</label>
+            <label className="text-sm font-medium text-foreground/80">{t("form.taskLink")}</label>
             <Input
               value={taskLink}
               onChange={(e) => setTaskLink(e.target.value)}
@@ -327,19 +327,19 @@ export default function CreateCampaign() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">{t("form.taskDetails")}</label>
+            <label className="text-sm font-medium text-foreground/80">{t("form.taskDetails")}</label>
             <textarea
               value={taskDetails}
               onChange={(e) => setTaskDetails(e.target.value)}
               placeholder={t("placeholders.taskDetails")}
-              className="min-h-36 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35"
+              className="min-h-36 w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none placeholder:text-foreground/45"
             />
-            <p className="text-xs text-white/45">{t("form.taskDetailsHelp")}</p>
+            <p className="text-xs text-foreground/45">{t("form.taskDetailsHelp")}</p>
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("form.rewardPerTask")}</label>
+              <label className="text-sm font-medium text-foreground/80">{t("form.rewardPerTask")}</label>
               <Input
                 type="number"
                 min="1"
@@ -350,7 +350,7 @@ export default function CreateCampaign() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("form.totalBudget")}</label>
+              <label className="text-sm font-medium text-foreground/80">{t("form.totalBudget")}</label>
               <Input
                 type="number"
                 min="1"
@@ -369,43 +369,43 @@ export default function CreateCampaign() {
             {loading ? t("actions.launching") : t("actions.launch")}
           </Button>
 
-          {error ? <p className="text-sm text-red-400">{error}</p> : null}
-          {message ? <p className="text-sm text-emerald-300">{message}</p> : null}
+          {error ? <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p> : null}
+          {message ? <p className="text-sm text-emerald-700 dark:text-emerald-300">{message}</p> : null}
 
           {errorCode === "INSUFFICIENT_WALLET" ? (
             <Link
               href="/dashboard/business/funding"
-              className="inline-block text-sm text-white underline underline-offset-4"
+              className="inline-block text-sm text-foreground/80 underline underline-offset-4 hover:text-foreground"
             >
               {t("actions.addFundsLink")}
             </Link>
           ) : null}
         </div>
 
-          <div className="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
+          <div className="space-y-5 rounded-3xl border border-foreground/10 bg-background/50 p-4 shadow-xl shadow-black/5 backdrop-blur-md sm:p-6">
             <div>
-              <p className="text-sm text-white/60">{t("preview.eyebrow")}</p>
-              <h3 className="mt-1 text-xl font-semibold text-white">{title || t("preview.untitled")}</h3>
-              <p className="mt-2 text-sm text-white/60">
+              <p className="text-sm text-foreground/60">{t("preview.eyebrow")}</p>
+              <h3 className="mt-1 text-xl font-semibold text-foreground">{title || t("preview.untitled")}</h3>
+              <p className="mt-2 text-sm text-foreground/60">
               {description || t("preview.descriptionFallback")}
               </p>
             </div>
 
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("preview.categoryLabel")}</p>
-            <p className="mt-2 text-sm text-white">{getCampaignCategoryLabel(category, tCategories)}</p>
-            <p className="mt-1 text-sm text-white/60">
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("preview.categoryLabel")}</p>
+            <p className="mt-2 text-sm text-foreground">{getCampaignCategoryLabel(category, tCategories)}</p>
+            <p className="mt-1 text-sm text-foreground/60">
               {t("preview.taskCategoryLabel")}: {taskCategory}
             </p>
-            <p className="mt-1 text-sm text-white/60">
+            <p className="mt-1 text-sm text-foreground/60">
               {t("preview.taskTypeLabel")}: {effectiveTaskLabel}
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("preview.taskDetailsLabel")}</p>
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("preview.taskDetailsLabel")}</p>
             {taskDetails.trim() ? (
-              <ol className="mt-3 space-y-2 text-sm text-white/75">
+              <ol className="mt-3 space-y-2 text-sm text-foreground/75">
                 {taskDetails
                   .split("\n")
                   .map((line) => line.trim())
@@ -415,37 +415,37 @@ export default function CreateCampaign() {
                   ))}
               </ol>
             ) : (
-              <p className="mt-3 text-sm text-white/45">{t("preview.noInstructions")}</p>
+              <p className="mt-3 text-sm text-foreground/45">{t("preview.noInstructions")}</p>
             )}
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("preview.rewardPerTask")}</p>
-              <p className="mt-2 text-lg font-semibold text-emerald-200">
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("preview.rewardPerTask")}</p>
+              <p className="mt-2 text-lg font-semibold text-emerald-700 dark:text-emerald-200">
                 INR {formatMoney(rewardValue)}
               </p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("preview.totalBudget")}</p>
-              <p className="mt-2 text-lg font-semibold text-white">INR {formatMoney(budgetValue)}</p>
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("preview.totalBudget")}</p>
+              <p className="mt-2 text-lg font-semibold text-foreground">INR {formatMoney(budgetValue)}</p>
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("preview.totalSlots")}</p>
-              <p className="mt-2 text-lg font-semibold text-white">{totalSlots}</p>
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("preview.totalSlots")}</p>
+              <p className="mt-2 text-lg font-semibold text-foreground">{totalSlots}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("preview.availableWallet")}</p>
-              <p className="mt-2 text-lg font-semibold text-white">
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("preview.availableWallet")}</p>
+              <p className="mt-2 text-lg font-semibold text-foreground">
                 INR {formatMoney(walletBalance ?? 0)}
               </p>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/65">
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4 text-sm text-foreground/65">
             <p>{t("preview.estimatedFee")}</p>
             <p className="mt-2">{t("preview.finalPayable", { amount: formatMoney(finalPayableAmount) })}</p>
             <p className="mt-2">
@@ -454,7 +454,7 @@ export default function CreateCampaign() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/55">
+          <div className="rounded-2xl border border-dashed border-foreground/10 bg-background/60 p-4 text-sm text-foreground/55">
             {t("preview.commissionHint")}
           </div>
         </div>

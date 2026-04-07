@@ -53,7 +53,7 @@ export default function AdminWalletAdjustmentReviewActions({
       <input
         value={reviewNote}
         onChange={(e) => setReviewNote(e.target.value)}
-        className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white"
+        className="w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
         placeholder={t("notePlaceholder")}
       />
       <div className="flex flex-col gap-2 sm:flex-row">
@@ -64,7 +64,7 @@ export default function AdminWalletAdjustmentReviewActions({
           {loading === "REJECT" ? t("rejecting") : t("reject")}
         </Button>
       </div>
-      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }

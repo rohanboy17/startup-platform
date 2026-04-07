@@ -47,6 +47,15 @@ function makeActivityItems(input: {
   transactions: Array<{ id: string; createdAt: Date; note: string | null; type: "CREDIT" | "DEBIT"; amount: number }>;
   withdrawals: Array<{ id: string; createdAt: Date; status: string; amount: number }>;
   submissions: Array<{ id: string; createdAt: Date; adminStatus: string; campaign: { title: string } | null }>;
+  jobApplications: Array<{
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
+    status: string;
+    interviewAt: Date | null;
+    joinedAt: Date | null;
+    job: { title: string } | null;
+  }>;
 }) {
   const txItems = input.transactions.map((tx) => ({
     id: `tx-${tx.id}`,
@@ -72,7 +81,38 @@ function makeActivityItems(input: {
     message: `${submission.campaign?.title || "Campaign"} submission is ${submission.adminStatus.toLowerCase().replaceAll("_", " ")}`,
   }));
 
-  return [...txItems, ...withdrawalItems, ...submissionItems]
+  const jobItems = input.jobApplications.map((application) => {
+    const title = application.job?.title || "Job";
+    const activityAt =
+      application.joinedAt ||
+      application.interviewAt ||
+      application.updatedAt ||
+      application.createdAt;
+
+    const message =
+      application.status === "APPLIED"
+        ? `Application sent for ${title}`
+        : application.status === "SHORTLISTED"
+          ? `You were shortlisted for ${title}`
+          : application.status === "INTERVIEW_SCHEDULED"
+            ? `Interview scheduled for ${title}`
+            : application.status === "HIRED"
+              ? `You were marked hired for ${title}`
+              : application.status === "JOINED"
+                ? `You joined ${title}`
+                : application.status === "WITHDRAWN"
+                  ? `You withdrew your application for ${title}`
+                  : `Application for ${title} is ${application.status.toLowerCase().replaceAll("_", " ")}`;
+
+    return {
+      id: `job-${application.id}`,
+      createdAt: activityAt,
+      kind: "JOB",
+      message,
+    };
+  });
+
+  return [...txItems, ...withdrawalItems, ...submissionItems, ...jobItems]
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
     .slice(0, 6)
     .map((item) => ({
@@ -114,7 +154,21 @@ export async function GET() {
     };
   }).walletTransaction;
 
-  const [user, appSettings, pendingWithdrawalAmount, totalWithdrawn, approvedSubmissions, todayApprovedCount, unreadNotifications, recentNotifications, recentTransactions, recentWithdrawals, recentSubmissions] = await Promise.all([
+  const [
+    user,
+    appSettings,
+    pendingWithdrawalAmount,
+    totalWithdrawn,
+    approvedSubmissions,
+    todayApprovedCount,
+    activeJobApplications,
+    unreadNotifications,
+    recentNotifications,
+    recentTransactions,
+    recentWithdrawals,
+    recentSubmissions,
+    recentJobApplications,
+  ] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -123,6 +177,7 @@ export async function GET() {
         email: true,
         balance: true,
         coinBalance: true,
+        perkCreditBalance: true,
         level: true,
         dailyApproved: true,
         lastLevelResetAt: true,
@@ -152,6 +207,12 @@ export async function GET() {
         createdAt: { gte: todayStart },
       },
     }),
+    prisma.jobApplication.count({
+      where: {
+        userId,
+        status: { in: ["APPLIED", "SHORTLISTED", "INTERVIEW_SCHEDULED"] },
+      },
+    }),
     notificationDelegate?.count({ where: { userId, isRead: false } }) ?? Promise.resolve(0),
     notificationDelegate?.findMany({
       where: { userId },
@@ -178,6 +239,20 @@ export async function GET() {
         createdAt: true,
         adminStatus: true,
         campaign: { select: { title: true } },
+      },
+    }),
+    prisma.jobApplication.findMany({
+      where: { userId },
+      orderBy: { updatedAt: "desc" },
+      take: 4,
+      select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        status: true,
+        interviewAt: true,
+        joinedAt: true,
+        job: { select: { title: true } },
       },
     }),
   ]);
@@ -209,6 +284,7 @@ export async function GET() {
       level: effectiveLevel,
       balance: user.balance,
       coinBalance: user.coinBalance,
+      perkCreditBalance: user.perkCreditBalance,
       totalApproved: user.totalApproved,
       dailyApproved: effectiveDailyApproved,
       dailySubmits: effectiveDailySubmits,
@@ -216,10 +292,12 @@ export async function GET() {
     metrics: {
       availableBalance: user.balance,
       coinBalance: user.coinBalance,
+      perkCreditBalance: user.perkCreditBalance,
       pendingWithdrawalAmount: pendingWithdrawalAmount._sum.amount ?? 0,
       totalWithdrawn: totalWithdrawn._sum.amount ?? 0,
       approvedSubmissions,
       todayApprovedCount,
+      activeJobApplications,
       unreadNotifications,
     },
     progress,
@@ -243,6 +321,7 @@ export async function GET() {
       transactions: recentTransactions,
       withdrawals: recentWithdrawals,
       submissions: recentSubmissions,
+      jobApplications: recentJobApplications,
     }),
   });
 }

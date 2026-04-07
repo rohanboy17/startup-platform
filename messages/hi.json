@@ -461,12 +461,15 @@
       "eyebrow": "Daily earning center",
       "title": "User Overview",
       "ctaTasks": "Find Tasks",
+      "ctaJobs": "Find Jobs",
       "ctaWithdraw": "Withdraw",
       "kpiAvailable": "Available balance",
       "kpiCoins": "FreeEarnHub Coins",
+      "kpiPerkCredits": "Perk credits",
       "kpiPendingWithdrawal": "Pending withdrawal",
       "kpiTotalWithdrawn": "Total withdrawn",
       "kpiApprovedSubmissions": "Approved submissions",
+      "kpiActiveApplications": "Active job applications",
       "kpiUnread": "Unread notifications",
       "shortcutsTitle": "Quick shortcuts",
       "openWallet": "Open wallet",
@@ -485,6 +488,10 @@
       "submittedToday": "Submitted today",
       "openTasks": "Open tasks",
       "openTasksDesc": "Find available campaigns with open slots.",
+      "openJobs": "Open jobs",
+      "openJobsDesc": "Browse nearby roles, internships, and field work.",
+      "openJobApplications": "My applications",
+      "openJobApplicationsDesc": "Track manager review, admin review, interviews, and hiring updates.",
       "openWalletDesc": "Review credits, debits, and payout history.",
       "openNotificationsDesc": "Check approval, rejection, and payout updates.",
       "openReferralsDesc": "Share your code, earn coins, and convert them into internal perk credits.",
@@ -494,13 +501,13 @@
       "noNotifications": "No notifications yet. Approval and withdrawal updates will appear here.",
       "unread": "Unread",
       "recentActivity": "Recent activity",
-      "activityTitle": "Latest balance and submission changes",
+      "activityTitle": "Latest wallet, task, and job changes",
       "walletDetails": "Wallet details",
-      "noActivity": "No activity yet. Complete a task or request a withdrawal to populate the timeline.",
+      "noActivity": "No activity yet. Complete a task, apply for a job, or request a withdrawal to populate the timeline.",
       "loading": "Loading user overview...",
       "failed": "Failed to load overview",
       "unexpected": "Unexpected server response",
-      "subtitle": "Track your balance, approvals, withdrawal status, and current level without switching between tabs.",
+      "subtitle": "Track your balance, approvals, job applications, withdrawal status, and current level without switching between tabs.",
       "kpiCurrentLevel": "Current level",
       "levelGuideSubtitle": "Your daily level changes your wallet share on Type A insight and QA campaigns.",
       "levelBenefitsEyebrow": "Level benefits",
@@ -820,13 +827,25 @@
     "help": {
       "eyebrow": "Trust and support",
       "title": "Help",
-      "subtitle": "Understand how approvals, levels, fraud checks, and withdrawals work before you submit more tasks.",
+      "subtitle": "Understand how tasks, job applications, profile readiness, levels, fraud checks, and withdrawals work before you take more work.",
       "approvalEyebrow": "Approval workflow",
       "approvalTitle": "How your submission gets approved",
       "approvalStep1": "1. You submit proof from the task detail page.",
       "approvalStep2": "2. Manager reviews first and can approve or reject.",
       "approvalStep3": "3. Admin verifies the final decision.",
       "approvalStep4": "4. Approved submissions credit your wallet automatically.",
+      "jobsEyebrow": "Jobs and internships",
+      "jobsTitle": "How job applications move",
+      "jobsBullet1": "Jobs and internships use an application flow instead of proof submissions.",
+      "jobsBullet2": "Your application goes to manager review first, then final admin review.",
+      "jobsBullet3": "Only after verification can the business shortlist, schedule interviews, hire, or mark joined.",
+      "jobsBullet4": "Your applications page shows each stage clearly so you always know what changed.",
+      "profileEyebrow": "Profile readiness",
+      "profileTitle": "What to complete before applying",
+      "profileBullet1": "Add city and state so nearby jobs can match correctly.",
+      "profileBullet2": "Keep skills, languages, work mode, and internship preference updated.",
+      "profileBullet3": "A stronger profile improves local job matching and admin recommendations.",
+      "profileBullet4": "If you want physical jobs, optional coordinates help radius-based matching too.",
       "levelsEyebrow": "Level system",
       "levelsTitle": "How levels move",
       "levelsBullet1": "Level upgrades are based on admin-approved submissions.",
@@ -847,7 +866,10 @@
       "withdrawalsBullet4": "Admin review determines approval or rejection.",
       "supportEyebrow": "Support",
       "supportTitle": "Need help?",
-      "supportBody": "If something looks wrong in your submissions, wallet, or withdrawals, use the public contact page or the official support channel listed there."
+      "supportBody": "If something looks wrong in your submissions, job applications, wallet, or withdrawals, use the public contact page or the official support channel listed there.",
+      "supportProfile": "Update profile",
+      "supportJobs": "Browse jobs",
+      "supportApplications": "Open my applications"
     },
     "profilePage": {
       "eyebrow": "User profile",
@@ -1032,6 +1054,8 @@
       "fields": {
         "name": "Name",
         "address": "Address",
+        "city": "City",
+        "state": "State",
         "gender": "Gender",
         "religion": "Religion",
         "dateOfBirth": "Date of birth",
@@ -1193,6 +1217,7 @@
       "subtitle": "These roles use applications and shortlisting, not task submissions.",
       "loading": "Loading jobs...",
       "empty": "No open jobs match your current search yet.",
+      "emptyFiltered": "No jobs match the current filters right now.",
       "search": "Search by title, business, city, state, or type",
       "matchScore": "Match score: {score}",
       "noStrongMatchYet": "Add more profile details and skills to improve matching.",
@@ -1248,6 +1273,16 @@
       "messages": {
         "applied": "Application sent for manager review"
       },
+      "pushNudgeTitle": "No jobs right now",
+      "pushNudgeBody": "Enable notifications and we will alert you when new jobs or internships open.",
+      "pushEnabling": "Enabling...",
+      "pushEnableButton": "Enable notifications",
+      "pushUnsupported": "This browser does not support push notifications.",
+      "pushNotConfigured": "Push is not configured for this environment yet.",
+      "pushPermissionDenied": "Permission not granted. You can enable it in browser settings anytime.",
+      "pushRegisterFailed": "Could not register this device for push.",
+      "pushEnableFailed": "Unable to enable push notifications",
+      "pushEnabled": "Notifications enabled. We will alert you when new jobs go live.",
       "errors": {
         "unexpectedServerResponse": "Unexpected server response",
         "failedToLoad": "Failed to load jobs",
@@ -1280,6 +1315,7 @@
         "applied": "Applied",
         "shortlisted": "Shortlisted",
         "hired": "Hired",
+        "joined": "Joined",
         "rejected": "Rejected",
         "interviewed": "Interviewed"
       },
@@ -1354,7 +1390,7 @@
     "kycPageTitle": "Business KYC",
     "notificationsPageTitle": "Notifications",
     "activityPageTitle": "Activity Log",
-    "reviewsPageTitle": "Business Reviews",
+    "reviewsPageTitle": "Campaign Applicants",
     "teamPageTitle": "Team Members",
     "settingsPageTitle": "Settings",
     "fundingPageTitle": "Wallet Funding",
@@ -1721,7 +1757,7 @@
       "loading": "Loading business overview...",
       "eyebrow": "Business dashboard",
       "title": "Business Overview",
-      "subtitle": "Check wallet balance, campaign progress, and the next important action from one place.",
+      "subtitle": "Check wallet balance, campaign progress, job pipeline, and the next important action from one place.",
       "time": {
         "minutesAgo": "{count}m ago",
         "hoursAgo": "{count}h ago",
@@ -1733,7 +1769,8 @@
       },
       "actions": {
         "addFunds": "Add Funds",
-        "createCampaign": "Create Campaign"
+        "createCampaign": "Create Campaign",
+        "createJob": "Create Job"
       },
       "lowBalance": {
         "title": "Low wallet balance",
@@ -1751,11 +1788,16 @@
         "approvedResults": "Approved Results",
         "totalBudget": "Total Budget",
         "todaySpend": "Today Spend",
-        "fundingFee": "Business Wallet Fee"
+        "fundingFee": "Business Wallet Fee",
+        "liveCampaigns": "Live Campaigns",
+        "openJobs": "Open Jobs",
+        "pendingCampaignReviews": "Pending Campaign Reviews",
+        "pendingJobReviews": "Pending Job Reviews",
+        "readyApplicants": "Ready Applicants"
       },
       "snapshot": {
         "eyebrow": "Performance snapshot",
-        "title": "Spend and campaign health",
+        "title": "Spend, campaigns, and hiring health",
         "openAnalytics": "Open analytics",
         "todaySpend": {
           "label": "Today spend",
@@ -1776,13 +1818,29 @@
         "liveCampaignShare": {
           "label": "Live campaign share",
           "help": "{live} of {total} campaigns are currently live."
-        }
+        },
+        "readyApplicants": {
+          "label": "Ready applicants",
+          "help": "Verified applicants the business can act on now."
+        },
+        "joinedWorkers": {
+          "label": "Joined workers",
+          "help": "Candidates already marked joined across your active jobs."
+        },
+        "launchModel": "Launch model",
+        "launchTitle": "One business dashboard for campaigns and jobs",
+        "launchBody": "Campaigns keep digital delivery separate, while jobs handle physical hiring, internships, and local staffing from the same wallet and moderation layer.",
+        "launchChip": "Business operations",
+        "jobsOpen": "Jobs open",
+        "interviews": "Interviews",
+        "activeApplicants": "Active applicants"
       },
       "activity": {
         "eyebrow": "Recent activity",
         "title": "What changed most recently",
         "viewCampaigns": "View campaigns",
-        "empty": "No business activity yet. Fund the wallet or launch your first campaign to start the timeline."
+        "empty": "No business activity yet. Fund the wallet, launch a campaign, or post a job to start the timeline.",
+        "viewActivity": "View activity"
       }
     },
     "analyticsPanel": {
@@ -1946,7 +2004,7 @@
       },
       "inbox": {
         "eyebrow": "In-app inbox",
-        "title": "Campaign and payment notifications"
+        "title": "Campaign, job, and payment notifications"
       }
     },
     "activityPanel": {
@@ -2040,10 +2098,10 @@
       }
     },
     "submissionsPanel": {
-      "loading": "Loading campaign responses...",
+      "loading": "Loading campaign applicants...",
       "errors": {
         "unexpectedServerResponse": "Unexpected server response",
-        "failedToLoad": "Failed to load campaign responses"
+        "failedToLoad": "Failed to load campaign applicants"
       },
       "filters": {
         "all": "All",
@@ -2068,14 +2126,14 @@
         "rejected": "Rejected"
       },
       "header": {
-        "eyebrow": "Campaign responses",
+        "eyebrow": "Campaign applicants",
         "title": "Track every submission clearly",
         "exportCsv": "Export CSV"
       },
       "search": {
         "placeholder": "Search by campaign, participant, proof, or reason"
       },
-      "empty": "No submissions found for the current filter.",
+      "empty": "No campaign applicants found for the current filter.",
       "fallback": {
         "campaign": "Campaign",
         "unnamedUser": "Unnamed User"
@@ -2338,7 +2396,7 @@
       "noApplications": "No applicants yet for this role.",
       "kpis": {
         "totalApplications": "Total applications",
-        "newApplications": "New applications",
+        "newApplications": "Ready for business",
         "shortlisted": "Shortlisted",
         "hired": "Hired",
         "interviewed": "Interviewed"
@@ -2444,7 +2502,8 @@
         "moderationPendingManager": "Pending manager review",
         "unnamed": "Unnamed applicant",
         "experienceLine": "Experience: {label} ({days} days)",
-        "internship": "Internship preference"
+        "internship": "Internship preference",
+        "experienceBreakdown": "Digital days: {digital}, physical days: {physical}, approved tasks: {tasks}"
       },
       "messages": {
         "updated": "Update saved"
@@ -2460,6 +2519,66 @@
         "subtitle": "Adjust the role details, location, payout, and hiring requirements.",
         "save": "Save changes",
         "saving": "Saving..."
+      }
+    },
+    "campaignApplicantsPageEyebrow": "Campaign applicants",
+    "campaignApplicantsPageTitle": "Campaign Applicants",
+    "campaignApplicantsPageSubtitle": "See every response to your campaigns, follow its status, and understand why something was rejected.",
+    "jobApplicantsPageEyebrow": "Job applicants",
+    "jobApplicantsPageTitle": "Job Applicants",
+    "jobApplicantsPageSubtitle": "Review moderated candidates across every job, track hiring stages, and act only after manager and admin approval.",
+    "jobApplicantsPanel": {
+      "loading": "Loading job applicants...",
+      "errors": {
+        "unexpectedServerResponse": "Unexpected server response",
+        "failedToLoad": "Failed to load job applicants",
+        "actionFailed": "Failed to update applicant"
+      },
+      "messages": {
+        "updated": "Applicant updated"
+      },
+      "kpis": {
+        "total": "Total applicants",
+        "pendingModeration": "Pending moderation",
+        "readyForBusiness": "Ready for business",
+        "interviews": "Interviews",
+        "hired": "Hired",
+        "joined": "Joined"
+      },
+      "header": {
+        "eyebrow": "Applicant pipeline",
+        "title": "Manage applicants across every job"
+      },
+      "controls": {
+        "show": "Show",
+        "showAll": "Show all"
+      },
+      "search": {
+        "placeholder": "Search job, applicant, skills, language, note, or location"
+      },
+      "filters": {
+        "ALL": "All",
+        "PENDING_REVIEW": "Pending moderation",
+        "READY": "Ready for business",
+        "SHORTLISTED": "Shortlisted",
+        "INTERVIEW_SCHEDULED": "Interview scheduled",
+        "HIRED": "Hired",
+        "JOINED": "Joined",
+        "REJECTED": "Rejected",
+        "WITHDRAWN": "Withdrawn"
+      },
+      "empty": "No job applicants match the current filter.",
+      "fallback": {
+        "unnamedApplicant": "Unnamed applicant"
+      },
+      "card": {
+        "openJob": "Open job",
+        "appliedAt": "Applied {value}",
+        "experience": "Work experience",
+        "coverNote": "Application note",
+        "noExperience": "No recorded experience yet",
+        "experienceLine": "Experience: {label} ({days} days)",
+        "experienceBreakdown": "Digital days: {digital}, physical days: {physical}, approved tasks: {tasks}"
       }
     }
   },
@@ -2482,7 +2601,7 @@
       "skills": "Skills",
       "help": "Help",
       "settings": "Settings",
-      "submissionQueue": "Submission Queue",
+      "submissionQueue": "Campaigns Queue",
       "history": "History",
       "risk": "Risk",
       "campaigns": "Campaigns",
@@ -2507,8 +2626,11 @@
       "profile": "Profile",
       "earnAds": "Beta Perks",
       "jobs": "Jobs",
+      "jobsQueue": "Jobs Queue",
       "createJob": "Create Job",
-      "jobApplications": "My Applications"
+      "jobApplications": "My Applications",
+      "campaignApplicants": "Campaign Applicants",
+      "jobApplicants": "Job Applicants"
     },
     "shell": {
       "signedInAs": "Signed in as",
@@ -2563,7 +2685,7 @@
         "empty": "No critical alerts right now.",
         "items": {
           "withdrawalsPending": "{count} withdrawal request(s) pending for more than 24 hours.",
-          "adminReviewsPending": "{count} manager-approved submission(s) waiting admin review for over 24 hours.",
+          "adminReviewsPending": "{count} manager-approved item(s) waiting final admin review for over 24 hours.",
           "failedPayments": "{count} failed payment order(s) need reconciliation.",
           "suspiciousUsers": "{count} suspicious user account(s) flagged.",
           "staleResets": "Cron reset lag detected for {count} user(s)."
@@ -3324,6 +3446,88 @@
       "submitting": "Submitting...",
       "create": "Create Payout Request"
     },
+    "campaignApplicantsPage": {
+      "subtitle": "Review manager-approved campaign responses, sort risky proofs quickly, and finalize applicant outcomes from one queue.",
+      "kpis": {
+        "pending": "Pending campaign applicants",
+        "highFraud": "High fraud items",
+        "lowDetail": "Low-detail proofs",
+        "recentlyReviewed": "Recently reviewed"
+      },
+      "filters": {
+        "searchPlaceholder": "Search campaign, user, or proof",
+        "sortFraud": "Sort by fraud score",
+        "sortNewest": "Sort by newest",
+        "show5": "Show 5",
+        "show10": "Show 10",
+        "show20": "Show 20",
+        "showAll": "Show all",
+        "apply": "Apply"
+      },
+      "labels": {
+        "reward": "Reward",
+        "fraudScore": "Fraud score",
+        "user": "User",
+        "level": "Level",
+        "category": "Category",
+        "budgetLeft": "Budget left",
+        "proof": "Proof",
+        "submitted": "Submitted"
+      },
+      "actions": {
+        "viewLink": "View link",
+        "previewScreenshot": "Preview screenshot"
+      },
+      "badges": {
+        "ipAnomaly": "IP anomaly: {count} in 24h",
+        "timeAnomaly": "Time anomaly: {count} in 10m",
+        "lowDetail": "Low-detail proof"
+      },
+      "fallback": {
+        "unnamed": "Unnamed",
+        "screenshotProof": "Screenshot proof uploaded."
+      },
+      "empty": {
+        "pending": "No manager-approved campaign applicants are waiting for final admin review."
+      },
+      "recent": {
+        "title": "Recently reviewed campaign applicants",
+        "empty": "No reviewed campaign applicants yet.",
+        "undoHistory": "Undo history",
+        "noHistory": "No admin history found."
+      }
+    },
+    "jobApplicantsPage": {
+      "subtitle": "Finalize manager-approved job applicants, verify experience snapshots, and release only qualified candidates to businesses.",
+      "kpis": {
+        "pending": "Pending job applicants",
+        "internships": "Internship applicants",
+        "withExperience": "Applicants with experience",
+        "oldestWaiting": "Oldest waiting"
+      },
+      "filters": {
+        "searchPlaceholder": "Search job, applicant, business, or note",
+        "show5": "Show 5",
+        "show10": "Show 10",
+        "show20": "Show 20",
+        "showAll": "Show all",
+        "apply": "Apply"
+      },
+      "labels": {
+        "jobStatus": "Job: {status}",
+        "internship": "Internship",
+        "category": "Category",
+        "location": "Location",
+        "pay": "Pay",
+        "workerPayout": "Worker payout",
+        "experience": "Experience",
+        "experienceLine": "{label} | {total} days total | Digital {digital} | Physical {physical}",
+        "noExperience": "No verified experience recorded yet.",
+        "notProvided": "Not provided",
+        "noSkills": "No skills listed."
+      },
+      "empty": "No manager-approved job applicants are waiting for final admin review."
+    },
     "jobsPage": {
       "pageTitle": "Jobs Oversight",
       "pageDescription": "Review every local or physical hiring post, monitor applicant flow, and step in when a role needs admin action.",
@@ -3444,7 +3648,7 @@
     "dashboard": {
       "eyebrow": "Manager dashboard",
       "title": "Manager Overview",
-      "subtitle": "Review incoming submissions, flag suspicious activity, and pass valid work to the admin team for final approval.",
+      "subtitle": "Review incoming submissions and job applications, flag suspicious activity, and pass valid work to the admin team for final approval.",
       "notEnoughData": "Not enough data",
       "minAvg": "{count} min avg",
       "hrAvg": "{count} hr avg",
@@ -3458,32 +3662,36 @@
       },
       "snapshot": {
         "eyebrow": "Review snapshot",
-        "title": "Oldest submissions first",
-        "openSubmissions": "Open submissions",
-        "empty": "No submissions are waiting for review right now.",
-        "fallbackTitle": "Campaign submission",
+        "title": "Oldest review items first",
+        "openSubmissions": "Open campaigns queue",
+        "openJobs": "Open jobs queue",
+        "empty": "No submissions or job applications are waiting for review right now.",
+        "fallbackSubmissionTitle": "Campaign submission",
+        "fallbackJobTitle": "Job application",
         "unnamed": "Unnamed",
         "level": "Level {level}",
         "inReview": "{age} in review",
-        "suspicious": "Suspicious"
+        "suspicious": "Suspicious",
+        "submissionKind": "Submission",
+        "jobKind": "Job application"
       },
       "pace": {
         "eyebrow": "Review pace",
         "title": "How quickly reviews are moving",
         "averageTurnaround": "Average turnaround",
-        "averageTurnaroundHelp": "Measured from submission creation to your manager decision.",
+        "averageTurnaroundHelp": "Measured from submission or job-application creation to your manager decision.",
         "oldestPending": "Oldest pending item",
-        "oldestPendingHelp": "Longest wait among submissions still with the manager team."
+        "oldestPendingHelp": "Longest wait among submissions and job applications still with the manager team."
       },
       "access": {
-        "firstPassOnly": "Manager access covers first-pass review only.",
+        "firstPassOnly": "Manager access covers first-pass review for submissions and job applications.",
         "adminControls": "Financial approval, payout control, and user-role changes remain with admin."
       }
     },
     "notificationsPage": {
       "eyebrow": "Inbox",
       "title": "Manager Notifications",
-      "subtitle": "Stay updated on new submissions, flagged activity, and important review alerts.",
+      "subtitle": "Stay updated on new campaigns queue items, jobs queue items, flagged activity, and important review alerts.",
       "inboxEyebrow": "In-app inbox",
       "alertsEyebrow": "Review alerts"
     },
@@ -3670,26 +3878,26 @@
       "saved": "Saved"
     },
     "submissionsPage": {
-      "eyebrow": "Submission review",
-      "title": "Manager Review Desk",
-      "subtitle": "Review new submissions, identify risky activity, and send valid work forward for final approval."
+      "eyebrow": "Campaigns queue",
+      "title": "Campaigns Queue",
+      "subtitle": "Review new campaign submissions, identify risky activity, and send valid work forward for final approval."
     },
     "riskPage": {
       "eyebrow": "Fraud signals",
       "title": "Manager Risk",
-      "subtitle": "Triage suspicious activity quickly: flagged users, IP hotspots, and pending-admin backlog."
+      "subtitle": "Triage suspicious activity quickly across submissions and job applications: flagged users, IP hotspots, and pending-admin backlog."
     },
     "historyPage": {
       "eyebrow": "Review history",
       "title": "Manager History",
-      "subtitle": "Look back at what you approved, rejected, or escalated, along with the reason and campaign context."
+      "subtitle": "Look back at what you approved, rejected, or escalated across submissions and job applications."
     },
     "queuePanel": {
       "errors": {
         "unexpected": "Unexpected server response",
-        "failed": "Failed to load submissions"
+        "failed": "Failed to load campaigns queue"
       },
-      "loading": "Loading submissions...",
+      "loading": "Loading campaigns queue...",
       "kpis": {
         "totalInReview": "Total in review",
         "flaggedSubmissions": "Flagged submissions",
@@ -3705,7 +3913,7 @@
         "suspicious": "Suspicious",
         "highLevel": "High level"
       },
-      "empty": "No submissions match the current filters.",
+      "empty": "No campaign queue items match the current filters.",
       "fallbacks": {
         "submission": "Submission",
         "uncategorized": "Uncategorized",
@@ -3764,14 +3972,25 @@
       },
       "fallbacks": {
         "submissionReview": "Submission review",
+        "jobApplicationReview": "Job application review",
         "uncategorized": "Uncategorized",
         "unnamedUser": "Unnamed user",
-        "unknown": "unknown"
+        "unknown": "unknown",
+        "business": "Business"
+      },
+      "kind": {
+        "submission": "Submission",
+        "jobApplication": "Job application"
       },
       "flagged": "Flagged",
       "user": {
         "title": "User",
-        "submissionId": "Submission ID: {value}"
+        "submissionId": "Submission ID: {value}",
+        "applicationId": "Application ID: {value}"
+      },
+      "application": {
+        "title": "Application note",
+        "noCoverNote": "No cover note was added to this job application."
       },
       "proof": {
         "title": "Reason / Proof",
@@ -3802,16 +4021,16 @@
       }
     },
     "jobsPage": {
-      "eyebrow": "Job application queue",
-      "title": "Manager Job Reviews",
+      "eyebrow": "Jobs queue",
+      "title": "Jobs Queue",
       "subtitle": "Review incoming job applications before they move to final admin verification."
     },
     "jobApplications": {
-      "loading": "Loading job applications...",
-      "failed": "Failed to load job applications",
+      "loading": "Loading jobs queue...",
+      "failed": "Failed to load jobs queue",
       "unexpected": "Unexpected server response",
       "eyebrow": "First-pass review",
-      "title": "Applications waiting for manager review",
+      "title": "Jobs waiting for manager review",
       "show": "Show",
       "showAll": "Show all",
       "search": "Search job, applicant, skill, location, or note",

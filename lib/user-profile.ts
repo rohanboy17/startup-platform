@@ -141,6 +141,8 @@ export type ProfileCompletionItem = {
   key:
     | "name"
     | "address"
+    | "city"
+    | "state"
     | "gender"
     | "religion"
     | "dateOfBirth"
@@ -163,6 +165,8 @@ export function getUserProfileCompletion(profile: ProfileCompletionSource, skill
   const items: ProfileCompletionItem[] = [
     { key: "name", complete: hasValue(profile.name) },
     { key: "address", complete: hasValue(profile.address) },
+    { key: "city", complete: hasValue(profile.city) },
+    { key: "state", complete: hasValue(profile.state) },
     { key: "gender", complete: hasValue(profile.gender) },
     { key: "religion", complete: hasValue(profile.religion) },
     { key: "dateOfBirth", complete: hasValue(profile.dateOfBirth) },

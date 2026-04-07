@@ -63,7 +63,7 @@ export default function AdminUserStatusActions({
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value as AccountStatus)}
-          className="w-full rounded-md border border-white/20 bg-black/30 px-3 py-2 text-sm text-white sm:w-auto"
+          className="w-full rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground sm:w-auto"
           disabled={loading}
         >
           <option value="ACTIVE">{t("status.active")}</option>
@@ -79,7 +79,7 @@ export default function AdminUserStatusActions({
         value={reason}
         onChange={(e) => setReason(e.target.value)}
       />
-      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }

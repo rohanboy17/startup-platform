@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-function extractSubmissionId(details: string | null) {
+function extractId(details: string | null, key: string) {
   if (!details) return null;
-  const match = /submissionId=([^,\s]+)/.exec(details);
+  const match = new RegExp(`${key}=([^,\\s]+)`).exec(details);
   return match?.[1] ?? null;
 }
 
@@ -28,8 +28,16 @@ export async function GET(req: Request) {
   const logs = await prisma.activityLog.findMany({
     where: {
       userId: session.user.id,
-      entity: "Submission",
-      action: { in: ["MANAGER_APPROVED_SUBMISSION", "MANAGER_REJECTED_SUBMISSION", "MANAGER_ESCALATED_SUBMISSION"] },
+      entity: { in: ["Submission", "JobApplication"] },
+      action: {
+        in: [
+          "MANAGER_APPROVED_SUBMISSION",
+          "MANAGER_REJECTED_SUBMISSION",
+          "MANAGER_ESCALATED_SUBMISSION",
+          "MANAGER_APPROVED_JOB_APPLICATION",
+          "MANAGER_REJECTED_JOB_APPLICATION",
+        ],
+      },
     },
     orderBy: { createdAt: "desc" },
     take: limit,
@@ -38,32 +46,96 @@ export async function GET(req: Request) {
   const submissionIds = Array.from(
     new Set(
       logs
-        .map((log) => extractSubmissionId(log.details))
+        .filter((log) => log.entity === "Submission")
+        .map((log) => extractId(log.details, "submissionId"))
+        .filter((value): value is string => Boolean(value))
+    )
+  );
+  const applicationIds = Array.from(
+    new Set(
+      logs
+        .filter((log) => log.entity === "JobApplication")
+        .map((log) => extractId(log.details, "applicationId"))
         .filter((value): value is string => Boolean(value))
     )
   );
 
-  const submissions = submissionIds.length
-    ? await prisma.submission.findMany({
-        where: { id: { in: submissionIds } },
-        include: {
-          user: { select: { id: true, name: true, level: true, isSuspicious: true } },
-          campaign: { select: { id: true, title: true, category: true, rewardPerTask: true } },
-        },
-      })
-    : [];
+  const [submissions, applications] = await Promise.all([
+    submissionIds.length
+      ? prisma.submission.findMany({
+          where: { id: { in: submissionIds } },
+          include: {
+            user: { select: { id: true, name: true, level: true, isSuspicious: true } },
+            campaign: { select: { id: true, title: true, category: true, rewardPerTask: true } },
+          },
+        })
+      : Promise.resolve([]),
+    applicationIds.length
+      ? prisma.jobApplication.findMany({
+          where: { id: { in: applicationIds } },
+          include: {
+            user: { select: { id: true, name: true, level: true, isSuspicious: true } },
+            job: {
+              select: {
+                id: true,
+                title: true,
+                jobCategory: true,
+                city: true,
+                state: true,
+                payAmount: true,
+                business: { select: { id: true, name: true } },
+              },
+            },
+          },
+        })
+      : Promise.resolve([]),
+  ]);
 
-  const byId = new Map(submissions.map((row) => [row.id, row]));
+  const submissionsById = new Map(submissions.map((row) => [row.id, row]));
+  const applicationsById = new Map(applications.map((row) => [row.id, row]));
 
   const rows = logs.map((log) => {
-    const submissionId = extractSubmissionId(log.details);
-    const submission = submissionId ? byId.get(submissionId) : null;
+    const reason = extractReason(log.details);
+
+    if (log.entity === "JobApplication") {
+      const applicationId = extractId(log.details, "applicationId");
+      const application = applicationId ? applicationsById.get(applicationId) : null;
+      return {
+        id: log.id,
+        kind: "JOB_APPLICATION" as const,
+        action: log.action,
+        createdAt: log.createdAt.toISOString(),
+        reason,
+        submissionId: null,
+        applicationId,
+        submission: null,
+        application: application
+          ? {
+              id: application.id,
+              createdAt: application.createdAt.toISOString(),
+              coverNote: application.coverNote,
+              status: application.status,
+              managerReason: application.managerReason,
+              user: application.user,
+              job: {
+                ...application.job,
+              },
+            }
+          : null,
+      };
+    }
+
+    const submissionId = extractId(log.details, "submissionId");
+    const submission = submissionId ? submissionsById.get(submissionId) : null;
     return {
       id: log.id,
+      kind: "SUBMISSION" as const,
       action: log.action,
       createdAt: log.createdAt.toISOString(),
+      reason,
       submissionId,
-      reason: extractReason(log.details),
+      applicationId: null,
+      application: null,
       submission: submission
         ? {
             id: submission.id,

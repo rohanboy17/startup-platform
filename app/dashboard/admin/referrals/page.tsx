@@ -146,17 +146,17 @@ export default async function AdminReferralsPage() {
     <div className="space-y-8">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.24em] text-emerald-300/70">Growth controls</p>
+          <p className="text-sm uppercase tracking-[0.24em] text-emerald-600/80 dark:text-emerald-300/70">Growth controls</p>
           <h2 className="mt-2 text-3xl font-semibold md:text-4xl">Referral monitoring</h2>
-          <p className="mt-2 max-w-3xl text-sm text-white/65 md:text-base">
+          <p className="mt-2 max-w-3xl text-sm text-foreground/65 md:text-base">
             Monitor referral adoption, coin issuance, perk conversions, and suspicious reward patterns from one admin view.
           </p>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
-          <Button asChild variant="outline" className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+          <Button asChild variant="outline" className="border-foreground/15 bg-background/60 text-foreground hover:bg-foreground/[0.08] hover:text-foreground">
             <a href="/api/admin/export/referrals?type=invites">Export invites CSV</a>
           </Button>
-          <Button asChild variant="outline" className="border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white">
+          <Button asChild variant="outline" className="border-foreground/15 bg-background/60 text-foreground hover:bg-foreground/[0.08] hover:text-foreground">
             <a href="/api/admin/export/referrals?type=redemptions">Export conversions CSV</a>
           </Button>
         </div>
@@ -174,49 +174,49 @@ export default async function AdminReferralsPage() {
       <div className="grid gap-6 lg:grid-cols-4">
         <SectionCard elevated className="space-y-4 lg:col-span-2">
           <div>
-            <p className="text-sm text-white/60">Program settings snapshot</p>
-            <h3 className="text-xl font-semibold text-white">Current reward rules</h3>
+            <p className="text-sm text-foreground/60">Program settings snapshot</p>
+            <h3 className="text-xl font-semibold text-foreground">Current reward rules</h3>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/45">Referrer reward</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{settings.referralRewardCoins} coins</p>
+            <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/45">Referrer reward</p>
+              <p className="mt-2 text-2xl font-semibold text-foreground">{settings.referralRewardCoins} coins</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/45">New user bonus</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{settings.newUserBonusCoins} coins</p>
+            <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/45">New user bonus</p>
+              <p className="mt-2 text-2xl font-semibold text-foreground">{settings.newUserBonusCoins} coins</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/45">Conversion minimum</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{settings.redeemMinCoins} coins</p>
+            <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/45">Conversion minimum</p>
+              <p className="mt-2 text-2xl font-semibold text-foreground">{settings.redeemMinCoins} coins</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/45">Monthly conversion cap</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{settings.redeemMonthlyLimit} coins</p>
+            <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/45">Monthly conversion cap</p>
+              <p className="mt-2 text-2xl font-semibold text-foreground">{settings.redeemMonthlyLimit} coins</p>
             </div>
           </div>
         </SectionCard>
 
         <SectionCard elevated className="space-y-4 lg:col-span-2">
           <div>
-            <p className="text-sm text-white/60">Monthly movement</p>
-            <h3 className="text-xl font-semibold text-white">Coins to perk conversion</h3>
+            <p className="text-sm text-foreground/60">Monthly movement</p>
+            <h3 className="text-xl font-semibold text-foreground">Coins to perk conversion</h3>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/45">Coins credited</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{totalCoinsCredited._sum.amount ?? 0}</p>
+            <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/45">Coins credited</p>
+              <p className="mt-2 text-2xl font-semibold text-foreground">{totalCoinsCredited._sum.amount ?? 0}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/45">Coins converted this month</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{monthlyCoinsRedeemed._sum.coinsUsed ?? 0}</p>
+            <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/45">Coins converted this month</p>
+              <p className="mt-2 text-2xl font-semibold text-foreground">{monthlyCoinsRedeemed._sum.coinsUsed ?? 0}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/45">Perk credits granted this month</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{Math.floor(monthlyPerkCreditsGranted._sum.perkCreditsGranted ?? 0)}</p>
+            <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/45">Perk credits granted this month</p>
+              <p className="mt-2 text-2xl font-semibold text-foreground">{Math.floor(monthlyPerkCreditsGranted._sum.perkCreditsGranted ?? 0)}</p>
             </div>
           </div>
-          <div className="rounded-2xl border border-amber-400/20 bg-amber-500/10 p-4 text-sm text-amber-100">
+          <div className="rounded-2xl border border-amber-400/20 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-100">
             Suspicious rewarded invites detected: <span className="font-semibold">{suspiciousRewardedInvites}</span>
           </div>
         </SectionCard>
@@ -225,31 +225,31 @@ export default async function AdminReferralsPage() {
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
         <SectionCard elevated className="space-y-4 p-4">
           <div>
-            <p className="text-sm text-white/60">Recent referral invites</p>
-            <h3 className="text-xl font-semibold text-white">Qualification funnel</h3>
+            <p className="text-sm text-foreground/60">Recent referral invites</p>
+            <h3 className="text-xl font-semibold text-foreground">Qualification funnel</h3>
           </div>
 
           {recentInvites.length === 0 ? (
-            <p className="text-sm text-white/60">No referral invites yet.</p>
+            <p className="text-sm text-foreground/60">No referral invites yet.</p>
           ) : (
             <div className="space-y-3">
               {recentInvites.map((invite) => (
-                <div key={invite.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                <div key={invite.id} className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
                   <div className="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
                     <div className="min-w-0">
-                      <p className="font-medium text-white">
+                      <p className="font-medium text-foreground">
                         {invite.referrer.name?.trim() || invite.referrer.email} invited {invite.referred.name?.trim() || invite.referred.email}
                       </p>
-                      <p className="mt-1 break-all text-sm text-white/60">Code used: {invite.codeUsed}</p>
+                      <p className="mt-1 break-all text-sm text-foreground/60">Code used: {invite.codeUsed}</p>
                     </div>
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-medium ${
                         invite.status === "REWARDED"
-                          ? "bg-emerald-500/15 text-emerald-200"
+                          ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-200"
                           : invite.status === "PENDING"
-                            ? "bg-amber-500/15 text-amber-200"
+                            ? "bg-amber-500/15 text-amber-800 dark:text-amber-200"
                             : invite.status === "REJECTED"
-                              ? "bg-rose-500/15 text-rose-200"
+                              ? "bg-rose-500/15 text-rose-700 dark:text-rose-200"
                               : "bg-sky-500/15 text-sky-200"
                       }`}
                     >
@@ -257,27 +257,27 @@ export default async function AdminReferralsPage() {
                     </span>
                   </div>
 
-                  <div className="mt-3 grid gap-3 text-sm text-white/65 sm:grid-cols-2 xl:grid-cols-4">
+                  <div className="mt-3 grid gap-3 text-sm text-foreground/65 sm:grid-cols-2 xl:grid-cols-4">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.18em] text-white/35">Created</p>
+                      <p className="text-xs uppercase tracking-[0.18em] text-foreground/35">Created</p>
                       <p>{formatDate(invite.createdAt)}</p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase tracking-[0.18em] text-white/35">Qualified</p>
+                      <p className="text-xs uppercase tracking-[0.18em] text-foreground/35">Qualified</p>
                       <p>{formatDate(invite.qualifiedAt)}</p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase tracking-[0.18em] text-white/35">Rewarded</p>
+                      <p className="text-xs uppercase tracking-[0.18em] text-foreground/35">Rewarded</p>
                       <p>{formatDate(invite.rewardedAt)}</p>
                     </div>
                     <div>
-                      <p className="text-xs uppercase tracking-[0.18em] text-white/35">Referred approvals</p>
+                      <p className="text-xs uppercase tracking-[0.18em] text-foreground/35">Referred approvals</p>
                       <p>{invite.referred.totalApproved}</p>
                     </div>
                   </div>
 
                   {invite.referrer.referralCode ? (
-                    <div className="mt-3 border-t border-white/10 pt-3">
+                    <div className="mt-3 border-t border-foreground/10 pt-3">
                       <AdminReferralCodeToggle
                         userId={invite.referrer.id}
                         code={invite.referrer.referralCode.code}
@@ -287,7 +287,7 @@ export default async function AdminReferralsPage() {
                   ) : null}
 
                   {invite.referrer.isSuspicious || invite.referred.isSuspicious ? (
-                    <p className="mt-3 text-xs uppercase tracking-[0.18em] text-rose-300">
+                    <p className="mt-3 text-xs uppercase tracking-[0.18em] text-rose-700 dark:text-rose-300">
                       Fraud review: suspicious account involved
                     </p>
                   ) : null}
@@ -300,33 +300,33 @@ export default async function AdminReferralsPage() {
         <div className="space-y-6">
           <SectionCard elevated className="space-y-4 p-4">
             <div>
-              <p className="text-sm text-white/60">Top referrers</p>
-              <h3 className="text-xl font-semibold text-white">Users earning the most referral rewards</h3>
+              <p className="text-sm text-foreground/60">Top referrers</p>
+              <h3 className="text-xl font-semibold text-foreground">Users earning the most referral rewards</h3>
             </div>
 
             {topReferrers.length === 0 ? (
-              <p className="text-sm text-white/60">No rewarded referrers yet.</p>
+              <p className="text-sm text-foreground/60">No rewarded referrers yet.</p>
             ) : (
               <div className="space-y-3">
                 {topReferrers.map((item) => {
                   const user = topReferrerMap.get(item.referrerUserId);
                   return (
-                    <div key={item.referrerUserId} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                    <div key={item.referrerUserId} className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
                       <div className="flex items-center justify-between gap-3">
                         <div className="min-w-0">
-                          <p className="truncate font-medium text-white">{user?.name?.trim() || user?.email || item.referrerUserId}</p>
-                          <p className="text-sm text-white/60">{item._count._all} rewarded invite(s)</p>
+                          <p className="truncate font-medium text-foreground">{user?.name?.trim() || user?.email || item.referrerUserId}</p>
+                          <p className="text-sm text-foreground/60">{item._count._all} rewarded invite(s)</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm text-white/60">Coin balance</p>
-                          <p className="font-semibold text-white">{user?.coinBalance ?? 0}</p>
+                          <p className="text-sm text-foreground/60">Coin balance</p>
+                          <p className="font-semibold text-foreground">{user?.coinBalance ?? 0}</p>
                         </div>
                       </div>
                       {user?.isSuspicious ? (
-                        <p className="mt-2 text-xs uppercase tracking-[0.18em] text-rose-300">Suspicious user</p>
+                        <p className="mt-2 text-xs uppercase tracking-[0.18em] text-rose-700 dark:text-rose-300">Suspicious user</p>
                       ) : null}
                       {user?.referralCode ? (
-                        <div className="mt-3 border-t border-white/10 pt-3">
+                        <div className="mt-3 border-t border-foreground/10 pt-3">
                           <AdminReferralCodeToggle
                             userId={user.id}
                             code={user.referralCode.code}
@@ -343,45 +343,45 @@ export default async function AdminReferralsPage() {
 
           <SectionCard elevated className="space-y-4 p-4">
             <div>
-              <p className="text-sm text-white/60">Recent conversions</p>
-              <h3 className="text-xl font-semibold text-white">Coins converted into perk credits</h3>
+              <p className="text-sm text-foreground/60">Recent conversions</p>
+              <h3 className="text-xl font-semibold text-foreground">Coins converted into perk credits</h3>
             </div>
 
             {recentRedemptions.length === 0 ? (
-              <p className="text-sm text-white/60">No coin conversions yet.</p>
+              <p className="text-sm text-foreground/60">No coin conversions yet.</p>
             ) : (
               <div className="space-y-3">
                 {recentRedemptions.map((item) => (
-                  <div key={item.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                  <div key={item.id} className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="truncate font-medium text-white">{item.user.name?.trim() || item.user.email}</p>
-                        <p className="text-sm text-white/60">{formatDate(item.createdAt)}</p>
+                        <p className="truncate font-medium text-foreground">{item.user.name?.trim() || item.user.email}</p>
+                        <p className="text-sm text-foreground/60">{formatDate(item.createdAt)}</p>
                       </div>
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-medium ${
                           item.status === "APPROVED"
-                            ? "bg-emerald-500/15 text-emerald-200"
+                            ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-200"
                             : item.status === "REJECTED"
-                              ? "bg-rose-500/15 text-rose-200"
-                              : "bg-amber-500/15 text-amber-200"
+                              ? "bg-rose-500/15 text-rose-700 dark:text-rose-200"
+                              : "bg-amber-500/15 text-amber-800 dark:text-amber-200"
                         }`}
                       >
                         {item.status}
                       </span>
                     </div>
-                    <div className="mt-3 grid gap-3 text-sm text-white/65 sm:grid-cols-2">
+                    <div className="mt-3 grid gap-3 text-sm text-foreground/65 sm:grid-cols-2">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.18em] text-white/35">Coins used</p>
+                        <p className="text-xs uppercase tracking-[0.18em] text-foreground/35">Coins used</p>
                         <p>{item.coinsUsed}</p>
                       </div>
                       <div>
-                        <p className="text-xs uppercase tracking-[0.18em] text-white/35">Perk credits granted</p>
+                        <p className="text-xs uppercase tracking-[0.18em] text-foreground/35">Perk credits granted</p>
                         <p>{Math.floor(item.perkCreditsGranted)}</p>
                       </div>
                     </div>
                     {item.user.isSuspicious ? (
-                      <p className="mt-2 text-xs uppercase tracking-[0.18em] text-rose-300">Suspicious user</p>
+                      <p className="mt-2 text-xs uppercase tracking-[0.18em] text-rose-700 dark:text-rose-300">Suspicious user</p>
                     ) : null}
                   </div>
                 ))}

@@ -189,25 +189,25 @@ export default function BusinessSubmissionsPanel() {
     URL.revokeObjectURL(url);
   }
 
-  if (error) return <p className="text-sm text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-white/60">{t("loading")}</p>;
+  if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
+  if (!data) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">{t("kpis.total")}</p><p className="mt-2 text-3xl font-semibold text-white">{data.counts.total}</p></CardContent></Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">{t("kpis.pendingManager")}</p><p className="mt-2 text-3xl font-semibold text-amber-100">{data.counts.pendingManager}</p></CardContent></Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">{t("kpis.pendingAdmin")}</p><p className="mt-2 text-3xl font-semibold text-amber-100">{data.counts.pendingAdmin}</p></CardContent></Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">{t("kpis.approved")}</p><p className="mt-2 text-3xl font-semibold text-emerald-200">{data.counts.approved}</p></CardContent></Card>
-        <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-white/60">{t("kpis.rejected")}</p><p className="mt-2 text-3xl font-semibold text-rose-200">{data.counts.rejected}</p></CardContent></Card>
+        <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-foreground/60">{t("kpis.total")}</p><p className="mt-2 text-3xl font-semibold text-foreground">{data.counts.total}</p></CardContent></Card>
+        <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-foreground/60">{t("kpis.pendingManager")}</p><p className="mt-2 text-3xl font-semibold text-amber-700 dark:text-amber-100">{data.counts.pendingManager}</p></CardContent></Card>
+        <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-foreground/60">{t("kpis.pendingAdmin")}</p><p className="mt-2 text-3xl font-semibold text-amber-700 dark:text-amber-100">{data.counts.pendingAdmin}</p></CardContent></Card>
+        <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-foreground/60">{t("kpis.approved")}</p><p className="mt-2 text-3xl font-semibold text-emerald-700 dark:text-emerald-200">{data.counts.approved}</p></CardContent></Card>
+        <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md"><CardContent className="p-4 sm:p-5"><p className="text-sm text-foreground/60">{t("kpis.rejected")}</p><p className="mt-2 text-3xl font-semibold text-rose-700 dark:text-rose-200">{data.counts.rejected}</p></CardContent></Card>
       </div>
 
-      <Card className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
+      <Card className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md">
         <CardContent className="space-y-4 p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm text-white/60">{t("header.eyebrow")}</p>
-              <h3 className="text-xl font-semibold text-white">{t("header.title")}</h3>
+              <p className="text-sm text-foreground/60">{t("header.eyebrow")}</p>
+              <h3 className="text-xl font-semibold text-foreground">{t("header.title")}</h3>
             </div>
             <Button type="button" variant="outline" onClick={exportCsv} className="w-full sm:w-auto">
               <Download size={16} />
@@ -217,20 +217,20 @@ export default function BusinessSubmissionsPanel() {
 
           <div className="flex flex-col gap-3 lg:flex-row lg:items-start">
             <div className="relative flex-1">
-              <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+              <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40" />
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={t("search.placeholder")}
-                className="border-white/10 bg-black/20 pl-10 text-white placeholder:text-white/35"
+                className="border-foreground/15 bg-background/60 pl-10 text-foreground placeholder:text-foreground/40"
               />
             </div>
-            <label className="flex items-center gap-2 text-sm text-white/60">
+            <label className="flex items-center gap-2 text-sm text-foreground/60">
               <span>Show</span>
               <select
                 value={limit}
                 onChange={(e) => setLimit(e.target.value as "5" | "10" | "20" | "ALL")}
-                className="rounded-xl border border-white/10 bg-black/20 px-3 py-2 text-sm text-white"
+                className="rounded-xl border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
               >
                 <option value="5">5</option>
                 <option value="10">10</option>
@@ -246,8 +246,8 @@ export default function BusinessSubmissionsPanel() {
                   onClick={() => setFilter(item.value)}
                   className={`rounded-xl border px-3 py-2 text-sm transition ${
                     filter === item.value
-                      ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-100"
-                      : "border-white/10 bg-black/20 text-white/70 hover:bg-black/30 hover:text-white"
+                      ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-800 dark:text-emerald-100"
+                      : "border-foreground/10 bg-background/60 text-foreground/70 hover:bg-background/80 hover:text-foreground"
                   }`}
                 >
                   {item.label}
@@ -260,26 +260,26 @@ export default function BusinessSubmissionsPanel() {
 
       <div className="space-y-4">
         {filtered.length === 0 ? (
-          <Card className="rounded-3xl border border-dashed border-white/10 bg-white/5 backdrop-blur-md">
-            <CardContent className="p-6 text-sm text-white/55">{t("empty")}</CardContent>
+          <Card className="rounded-3xl border border-dashed border-foreground/15 bg-background/50 backdrop-blur-md">
+            <CardContent className="p-6 text-sm text-foreground/55">{t("empty")}</CardContent>
           </Card>
         ) : (
           visibleRows.map((submission) => (
-            <Card key={submission.id} className="rounded-3xl border-white/10 bg-white/5 backdrop-blur-md">
+            <Card key={submission.id} className="rounded-3xl border-foreground/10 bg-background/50 backdrop-blur-md">
               <CardContent className="space-y-4 p-4 sm:p-6">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-lg font-semibold text-white">{submission.campaign?.title || t("fallback.campaign")}</p>
+                      <p className="text-lg font-semibold text-foreground">{submission.campaign?.title || t("fallback.campaign")}</p>
                       <span className={`rounded-full border px-2.5 py-1 text-xs ${stageTone(submission.stage)}`}>
                         {stageLabel(submission.stage)}
                       </span>
                     </div>
-                    <p className="mt-1 text-sm text-white/60">
+                    <p className="mt-1 text-sm text-foreground/60">
                       {getCampaignCategoryLabel(submission.campaign?.category || "", tCategories)} | {t("row.reward", { amount: formatMoney(submission.rewardAmount || submission.campaign?.rewardPerTask || 0) })}
                     </p>
                   </div>
-                  <p className="text-xs text-white/45">
+                  <p className="text-xs text-foreground/45">
                     {new Date(submission.createdAt).toLocaleString(dateLocale, {
                       day: "2-digit",
                       month: "short",
@@ -291,13 +291,13 @@ export default function BusinessSubmissionsPanel() {
                 </div>
 
                 <div className="grid gap-4 lg:grid-cols-2">
-                  <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("row.participant")}</p>
-                    <p className="mt-2 text-sm text-white">{submission.user.name || t("fallback.unnamedUser")}</p>
-                    <p className="text-xs text-white/45">{t("row.participantPrivacy")}</p>
+                  <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                    <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("row.participant")}</p>
+                    <p className="mt-2 text-sm text-foreground">{submission.user.name || t("fallback.unnamedUser")}</p>
+                    <p className="text-xs text-foreground/45">{t("row.participantPrivacy")}</p>
                   </div>
-                  <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("row.proof")}</p>
+                  <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+                    <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("row.proof")}</p>
                     {submission.canViewProof ? (() => {
                       const screenshotUrl =
                         submission.proofImage || (isLikelyScreenshotUrl(submission.proof) ? submission.proof : null);
@@ -310,7 +310,7 @@ export default function BusinessSubmissionsPanel() {
 
                       return (
                         <>
-                          <p className="mt-2 break-all text-sm text-white/75">{proofText}</p>
+                          <p className="mt-2 break-all text-sm text-foreground/75">{proofText}</p>
                           <div className="mt-3 flex flex-col gap-2 lg:flex-row lg:flex-wrap lg:items-center">
                             {screenshotUrl ? (
                               <ProofImageDialog url={screenshotUrl} label={t("row.openScreenshot")} />
@@ -320,7 +320,7 @@ export default function BusinessSubmissionsPanel() {
                                 href={submission.proofLink}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex w-full items-center gap-1 text-sm text-emerald-200 underline underline-offset-4 lg:w-auto"
+                                className="inline-flex w-full items-center gap-1 text-sm text-emerald-700 underline underline-offset-4 dark:text-emerald-200 lg:w-auto"
                               >
                                 <ExternalLink size={14} />
                                 {t("openProof")}
@@ -331,8 +331,8 @@ export default function BusinessSubmissionsPanel() {
                       );
                     })() : (
                       <>
-                        <p className="mt-2 text-sm text-white/75">{t("row.proofHiddenUntilManagerReview")}</p>
-                        <p className="mt-2 text-xs text-white/45">{t("row.proofUnlockHelp")}</p>
+                        <p className="mt-2 text-sm text-foreground/75">{t("row.proofHiddenUntilManagerReview")}</p>
+                        <p className="mt-2 text-xs text-foreground/45">{t("row.proofUnlockHelp")}</p>
                       </>
                     )}
                   </div>
@@ -340,8 +340,8 @@ export default function BusinessSubmissionsPanel() {
 
                 {submission.reason ? (
                   <div className="rounded-2xl border border-rose-400/15 bg-rose-500/10 p-4">
-                    <p className="text-xs uppercase tracking-[0.2em] text-rose-100/70">{t("row.reviewReason")}</p>
-                    <p className="mt-2 text-sm text-rose-50">{submission.reason}</p>
+                    <p className="text-xs uppercase tracking-[0.2em] text-rose-800/70 dark:text-rose-100/70">{t("row.reviewReason")}</p>
+                    <p className="mt-2 text-sm text-rose-900 dark:text-rose-50">{submission.reason}</p>
                   </div>
                 ) : null}
               </CardContent>

@@ -51,13 +51,13 @@ export default function AdminTwoFactorRecoveryCodesCard({
   }
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-4 sm:p-5">
-      <p className="text-sm text-white/60">Admin Recovery Codes</p>
-      <p className="mt-1 text-xs text-white/55">Use these one-time codes if email OTP is unavailable.</p>
-      <p className="mt-2 text-xs text-white/60">
+    <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4 sm:p-5">
+      <p className="text-sm text-foreground/60">Admin Recovery Codes</p>
+      <p className="mt-1 text-xs text-foreground/55">Use these one-time codes if email OTP is unavailable.</p>
+      <p className="mt-2 text-xs text-foreground/60">
         Active: {activeCount} | Used: {usedCount}
       </p>
-      <p className="mt-1 text-xs text-white/55">
+      <p className="mt-1 text-xs text-foreground/55">
         {lastGeneratedAt ? `Last generated: ${new Date(lastGeneratedAt).toLocaleString()}` : "Never generated"}
       </p>
 
@@ -70,19 +70,19 @@ export default function AdminTwoFactorRecoveryCodesCard({
         </Button>
       </div>
 
-      {!enabled ? <p className="mt-2 text-xs text-amber-300">Enable admin 2FA first.</p> : null}
+      {!enabled ? <p className="mt-2 text-xs text-amber-700 dark:text-amber-300">Enable admin 2FA first.</p> : null}
 
       {codes.length ? (
         <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
           {codes.map((code) => (
-            <div key={code} className="rounded-md border border-white/10 bg-black/30 px-3 py-2 font-mono text-xs">
+            <div key={code} className="rounded-md border border-foreground/10 bg-background/60 px-3 py-2 font-mono text-xs">
               {code}
             </div>
           ))}
         </div>
       ) : null}
 
-      {message ? <p className="mt-2 text-xs text-white/70">{message}</p> : null}
+      {message ? <p className="mt-2 text-xs text-foreground/70">{message}</p> : null}
     </div>
   );
 }

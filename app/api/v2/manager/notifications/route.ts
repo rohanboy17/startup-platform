@@ -36,8 +36,13 @@ export async function GET(req: Request) {
     suspiciousQueueCount,
     adminBacklogCount,
     escalationsCount,
+    jobQueueCount,
+    suspiciousJobQueueCount,
+    adminBacklogJobCount,
     recentSubmissions,
     recentManagerDecisions,
+    latestJobApplication,
+    latestPendingAdminJobApplication,
   ] = await Promise.all([
     prisma.submission.count({
       where: { campaignId: { not: null }, managerStatus: "PENDING", managerEscalatedAt: null },
@@ -58,6 +63,20 @@ export async function GET(req: Request) {
       },
     }),
     prisma.submission.count({ where: { managerEscalatedAt: { gte: since } } }),
+    prisma.jobApplication.count({
+      where: { managerStatus: "PENDING", adminStatus: "PENDING", status: "APPLIED" },
+    }),
+    prisma.jobApplication.count({
+      where: {
+        managerStatus: "PENDING",
+        adminStatus: "PENDING",
+        status: "APPLIED",
+        user: { isSuspicious: true },
+      },
+    }),
+    prisma.jobApplication.count({
+      where: { managerStatus: "MANAGER_APPROVED", adminStatus: "PENDING" },
+    }),
     prisma.submission.findMany({
       where: { createdAt: { gte: since }, ipAddress: { not: null } },
       select: { ipAddress: true, userId: true, createdAt: true },
@@ -73,6 +92,16 @@ export async function GET(req: Request) {
       select: { createdAt: true, action: true, details: true },
       take: 20000,
       orderBy: { createdAt: "desc" },
+    }),
+    prisma.jobApplication.findFirst({
+      where: { managerStatus: "PENDING", adminStatus: "PENDING", status: "APPLIED" },
+      select: { createdAt: true },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.jobApplication.findFirst({
+      where: { managerStatus: "MANAGER_APPROVED", adminStatus: "PENDING" },
+      select: { createdAt: true, managerReviewedAt: true },
+      orderBy: { managerReviewedAt: "desc" },
     }),
   ]);
 
@@ -135,15 +164,18 @@ export async function GET(req: Request) {
 
   const latestDecisionAt = recentManagerDecisions[0]?.createdAt;
   const latestSubmissionAt = recentSubmissions[0]?.createdAt;
-  const latest = maxDate(latestDecisionAt, latestSubmissionAt);
+  const latestJobApplicationAt = latestJobApplication?.createdAt;
+  const latestPendingAdminJobAt =
+    latestPendingAdminJobApplication?.managerReviewedAt || latestPendingAdminJobApplication?.createdAt;
+  const latest = maxDate(latestDecisionAt, latestSubmissionAt, latestJobApplicationAt, latestPendingAdminJobAt);
 
   const items: NotificationItem[] = [];
 
   if (queueCount > 0) {
     items.push({
       key: "queue",
-      title: "New submissions waiting",
-      message: `${queueCount} submissions are waiting in the manager queue.`,
+      title: "New campaigns queue items",
+      message: `${queueCount} campaign submission(s) are waiting in the campaigns queue.`,
       severity: "INFO",
       createdAt: (latestSubmissionAt || new Date()).toISOString(),
       href: "/dashboard/manager/submissions",
@@ -153,11 +185,33 @@ export async function GET(req: Request) {
   if (suspiciousQueueCount > 0) {
     items.push({
       key: "suspicious_queue",
-      title: "Suspicious queue items",
-      message: `${suspiciousQueueCount} queued submissions are from flagged users.`,
+      title: "Flagged campaigns queue items",
+      message: `${suspiciousQueueCount} campaign queue item(s) are from flagged users.`,
       severity: "WARNING",
       createdAt: (latestSubmissionAt || new Date()).toISOString(),
       href: "/dashboard/manager/submissions",
+    });
+  }
+
+  if (jobQueueCount > 0) {
+    items.push({
+      key: "job_queue",
+      title: "New jobs queue items",
+      message: `${jobQueueCount} job application(s) are waiting in the jobs queue.`,
+      severity: "INFO",
+      createdAt: (latestJobApplicationAt || new Date()).toISOString(),
+      href: "/dashboard/manager/jobs",
+    });
+  }
+
+  if (suspiciousJobQueueCount > 0) {
+    items.push({
+      key: "suspicious_job_queue",
+      title: "Flagged jobs queue items",
+      message: `${suspiciousJobQueueCount} jobs queue item(s) are from flagged users.`,
+      severity: "WARNING",
+      createdAt: (latestJobApplicationAt || new Date()).toISOString(),
+      href: "/dashboard/manager/jobs",
     });
   }
 
@@ -172,13 +226,19 @@ export async function GET(req: Request) {
     });
   }
 
-  if (adminBacklogCount > 0) {
+  if (adminBacklogCount > 0 || adminBacklogJobCount > 0) {
+    const parts = [
+      adminBacklogCount > 0 ? `${adminBacklogCount} submission(s)` : null,
+      adminBacklogJobCount > 0 ? `${adminBacklogJobCount} job application(s)` : null,
+    ]
+      .filter(Boolean)
+      .join(" and ");
     items.push({
       key: "admin_backlog",
       title: "Pending admin verification",
-      message: `${adminBacklogCount} submissions are waiting for admin verification.`,
+      message: `${parts} are waiting for admin verification.`,
       severity: "INFO",
-      createdAt: (latestDecisionAt || new Date()).toISOString(),
+      createdAt: (maxDate(latestDecisionAt, latestPendingAdminJobAt) || new Date()).toISOString(),
       href: "/dashboard/manager/risk",
     });
   }
@@ -211,8 +271,10 @@ export async function GET(req: Request) {
     counts: {
       queue: queueCount,
       suspiciousQueue: suspiciousQueueCount,
+      jobQueue: jobQueueCount,
+      suspiciousJobQueue: suspiciousJobQueueCount,
       escalations: escalationsCount,
-      adminBacklog: adminBacklogCount,
+      adminBacklog: adminBacklogCount + adminBacklogJobCount,
       ipHotspots: ipHotspotCount,
       highVelocity: highVelocityCount,
       rejectionSpikes: spikeCount,

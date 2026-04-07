@@ -480,7 +480,7 @@ export default async function AdminUsersPage({
 
       {loadError ? (
         <Card className="rounded-2xl border-amber-300/20 bg-amber-500/10">
-          <CardContent className="p-6 text-sm text-amber-200">{loadError}</CardContent>
+          <CardContent className="p-6 text-sm text-amber-800 dark:text-amber-200">{loadError}</CardContent>
         </Card>
       ) : (
         <div className="grid gap-6 md:grid-cols-2">

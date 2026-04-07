@@ -68,7 +68,7 @@ export default function AdminUserFlagActions({
           </Button>
         )}
       </div>
-      {message ? <p className="text-xs text-white/60">{message}</p> : null}
+      {message ? <p className="text-xs text-foreground/60">{message}</p> : null}
     </div>
   );
 }

@@ -84,29 +84,29 @@ export default function AdminKycRequestsPanel() {
     void load();
   }
 
-  if (loading) return <p className="text-sm text-white/60">{t("loading")}</p>;
-  if (error) return <p className="text-sm text-rose-300">{error}</p>;
+  if (loading) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
+  if (error) return <p className="text-sm text-rose-700 dark:text-rose-300">{error}</p>;
 
   return (
     <div className="space-y-4">
       {data.length === 0 ? (
-        <Card className="rounded-2xl border-white/10 bg-white/5">
-          <CardContent className="p-6 text-sm text-white/60">{t("empty")}</CardContent>
+        <Card className="rounded-2xl border-foreground/10 bg-background/60">
+          <CardContent className="p-6 text-sm text-foreground/60">{t("empty")}</CardContent>
         </Card>
       ) : (
         <div className="grid gap-6 lg:grid-cols-2">
           {data.map((request) => (
-            <Card key={request.id} className="rounded-2xl border-white/10 bg-white/5">
+            <Card key={request.id} className="rounded-2xl border-foreground/10 bg-background/60">
               <CardContent className="space-y-3 p-6">
                 <div>
                   <h3 className="text-lg font-semibold">{request.legalName}</h3>
-                  <p className="text-sm text-white/70">
+                  <p className="text-sm text-foreground/70">
                     {t("businessLine", { name: request.business.name || t("unnamedBusiness"), email: request.business.email })}
                   </p>
-                  <p className="text-xs text-white/50">{t("submittedAt", { value: new Date(request.createdAt).toLocaleString() })}</p>
+                  <p className="text-xs text-foreground/50">{t("submittedAt", { value: new Date(request.createdAt).toLocaleString() })}</p>
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/70">
+                <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4 text-sm text-foreground/70">
                   <p>{t("fields.contact", { value: request.contactName })}</p>
                   <p>{t("fields.phone", { value: request.phone })}</p>
                   <p>{t("fields.address", { value: request.address })}</p>
@@ -120,7 +120,7 @@ export default function AdminKycRequestsPanel() {
                   onChange={(e) => setNotes((prev) => ({ ...prev, [request.id]: e.target.value }))}
                   placeholder={t("notesPlaceholder")}
                   rows={3}
-                  className="w-full rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white outline-none"
+                  className="w-full rounded-xl border border-foreground/10 bg-background/60 px-4 py-3 text-sm text-foreground outline-none"
                 />
 
                 <div className="flex flex-col gap-3 sm:flex-row">

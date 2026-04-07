@@ -220,12 +220,12 @@ export default function BusinessCampaignEditor({
   }
 
   return (
-    <div className="space-y-6 rounded-3xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:p-6">
+    <div className="space-y-6 rounded-3xl border border-foreground/10 bg-background/50 p-4 shadow-xl shadow-black/5 backdrop-blur-md sm:p-6">
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
-          <p className="text-sm text-white/60">{t("header.eyebrow")}</p>
-          <h3 className="text-2xl font-semibold text-white">{t("header.title")}</h3>
-          <p className="mt-2 max-w-3xl text-sm text-white/55">
+          <p className="text-sm text-foreground/60">{t("header.eyebrow")}</p>
+          <h3 className="text-2xl font-semibold text-foreground">{t("header.title")}</h3>
+          <p className="mt-2 max-w-3xl text-sm text-foreground/55">
             {t("header.subtitle")}
           </p>
         </div>
@@ -239,27 +239,27 @@ export default function BusinessCampaignEditor({
       <div className="grid gap-6 xl:grid-cols-[1fr_0.95fr]">
         <div className="space-y-5">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">{t("fields.title")}</label>
+            <label className="text-sm font-medium text-foreground/80">{t("fields.title")}</label>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("placeholders.title")} />
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">{t("fields.description")}</label>
+            <label className="text-sm font-medium text-foreground/80">{t("fields.description")}</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="min-h-28 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35"
+              className="min-h-28 w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none placeholder:text-foreground/45"
               placeholder={t("placeholders.description")}
             />
           </div>
 
           <div className="grid gap-5 md:grid-cols-3">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("fields.campaignCategory")}</label>
+              <label className="text-sm font-medium text-foreground/80">{t("fields.campaignCategory")}</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
+                className="w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none"
               >
                 {CAMPAIGN_CATEGORY_OPTIONS.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -270,7 +270,7 @@ export default function BusinessCampaignEditor({
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("fields.taskCategory")}</label>
+              <label className="text-sm font-medium text-foreground/80">{t("fields.taskCategory")}</label>
               <select
                 value={taskCategory}
                 onChange={(e) => {
@@ -279,7 +279,7 @@ export default function BusinessCampaignEditor({
                   setTaskType(getTaskTypesForCategory(nextTaskCategory, taskCategories)[0] || "Other");
                   setCustomTask("");
                 }}
-                className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
+                className="w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none"
               >
                 {taskCategories.map((option) => (
                   <option key={option.name} value={option.name}>
@@ -290,11 +290,11 @@ export default function BusinessCampaignEditor({
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("fields.taskType")}</label>
+              <label className="text-sm font-medium text-foreground/80">{t("fields.taskType")}</label>
               <select
                 value={taskType}
                 onChange={(e) => setTaskType(e.target.value)}
-                className="w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none"
+                className="w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none"
               >
                 {taskTypeOptions.map((option) => (
                   <option key={option} value={option}>
@@ -307,7 +307,7 @@ export default function BusinessCampaignEditor({
 
           {needsCustomTask ? (
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("fields.customTask")}</label>
+              <label className="text-sm font-medium text-foreground/80">{t("fields.customTask")}</label>
               <Input
                 value={customTask}
                 onChange={(e) => setCustomTask(e.target.value)}
@@ -317,7 +317,7 @@ export default function BusinessCampaignEditor({
           ) : null}
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">{t("fields.taskLink")}</label>
+            <label className="text-sm font-medium text-foreground/80">{t("fields.taskLink")}</label>
             <Input
               value={taskLink}
               onChange={(e) => setTaskLink(e.target.value)}
@@ -326,18 +326,18 @@ export default function BusinessCampaignEditor({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-white/80">{t("fields.instructions")}</label>
+            <label className="text-sm font-medium text-foreground/80">{t("fields.instructions")}</label>
             <textarea
               value={instructionsText}
               onChange={(e) => setInstructionsText(e.target.value)}
-              className="min-h-36 w-full rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-white outline-none placeholder:text-white/35"
+              className="min-h-36 w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none placeholder:text-foreground/45"
               placeholder={t("placeholders.instructions")}
             />
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("fields.rewardPerTask")}</label>
+              <label className="text-sm font-medium text-foreground/80">{t("fields.rewardPerTask")}</label>
               <Input
                 type="number"
                 min="1"
@@ -347,7 +347,7 @@ export default function BusinessCampaignEditor({
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white/80">{t("fields.totalBudget")}</label>
+              <label className="text-sm font-medium text-foreground/80">{t("fields.totalBudget")}</label>
               <Input
                 type="number"
                 min={spentBudget > 0 ? spentBudget.toFixed(2) : "1"}
@@ -368,77 +368,77 @@ export default function BusinessCampaignEditor({
             {loading ? t("actions.saving") : t("actions.save")}
           </Button>
 
-          {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-          {message ? <p className="text-sm text-emerald-300">{message}</p> : null}
+          {error ? <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p> : null}
+          {message ? <p className="text-sm text-emerald-700 dark:text-emerald-300">{message}</p> : null}
         </div>
 
         <div className="space-y-4">
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("side.currentCategory")}</p>
-            <p className="mt-2 text-sm text-white">{getCampaignCategoryLabel(category, tCategories)}</p>
-            <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">{t("side.currentTaskCategory")}</p>
-            <p className="mt-2 text-sm text-white">{taskCategory}</p>
-            <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">{t("side.currentTaskType")}</p>
-            <p className="mt-2 text-sm text-white">{effectiveTaskLabel}</p>
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("side.currentCategory")}</p>
+            <p className="mt-2 text-sm text-foreground">{getCampaignCategoryLabel(category, tCategories)}</p>
+            <p className="mt-2 text-xs uppercase tracking-[0.2em] text-foreground/40">{t("side.currentTaskCategory")}</p>
+            <p className="mt-2 text-sm text-foreground">{taskCategory}</p>
+            <p className="mt-2 text-xs uppercase tracking-[0.2em] text-foreground/40">{t("side.currentTaskType")}</p>
+            <p className="mt-2 text-sm text-foreground">{effectiveTaskLabel}</p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("side.availableWallet")}</p>
-              <p className="mt-2 text-lg font-semibold text-white">INR {formatMoney(walletBalance)}</p>
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("side.availableWallet")}</p>
+              <p className="mt-2 text-lg font-semibold text-foreground">INR {formatMoney(walletBalance)}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("side.usedBudget")}</p>
-              <p className="mt-2 text-lg font-semibold text-white">INR {formatMoney(spentBudget)}</p>
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("side.usedBudget")}</p>
+              <p className="mt-2 text-lg font-semibold text-foreground">INR {formatMoney(spentBudget)}</p>
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("side.projectedSlots")}</p>
-              <p className="mt-2 text-lg font-semibold text-white">{stats.projectedSlots}</p>
-              <p className="mt-1 text-xs text-white/45">{t("side.usedSubmissionsLocked", { count: campaign.submissionCount })}</p>
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("side.projectedSlots")}</p>
+              <p className="mt-2 text-lg font-semibold text-foreground">{stats.projectedSlots}</p>
+              <p className="mt-1 text-xs text-foreground/45">{t("side.usedSubmissionsLocked", { count: campaign.submissionCount })}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("side.projectedRemainingBudget")}</p>
-              <p className="mt-2 text-lg font-semibold text-white">
+            <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("side.projectedRemainingBudget")}</p>
+              <p className="mt-2 text-lg font-semibold text-foreground">
                 INR {formatMoney(stats.projectedRemaining)}
               </p>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-            <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("side.walletImpact")}</p>
+          <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
+            <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("side.walletImpact")}</p>
             {stats.topUpAmount > 0 ? (
-            <p className="mt-2 break-words text-sm text-amber-100">
+            <p className="mt-2 break-words text-sm text-amber-800 dark:text-amber-100">
                 {t("side.walletImpactTopUp", { amount: formatMoney(stats.topUpAmount) })}
               </p>
             ) : stats.releaseAmount > 0 ? (
-              <p className="mt-2 break-words text-sm text-emerald-200">
+              <p className="mt-2 break-words text-sm text-emerald-700 dark:text-emerald-200">
                 {t("side.walletImpactRelease", { amount: formatMoney(stats.releaseAmount) })}
               </p>
             ) : (
-              <p className="mt-2 text-sm text-white/65">{t("side.walletImpactNone")}</p>
+              <p className="mt-2 text-sm text-foreground/65">{t("side.walletImpactNone")}</p>
             )}
-            <p className="mt-2 text-xs text-white/45">
+            <p className="mt-2 text-xs text-foreground/45">
               {t("side.projectedWalletAfterSave", { amount: formatMoney(stats.projectedWallet) })}
             </p>
           </div>
 
-          <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-4 text-sm text-white/60">
+          <div className="rounded-2xl border border-dashed border-foreground/10 bg-background/60 p-4 text-sm text-foreground/60">
             <p>{t("side.summary.projectedTotalSlots", { count: stats.projectedSlots })}</p>
             <p className="mt-1">{t("side.summary.finalPayable", { amount: formatMoney(Math.max(0, stats.topUpAmount)) })}</p>
             <p className="mt-1">{t("side.summary.platformFee")}</p>
           </div>
 
           {stats.insufficient ? (
-            <div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 p-4 text-sm text-rose-100">
+            <div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 p-4 text-sm text-rose-900 dark:text-rose-100">
               {t("warnings.insufficientWallet")}
             </div>
           ) : null}
 
           {stats.invalidUsedSlots ? (
-            <div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 p-4 text-sm text-rose-100">
+            <div className="rounded-2xl border border-rose-400/20 bg-rose-400/10 p-4 text-sm text-rose-900 dark:text-rose-100">
               {t("warnings.invalidUsedSlots")}
             </div>
           ) : null}

@@ -31,10 +31,13 @@ export async function GET(req: Request) {
 
   const [
     suspiciousUsers,
-    suspiciousQueueCount,
+    suspiciousSubmissionQueueCount,
+    suspiciousJobQueueCount,
     recentSubmissions,
     adminBacklogCount,
     adminBacklog,
+    adminBacklogJobCount,
+    adminBacklogJobs,
     velocitySubmissions,
     recentManagerDecisions,
     escalatedSubmissions,
@@ -58,6 +61,14 @@ export async function GET(req: Request) {
       prisma.submission.count({
         where: { campaignId: { not: null }, managerStatus: "PENDING", user: { isSuspicious: true } },
       }),
+      prisma.jobApplication.count({
+        where: {
+          managerStatus: "PENDING",
+          adminStatus: "PENDING",
+          status: "APPLIED",
+          user: { isSuspicious: true },
+        },
+      }),
       prisma.submission.findMany({
         where: { createdAt: { gte: since }, ipAddress: { not: null } },
         select: { ipAddress: true, userId: true, campaignId: true },
@@ -73,6 +84,18 @@ export async function GET(req: Request) {
         include: {
           user: { select: { id: true, name: true, level: true, isSuspicious: true } },
           campaign: { select: { id: true, title: true, category: true } },
+        },
+      }),
+      prisma.jobApplication.count({
+        where: { managerStatus: "MANAGER_APPROVED", adminStatus: "PENDING" },
+      }),
+      prisma.jobApplication.findMany({
+        where: { managerStatus: "MANAGER_APPROVED", adminStatus: "PENDING" },
+        orderBy: { createdAt: "asc" },
+        take: 10,
+        include: {
+          user: { select: { id: true, name: true, level: true, isSuspicious: true } },
+          job: { select: { id: true, title: true, jobCategory: true } },
         },
       }),
       prisma.submission.findMany({
@@ -254,7 +277,7 @@ export async function GET(req: Request) {
 
   return NextResponse.json({
     windowHours: hours,
-    suspiciousQueueCount,
+    suspiciousQueueCount: suspiciousSubmissionQueueCount + suspiciousJobQueueCount,
     suspiciousUsers: suspiciousUsers.map((user) => ({
       ...user,
       flaggedAt: user.flaggedAt ? user.flaggedAt.toISOString() : null,
@@ -274,13 +297,27 @@ export async function GET(req: Request) {
       })),
     },
     adminBacklog: {
-      count: adminBacklogCount,
-      oldest: adminBacklog.map((row) => ({
-        id: row.id,
-        createdAt: row.createdAt.toISOString(),
-        user: row.user,
-        campaign: row.campaign,
-      })),
+      count: adminBacklogCount + adminBacklogJobCount,
+      oldest: [
+        ...adminBacklog.map((row) => ({
+          kind: "SUBMISSION" as const,
+          id: row.id,
+          createdAt: row.createdAt.toISOString(),
+          user: row.user,
+          campaign: row.campaign,
+          job: null,
+        })),
+        ...adminBacklogJobs.map((row) => ({
+          kind: "JOB_APPLICATION" as const,
+          id: row.id,
+          createdAt: row.createdAt.toISOString(),
+          user: row.user,
+          campaign: null,
+          job: row.job,
+        })),
+      ]
+        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+        .slice(0, 10),
     },
   });
 }

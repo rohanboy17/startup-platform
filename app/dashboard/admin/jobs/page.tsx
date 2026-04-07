@@ -5,10 +5,7 @@ import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { formatMoney } from "@/lib/format-money";
 import { getPhysicalWorkPayoutBreakdown } from "@/lib/commission";
-import { parseProfileDetails } from "@/lib/user-profile";
-import { getWorkExperienceMap } from "@/lib/work-experience";
 import AdminJobActions from "@/components/admin-job-actions";
-import AdminJobApplicationActions from "@/components/admin-job-application-actions";
 import { getTranslations } from "next-intl/server";
 
 type SearchParams = {
@@ -37,50 +34,13 @@ export default async function AdminJobsPage({
   const statusFilter = params.status || "ALL";
   const limit = params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
 
-  const [pendingCount, openCount, pausedCount, filledCount, closedCount, rejectedCount, pendingApplications, jobs] = await Promise.all([
+  const [pendingCount, openCount, pausedCount, filledCount, closedCount, rejectedCount, jobs] = await Promise.all([
     prisma.jobPosting.count({ where: { status: "PENDING_REVIEW" } }),
     prisma.jobPosting.count({ where: { status: "OPEN" } }),
     prisma.jobPosting.count({ where: { status: "PAUSED" } }),
     prisma.jobPosting.count({ where: { status: "FILLED" } }),
     prisma.jobPosting.count({ where: { status: "CLOSED" } }),
     prisma.jobPosting.count({ where: { status: "REJECTED" } }),
-    prisma.jobApplication.findMany({
-      where: {
-        managerStatus: "MANAGER_APPROVED",
-        adminStatus: "PENDING",
-      },
-      include: {
-        job: {
-          include: {
-            business: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
-          },
-        },
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            mobile: true,
-            profileDetails: true,
-            skills: {
-              include: {
-                skill: {
-                  select: { label: true },
-                },
-              },
-            },
-          },
-        },
-      },
-      orderBy: { managerReviewedAt: "asc" },
-      ...(limit ? { take: limit } : {}),
-    }),
     prisma.jobPosting.findMany({
       where: {
         ...(q
@@ -116,8 +76,6 @@ export default async function AdminJobsPage({
       ...(limit ? { take: limit } : {}),
     }),
   ]);
-
-  const experienceMap = await getWorkExperienceMap(pendingApplications.map((row) => row.user.id));
 
   return (
     <div className="space-y-8">
@@ -174,99 +132,6 @@ export default async function AdminJobsPage({
             {t("filters.apply")}
           </button>
         </form>
-      </SectionCard>
-
-      <SectionCard elevated className="space-y-4 p-4 sm:p-6">
-        <div>
-          <p className="text-sm text-foreground/60">{t("pendingApplicationsEyebrow")}</p>
-          <h3 className="text-xl font-semibold text-foreground">{t("pendingApplicationsTitle")}</h3>
-        </div>
-
-        {pendingApplications.length === 0 ? (
-          <Card className="rounded-2xl border-foreground/10 bg-background/60">
-            <CardContent className="p-6 text-sm text-foreground/70">{t("pendingApplicationsEmpty")}</CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-4">
-            {pendingApplications.map((application) => {
-              const profile = parseProfileDetails(application.user.profileDetails);
-              const experience = experienceMap.get(application.user.id);
-              const payout = getPhysicalWorkPayoutBreakdown(application.job.payAmount);
-
-              return (
-                <Card key={application.id} className="rounded-2xl border-foreground/10 bg-background/60">
-                  <CardContent className="space-y-4 p-6">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div>
-                        <p className="font-semibold text-foreground">{application.job.title}</p>
-                        <p className="mt-1 text-sm text-foreground/70">
-                          {application.user.name || application.user.email} | {application.job.business.name || t("fallback.business")}
-                        </p>
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        <StatusBadge label={t(`status.${application.job.status}`)} tone={toneForStatus(application.job.status)} />
-                        {application.job.employmentType === "INTERNSHIP" ? (
-                          <StatusBadge label={t("labels.internship")} tone="info" />
-                        ) : null}
-                      </div>
-                    </div>
-
-                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 text-sm text-foreground/70">
-                      <div>
-                        <span className="text-foreground/50">{t("labels.category")}:</span>{" "}
-                        {application.job.jobCategory} / {application.job.customJobType || application.job.jobType}
-                      </div>
-                      <div>
-                        <span className="text-foreground/50">{t("labels.location")}:</span>{" "}
-                        {application.job.city}, {application.job.state}
-                      </div>
-                      <div>
-                        <span className="text-foreground/50">{t("labels.pay")}:</span>{" "}
-                        INR {formatMoney(application.job.payAmount)} / {t(`payUnits.${application.job.payUnit}`)}
-                      </div>
-                      <div>
-                        <span className="text-foreground/50">{t("labels.workerPayout")}:</span>{" "}
-                        INR {formatMoney(payout.workerAmount)}
-                      </div>
-                    </div>
-
-                    <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
-                      <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("labels.experience")}</p>
-                      <p className="mt-2 text-sm text-foreground/80">
-                        {experience
-                          ? t("labels.experienceLine", {
-                              label: experience.experienceLabel,
-                              days: experience.totalWorkDays,
-                              digital: experience.digitalWorkDays,
-                              physical: experience.physicalWorkDays,
-                            })
-                          : t("labels.noExperience")}
-                      </p>
-                      <p className="mt-2 text-sm text-foreground/65">
-                        {profile.city || "-"}, {profile.state || "-"} | {profile.educationQualification || t("labels.notProvided")}
-                      </p>
-                      {application.coverNote ? <p className="mt-3 text-sm text-foreground/75">{application.coverNote}</p> : null}
-                    </div>
-
-                    <div className="flex flex-wrap gap-2">
-                      {application.user.skills.length === 0 ? (
-                        <span className="text-sm text-foreground/60">{t("labels.noSkills")}</span>
-                      ) : (
-                        application.user.skills.map((row) => (
-                          <span key={row.skill.label} className="rounded-full border border-foreground/10 px-3 py-1 text-xs text-foreground/80">
-                            {row.skill.label}
-                          </span>
-                        ))
-                      )}
-                    </div>
-
-                    <AdminJobApplicationActions applicationId={application.id} />
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
       </SectionCard>
 
       <div className="space-y-4">

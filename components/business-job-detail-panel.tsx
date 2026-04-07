@@ -166,7 +166,7 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
     const applications = data?.job.applications || [];
     return {
       total: applications.length,
-      applied: applications.filter((item) => item.managerStatus === "PENDING").length,
+      applied: applications.filter((item) => item.adminStatus === "ADMIN_APPROVED" && item.status === "APPLIED").length,
       shortlisted: applications.filter((item) => item.adminStatus === "ADMIN_APPROVED").length,
       interviewed: applications.filter((item) => item.status === "INTERVIEW_SCHEDULED").length,
       hired: applications.filter((item) => ["HIRED", "JOINED"].includes(item.status)).length,
@@ -299,9 +299,9 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
 
         {message ? <p className="text-sm text-foreground/70">{message}</p> : null}
         {["PENDING_REVIEW", "REJECTED"].includes(job.status) ? (
-          <div className="rounded-2xl border border-amber-400/20 bg-amber-500/10 p-4 text-sm text-amber-100/90">
+          <div className="rounded-2xl border border-amber-400/20 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-100/90">
             {job.status === "PENDING_REVIEW" ? t("job.awaitingAdminReview") : t("job.rejectedByAdmin")}
-            {job.reviewNote ? <p className="mt-2 text-xs text-amber-50/80">{job.reviewNote}</p> : null}
+            {job.reviewNote ? <p className="mt-2 text-xs text-amber-800/85 dark:text-amber-50/80">{job.reviewNote}</p> : null}
           </div>
         ) : null}
 

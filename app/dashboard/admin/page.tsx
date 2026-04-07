@@ -9,6 +9,7 @@ import { getTranslations } from "next-intl/server";
 
 export default async function AdminDashboard() {
   const t = await getTranslations("admin.dashboard");
+  const navT = await getTranslations("dashboard.nav");
   const now = new Date();
   const staleResetCutoff = new Date(now.getTime() - 26 * 60 * 60 * 1000);
   const staleQueueCutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -21,7 +22,8 @@ export default async function AdminDashboard() {
     businesses,
     managers,
     pendingCampaigns,
-    pendingFinalReviews,
+    pendingCampaignApplicants,
+    pendingJobApplications,
     liveCampaigns,
     totalSubmissions,
     pendingWithdrawals,
@@ -31,6 +33,7 @@ export default async function AdminDashboard() {
     failedPayments,
     oldPendingWithdrawals,
     oldPendingAdminReviews,
+    oldPendingJobReviews,
     earningsForChart,
     payoutsForChart,
   ] = await Promise.all([
@@ -41,6 +44,12 @@ export default async function AdminDashboard() {
     prisma.submission.count({
       where: {
         campaignId: { not: null },
+        managerStatus: "MANAGER_APPROVED",
+        adminStatus: "PENDING",
+      },
+    }),
+    prisma.jobApplication.count({
+      where: {
         managerStatus: "MANAGER_APPROVED",
         adminStatus: "PENDING",
       },
@@ -58,6 +67,13 @@ export default async function AdminDashboard() {
     prisma.submission.count({
       where: {
         campaignId: { not: null },
+        managerStatus: "MANAGER_APPROVED",
+        adminStatus: "PENDING",
+        createdAt: { lt: staleQueueCutoff },
+      },
+    }),
+    prisma.jobApplication.count({
+      where: {
         managerStatus: "MANAGER_APPROVED",
         adminStatus: "PENDING",
         createdAt: { lt: staleQueueCutoff },
@@ -95,14 +111,19 @@ export default async function AdminDashboard() {
   const dbHealthy = true;
   const cronHealthy = staleLevelResets === 0;
   const payoutHealthy = failedPayments === 0;
-  const queueHealthy = oldPendingWithdrawals === 0 && oldPendingAdminReviews === 0;
+  const queueHealthy =
+    oldPendingWithdrawals === 0 && oldPendingAdminReviews === 0 && oldPendingJobReviews === 0;
 
   const alerts: string[] = [];
   if (oldPendingWithdrawals > 0) {
     alerts.push(t("actionAlerts.items.withdrawalsPending", { count: oldPendingWithdrawals }));
   }
-  if (oldPendingAdminReviews > 0) {
-    alerts.push(t("actionAlerts.items.adminReviewsPending", { count: oldPendingAdminReviews }));
+  if (oldPendingAdminReviews + oldPendingJobReviews > 0) {
+    alerts.push(
+      t("actionAlerts.items.adminReviewsPending", {
+        count: oldPendingAdminReviews + oldPendingJobReviews,
+      })
+    );
   }
   if (failedPayments > 0) {
     alerts.push(t("actionAlerts.items.failedPayments", { count: failedPayments }));
@@ -170,7 +191,8 @@ export default async function AdminDashboard() {
         <KpiCard label={t("kpis.pendingWithdrawals")} value={pendingWithdrawals} tone="warning" />
         <KpiCard label={t("kpis.pendingBusinessKyc")} value={pendingBusinessKyc} tone="warning" />
         <KpiCard label={t("kpis.totalSubmissions")} value={totalSubmissions} />
-        <KpiCard label={t("kpis.pendingFinalReviews")} value={pendingFinalReviews} />
+        <KpiCard label={navT("campaignApplicants")} value={pendingCampaignApplicants} tone="warning" />
+        <KpiCard label={navT("jobApplicants")} value={pendingJobApplications} tone="warning" />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">

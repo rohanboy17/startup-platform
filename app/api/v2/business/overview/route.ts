@@ -18,7 +18,18 @@ export async function GET() {
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
 
-  const [wallet, appSettings, campaigns, approvedSubmissions, pendingReviews, todayApprovals, recentTransactions, user] =
+  const [
+    wallet,
+    appSettings,
+    campaigns,
+    jobs,
+    approvedSubmissions,
+    pendingReviews,
+    jobApplications,
+    todayApprovals,
+    recentTransactions,
+    user,
+  ] =
     await Promise.all([
     ensureBusinessWalletSynced(context.businessUserId),
     getAppSettings(),
@@ -31,6 +42,17 @@ export async function GET() {
         totalBudget: true,
         remainingBudget: true,
         createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.jobPosting.findMany({
+      where: { businessId: context.businessUserId },
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true,
       },
       orderBy: { createdAt: "desc" },
     }),
@@ -56,6 +78,29 @@ export async function GET() {
         managerStatus: "MANAGER_APPROVED",
         adminStatus: "PENDING",
       },
+    }),
+    prisma.jobApplication.findMany({
+      where: {
+        job: { businessId: context.businessUserId },
+      },
+      select: {
+        id: true,
+        status: true,
+        managerStatus: true,
+        adminStatus: true,
+        createdAt: true,
+        updatedAt: true,
+        managerReviewedAt: true,
+        adminReviewedAt: true,
+        interviewAt: true,
+        joinedAt: true,
+        job: {
+          select: {
+            title: true,
+          },
+        },
+      },
+      orderBy: { updatedAt: "desc" },
     }),
     prisma.submission.findMany({
       where: {
@@ -93,6 +138,10 @@ export async function GET() {
   const liveCampaigns = campaigns.filter((campaign) => campaign.status === "LIVE").length;
   const pendingCampaigns = campaigns.filter((campaign) => campaign.status === "PENDING").length;
   const completedCampaigns = campaigns.filter((campaign) => campaign.status === "COMPLETED").length;
+  const totalJobs = jobs.length;
+  const openJobs = jobs.filter((job) => job.status === "OPEN").length;
+  const pendingJobs = jobs.filter((job) => job.status === "PENDING_REVIEW").length;
+  const filledJobs = jobs.filter((job) => job.status === "FILLED").length;
   const lockedBudget = campaigns
     .filter((campaign) => ["PENDING", "APPROVED", "LIVE"].includes(campaign.status))
     .reduce((sum, campaign) => sum + campaign.remainingBudget, 0);
@@ -105,6 +154,18 @@ export async function GET() {
     0
   );
   const averageCostPerApproval = approvedCount > 0 ? spentBudget / approvedCount : 0;
+  const readyApplicants = jobApplications.filter(
+    (application) => application.adminStatus === "ADMIN_APPROVED" && application.status === "APPLIED"
+  ).length;
+  const activeApplicants = jobApplications.filter(
+    (application) =>
+      application.adminStatus === "ADMIN_APPROVED" &&
+      ["APPLIED", "SHORTLISTED", "INTERVIEW_SCHEDULED", "HIRED"].includes(application.status)
+  ).length;
+  const scheduledInterviews = jobApplications.filter(
+    (application) => application.status === "INTERVIEW_SCHEDULED"
+  ).length;
+  const joinedWorkers = jobApplications.filter((application) => application.status === "JOINED").length;
   const lowBalanceThreshold = Number(process.env.NEXT_PUBLIC_MIN_FUNDING_THRESHOLD ?? 500);
 
   const activityFeed = [
@@ -120,6 +181,44 @@ export async function GET() {
       message: `Submission approved for "${submission.campaign?.title || "Campaign"}".`,
       createdAt: submission.createdAt,
     })),
+    ...jobs.slice(0, 3).map((job) => ({
+      id: `job-${job.id}`,
+      kind: "JOB",
+      message: `Job "${job.title}" is ${job.status.toLowerCase().replaceAll("_", " ")}.`,
+      createdAt: job.updatedAt || job.createdAt,
+    })),
+    ...jobApplications.slice(0, 4).map((application) => {
+      const title = application.job?.title || "Job";
+      const createdAt =
+        application.joinedAt ||
+        application.interviewAt ||
+        application.adminReviewedAt ||
+        application.managerReviewedAt ||
+        application.updatedAt ||
+        application.createdAt;
+
+      const message =
+        application.adminStatus !== "ADMIN_APPROVED"
+          ? `Applicant for "${title}" is still in moderation.`
+          : application.status === "APPLIED"
+            ? `Verified applicant is ready for "${title}".`
+            : application.status === "SHORTLISTED"
+              ? `Applicant shortlisted for "${title}".`
+              : application.status === "INTERVIEW_SCHEDULED"
+                ? `Interview scheduled for "${title}".`
+                : application.status === "HIRED"
+                  ? `Candidate hired for "${title}".`
+                  : application.status === "JOINED"
+                    ? `Candidate joined "${title}".`
+                    : `Application for "${title}" is ${application.status.toLowerCase().replaceAll("_", " ")}.`;
+
+      return {
+        id: `application-${application.id}`,
+        kind: "APPLICATION",
+        message,
+        createdAt,
+      };
+    }),
     ...recentTransactions.map((transaction) => ({
       id: `wallet-${transaction.id}`,
       kind: "WALLET",
@@ -146,12 +245,20 @@ export async function GET() {
     liveCampaigns,
     pendingCampaigns,
     completedCampaigns,
+    totalJobs,
+    openJobs,
+    pendingJobs,
+    filledJobs,
     lockedBudget,
     totalBudget,
     remainingBudget,
     spentBudget,
     approvedSubmissions: approvedCount,
     pendingReviews,
+    readyApplicants,
+    activeApplicants,
+    scheduledInterviews,
+    joinedWorkers,
     todaySpend,
     averageCostPerApproval,
     fundingFeeRate: appSettings.fundingFeeRate,

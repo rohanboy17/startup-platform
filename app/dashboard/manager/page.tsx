@@ -29,7 +29,21 @@ export default async function ManagerDashboardPage() {
   const todayStart = new Date();
   todayStart.setHours(0, 0, 0, 0);
 
-  const [pendingCount, pendingQueue, pendingAdmin, suspiciousQueue, approvedToday, rejectedToday, reviewLogs] = await Promise.all([
+  const [
+    pendingSubmissionCount,
+    pendingSubmissionQueue,
+    pendingAdminSubmissions,
+    suspiciousSubmissionQueue,
+    pendingJobCount,
+    pendingJobQueue,
+    pendingAdminJobs,
+    suspiciousJobQueue,
+    approvedTodaySubmissions,
+    rejectedTodaySubmissions,
+    approvedTodayJobs,
+    rejectedTodayJobs,
+    reviewLogs,
+  ] = await Promise.all([
     prisma.submission.count({
       where: { campaignId: { not: null }, managerStatus: "PENDING", managerEscalatedAt: null },
     }),
@@ -58,6 +72,31 @@ export default async function ManagerDashboardPage() {
         user: { isSuspicious: true },
       },
     }),
+    prisma.jobApplication.count({
+      where: { managerStatus: "PENDING", adminStatus: "PENDING", status: "APPLIED" },
+    }),
+    prisma.jobApplication.findMany({
+      where: { managerStatus: "PENDING", adminStatus: "PENDING", status: "APPLIED" },
+      select: {
+        id: true,
+        createdAt: true,
+        job: { select: { title: true } },
+        user: { select: { name: true, level: true, isSuspicious: true } },
+      },
+      orderBy: { createdAt: "asc" },
+      take: 6,
+    }),
+    prisma.jobApplication.count({
+      where: { managerStatus: "MANAGER_APPROVED", adminStatus: "PENDING" },
+    }),
+    prisma.jobApplication.count({
+      where: {
+        managerStatus: "PENDING",
+        adminStatus: "PENDING",
+        status: "APPLIED",
+        user: { isSuspicious: true },
+      },
+    }),
     prisma.activityLog.count({
       where: {
         userId: managerId,
@@ -72,12 +111,34 @@ export default async function ManagerDashboardPage() {
         createdAt: { gte: todayStart },
       },
     }),
+    prisma.activityLog.count({
+      where: {
+        userId: managerId,
+        action: "MANAGER_APPROVED_JOB_APPLICATION",
+        createdAt: { gte: todayStart },
+      },
+    }),
+    prisma.activityLog.count({
+      where: {
+        userId: managerId,
+        action: "MANAGER_REJECTED_JOB_APPLICATION",
+        createdAt: { gte: todayStart },
+      },
+    }),
     prisma.activityLog.findMany({
       where: {
         userId: managerId,
-        action: { in: ["MANAGER_APPROVED_SUBMISSION", "MANAGER_REJECTED_SUBMISSION"] },
+        action: {
+          in: [
+            "MANAGER_APPROVED_SUBMISSION",
+            "MANAGER_REJECTED_SUBMISSION",
+            "MANAGER_APPROVED_JOB_APPLICATION",
+            "MANAGER_REJECTED_JOB_APPLICATION",
+          ],
+        },
       },
       select: {
+        entity: true,
         action: true,
         details: true,
         createdAt: true,
@@ -87,10 +148,48 @@ export default async function ManagerDashboardPage() {
     }),
   ]);
 
+  const pendingCount = pendingSubmissionCount + pendingJobCount;
+  const pendingAdmin = pendingAdminSubmissions + pendingAdminJobs;
+  const suspiciousQueue = suspiciousSubmissionQueue + suspiciousJobQueue;
+  const approvedToday = approvedTodaySubmissions + approvedTodayJobs;
+  const rejectedToday = rejectedTodaySubmissions + rejectedTodayJobs;
+
+  const pendingQueue = [
+    ...pendingSubmissionQueue.map((submission) => ({
+      id: submission.id,
+      kind: "SUBMISSION" as const,
+      createdAt: submission.createdAt,
+      title: submission.campaign?.title || t("snapshot.fallbackSubmissionTitle"),
+      userName: submission.user.name,
+      userLevel: submission.user.level,
+      isSuspicious: submission.user.isSuspicious,
+      href: "/dashboard/manager/submissions",
+      kindLabel: t("snapshot.submissionKind"),
+    })),
+    ...pendingJobQueue.map((application) => ({
+      id: application.id,
+      kind: "JOB_APPLICATION" as const,
+      createdAt: application.createdAt,
+      title: application.job.title || t("snapshot.fallbackJobTitle"),
+      userName: application.user.name,
+      userLevel: application.user.level,
+      isSuspicious: application.user.isSuspicious,
+      href: "/dashboard/manager/jobs",
+      kindLabel: t("snapshot.jobKind"),
+    })),
+  ]
+    .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+    .slice(0, 6);
+
   const oldestPending = pendingQueue[0]?.createdAt ?? null;
 
   const reviewSubmissionIds = reviewLogs
+    .filter((log) => log.entity === "Submission")
     .map((log) => parseEntityId(log.details, "submissionId"))
+    .filter((value): value is string => Boolean(value));
+  const reviewApplicationIds = reviewLogs
+    .filter((log) => log.entity === "JobApplication")
+    .map((log) => parseEntityId(log.details, "applicationId"))
     .filter((value): value is string => Boolean(value));
 
   const reviewedSubmissions = reviewSubmissionIds.length
@@ -99,14 +198,22 @@ export default async function ManagerDashboardPage() {
         select: { id: true, createdAt: true },
       })
     : [];
+  const reviewedApplications = reviewApplicationIds.length
+    ? await prisma.jobApplication.findMany({
+        where: { id: { in: reviewApplicationIds } },
+        select: { id: true, createdAt: true },
+      })
+    : [];
 
   const reviewedMap = new Map(reviewedSubmissions.map((item) => [item.id, item.createdAt]));
+  const reviewedApplicationMap = new Map(reviewedApplications.map((item) => [item.id, item.createdAt]));
   const turnaroundHours: number[] = [];
 
   for (const log of reviewLogs) {
-    const submissionId = parseEntityId(log.details, "submissionId");
-    if (!submissionId) continue;
-    const createdAt = reviewedMap.get(submissionId);
+    const createdAt =
+      log.entity === "JobApplication"
+        ? reviewedApplicationMap.get(parseEntityId(log.details, "applicationId") || "")
+        : reviewedMap.get(parseEntityId(log.details, "submissionId") || "");
     if (!createdAt) continue;
     const hours = (log.createdAt.getTime() - createdAt.getTime()) / (1000 * 60 * 60);
     if (hours >= 0) turnaroundHours.push(hours);
@@ -168,31 +275,43 @@ export default async function ManagerDashboardPage() {
               <p className="text-sm text-foreground/60">{t("snapshot.eyebrow")}</p>
               <h3 className="text-xl font-semibold text-foreground">{t("snapshot.title")}</h3>
             </div>
-            <a href="/dashboard/manager/submissions" className="text-sm text-emerald-200 transition hover:text-emerald-100">
-              {t("snapshot.openSubmissions")}
-            </a>
+            <div className="flex flex-wrap items-center gap-3 text-sm">
+              <a
+                href="/dashboard/manager/submissions"
+                className="text-emerald-700 transition hover:text-emerald-600 dark:text-emerald-200 dark:hover:text-emerald-100"
+              >
+                {t("snapshot.openSubmissions")}
+              </a>
+              <a
+                href="/dashboard/manager/jobs"
+                className="text-emerald-700 transition hover:text-emerald-600 dark:text-emerald-200 dark:hover:text-emerald-100"
+              >
+                {t("snapshot.openJobs")}
+              </a>
+            </div>
           </div>
 
           {pendingQueue.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-6 text-sm text-white/55">
+            <div className="rounded-2xl border border-dashed border-foreground/10 bg-foreground/[0.03] p-6 text-sm text-foreground/60">
               {t("snapshot.empty")}
             </div>
           ) : (
             <div className="space-y-3">
-              {pendingQueue.map((submission) => (
-                <div key={submission.id} className="rounded-2xl border border-white/10 bg-black/20 p-4">
+              {pendingQueue.map((item) => (
+                <div key={`${item.kind}:${item.id}`} className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <p className="font-medium text-white break-words">
-                        {submission.campaign?.title || t("snapshot.fallbackTitle")}
+                      <p className="font-medium text-foreground break-words">
+                        {item.title}
                       </p>
-                      <p className="mt-1 text-sm text-white/60 break-words">
-                        {(submission.user.name || t("snapshot.unnamed"))} | {t("snapshot.level", { level: submission.user.level })}
+                      <p className="mt-1 text-sm text-foreground/60 break-words">
+                        {item.kindLabel} | {(item.userName || t("snapshot.unnamed"))} |{" "}
+                        {t("snapshot.level", { level: item.userLevel })}
                       </p>
                     </div>
                     <div className="sm:text-right">
-                      <p className="text-sm text-white/75">{t("snapshot.inReview", { age: ageLabel(submission.createdAt) })}</p>
-                      {submission.user.isSuspicious ? (
+                      <p className="text-sm text-foreground/75">{t("snapshot.inReview", { age: ageLabel(item.createdAt) })}</p>
+                      {item.isSuspicious ? (
                         <div className="mt-1">
                           <StatusBadge label={t("snapshot.suspicious")} tone="warning" />
                         </div>
@@ -207,24 +326,24 @@ export default async function ManagerDashboardPage() {
 
         <SectionCard elevated className="space-y-4">
           <div>
-            <p className="text-sm text-white/60">{t("pace.eyebrow")}</p>
-            <h3 className="text-xl font-semibold text-white">{t("pace.title")}</h3>
+            <p className="text-sm text-foreground/60">{t("pace.eyebrow")}</p>
+            <h3 className="text-xl font-semibold text-foreground">{t("pace.title")}</h3>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("pace.averageTurnaround")}</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{averageReviewLabel}</p>
-              <p className="mt-1 text-xs text-white/45">{t("pace.averageTurnaroundHelp")}</p>
+            <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/45">{t("pace.averageTurnaround")}</p>
+              <p className="mt-2 text-2xl font-semibold text-foreground">{averageReviewLabel}</p>
+              <p className="mt-1 text-xs text-foreground/45">{t("pace.averageTurnaroundHelp")}</p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-white/40">{t("pace.oldestPending")}</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{oldestPending ? ageLabel(oldestPending) : t("clear")}</p>
-              <p className="mt-1 text-xs text-white/45">{t("pace.oldestPendingHelp")}</p>
+            <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/45">{t("pace.oldestPending")}</p>
+              <p className="mt-2 text-2xl font-semibold text-foreground">{oldestPending ? ageLabel(oldestPending) : t("clear")}</p>
+              <p className="mt-1 text-xs text-foreground/45">{t("pace.oldestPendingHelp")}</p>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-black/20 p-4 text-sm text-white/60">
+          <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4 text-sm text-foreground/65">
             <p>{t("access.firstPassOnly")}</p>
             <p className="mt-2">{t("access.adminControls")}</p>
           </div>
