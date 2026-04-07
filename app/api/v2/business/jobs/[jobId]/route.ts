@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
 import { canManageBusinessCampaigns, getBusinessContext } from "@/lib/business-context";
 import { PHYSICAL_WORK_COMMISSION_RATE } from "@/lib/commission";
+import { getJobBudgetDelta } from "@/lib/job-budget";
 import {
   DEFAULT_JOB_CATEGORIES,
   JOB_EMPLOYMENT_TYPE_OPTIONS,
@@ -339,11 +340,12 @@ export async function PUT(
   }
 
   const budgetRequired = getJobBudgetRequired(Number(payAmount), Number(openings));
-  const wallet = await ensureBusinessWalletSynced(context.businessUserId);
-  if (!wallet || wallet.balance < budgetRequired) {
+  const additionalBudgetRequired = Math.max(0, getJobBudgetDelta(budgetRequired, existing.lockedBudgetAmount));
+  const wallet = additionalBudgetRequired > 0 ? await ensureBusinessWalletSynced(context.businessUserId) : null;
+  if (additionalBudgetRequired > 0 && (!wallet || wallet.balance < additionalBudgetRequired)) {
     return NextResponse.json(
       {
-        error: `Add at least INR ${budgetRequired.toFixed(2)} to your business wallet before updating this job.`,
+        error: `Add at least INR ${additionalBudgetRequired.toFixed(2)} to your business wallet before updating this job.`,
       },
       { status: 400 }
     );

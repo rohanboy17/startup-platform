@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendInAppNotification } from "@/lib/notify";
 import { PHYSICAL_WORK_COMMISSION_RATE } from "@/lib/commission";
+import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
+import { applyJobBudgetDelta, getJobBudgetDelta } from "@/lib/job-budget";
 import {
   DEFAULT_JOB_CATEGORIES,
   JOB_EMPLOYMENT_TYPE_OPTIONS,
@@ -51,6 +53,8 @@ export async function PATCH(
       title: true,
       status: true,
       businessId: true,
+      budgetRequired: true,
+      lockedBudgetAmount: true,
     },
   });
 
@@ -90,12 +94,38 @@ export async function PATCH(
     return NextResponse.json({ error: "Job is already filled." }, { status: 400 });
   }
 
+  const budgetDelta = action === "APPROVE" ? getJobBudgetDelta(job.budgetRequired, job.lockedBudgetAmount) : 0;
+  if (budgetDelta > 0) {
+    const wallet = await ensureBusinessWalletSynced(job.businessId);
+    if (!wallet || wallet.balance < budgetDelta) {
+      return NextResponse.json(
+        {
+          error: `This business needs at least INR ${budgetDelta.toFixed(2)} more in the wallet before this job can be approved.`,
+        },
+        { status: 400 }
+      );
+    }
+  }
+
   const updated = await prisma.$transaction(async (tx) => {
+    if (action === "APPROVE" && budgetDelta !== 0) {
+      await applyJobBudgetDelta(tx, {
+        businessId: job.businessId,
+        jobTitle: job.title,
+        budgetDelta,
+      });
+    }
+
     const next = await tx.jobPosting.update({
       where: { id: jobId },
       data: {
         status: nextStatus as "PENDING_REVIEW" | "OPEN" | "REJECTED" | "PAUSED" | "CLOSED" | "FILLED",
         reviewNote: reviewNote || null,
+        ...(action === "APPROVE"
+          ? {
+              lockedBudgetAmount: job.budgetRequired,
+            }
+          : {}),
         ...(action === "APPROVE"
           ? {
               approvedAt: new Date(),
@@ -150,7 +180,7 @@ export async function PATCH(
                 : "Job closed by admin",
     message:
       action === "APPROVE"
-        ? `Your job "${job.title}" passed admin verification and is now live for users.`
+        ? `Your job "${job.title}" passed admin verification, is now live for users, and its budget has been reserved from the business wallet.`
         : action === "REJECT"
           ? `Your job "${job.title}" was rejected by admin review.${reviewNote ? ` Note: ${reviewNote}` : ""}`
           : action === "PAUSE"
@@ -316,8 +346,32 @@ export async function PUT(
   }
 
   const budgetRequired = getJobBudgetRequired(Number(payAmount), Number(openings));
+  const budgetDelta =
+    existing.status === "PENDING_REVIEW" || existing.status === "REJECTED"
+      ? 0
+      : getJobBudgetDelta(budgetRequired, existing.lockedBudgetAmount);
+
+  if (budgetDelta > 0) {
+    const wallet = await ensureBusinessWalletSynced(existing.businessId);
+    if (!wallet || wallet.balance < budgetDelta) {
+      return NextResponse.json(
+        {
+          error: `This business needs at least INR ${budgetDelta.toFixed(2)} more in the wallet before this job can be updated.`,
+        },
+        { status: 400 }
+      );
+    }
+  }
 
   const updated = await prisma.$transaction(async (tx) => {
+    if (budgetDelta !== 0) {
+      await applyJobBudgetDelta(tx, {
+        businessId: existing.businessId,
+        jobTitle: title,
+        budgetDelta,
+      });
+    }
+
     const next = await tx.jobPosting.update({
       where: { id: jobId },
       data: {
@@ -339,6 +393,10 @@ export async function PUT(
         payAmount: Number(payAmount),
         commissionRate: PHYSICAL_WORK_COMMISSION_RATE,
         budgetRequired,
+        lockedBudgetAmount:
+          existing.status === "PENDING_REVIEW" || existing.status === "REJECTED"
+            ? existing.lockedBudgetAmount
+            : budgetRequired,
         payUnit: payUnit as "HOURLY" | "DAILY" | "WEEKLY" | "MONTHLY" | "FIXED",
         shiftSummary,
         startDate,

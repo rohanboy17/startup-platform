@@ -476,6 +476,7 @@ export default function BusinessJobForm() {
             <p className="mt-2 text-sm font-semibold text-foreground">
               {budgetRequired > 0 ? formatMoney(budgetRequired) : "-"}
             </p>
+            <p className="mt-1 text-xs text-foreground/60">{t("preview.fundTiming")}</p>
           </div>
         </div>
       </SectionCard>

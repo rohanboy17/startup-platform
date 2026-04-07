@@ -160,7 +160,7 @@ export async function GET() {
   const activeApplicants = jobApplications.filter(
     (application) =>
       application.adminStatus === "ADMIN_APPROVED" &&
-      ["APPLIED", "SHORTLISTED", "INTERVIEW_SCHEDULED", "HIRED"].includes(application.status)
+      ["APPLIED", "SHORTLISTED", "INTERVIEW_SCHEDULED"].includes(application.status)
   ).length;
   const scheduledInterviews = jobApplications.filter(
     (application) => application.status === "INTERVIEW_SCHEDULED"

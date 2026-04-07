@@ -284,6 +284,7 @@ export default function BusinessJobEditor({
         <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/55">{tForm("preview.fundRequired")}</p>
           <p className="mt-2 text-lg font-semibold text-foreground">INR {formatMoney(budgetPreview)}</p>
+          <p className="mt-1 text-xs text-foreground/60">{tForm("preview.fundTiming")}</p>
         </div>
       </div>
 

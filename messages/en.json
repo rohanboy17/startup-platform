@@ -838,7 +838,7 @@
       "jobsTitle": "How job applications move",
       "jobsBullet1": "Jobs and internships use an application flow instead of proof submissions.",
       "jobsBullet2": "Your application goes to manager review first, then final admin review.",
-      "jobsBullet3": "Only after verification can the business shortlist, schedule interviews, hire, or mark joined.",
+      "jobsBullet3": "Only after verification can the business hire or reject. Interview scheduling is handled during admin review.",
       "jobsBullet4": "Your applications page shows each stage clearly so you always know what changed.",
       "profileEyebrow": "Profile readiness",
       "profileTitle": "What to complete before applying",
@@ -2376,9 +2376,10 @@
         "pay": "Compensation",
         "workerTakeHome": "Worker take-home",
         "platformCut": "Platform cut {percent}%",
-        "fundRequired": "Fund required"
+        "fundRequired": "Fund required",
+        "fundTiming": "This amount is deducted only after admin approval."
       },
-      "footerNote": "Job payouts and final joining workflow should be handled with your operational hiring process, not the task wallet system.",
+      "footerNote": "The required budget is deducted only after admin approval. Job payouts and final joining workflow should be handled with your operational hiring process, not the task wallet system.",
       "actions": {
         "add": "Add",
         "posting": "Posting...",
@@ -2479,7 +2480,8 @@
         "workerTakeHome": "Worker take-home INR {amount}",
         "fundRequired": "Fund requirement",
         "physicalCommission": "Platform commission {percent}%",
-        "awaitingAdminReview": "This job is waiting for final admin verification before it goes live for users.",
+        "fundTiming": "This amount is deducted only after admin approval.",
+        "awaitingAdminReview": "This job is waiting for final admin verification before it goes live for users. Its budget will be deducted only after admin approval.",
         "rejectedByAdmin": "This job is currently rejected. Edit it and send it back for admin review."
       },
       "application": {
@@ -2491,9 +2493,11 @@
         "education": "Education",
         "notProvided": "Not provided",
         "businessNote": "Business note",
-        "businessNotePlaceholder": "Add interview details, location notes, or follow-up instructions",
+        "businessNotePlaceholder": "Add location notes, hiring comments, or follow-up instructions",
         "interview": "Interview schedule",
         "interviewScheduledAt": "Scheduled for {value}",
+        "noInterviewScheduled": "No interview has been scheduled yet.",
+        "interviewManagedByAdmin": "Interview scheduling is handled only by admin during final verification.",
         "joinedAt": "Joined on {value}",
         "moderationRejectedManager": "Rejected by manager",
         "moderationRejectedAdmin": "Rejected by admin",
@@ -2626,6 +2630,7 @@
       "profile": "Profile",
       "earnAds": "Beta Perks",
       "jobs": "Jobs",
+      "jobManagement": "Job Management",
       "jobsQueue": "Jobs Queue",
       "createJob": "Create Job",
       "jobApplications": "My Applications",
@@ -3529,7 +3534,7 @@
       "empty": "No manager-approved job applicants are waiting for final admin review."
     },
     "jobsPage": {
-      "pageTitle": "Jobs Oversight",
+      "pageTitle": "Job Management",
       "pageDescription": "Review every local or physical hiring post, monitor applicant flow, and step in when a role needs admin action.",
       "empty": "No jobs match the current filters.",
       "kpis": {
@@ -3633,7 +3638,13 @@
       "pendingApplicationsTitle": "Manager-approved applicants waiting for final admin verification",
       "pendingApplicationsEmpty": "No manager-approved job applications are waiting right now.",
       "applicationActions": {
+        "interviewLabel": "Interview schedule",
+        "interviewHelp": "Only admin can shortlist and schedule interviews before approving an applicant for business review.",
         "reasonPlaceholder": "Optional review note. A reason is required if you reject.",
+        "shortlist": "Shortlist",
+        "shortlisting": "Shortlisting...",
+        "scheduleInterview": "Schedule interview",
+        "schedulingInterview": "Scheduling...",
         "approve": "Approve for business review",
         "approving": "Approving...",
         "reject": "Reject",

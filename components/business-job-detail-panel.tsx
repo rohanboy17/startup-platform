@@ -120,7 +120,6 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
   const [busyKey, setBusyKey] = useState("");
   const [editOpen, setEditOpen] = useState(false);
   const [applicationNotes, setApplicationNotes] = useState<Record<string, string>>({});
-  const [interviewTimes, setInterviewTimes] = useState<Record<string, string>>({});
 
   const load = useCallback(async () => {
     const res = await fetch(`/api/v2/business/jobs/${jobId}`, { credentials: "include" });
@@ -143,15 +142,6 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
         for (const item of parsed.job.applications) {
           if (typeof next[item.id] === "undefined") {
             next[item.id] = item.businessNote || "";
-          }
-        }
-        return next;
-      });
-      setInterviewTimes((current) => {
-        const next = { ...current };
-        for (const item of parsed.job.applications) {
-          if (typeof next[item.id] === "undefined") {
-            next[item.id] = item.interviewAt ? item.interviewAt.slice(0, 16) : "";
           }
         }
         return next;
@@ -203,9 +193,8 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
   async function updateApplication(
     applicationId: string,
     payload: {
-      status?: "SHORTLISTED" | "INTERVIEW_SCHEDULED" | "REJECTED" | "HIRED" | "JOINED";
+      status?: "REJECTED" | "HIRED";
       businessNote?: string;
-      interviewAt?: string;
     }
   ) {
     const actionKey = payload.status || "NOTE";
@@ -327,6 +316,7 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
             <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("job.fundRequired")}</p>
             <p className="mt-2 text-sm font-semibold text-foreground">{formatMoney(job.budgetRequired)}</p>
             <p className="mt-1 text-xs text-foreground/60">{t("job.physicalCommission", { percent: Math.round(job.commissionRate * 100) })}</p>
+            <p className="mt-1 text-xs text-foreground/60">{t("job.fundTiming")}</p>
           </div>
         </div>
 
@@ -433,38 +423,7 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
 
                   {canManage && application.adminStatus === "ADMIN_APPROVED" ? (
                     <div className="flex flex-wrap gap-2">
-                      {application.status === "APPLIED" ? (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          disabled={busyKey === `application:${application.id}:SHORTLISTED`}
-                          onClick={() =>
-                            void updateApplication(application.id, {
-                              status: "SHORTLISTED",
-                              businessNote: applicationNotes[application.id] || "",
-                            })
-                          }
-                        >
-                          {t("actions.shortlist")}
-                        </Button>
-                      ) : null}
-                      {!["HIRED", "JOINED", "REJECTED"].includes(application.status) ? (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          disabled={busyKey === `application:${application.id}:INTERVIEW_SCHEDULED`}
-                          onClick={() =>
-                            void updateApplication(application.id, {
-                              status: "INTERVIEW_SCHEDULED",
-                              interviewAt: interviewTimes[application.id] || "",
-                              businessNote: applicationNotes[application.id] || "",
-                            })
-                          }
-                        >
-                          {t("actions.scheduleInterview")}
-                        </Button>
-                      ) : null}
-                      {!["HIRED", "JOINED", "REJECTED"].includes(application.status) ? (
+                      {!["HIRED", "JOINED", "REJECTED", "WITHDRAWN"].includes(application.status) ? (
                         <Button
                           type="button"
                           variant="outline"
@@ -479,22 +438,7 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
                           {t("actions.hire")}
                         </Button>
                       ) : null}
-                      {application.status === "HIRED" ? (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          disabled={busyKey === `application:${application.id}:JOINED`}
-                          onClick={() =>
-                            void updateApplication(application.id, {
-                              status: "JOINED",
-                              businessNote: applicationNotes[application.id] || "",
-                            })
-                          }
-                        >
-                          {t("actions.markJoined")}
-                        </Button>
-                      ) : null}
-                      {!["REJECTED", "JOINED"].includes(application.status) ? (
+                      {!["HIRED", "JOINED", "REJECTED", "WITHDRAWN"].includes(application.status) ? (
                         <Button
                           type="button"
                           variant="outline"
@@ -527,8 +471,8 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
                       {application.user.skills.length === 0 ? (
                         <span className="text-sm text-foreground/60">{t("application.notProvided")}</span>
                       ) : (
-                        application.user.skills.map((item) => (
-                          <span key={item} className="rounded-full border border-foreground/10 px-3 py-1 text-xs text-foreground/80">
+                        application.user.skills.map((item, index) => (
+                          <span key={`${application.id}:skill:${index}:${item}`} className="rounded-full border border-foreground/10 px-3 py-1 text-xs text-foreground/80">
                             {item}
                           </span>
                         ))
@@ -541,8 +485,8 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
                       {application.user.profile.languages.length === 0 ? (
                         <span className="text-sm text-foreground/60">{t("application.notProvided")}</span>
                       ) : (
-                        application.user.profile.languages.map((item) => (
-                          <span key={item} className="rounded-full border border-foreground/10 px-3 py-1 text-xs text-foreground/80">
+                        application.user.profile.languages.map((item, index) => (
+                          <span key={`${application.id}:language:${index}:${item}`} className="rounded-full border border-foreground/10 px-3 py-1 text-xs text-foreground/80">
                             {item}
                           </span>
                         ))
@@ -608,23 +552,14 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("application.interview")}</p>
-                    <input
-                      type="datetime-local"
-                      value={interviewTimes[application.id] || ""}
-                      onChange={(e) =>
-                        setInterviewTimes((current) => ({
-                          ...current,
-                          [application.id]: e.target.value,
-                        }))
-                      }
-                      disabled={application.adminStatus !== "ADMIN_APPROVED"}
-                      className="mt-3 min-h-11 w-full rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground outline-none transition focus:border-foreground/30"
-                    />
                     {application.interviewAt ? (
                       <p className="mt-3 text-sm text-foreground/70">
                         {t("application.interviewScheduledAt", { value: new Date(application.interviewAt).toLocaleString() })}
                       </p>
-                    ) : null}
+                    ) : (
+                      <p className="mt-3 text-sm text-foreground/60">{t("application.noInterviewScheduled")}</p>
+                    )}
+                    <p className="mt-2 text-xs text-foreground/55">{t("application.interviewManagedByAdmin")}</p>
                     {application.joinedAt ? (
                       <p className="mt-2 text-sm text-foreground/70">
                         {t("application.joinedAt", { value: new Date(application.joinedAt).toLocaleString() })}

@@ -236,6 +236,7 @@ export default async function BusinessTrustPage() {
           </div>
           <div className="space-y-3 text-sm text-foreground/70">
             <p>Campaign creation locks the full budget immediately from the business wallet.</p>
+            <p>Job postings are submitted first, and the required job budget is locked only when admin approves the job.</p>
             <p>On final admin approval, the full per-task reward is deducted from campaign remaining budget.</p>
             <p>User payout and platform commission are split internally after approval. Businesses are charged only from campaign budget, not an extra approval fee.</p>
             <p>Campaign edit budget increases deduct only the difference. Budget reductions release unused budget back to the business wallet.</p>

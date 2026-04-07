@@ -317,7 +317,7 @@ export async function GET() {
       const actionableApplicants = jobApplications.filter(
         (application) =>
           application.adminStatus === "ADMIN_APPROVED" &&
-          ["APPLIED", "SHORTLISTED", "INTERVIEW_SCHEDULED", "HIRED"].includes(application.status)
+          ["APPLIED", "SHORTLISTED", "INTERVIEW_SCHEDULED"].includes(application.status)
       ).length;
       const activeAlertCount =
         exhaustedLiveCampaigns +
@@ -416,13 +416,18 @@ export async function GET() {
     if (role === "MANAGER") {
       const [queue, suspiciousQueue, decisions, openSecurityEvents, unreadManagerNotifications, latestUnreadManagerNotification, pendingJobApplications, suspiciousJobApplications] = await Promise.all([
         prisma.submission.findMany({
-          where: { managerStatus: "PENDING", managerEscalatedAt: null },
+          where: { campaignId: { not: null }, managerStatus: "PENDING", managerEscalatedAt: null },
           select: { createdAt: true },
           orderBy: { createdAt: "desc" },
           take: 100,
         }),
         prisma.submission.findMany({
-          where: { managerStatus: "PENDING", managerEscalatedAt: null, user: { isSuspicious: true } },
+          where: {
+            campaignId: { not: null },
+            managerStatus: "PENDING",
+            managerEscalatedAt: null,
+            user: { isSuspicious: true },
+          },
           select: { createdAt: true },
           orderBy: { createdAt: "desc" },
           take: 100,

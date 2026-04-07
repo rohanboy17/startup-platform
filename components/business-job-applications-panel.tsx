@@ -154,7 +154,6 @@ export default function BusinessJobApplicationsPanel() {
   const [limit, setLimit] = useState<"5" | "10" | "20" | "ALL">("10");
   const [busyKey, setBusyKey] = useState("");
   const [applicationNotes, setApplicationNotes] = useState<Record<string, string>>({});
-  const [interviewTimes, setInterviewTimes] = useState<Record<string, string>>({});
 
   const filters: Array<{ value: FilterValue; label: string }> = [
     { value: "ALL", label: t("filters.ALL") },
@@ -189,15 +188,6 @@ export default function BusinessJobApplicationsPanel() {
       for (const item of parsed.applications) {
         if (typeof next[item.id] === "undefined") {
           next[item.id] = item.businessNote || "";
-        }
-      }
-      return next;
-    });
-    setInterviewTimes((current) => {
-      const next = { ...current };
-      for (const item of parsed.applications) {
-        if (typeof next[item.id] === "undefined") {
-          next[item.id] = item.interviewAt ? item.interviewAt.slice(0, 16) : "";
         }
       }
       return next;
@@ -265,9 +255,8 @@ export default function BusinessJobApplicationsPanel() {
     jobId: string,
     applicationId: string,
     payload: {
-      status?: "SHORTLISTED" | "INTERVIEW_SCHEDULED" | "REJECTED" | "HIRED" | "JOINED";
+      status?: "REJECTED" | "HIRED";
       businessNote?: string;
-      interviewAt?: string;
     }
   ) {
     const actionKey = payload.status || "NOTE";
@@ -553,25 +542,16 @@ export default function BusinessJobApplicationsPanel() {
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{tDetail("application.interview")}</p>
-                    <input
-                      type="datetime-local"
-                      value={interviewTimes[application.id] || ""}
-                      onChange={(e) =>
-                        setInterviewTimes((current) => ({
-                          ...current,
-                          [application.id]: e.target.value,
-                        }))
-                      }
-                      disabled={!canManage}
-                      className="mt-3 min-h-11 w-full rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground outline-none transition focus:border-foreground/30"
-                    />
                     {application.interviewAt ? (
                       <p className="mt-3 text-sm text-foreground/70">
                         {tDetail("application.interviewScheduledAt", {
                           value: new Date(application.interviewAt).toLocaleString(dateLocale),
                         })}
                       </p>
-                    ) : null}
+                    ) : (
+                      <p className="mt-3 text-sm text-foreground/60">{tDetail("application.noInterviewScheduled")}</p>
+                    )}
+                    <p className="mt-2 text-xs text-foreground/55">{tDetail("application.interviewManagedByAdmin")}</p>
                     {application.joinedAt ? (
                       <p className="mt-2 text-sm text-foreground/70">
                         {tDetail("application.joinedAt", {
@@ -584,38 +564,7 @@ export default function BusinessJobApplicationsPanel() {
 
                 {canManage ? (
                   <div className="flex flex-wrap gap-2">
-                    {application.status === "APPLIED" ? (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={busyKey === `application:${application.id}:SHORTLISTED`}
-                        onClick={() =>
-                          void updateApplication(application.job.id, application.id, {
-                            status: "SHORTLISTED",
-                            businessNote: applicationNotes[application.id] || "",
-                          })
-                        }
-                      >
-                        {tDetail("actions.shortlist")}
-                      </Button>
-                    ) : null}
-                    {!['HIRED', 'JOINED', 'REJECTED', 'WITHDRAWN'].includes(application.status) ? (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={busyKey === `application:${application.id}:INTERVIEW_SCHEDULED`}
-                        onClick={() =>
-                          void updateApplication(application.job.id, application.id, {
-                            status: "INTERVIEW_SCHEDULED",
-                            interviewAt: interviewTimes[application.id] || "",
-                            businessNote: applicationNotes[application.id] || "",
-                          })
-                        }
-                      >
-                        {tDetail("actions.scheduleInterview")}
-                      </Button>
-                    ) : null}
-                    {!['HIRED', 'JOINED', 'REJECTED', 'WITHDRAWN'].includes(application.status) ? (
+                    {!["HIRED", "JOINED", "REJECTED", "WITHDRAWN"].includes(application.status) ? (
                       <Button
                         type="button"
                         variant="outline"
@@ -630,22 +579,7 @@ export default function BusinessJobApplicationsPanel() {
                         {tDetail("actions.hire")}
                       </Button>
                     ) : null}
-                    {application.status === "HIRED" ? (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={busyKey === `application:${application.id}:JOINED`}
-                        onClick={() =>
-                          void updateApplication(application.job.id, application.id, {
-                            status: "JOINED",
-                            businessNote: applicationNotes[application.id] || "",
-                          })
-                        }
-                      >
-                        {tDetail("actions.markJoined")}
-                      </Button>
-                    ) : null}
-                    {!['REJECTED', 'JOINED', 'WITHDRAWN'].includes(application.status) ? (
+                    {!["HIRED", "JOINED", "REJECTED", "WITHDRAWN"].includes(application.status) ? (
                       <Button
                         type="button"
                         variant="outline"

@@ -334,6 +334,7 @@ model JobPosting {
   payAmount           Float
   commissionRate      Float              @default(0.15)
   budgetRequired      Float              @default(0)
+  lockedBudgetAmount  Float              @default(0)
   payUnit             JobPayUnit
   shiftSummary        String?
   startDate           DateTime?
