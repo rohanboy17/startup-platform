@@ -57,7 +57,7 @@ export default function HomeLiveSection() {
     );
   }, [t]);
 
-  useLiveRefresh(load, 10000);
+  useLiveRefresh(load, 30000);
 
   const withdrawalItems = useMemo(
     () => (data?.events ?? []).filter((item) => item.kind === "WITHDRAW"),
@@ -116,10 +116,10 @@ export default function HomeLiveSection() {
             <p className="mb-1 text-[11px] uppercase tracking-wide text-sky-600 dark:text-sky-300/80">
               {t("withdrawRequests")} ({data.stats.liveWithdraws})
             </p>
-            <div className="min-h-[52px] overflow-hidden whitespace-nowrap rounded-lg border border-white/10 bg-background/60 px-3 py-2 flex items-center">
+            <div className="min-h-[52px] rounded-lg border border-white/10 bg-background/60 px-3 py-2">
               <div
                 key={`withdraw-${withdrawIndex}-${currentWithdrawalText}`}
-                className="inline-block min-w-full pr-8 text-sm leading-6 text-sky-700 dark:text-sky-200 [animation:marquee_12s_linear_forwards]"
+                className="line-clamp-2 text-sm leading-6 text-sky-700 dark:text-sky-200"
               >
                 {currentWithdrawalText}
               </div>
@@ -130,10 +130,10 @@ export default function HomeLiveSection() {
             <p className="mb-1 text-[11px] uppercase tracking-wide text-emerald-600 dark:text-emerald-300/80">
               {t("activityHistory")}
             </p>
-            <div className="min-h-[52px] overflow-hidden whitespace-nowrap rounded-lg border border-white/10 bg-background/60 px-3 py-2 flex items-center">
+            <div className="min-h-[52px] rounded-lg border border-white/10 bg-background/60 px-3 py-2">
               <div
                 key={`activity-${activityIndex}-${currentActivityText}`}
-                className="inline-block min-w-full pr-8 text-sm leading-6 text-emerald-700 dark:text-emerald-200 [animation:marquee_15s_linear_forwards]"
+                className="line-clamp-2 text-sm leading-6 text-emerald-700 dark:text-emerald-200"
               >
                 {currentActivityText}
               </div>

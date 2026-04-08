@@ -129,7 +129,7 @@ export default function BusinessOverviewPanel() {
     setData(parsed);
   }, [t]);
 
-  useLiveRefresh(load, 10000);
+  useLiveRefresh(load, 45000);
 
   if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
   if (!data) return <p className="text-sm text-foreground/60">{t("loading")}</p>;

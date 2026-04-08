@@ -1,0 +1,36 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useReducedMotion } from "framer-motion";
+
+export function usePerformanceReducedMotion() {
+  const prefersReducedMotion = useReducedMotion();
+  const [reduced, setReduced] = useState(Boolean(prefersReducedMotion));
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 1024px)");
+    const connection = (navigator as Navigator & {
+      connection?: {
+        saveData?: boolean;
+      };
+    }).connection;
+
+    const update = () => {
+      const lowCoreDevice =
+        typeof navigator.hardwareConcurrency === "number" && navigator.hardwareConcurrency <= 4;
+      setReduced(Boolean(prefersReducedMotion || mediaQuery.matches || connection?.saveData || lowCoreDevice));
+    };
+
+    update();
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", update);
+      return () => mediaQuery.removeEventListener("change", update);
+    }
+
+    mediaQuery.addListener(update);
+    return () => mediaQuery.removeListener(update);
+  }, [prefersReducedMotion]);
+
+  return reduced;
+}

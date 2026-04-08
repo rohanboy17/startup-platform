@@ -21,29 +21,85 @@ export async function GET() {
   const [
     wallet,
     appSettings,
-    campaigns,
-    jobs,
-    approvedSubmissions,
+    totalCampaigns,
+    liveCampaigns,
+    pendingCampaigns,
+    completedCampaigns,
+    campaignBudgetTotals,
+    campaignLockedBudget,
+    recentCampaigns,
+    totalJobs,
+    openJobs,
+    pendingJobs,
+    filledJobs,
+    jobLockedBudget,
+    recentJobs,
+    approvedCount,
+    recentApprovedSubmissions,
     pendingReviews,
-    jobApplications,
+    readyApplicants,
+    activeApplicants,
+    scheduledInterviews,
+    joinedWorkers,
+    recentJobApplications,
     todayApprovals,
     recentTransactions,
     user,
-  ] =
-    await Promise.all([
+  ] = await Promise.all([
     ensureBusinessWalletSynced(context.businessUserId),
     getAppSettings(),
+    prisma.campaign.count({ where: { businessId: context.businessUserId } }),
+    prisma.campaign.count({
+      where: { businessId: context.businessUserId, status: "LIVE" },
+    }),
+    prisma.campaign.count({
+      where: { businessId: context.businessUserId, status: "PENDING" },
+    }),
+    prisma.campaign.count({
+      where: { businessId: context.businessUserId, status: "COMPLETED" },
+    }),
+    prisma.campaign.aggregate({
+      where: { businessId: context.businessUserId },
+      _sum: {
+        totalBudget: true,
+        remainingBudget: true,
+      },
+    }),
+    prisma.campaign.aggregate({
+      where: {
+        businessId: context.businessUserId,
+        status: { in: ["PENDING", "APPROVED", "LIVE"] },
+      },
+      _sum: {
+        remainingBudget: true,
+      },
+    }),
     prisma.campaign.findMany({
       where: { businessId: context.businessUserId },
       select: {
         id: true,
         title: true,
         status: true,
-        totalBudget: true,
-        remainingBudget: true,
         createdAt: true,
       },
       orderBy: { createdAt: "desc" },
+      take: 3,
+    }),
+    prisma.jobPosting.count({ where: { businessId: context.businessUserId } }),
+    prisma.jobPosting.count({
+      where: { businessId: context.businessUserId, status: "OPEN" },
+    }),
+    prisma.jobPosting.count({
+      where: { businessId: context.businessUserId, status: "PENDING_REVIEW" },
+    }),
+    prisma.jobPosting.count({
+      where: { businessId: context.businessUserId, status: "FILLED" },
+    }),
+    prisma.jobPosting.aggregate({
+      where: { businessId: context.businessUserId },
+      _sum: {
+        lockedBudgetAmount: true,
+      },
     }),
     prisma.jobPosting.findMany({
       where: { businessId: context.businessUserId },
@@ -54,7 +110,14 @@ export async function GET() {
         createdAt: true,
         updatedAt: true,
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { updatedAt: "desc" },
+      take: 3,
+    }),
+    prisma.submission.count({
+      where: {
+        campaign: { businessId: context.businessUserId },
+        adminStatus: "ADMIN_APPROVED",
+      },
     }),
     prisma.submission.findMany({
       where: {
@@ -66,17 +129,43 @@ export async function GET() {
         campaign: {
           select: {
             title: true,
-            rewardPerTask: true,
           },
         },
       },
       orderBy: { createdAt: "desc" },
+      take: 3,
     }),
     prisma.submission.count({
       where: {
         campaign: { businessId: context.businessUserId },
         managerStatus: "MANAGER_APPROVED",
         adminStatus: "PENDING",
+      },
+    }),
+    prisma.jobApplication.count({
+      where: {
+        job: { businessId: context.businessUserId },
+        adminStatus: "ADMIN_APPROVED",
+        status: "APPLIED",
+      },
+    }),
+    prisma.jobApplication.count({
+      where: {
+        job: { businessId: context.businessUserId },
+        adminStatus: "ADMIN_APPROVED",
+        status: { in: ["APPLIED", "SHORTLISTED", "INTERVIEW_SCHEDULED"] },
+      },
+    }),
+    prisma.jobApplication.count({
+      where: {
+        job: { businessId: context.businessUserId },
+        status: "INTERVIEW_SCHEDULED",
+      },
+    }),
+    prisma.jobApplication.count({
+      where: {
+        job: { businessId: context.businessUserId },
+        status: "JOINED",
       },
     }),
     prisma.jobApplication.findMany({
@@ -101,6 +190,7 @@ export async function GET() {
         },
       },
       orderBy: { updatedAt: "desc" },
+      take: 4,
     }),
     prisma.submission.findMany({
       where: {
@@ -134,60 +224,38 @@ export async function GET() {
     }),
   ]);
 
-  const totalCampaigns = campaigns.length;
-  const liveCampaigns = campaigns.filter((campaign) => campaign.status === "LIVE").length;
-  const pendingCampaigns = campaigns.filter((campaign) => campaign.status === "PENDING").length;
-  const completedCampaigns = campaigns.filter((campaign) => campaign.status === "COMPLETED").length;
-  const totalJobs = jobs.length;
-  const openJobs = jobs.filter((job) => job.status === "OPEN").length;
-  const pendingJobs = jobs.filter((job) => job.status === "PENDING_REVIEW").length;
-  const filledJobs = jobs.filter((job) => job.status === "FILLED").length;
-  const lockedBudget = campaigns
-    .filter((campaign) => ["PENDING", "APPROVED", "LIVE"].includes(campaign.status))
-    .reduce((sum, campaign) => sum + campaign.remainingBudget, 0);
-  const totalBudget = campaigns.reduce((sum, campaign) => sum + campaign.totalBudget, 0);
-  const remainingBudget = campaigns.reduce((sum, campaign) => sum + campaign.remainingBudget, 0);
+  const lockedBudget =
+    (campaignLockedBudget._sum.remainingBudget ?? 0) + (jobLockedBudget._sum.lockedBudgetAmount ?? 0);
+  const totalBudget = campaignBudgetTotals._sum.totalBudget ?? 0;
+  const remainingBudget = campaignBudgetTotals._sum.remainingBudget ?? 0;
   const spentBudget = totalBudget - remainingBudget;
-  const approvedCount = approvedSubmissions.length;
   const todaySpend = todayApprovals.reduce(
     (sum, submission) => sum + (submission.campaign?.rewardPerTask || 0),
     0
   );
   const averageCostPerApproval = approvedCount > 0 ? spentBudget / approvedCount : 0;
-  const readyApplicants = jobApplications.filter(
-    (application) => application.adminStatus === "ADMIN_APPROVED" && application.status === "APPLIED"
-  ).length;
-  const activeApplicants = jobApplications.filter(
-    (application) =>
-      application.adminStatus === "ADMIN_APPROVED" &&
-      ["APPLIED", "SHORTLISTED", "INTERVIEW_SCHEDULED"].includes(application.status)
-  ).length;
-  const scheduledInterviews = jobApplications.filter(
-    (application) => application.status === "INTERVIEW_SCHEDULED"
-  ).length;
-  const joinedWorkers = jobApplications.filter((application) => application.status === "JOINED").length;
   const lowBalanceThreshold = Number(process.env.NEXT_PUBLIC_MIN_FUNDING_THRESHOLD ?? 500);
 
   const activityFeed = [
-    ...campaigns.slice(0, 3).map((campaign) => ({
+    ...recentCampaigns.map((campaign) => ({
       id: `campaign-${campaign.id}`,
       kind: "CAMPAIGN",
       message: `Campaign "${campaign.title}" is ${campaign.status.toLowerCase()}.`,
       createdAt: campaign.createdAt,
     })),
-    ...approvedSubmissions.slice(0, 3).map((submission, index) => ({
+    ...recentApprovedSubmissions.map((submission, index) => ({
       id: `approval-${index}-${submission.createdAt.toISOString()}`,
       kind: "APPROVAL",
       message: `Submission approved for "${submission.campaign?.title || "Campaign"}".`,
       createdAt: submission.createdAt,
     })),
-    ...jobs.slice(0, 3).map((job) => ({
+    ...recentJobs.map((job) => ({
       id: `job-${job.id}`,
       kind: "JOB",
       message: `Job "${job.title}" is ${job.status.toLowerCase().replaceAll("_", " ")}.`,
       createdAt: job.updatedAt || job.createdAt,
     })),
-    ...jobApplications.slice(0, 4).map((application) => {
+    ...recentJobApplications.map((application) => {
       const title = application.job?.title || "Job";
       const createdAt =
         application.joinedAt ||

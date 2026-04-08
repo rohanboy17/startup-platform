@@ -36,7 +36,7 @@ export default function HomeLiveFloatsAndStats({
     setMetrics((current) => mergeMetricMaximums(current, data));
   }, []);
 
-  useLiveRefresh(load, 10000);
+  useLiveRefresh(load, 30000);
 
   return (
     <>

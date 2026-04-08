@@ -1,8 +1,9 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { usePerformanceReducedMotion } from "@/lib/use-performance-reduced-motion";
 
 type MotionSectionProps = {
   children: ReactNode;
@@ -11,7 +12,7 @@ type MotionSectionProps = {
 };
 
 export default function MotionSection({ children, className, delay = 0 }: MotionSectionProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = usePerformanceReducedMotion();
 
   if (reduceMotion) {
     return <div className={cn(className)}>{children}</div>;
@@ -23,7 +24,7 @@ export default function MotionSection({ children, className, delay = 0 }: Motion
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.45, ease: "easeOut", delay }}
+      transition={{ duration: 0.3, ease: "easeOut", delay }}
     >
       {children}
     </motion.div>

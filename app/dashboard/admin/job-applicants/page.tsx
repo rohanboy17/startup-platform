@@ -44,14 +44,26 @@ export default async function AdminJobApplicantsPage({
           }
         : {}),
     },
-    include: {
+    select: {
+      id: true,
+      coverNote: true,
+      createdAt: true,
+      managerReviewedAt: true,
       job: {
-        include: {
+        select: {
+          title: true,
+          status: true,
+          employmentType: true,
+          jobCategory: true,
+          jobType: true,
+          customJobType: true,
+          city: true,
+          state: true,
+          payAmount: true,
+          payUnit: true,
           business: {
             select: {
-              id: true,
               name: true,
-              email: true,
             },
           },
         },
@@ -61,10 +73,9 @@ export default async function AdminJobApplicantsPage({
           id: true,
           name: true,
           email: true,
-          mobile: true,
           profileDetails: true,
           skills: {
-            include: {
+            select: {
               skill: {
                 select: { label: true },
               },

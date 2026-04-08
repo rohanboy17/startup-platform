@@ -1,8 +1,9 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { usePerformanceReducedMotion } from "@/lib/use-performance-reduced-motion";
 
 type MotionStaggerProps = {
   children: ReactNode;
@@ -32,7 +33,7 @@ const item: Variants = {
 };
 
 export function MotionStagger({ children, className, delay = 0 }: MotionStaggerProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = usePerformanceReducedMotion();
 
   if (reduceMotion) {
     return <div className={cn(className)}>{children}</div>;
@@ -53,7 +54,7 @@ export function MotionStagger({ children, className, delay = 0 }: MotionStaggerP
 }
 
 export function MotionItem({ children, className }: MotionItemProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = usePerformanceReducedMotion();
 
   if (reduceMotion) {
     return <div className={cn(className)}>{children}</div>;

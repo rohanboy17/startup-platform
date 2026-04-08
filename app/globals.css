@@ -137,7 +137,7 @@
     @apply border-border outline-ring/50;
   }
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
   }
   body {
     @apply bg-background text-foreground;
@@ -188,10 +188,9 @@
     rgba(16, 185, 129, 0.22) 55%,
     transparent 70%
   );
-  background-size: 240% 240%;
-  animation: gridSweep 12s linear infinite;
+  background-size: 200% 200%;
   mix-blend-mode: screen;
-  opacity: 0.8;
+  opacity: 0.32;
 }
 
 @keyframes gridSweep {
@@ -212,22 +211,19 @@
 .surface-card {
   background: color-mix(in oklch, var(--surface-1) 86%, transparent 14%);
   border: 1px solid color-mix(in oklch, var(--border) 72%, transparent 28%);
-  box-shadow: var(--elevation-1);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 14px rgba(2, 8, 23, 0.06);
 }
 
 .surface-card-elevated {
   background: color-mix(in oklch, var(--surface-2) 84%, transparent 16%);
   border: 1px solid color-mix(in oklch, var(--border) 68%, transparent 32%);
-  box-shadow: var(--elevation-2);
-  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 24px rgba(2, 8, 23, 0.09);
 }
 
 .surface-card-focus {
   background: color-mix(in oklch, var(--surface-3) 82%, transparent 18%);
   border: 1px solid color-mix(in oklch, var(--ring-strong) 56%, transparent 44%);
-  box-shadow: var(--elevation-3);
-  backdrop-filter: blur(16px);
+  box-shadow: 0 16px 32px rgba(2, 8, 23, 0.12);
 }
 
 .kpi-value {
@@ -293,11 +289,25 @@
 @media (max-width: 640px) {
   .bg-grid::after {
     animation: none;
-    opacity: 0.35;
+    opacity: 0.2;
   }
 
   .home-orb {
     display: none;
+  }
+}
+
+.dashboard-shell [class*="backdrop-blur"],
+.home-shell [class*="backdrop-blur"],
+.public-shell [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+@media (max-width: 1024px) {
+  .auth-shell [class*="backdrop-blur"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 }
 

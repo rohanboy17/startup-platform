@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
   Bell,
   BriefcaseBusiness,
@@ -113,50 +113,53 @@ export default function UserOverviewPanel() {
   const [error, setError] = useState("");
   const hydrated = useHydrated();
 
-  const quickLinks = [
-    {
-      href: "/dashboard/user/tasks",
-      title: t("openTasks"),
-      description: t("openTasksDesc"),
-      Icon: ListChecks,
-      iconClassName: "border-emerald-400/25 bg-emerald-400/10 text-emerald-700 dark:text-emerald-200",
-    },
-    {
-      href: "/dashboard/user/jobs",
-      title: t("openJobs"),
-      description: t("openJobsDesc"),
-      Icon: BriefcaseBusiness,
-      iconClassName: "border-sky-400/25 bg-sky-400/10 text-sky-700 dark:text-sky-200",
-    },
-    {
-      href: "/dashboard/user/job-applications",
-      title: t("openJobApplications"),
-      description: t("openJobApplicationsDesc"),
-      Icon: ClipboardList,
-      iconClassName: "border-violet-400/25 bg-violet-400/10 text-violet-700 dark:text-violet-200",
-    },
-    {
-      href: "/dashboard/user/wallet",
-      title: t("openWallet"),
-      description: t("openWalletDesc"),
-      Icon: Wallet,
-      iconClassName: "border-amber-400/25 bg-amber-400/10 text-amber-700 dark:text-amber-200",
-    },
-    {
-      href: "/dashboard/user/notifications",
-      title: t("openNotifications"),
-      description: t("openNotificationsDesc"),
-      Icon: Bell,
-      iconClassName: "border-rose-400/25 bg-rose-400/10 text-rose-700 dark:text-rose-200",
-    },
-    {
-      href: "/dashboard/user/referrals",
-      title: t("openReferrals"),
-      description: t("openReferralsDesc"),
-      Icon: Gift,
-      iconClassName: "border-fuchsia-400/25 bg-fuchsia-400/10 text-fuchsia-700 dark:text-fuchsia-200",
-    },
-  ];
+  const quickLinks = useMemo(
+    () => [
+      {
+        href: "/dashboard/user/tasks",
+        title: t("openTasks"),
+        description: t("openTasksDesc"),
+        Icon: ListChecks,
+        iconClassName: "border-emerald-400/25 bg-emerald-400/10 text-emerald-700 dark:text-emerald-200",
+      },
+      {
+        href: "/dashboard/user/jobs",
+        title: t("openJobs"),
+        description: t("openJobsDesc"),
+        Icon: BriefcaseBusiness,
+        iconClassName: "border-sky-400/25 bg-sky-400/10 text-sky-700 dark:text-sky-200",
+      },
+      {
+        href: "/dashboard/user/job-applications",
+        title: t("openJobApplications"),
+        description: t("openJobApplicationsDesc"),
+        Icon: ClipboardList,
+        iconClassName: "border-violet-400/25 bg-violet-400/10 text-violet-700 dark:text-violet-200",
+      },
+      {
+        href: "/dashboard/user/wallet",
+        title: t("openWallet"),
+        description: t("openWalletDesc"),
+        Icon: Wallet,
+        iconClassName: "border-amber-400/25 bg-amber-400/10 text-amber-700 dark:text-amber-200",
+      },
+      {
+        href: "/dashboard/user/notifications",
+        title: t("openNotifications"),
+        description: t("openNotificationsDesc"),
+        Icon: Bell,
+        iconClassName: "border-rose-400/25 bg-rose-400/10 text-rose-700 dark:text-rose-200",
+      },
+      {
+        href: "/dashboard/user/referrals",
+        title: t("openReferrals"),
+        description: t("openReferralsDesc"),
+        Icon: Gift,
+        iconClassName: "border-fuchsia-400/25 bg-fuchsia-400/10 text-fuchsia-700 dark:text-fuchsia-200",
+      },
+    ],
+    [t]
+  );
 
   const load = useCallback(async () => {
     const res = await fetch("/api/v2/users/me/overview", { credentials: "include" });
@@ -179,7 +182,7 @@ export default function UserOverviewPanel() {
     setData(parsed);
   }, [t]);
 
-  useLiveRefresh(load, 10000);
+  useLiveRefresh(load, 45000);
 
   if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
   if (!data) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
