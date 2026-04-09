@@ -198,7 +198,7 @@
   "home": {
     "landing": {
       "heroTitle": "Verified micro-work and local jobs for people. Controlled delivery, trusted hiring, and clear tracking for businesses.",
-      "heroSubtitle": "FreeEarnHub connects businesses with moderated digital work, internships, and location-based jobs for testing, feedback, content, research, data operations, and field teams."
+      "heroSubtitle": "Verified work and local hiring for people and businesses, managed in one place."
     },
     "announcements": {
       "learnMore": "Learn more"
@@ -211,11 +211,13 @@
       "avgApproval": "Avg approval: {time}",
       "payoutsProtected": "Payouts protected",
       "viewDashboard": "View dashboard",
-      "offeringsLabel": "Built for",
+      "offeringsLabel": "Built for Verified",
       "offerings": [
         "Micro tasks",
         "Digital works",
-        "Physical jobs",
+        "Internships",
+        "On-site jobs",
+        "Office works",
         "Local jobs"
       ]
     },

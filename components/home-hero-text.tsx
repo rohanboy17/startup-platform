@@ -37,7 +37,18 @@ export default function HomeHeroText({ title, subtitle, avgApprovalTimeLabel }: 
             className="mt-1 block min-h-[1.15em] whitespace-nowrap font-bold text-emerald-600 dark:text-emerald-300 sm:ml-2 sm:mt-0 sm:inline-block"
           />
         </span>
-        <span className="mt-1 block whitespace-pre-line">{titleTail}</span>
+        <span className="my-4 flex w-full items-center justify-center gap-3 px-2 sm:my-5 sm:px-0">
+          <span className="h-px min-w-0 flex-1 rounded-full bg-gradient-to-r from-transparent via-emerald-500/65 to-sky-400/45 sm:max-w-[12rem] md:max-w-[14rem]" />
+          <span className="relative flex h-4 w-4 shrink-0 items-center justify-center">
+            <span className="absolute inset-0 rounded-full bg-emerald-400/25 blur-[6px] animate-pulse" />
+            <span className="absolute h-3 w-3 rounded-full border border-emerald-400/45 bg-background/90" />
+            <span className="relative h-1.5 w-1.5 rounded-full bg-emerald-500 dark:bg-emerald-300" />
+          </span>
+          <span className="h-px min-w-0 flex-1 rounded-full bg-gradient-to-l from-transparent via-emerald-500/65 to-sky-400/45 sm:max-w-[12rem] md:max-w-[14rem]" />
+        </span>
+        <span className="mt-2 block text-balance text-[0.8em] font-semibold leading-[1.14] tracking-[-0.025em] text-foreground/90 sm:text-[0.84em] md:text-[0.82em]">
+          {titleTail}
+        </span>
       </motion.h1>
 
       <motion.p
