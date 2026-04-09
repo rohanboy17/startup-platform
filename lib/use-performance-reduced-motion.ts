@@ -3,9 +3,16 @@
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "framer-motion";
 
-export function usePerformanceReducedMotion() {
+type UsePerformanceReducedMotionOptions = {
+  disableOnSmallScreens?: boolean;
+};
+
+export function usePerformanceReducedMotion(
+  options: UsePerformanceReducedMotionOptions = {}
+) {
   const prefersReducedMotion = useReducedMotion();
   const [reduced, setReduced] = useState(Boolean(prefersReducedMotion));
+  const { disableOnSmallScreens = true } = options;
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 1024px)");
@@ -18,7 +25,14 @@ export function usePerformanceReducedMotion() {
     const update = () => {
       const lowCoreDevice =
         typeof navigator.hardwareConcurrency === "number" && navigator.hardwareConcurrency <= 4;
-      setReduced(Boolean(prefersReducedMotion || mediaQuery.matches || connection?.saveData || lowCoreDevice));
+      setReduced(
+        Boolean(
+          prefersReducedMotion ||
+            (disableOnSmallScreens && mediaQuery.matches) ||
+            connection?.saveData ||
+            lowCoreDevice
+        )
+      );
     };
 
     update();
@@ -30,7 +44,7 @@ export function usePerformanceReducedMotion() {
 
     mediaQuery.addListener(update);
     return () => mediaQuery.removeListener(update);
-  }, [prefersReducedMotion]);
+  }, [disableOnSmallScreens, prefersReducedMotion]);
 
   return reduced;
 }

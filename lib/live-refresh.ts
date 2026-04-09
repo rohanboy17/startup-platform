@@ -18,12 +18,12 @@ export function useLiveRefresh(load: () => Promise<void> | void, intervalMs = 30
 
   useEffect(() => {
     const getEffectiveInterval = () => {
-      const minimumInterval = Math.max(intervalMs, 20000);
+      const minimumInterval = Math.max(intervalMs, 30000);
       const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
       const lowCoreDevice =
         typeof navigator.hardwareConcurrency === "number" && navigator.hardwareConcurrency <= 4;
       if (connection?.saveData || lowCoreDevice) {
-        return Math.max(minimumInterval, 45000);
+        return Math.max(minimumInterval, 60000);
       }
       return minimumInterval;
     };

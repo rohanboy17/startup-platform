@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, CheckCircle2, ShieldCheck, Timer, ArrowUpRight } from "lucide-react";
 import { useTranslations } from "next-intl";
+import HomeHeroOfferings from "@/components/home-hero-offerings";
 
 type HomeHeroTextProps = {
   title: string;
@@ -14,15 +15,29 @@ type HomeHeroTextProps = {
 export default function HomeHeroText({ title, subtitle, avgApprovalTimeLabel }: HomeHeroTextProps) {
   const t = useTranslations("home.hero");
   const reduceMotion = useReducedMotion();
+  const offerings = t.raw("offerings") as string[];
+  const titleParts = title
+    .split(".")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const titleTail = titleParts.length > 1 ? `${titleParts.slice(1).join(". ")}.` : title;
+
   return (
     <div className="space-y-5 sm:space-y-8">
       <motion.h1
         initial={reduceMotion ? false : { opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: "easeOut" }}
-        className="max-w-[20ch] text-balance text-2xl font-bold leading-tight min-[360px]:text-3xl sm:max-w-none sm:text-4xl md:text-6xl whitespace-pre-line"
+        className="max-w-[20ch] text-balance text-2xl font-bold leading-tight min-[360px]:text-3xl sm:max-w-none sm:text-4xl md:text-6xl"
       >
-        {title}
+        <span className="block">
+          <span className="block sm:inline">{t("offeringsLabel")}</span>{" "}
+          <HomeHeroOfferings
+            phrases={offerings}
+            className="mt-1 block min-h-[1.15em] whitespace-nowrap font-bold text-emerald-600 dark:text-emerald-300 sm:ml-2 sm:mt-0 sm:inline-block"
+          />
+        </span>
+        <span className="mt-1 block whitespace-pre-line">{titleTail}</span>
       </motion.h1>
 
       <motion.p
