@@ -1,5 +1,6 @@
 import { Quote } from "lucide-react";
-import { MotionItem, MotionStagger } from "@/components/motion-stagger";
+import MobileCarouselShell from "@/components/mobile-carousel-shell";
+import { MotionItem } from "@/components/motion-stagger";
 
 type TestimonialItem = {
   quote: string;
@@ -30,11 +31,11 @@ export default function HomeTestimonialsSection({
         <p className="text-sm leading-6 text-foreground/70 sm:text-base">{subtitle}</p>
       </div>
 
-      <MotionStagger className="grid gap-5 md:grid-cols-3">
+      <MobileCarouselShell className="-mx-1 flex snap-x snap-mandatory gap-5 overflow-x-auto px-1 pb-2 no-scrollbar md:mx-0 md:grid md:overflow-visible md:px-0 md:pb-0 md:grid-cols-3">
         {items.map((item, index) => (
           <MotionItem
             key={`${item.name}-${index}`}
-            className="flex h-full flex-col rounded-3xl border border-foreground/10 bg-foreground/5 p-6 shadow-[0_20px_70px_-44px_rgba(15,23,42,0.25)]"
+            className="flex h-full min-w-[84%] max-w-[22rem] snap-start flex-col rounded-3xl border border-foreground/10 bg-foreground/5 p-6 shadow-[0_20px_70px_-44px_rgba(15,23,42,0.25)] md:min-w-0 md:max-w-none"
           >
             <div className="flex items-center justify-between">
               <Quote className="text-emerald-500" size={22} />
@@ -42,14 +43,14 @@ export default function HomeTestimonialsSection({
                 {item.role}
               </span>
             </div>
-            <p className="mt-5 flex-1 text-sm leading-7 text-foreground/80 sm:text-base">{item.quote}</p>
+            <p className="mt-5 flex-1 line-clamp-6 text-sm leading-7 text-foreground/80 md:line-clamp-none sm:text-base">{item.quote}</p>
             <div className="mt-5 border-t border-foreground/10 pt-4">
               <p className="font-semibold text-foreground">{item.name}</p>
               <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{item.role}</p>
             </div>
           </MotionItem>
         ))}
-      </MotionStagger>
+      </MobileCarouselShell>
 
       {footer ? <div>{footer}</div> : null}
     </div>

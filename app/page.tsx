@@ -12,6 +12,7 @@ import { getFeatureFlag } from "@/lib/cms";
 import { prisma } from "@/lib/prisma";
 import HomeLiveFloatsAndStats from "@/components/home-live-floats-and-stats";
 import HomeLiveHeroVisual from "@/components/home-live-hero-visual";
+import MobileCarouselShell from "@/components/mobile-carousel-shell";
 import PwaInstallNudge from "@/components/pwa-install-nudge";
 import HomeGuidedVideoSection from "@/components/home-guided-video-section";
 import HomeTestimonialsSection from "@/components/home-testimonials-section";
@@ -268,6 +269,7 @@ export default async function Home() {
       iconClassName: "text-violet-500",
     },
   ];
+  const platformCards = [...(showFeatures ? featureCards : []), ...trustCards];
 
   return (
     <div className="home-shell relative min-h-screen overflow-x-clip bg-background text-foreground">
@@ -312,8 +314,8 @@ export default async function Home() {
         </section>
       ) : null}
 
-      <section className="relative mx-auto grid w-full max-w-screen-2xl items-stretch gap-8 px-4 pb-16 pt-8 sm:gap-10 sm:px-6 sm:pb-20 sm:pt-14 lg:grid-cols-[1.2fr_0.8fr] lg:items-start">
-        <MotionSection className="min-w-0">
+      <section className="relative mx-auto grid w-full max-w-screen-2xl items-stretch gap-7 px-4 pb-14 pt-6 sm:gap-9 sm:px-6 sm:pb-[4.5rem] sm:pt-12 lg:grid-cols-[1.22fr_0.78fr]">
+        <MotionSection className="flex min-w-0 flex-col lg:h-full">
           <HomeHeroText
             title={heroTitle}
             subtitle={heroSubtitle}
@@ -322,18 +324,18 @@ export default async function Home() {
           <HomeLiveFloatsAndStats initial={heroMetrics} showStats={showStats} />
         </MotionSection>
 
-        <div className="mx-auto w-full max-w-full min-w-0 space-y-6">
+        <div className="mx-auto flex h-full w-full max-w-full min-w-0 flex-col gap-5">
           <HomeLiveHeroVisual initial={heroMetrics} />
           {showLiveActivity ? (
-            <div id="live-activity">
+            <section id="live-activity" className="home-anchor-target flex-1">
               <HomeLiveSection />
-            </div>
+            </section>
           ) : null}
         </div>
       </section>
 
-      <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-12 sm:px-6 sm:pb-16">
-        <MotionSection className="rounded-[2rem] border border-foreground/10 bg-foreground/5 p-5 sm:p-7">
+      <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-10 sm:px-6 sm:pb-16">
+        <MotionSection>
           <HomeGuidedVideoSection
             items={guidedVideos.map((item) => ({
               ...item,
@@ -350,12 +352,25 @@ export default async function Home() {
         </MotionSection>
       </section>
 
-      <section id="how-it-works" className="relative mx-auto w-full max-w-screen-2xl px-4 pb-12 sm:px-6 sm:pb-16">
+      <section id="how-it-works" className="home-anchor-target relative mx-auto w-full max-w-screen-2xl px-4 pb-10 sm:px-6 sm:pb-16">
+        <div className="mb-6 max-w-3xl space-y-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-sky-500/80 dark:text-sky-300/70">
+            {tHome("workflowSection.eyebrow")}
+          </p>
+          <h2 className="text-2xl font-semibold sm:text-3xl">{tHome("workflowSection.title")}</h2>
+          <p className="text-sm leading-6 text-foreground/70 sm:text-base">
+            {tHome("workflowSection.subtitle")}
+          </p>
+        </div>
         <MotionStagger className="grid gap-6 lg:grid-cols-2">
-          <MotionItem className="rounded-3xl border border-foreground/10 bg-foreground/5 p-6 sm:p-7">
+          <MotionItem className="relative overflow-hidden rounded-[2rem] border border-foreground/10 bg-background/70 p-6 shadow-[0_18px_45px_-36px_rgba(15,23,42,0.18)] sm:p-8">
+            <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-emerald-400/0 via-emerald-400/70 to-sky-400/0" />
             <div className="space-y-4">
               <p className="text-sm font-semibold uppercase tracking-wide text-foreground/60">{tHome("sections.howItWorksEyebrow")}</p>
               <h2 className="text-2xl font-semibold sm:text-3xl">{tHome("sections.howItWorksTitle")}</h2>
+              <p className="max-w-2xl text-sm leading-6 text-foreground/65 sm:text-base">
+                {tHome("sections.howItWorksIntro")}
+              </p>
               <ul className="space-y-3 text-sm text-foreground/70">
                 <li className="flex items-start gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-emerald-400" />
@@ -372,10 +387,14 @@ export default async function Home() {
               </ul>
             </div>
           </MotionItem>
-          <MotionItem className="rounded-3xl border border-foreground/10 bg-foreground/5 p-6 sm:p-7">
+          <MotionItem className="relative overflow-hidden rounded-[2rem] border border-foreground/10 bg-background/70 p-6 shadow-[0_18px_45px_-36px_rgba(15,23,42,0.18)] sm:p-8">
+            <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-sky-400/0 via-sky-400/70 to-violet-400/0" />
             <div className="space-y-4">
               <p className="text-sm font-semibold uppercase tracking-wide text-foreground/60">{tHome("sections.forBusinessesEyebrow")}</p>
               <h2 className="text-2xl font-semibold sm:text-3xl">{tHome("sections.forBusinessesTitle")}</h2>
+              <p className="max-w-2xl text-sm leading-6 text-foreground/65 sm:text-base">
+                {tHome("sections.forBusinessesIntro")}
+              </p>
               <ul className="space-y-3 text-sm text-foreground/70">
                 <li className="flex items-start gap-3">
                   <span className="mt-1 h-2 w-2 rounded-full bg-emerald-400" />
@@ -395,15 +414,25 @@ export default async function Home() {
         </MotionStagger>
       </section>
 
-      {showFeatures ? (
-        <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-12 sm:px-6 sm:pb-16">
-          <MotionStagger className="grid gap-5 sm:gap-6 md:grid-cols-3 auto-rows-fr">
-            {featureCards.map((item) => {
+      {platformCards.length > 0 ? (
+        <section id="trust" className="home-anchor-target relative mx-auto w-full max-w-screen-2xl px-4 pb-10 sm:px-6 sm:pb-16">
+          <div className="mb-6 max-w-3xl space-y-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-500/80 dark:text-emerald-300/70">
+              {tHome("platformCards.eyebrow")}
+            </p>
+            <h2 className="text-2xl font-semibold sm:text-3xl">{tHome("platformCards.title")}</h2>
+            <p className="text-sm leading-6 text-foreground/70 sm:text-base">
+              {tHome("platformCards.subtitle")}
+            </p>
+          </div>
+
+          <MobileCarouselShell className="-mx-1 flex snap-x snap-mandatory gap-5 overflow-x-auto px-1 pb-2 no-scrollbar md:mx-0 md:grid md:auto-rows-fr md:overflow-visible md:px-0 md:pb-0 md:grid-cols-3 md:gap-6">
+            {platformCards.map((item) => {
               const Icon = item.icon;
               return (
                 <MotionItem
                   key={item.title}
-                  className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-foreground/10 bg-foreground/5 shadow-[0_24px_70px_-42px_rgba(15,23,42,0.42)]"
+                  className="group flex h-full min-w-[86%] max-w-[22rem] snap-start flex-col overflow-hidden rounded-[1.75rem] border border-foreground/10 bg-background/72 shadow-[0_18px_48px_-38px_rgba(15,23,42,0.22)] md:min-w-0 md:max-w-none"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden border-b border-foreground/10 bg-foreground/[0.04]">
                     <Image
@@ -417,47 +446,17 @@ export default async function Home() {
                     </div>
                   </div>
                   <div className="flex flex-1 flex-col p-5 sm:p-6">
-                    <h3 className="text-xl font-semibold">{item.title}</h3>
-                    <p className="mt-3 text-foreground/65">{item.body}</p>
+                    <h3 className="min-h-[3.5rem] line-clamp-2 text-xl font-semibold md:min-h-0 md:line-clamp-none">{item.title}</h3>
+                    <p className="mt-3 line-clamp-4 text-foreground/65 md:line-clamp-none">{item.body}</p>
                   </div>
                 </MotionItem>
               );
             })}
-          </MotionStagger>
+          </MobileCarouselShell>
         </section>
       ) : null}
 
-      <section id="trust" className="relative mx-auto w-full max-w-screen-2xl px-4 pb-12 sm:px-6 sm:pb-16">
-        <MotionStagger className="grid gap-6 md:grid-cols-3 auto-rows-fr">
-          {trustCards.map((item) => {
-            const Icon = item.icon;
-            return (
-              <MotionItem
-                key={item.title}
-                className="group flex h-full flex-col overflow-hidden rounded-[1.9rem] border border-foreground/10 bg-foreground/5 shadow-[0_24px_70px_-42px_rgba(15,23,42,0.42)]"
-              >
-                <div className="relative aspect-[16/10] overflow-hidden border-b border-foreground/10 bg-foreground/[0.04]">
-                  <Image
-                    src={item.image}
-                    alt={item.alt}
-                    fill
-                    className="object-cover transition duration-500 group-hover:scale-[1.03]"
-                  />
-                  <div className="absolute left-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/20 bg-background/80 shadow-lg backdrop-blur-md">
-                    <Icon className={item.iconClassName} />
-                  </div>
-                </div>
-                <div className="flex flex-1 flex-col p-6 sm:p-7">
-                  <h3 className="text-lg font-semibold">{item.title}</h3>
-                  <p className="mt-3 text-sm text-foreground/70">{item.body}</p>
-                </div>
-              </MotionItem>
-            );
-          })}
-        </MotionStagger>
-      </section>
-
-      <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-12 sm:px-6 sm:pb-16">
+      <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-10 sm:px-6 sm:pb-16">
         <HomeTestimonialsSection
           eyebrow={tHome("testimonials.eyebrow")}
           title={tHome("testimonials.title")}
@@ -490,14 +489,15 @@ export default async function Home() {
       </section>
 
       <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-16 sm:px-6 sm:pb-20">
-        <MotionSection className="flex flex-col items-start justify-between gap-6 rounded-3xl border border-foreground/10 bg-foreground/5 p-6 sm:flex-row sm:items-center sm:p-7">
-          <div>
+        <MotionSection className="relative overflow-hidden rounded-[2.25rem] border border-foreground/10 bg-[linear-gradient(135deg,rgba(16,185,129,0.08),rgba(59,130,246,0.06)_55%,rgba(255,255,255,0.02))] p-6 sm:flex-row sm:items-center sm:p-7">
+          <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-1/3 bg-[radial-gradient(circle_at_center,rgba(59,130,246,0.12),transparent_62%)] sm:block" />
+          <div className="relative">
             <h2 className="text-2xl font-semibold">{tHome("cta.title")}</h2>
             <p className="mt-2 text-sm text-foreground/70">
               {tHome("cta.body")}
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="relative flex flex-wrap gap-3">
             <Link
               href="/register"
               className="inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-semibold text-background transition hover:scale-105"

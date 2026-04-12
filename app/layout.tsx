@@ -60,14 +60,14 @@ export default async function RootLayout({
     <html lang={locale} suppressHydrationWarning>
       <body
         suppressHydrationWarning
-        className={`${GeistSans.variable} ${GeistMono.variable} antialiased selection:bg-emerald-300/30`}
+        className={`${GeistSans.variable} ${GeistMono.variable} flex min-h-screen flex-col antialiased selection:bg-emerald-300/30`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ThemeProvider>
             <PwaRegister />
             <PushForegroundListener />
             <SiteHeader />
-            <div className="pt-14 sm:pt-16">{children}</div>
+            <main className="flex-1 pt-14 sm:pt-16">{children}</main>
             <SiteFooter year={year} />
           </ThemeProvider>
         </NextIntlClientProvider>

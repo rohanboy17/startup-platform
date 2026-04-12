@@ -35,8 +35,8 @@ export default function HomeGuidedVideoSection({
   if (!activeItem) return null;
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr] xl:items-stretch">
-      <div className="space-y-5 rounded-3xl border border-foreground/10 bg-foreground/5 p-6 sm:p-7">
+    <div className="grid gap-5 xl:grid-cols-[0.92fr_1.08fr] xl:items-stretch">
+      <div className="space-y-4 rounded-[1.85rem] border border-foreground/10 bg-background/72 p-5 shadow-[0_16px_40px_-34px_rgba(15,23,42,0.16)] sm:p-6">
         <div className="space-y-3">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-500/80 dark:text-emerald-300/70">
             {activeItem.eyebrow}
@@ -45,7 +45,7 @@ export default function HomeGuidedVideoSection({
           <p className="text-sm leading-6 text-foreground/70 sm:text-base">{activeItem.body}</p>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+        <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-1">
           {items.map((item) => {
             const active = item.id === activeItem.id;
             return (
@@ -53,10 +53,10 @@ export default function HomeGuidedVideoSection({
                 key={item.id}
                 type="button"
                 onClick={() => setActiveId(item.id)}
-                className={`rounded-2xl border px-4 py-4 text-left transition ${
+                className={`rounded-[1.35rem] border px-4 py-3.5 text-left transition ${
                   active
-                    ? "border-emerald-400/30 bg-emerald-500/10 shadow-[0_18px_50px_-30px_rgba(16,185,129,0.45)]"
-                    : "border-foreground/10 bg-background/40 hover:bg-foreground/[0.06]"
+                    ? "border-emerald-400/30 bg-emerald-500/10 shadow-[0_14px_34px_-28px_rgba(16,185,129,0.24)]"
+                    : "border-foreground/10 bg-background/60 hover:bg-foreground/[0.05]"
                 }`}
               >
                 <p className="text-sm font-semibold text-foreground">{item.tabLabel}</p>
@@ -66,7 +66,7 @@ export default function HomeGuidedVideoSection({
           })}
         </div>
 
-        <div className="rounded-2xl border border-foreground/10 bg-background/40 p-4">
+        <div className="rounded-[1.35rem] border border-foreground/10 bg-background/55 p-4">
           <ul className="space-y-3 text-sm text-foreground/70">
             {activeItem.bullets.map((bullet, index) => (
               <li key={`${activeItem.id}-${index}`} className="flex items-start gap-3">
@@ -78,7 +78,7 @@ export default function HomeGuidedVideoSection({
         </div>
       </div>
 
-      <div className="rounded-3xl border border-foreground/10 bg-foreground/5 p-4 shadow-[0_24px_80px_-42px_rgba(15,23,42,0.28)] sm:p-5">
+      <div className="rounded-[1.85rem] border border-foreground/10 bg-background/72 p-4 shadow-[0_18px_44px_-34px_rgba(15,23,42,0.18)] sm:p-5">
         <div className="overflow-hidden rounded-[1.75rem] border border-foreground/10 bg-background/80">
           <div className="flex items-center justify-between gap-3 border-b border-foreground/10 px-4 py-3 sm:px-5">
             <div>

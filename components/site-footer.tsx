@@ -1,23 +1,38 @@
 "use client";
 
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import PublicSocialLinks from "@/components/public-social-links";
+import { cn } from "@/lib/utils";
 
 export default function SiteFooter({ year }: { year: number }) {
   const tFooter = useTranslations("footer");
   const tLinks = useTranslations("footer.links");
+  const [mobileOpen, setMobileOpen] = useState({
+    platform: false,
+    compliance: false,
+  });
+
+  const toggleMobileGroup = (group: "platform" | "compliance") => {
+    setMobileOpen((current) => ({
+      ...current,
+      [group]: !current[group],
+    }));
+  };
 
   return (
-    <footer className="relative border-t border-foreground/10 bg-background px-4 py-8 text-sm text-foreground/70 sm:px-6 sm:py-12">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.15),transparent_70%)]" />
-      <div className="mx-auto w-full max-w-screen-2xl space-y-8">
-        <div className="surface-card-focus rounded-3xl p-5 sm:p-8">
-          <div className="space-y-6 sm:space-y-8 lg:grid lg:grid-cols-[1.15fr_1fr] lg:gap-10 lg:space-y-0">
-            <div className="space-y-4 text-center sm:text-left">
-              <div className="flex items-center justify-center gap-3 sm:justify-start">
-                <div className="h-10 w-10 rounded-2xl border border-foreground/10 bg-foreground/5 p-[3px]">
-                  <div className="h-full w-full rounded-[14px] bg-gradient-to-br from-emerald-400/80 to-sky-400/70" />
+    <footer className="relative overflow-hidden border-t border-foreground/10 bg-[linear-gradient(180deg,rgba(16,185,129,0.025),rgba(59,130,246,0.025)_45%,rgba(15,23,42,0.015)_100%)] px-4 py-8 text-sm text-foreground/72 sm:px-6 sm:py-12">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.14),transparent_72%)]" />
+
+      <div className="relative mx-auto w-full max-w-screen-2xl space-y-5">
+        <div className="rounded-[2rem] border border-foreground/10 bg-background/84 p-5 shadow-[0_18px_48px_-40px_rgba(15,23,42,0.16)] sm:p-6">
+          <div className="grid gap-5 xl:grid-cols-[1.1fr_0.9fr] xl:items-start">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 items-center justify-center rounded-[1.1rem] border border-foreground/10 bg-foreground/[0.04] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)]">
+                  <div className="h-5 w-5 rounded-full bg-gradient-to-br from-emerald-400 to-sky-400" />
                 </div>
                 <div>
                   <p className="text-lg font-semibold tracking-tight text-foreground">FreeEarnHub</p>
@@ -26,68 +41,110 @@ export default function SiteFooter({ year }: { year: number }) {
                   </p>
                 </div>
               </div>
-              <p className="mx-auto max-w-md text-sm text-foreground/60 sm:mx-0">{tFooter("tagline")}</p>
+
+              <div className="max-w-2xl space-y-2.5">
+                <p className="text-[15px] leading-7 text-foreground/82 sm:text-lg">{tFooter("tagline")}</p>
+                <p className="text-sm leading-6 text-foreground/60">{tFooter("builtFor")}</p>
+              </div>
+
               <PublicSocialLinks
                 title={tFooter("socialTitle")}
                 description={tFooter("socialDescription")}
                 iconOnly
               />
-              <p className="text-xs text-foreground/50">{tFooter("creditLine")}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 border-t border-foreground/10 pt-5 text-center md:gap-8 md:pt-6 md:text-left lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
-              <div className="surface-card rounded-2xl p-4 sm:p-5">
-                <p className="mb-3 text-sm font-semibold text-foreground">{tFooter("platform")}</p>
-                <nav className="grid gap-2 text-sm text-foreground/70">
-                  <Link href="/" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <div className="rounded-[1.4rem] border border-foreground/10 bg-background/76 p-4 shadow-[0_12px_28px_-24px_rgba(15,23,42,0.14)] sm:p-5">
+                <button
+                  type="button"
+                  onClick={() => toggleMobileGroup("platform")}
+                  className="flex w-full items-center justify-between gap-2 text-left"
+                  aria-expanded={mobileOpen.platform}
+                >
+                  <span className="text-sm font-semibold text-foreground">{tFooter("platform")}</span>
+                  <ChevronDown
+                    size={16}
+                    className={cn(
+                      "text-foreground/55 transition sm:hidden",
+                      mobileOpen.platform ? "rotate-180" : "rotate-0"
+                    )}
+                  />
+                </button>
+                <nav
+                  className={cn(
+                    "mt-3 text-xs text-foreground/70 sm:mt-4 sm:grid sm:gap-2 sm:text-sm",
+                    mobileOpen.platform ? "grid gap-1.5" : "hidden sm:grid"
+                  )}
+                >
+                  <Link href="/" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("home")}
                   </Link>
-                  <Link href="/services" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                  <Link href="/services" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("services")}
                   </Link>
-                  <Link href="/about" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                  <Link href="/about" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("about")}
                   </Link>
-                  <Link href="/faq" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                  <Link href="/faq" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("faq")}
                   </Link>
-                  <Link href="/contact" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                  <Link href="/contact" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("contact")}
                   </Link>
-                  <Link href="/support" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                  <Link href="/support" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("support")}
                   </Link>
-                  <Link href="/sitemap" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                  <Link href="/sitemap" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("sitemap")}
                   </Link>
                 </nav>
               </div>
 
-              <div className="surface-card rounded-2xl p-4 sm:p-5">
-                <p className="mb-3 text-sm font-semibold text-foreground">{tFooter("compliance")}</p>
-                <nav className="grid gap-2 text-sm text-foreground/70">
-                  <Link href="/terms" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+              <div className="rounded-[1.4rem] border border-foreground/10 bg-background/76 p-4 shadow-[0_12px_28px_-24px_rgba(15,23,42,0.14)] sm:p-5">
+                <button
+                  type="button"
+                  onClick={() => toggleMobileGroup("compliance")}
+                  className="flex w-full items-center justify-between gap-2 text-left"
+                  aria-expanded={mobileOpen.compliance}
+                >
+                  <span className="text-sm font-semibold text-foreground">{tFooter("compliance")}</span>
+                  <ChevronDown
+                    size={16}
+                    className={cn(
+                      "text-foreground/55 transition sm:hidden",
+                      mobileOpen.compliance ? "rotate-180" : "rotate-0"
+                    )}
+                  />
+                </button>
+                <nav
+                  className={cn(
+                    "mt-3 text-xs text-foreground/70 sm:mt-4 sm:grid sm:gap-2 sm:text-sm",
+                    mobileOpen.compliance ? "grid gap-1.5" : "hidden sm:grid"
+                  )}
+                >
+                  <Link href="/terms" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("terms")}
                   </Link>
-                  <Link href="/privacy" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                  <Link href="/privacy" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("privacy")}
                   </Link>
-                  <Link href="/refund-policy" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                  <Link href="/refund-policy" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("refund")}
                   </Link>
-                  <Link href="/cookie-policy" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                  <Link href="/cookie-policy" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("cookie")}
                   </Link>
-                  <Link href="/disclaimer" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                  <Link href="/disclaimer" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("disclaimer")}
                   </Link>
-                  <Link href="/kyc-policy" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                  <Link href="/kyc-policy" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("kyc")}
                   </Link>
-                  <Link href="/business-guidelines" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                  <Link href="/business-guidelines" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("businessGuidelines")}
                   </Link>
-                  <Link href="/compliance" className="rounded-md px-2 py-1 transition hover:bg-foreground/[0.06] hover:text-foreground">
+                  <Link href="/compliance" className="rounded-lg px-2.5 py-2 transition hover:bg-foreground/[0.06] hover:text-foreground">
                     {tLinks("compliancePage")}
                   </Link>
                 </nav>
@@ -100,11 +157,9 @@ export default function SiteFooter({ year }: { year: number }) {
           <p>
             (c) {year} FreeEarnHub. {tFooter("rights")}
           </p>
-          <p>{tFooter("builtFor")}</p>
+          <p>{tFooter("creditLine")}</p>
         </div>
       </div>
     </footer>
   );
 }
-
-

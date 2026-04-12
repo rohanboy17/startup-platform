@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, type Variants } from "framer-motion";
-import { ReactNode } from "react";
+import { forwardRef, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { usePerformanceReducedMotion } from "@/lib/use-performance-reduced-motion";
 
@@ -32,15 +32,23 @@ const item: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
 };
 
-export function MotionStagger({ children, className, delay = 0 }: MotionStaggerProps) {
+export const MotionStagger = forwardRef<HTMLDivElement, MotionStaggerProps>(function MotionStagger(
+  { children, className, delay = 0 },
+  ref
+) {
   const reduceMotion = usePerformanceReducedMotion();
 
   if (reduceMotion) {
-    return <div className={cn(className)}>{children}</div>;
+    return (
+      <div ref={ref} className={cn(className)}>
+        {children}
+      </div>
+    );
   }
 
   return (
     <motion.div
+      ref={ref}
       className={cn(className)}
       variants={container}
       initial="hidden"
@@ -51,7 +59,7 @@ export function MotionStagger({ children, className, delay = 0 }: MotionStaggerP
       {children}
     </motion.div>
   );
-}
+});
 
 export function MotionItem({ children, className }: MotionItemProps) {
   const reduceMotion = usePerformanceReducedMotion();

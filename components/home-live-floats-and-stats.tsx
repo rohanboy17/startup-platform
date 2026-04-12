@@ -1,12 +1,12 @@
 "use client";
 
-import { Building2, CheckCircle2, Megaphone, Users, Wallet } from "lucide-react";
+import { BriefcaseBusiness, Building2, CheckCircle2, Megaphone, Timer, Users, Wallet } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
-import HomeHeroFloats from "@/components/home-hero-floats";
+import MobileCarouselShell from "@/components/mobile-carousel-shell";
 import MotionSection from "@/components/motion-section";
 import MetricCounter from "@/components/metric-counter";
-import { MotionItem, MotionStagger } from "@/components/motion-stagger";
+import { MotionItem } from "@/components/motion-stagger";
 import { SectionCard } from "@/components/ui/section-card";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { useLiveRefresh } from "@/lib/live-refresh";
@@ -30,6 +30,7 @@ export default function HomeLiveFloatsAndStats({
   showStats: boolean;
 }) {
   const t = useTranslations("home.stats");
+  const tHero = useTranslations("home.heroMetrics");
   const [metrics, setMetrics] = useState<HeroMetrics>(initial);
 
   const load = useCallback(async () => {
@@ -42,28 +43,47 @@ export default function HomeLiveFloatsAndStats({
   useLiveRefresh(load, 30000);
 
   return (
-    <>
-      <div className="mt-6 sm:mt-8">
-        <HomeHeroFloats
-          totalJobs={metrics.totalJobs}
-          totalJobApplications={metrics.totalJobApplications}
-          activeHiring={metrics.activeHiring}
-        />
-      </div>
-      {showStats ? (
-        <MotionSection className="mt-8 w-full sm:mt-10" delay={0.1}>
-          <SectionCard elevated>
-            <MotionStagger className="grid w-full grid-cols-2 gap-3 auto-rows-fr sm:grid-cols-3 lg:grid-cols-5">
-              <MotionItem>
-                <KpiCard
-                  label={t("totalPayout")}
-                  value={<MetricCounter value={metrics.totalPayout} formatter="inr" />}
-                  icon={<Wallet size={18} />}
-                  tone="success"
-                />
-              </MotionItem>
+    <MotionSection className="mt-5 w-full sm:mt-6 lg:flex-1" delay={0.1}>
+      <SectionCard elevated className="h-full p-4 sm:p-5 lg:p-6">
+        <MobileCarouselShell className="-mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-2 no-scrollbar md:mx-0 md:grid md:grid-cols-4 md:overflow-visible md:px-0 md:pb-0">
+          <MotionItem className="min-w-[82%] snap-start sm:min-w-[60%] md:min-w-0">
+            <KpiCard
+              label={t("totalPayout")}
+              value={<MetricCounter value={metrics.totalPayout} formatter="inr" />}
+              icon={<Wallet size={18} />}
+              tone="success"
+            />
+          </MotionItem>
 
-              <MotionItem>
+          <MotionItem className="min-w-[82%] snap-start sm:min-w-[60%] md:min-w-0">
+            <KpiCard
+              label={tHero("totalJobs.title")}
+              value={<MetricCounter value={metrics.totalJobs} />}
+              icon={<BriefcaseBusiness size={18} />}
+            />
+          </MotionItem>
+
+          <MotionItem className="min-w-[82%] snap-start sm:min-w-[60%] md:min-w-0">
+            <KpiCard
+              label={tHero("applications.title")}
+              value={<MetricCounter value={metrics.totalJobApplications} />}
+              icon={<Users size={18} />}
+              tone="success"
+            />
+          </MotionItem>
+
+          <MotionItem className="min-w-[82%] snap-start sm:min-w-[60%] md:min-w-0">
+            <KpiCard
+              label={tHero("activeHiring.title")}
+              value={<MetricCounter value={metrics.activeHiring} />}
+              icon={<Timer size={18} />}
+              tone="info"
+            />
+          </MotionItem>
+
+          {showStats ? (
+            <>
+              <MotionItem className="min-w-[82%] snap-start sm:min-w-[60%] md:min-w-0">
                 <KpiCard
                   label={t("tasksCompleted")}
                   value={<MetricCounter value={metrics.tasksCompleted} />}
@@ -71,7 +91,7 @@ export default function HomeLiveFloatsAndStats({
                 />
               </MotionItem>
 
-              <MotionItem>
+              <MotionItem className="min-w-[82%] snap-start sm:min-w-[60%] md:min-w-0">
                 <KpiCard
                   label={t("campaignsCompleted")}
                   value={<MetricCounter value={metrics.totalCampaigns} />}
@@ -80,7 +100,7 @@ export default function HomeLiveFloatsAndStats({
                 />
               </MotionItem>
 
-              <MotionItem>
+              <MotionItem className="min-w-[82%] snap-start sm:min-w-[60%] md:min-w-0">
                 <KpiCard
                   label={t("businessAccounts")}
                   value={<MetricCounter value={metrics.businessAccounts} />}
@@ -88,17 +108,17 @@ export default function HomeLiveFloatsAndStats({
                 />
               </MotionItem>
 
-              <MotionItem>
+              <MotionItem className="min-w-[82%] snap-start sm:min-w-[60%] md:min-w-0">
                 <KpiCard
                   label={t("totalUsers")}
                   value={<MetricCounter value={metrics.totalUsers} />}
                   icon={<Users size={18} />}
                 />
               </MotionItem>
-            </MotionStagger>
-          </SectionCard>
-        </MotionSection>
-      ) : null}
-    </>
+            </>
+          ) : null}
+        </MobileCarouselShell>
+      </SectionCard>
+    </MotionSection>
   );
 }

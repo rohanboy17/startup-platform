@@ -23,7 +23,7 @@ export default function HomeHeroText({ title, subtitle, avgApprovalTimeLabel }: 
   const titleTail = titleParts.length > 1 ? `${titleParts.slice(1).join(". ")}.` : title;
 
   return (
-    <div className="space-y-5 sm:space-y-8">
+    <div className="space-y-4 sm:space-y-6">
       <motion.h1
         initial={reduceMotion ? false : { opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -37,7 +37,7 @@ export default function HomeHeroText({ title, subtitle, avgApprovalTimeLabel }: 
             className="mt-1 block min-h-[1.15em] whitespace-nowrap font-bold text-emerald-600 dark:text-emerald-300 sm:ml-2 sm:mt-0 sm:inline-block"
           />
         </span>
-        <span className="my-4 flex w-full items-center justify-center gap-3 px-2 sm:my-5 sm:px-0">
+        <span className="my-3 flex w-full items-center justify-center gap-3 px-2 sm:my-4 sm:px-0">
           <span className="h-px min-w-0 flex-1 rounded-full bg-gradient-to-r from-transparent via-emerald-500/65 to-sky-400/45 sm:max-w-[12rem] md:max-w-[14rem]" />
           <span className="relative flex h-4 w-4 shrink-0 items-center justify-center">
             <span className="absolute inset-0 rounded-full bg-emerald-400/25 blur-[6px] animate-pulse" />
@@ -64,7 +64,7 @@ export default function HomeHeroText({ title, subtitle, avgApprovalTimeLabel }: 
         initial={reduceMotion ? false : { opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.45, ease: "easeOut", delay: 0.08 }}
-        className="flex flex-wrap items-center gap-3 sm:gap-4"
+        className="flex flex-wrap items-center gap-2.5 sm:gap-3.5"
       >
         <Link
           href="/register"
@@ -97,7 +97,7 @@ export default function HomeHeroText({ title, subtitle, avgApprovalTimeLabel }: 
         initial={reduceMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.45, ease: "easeOut", delay: 0.12 }}
-        className="flex flex-wrap items-center gap-2 text-[11px] text-foreground/60 sm:gap-3 sm:text-xs"
+        className="flex flex-wrap items-center gap-2 text-[11px] text-foreground/60 sm:gap-2.5 sm:text-xs"
       >
         <span className="inline-flex items-center gap-2 rounded-full border border-foreground/15 bg-foreground/5 px-3 py-1">
           <CheckCircle2 size={14} />

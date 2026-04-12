@@ -84,7 +84,7 @@ export default function HomeLiveSection() {
     activityItems[activityIndex % Math.max(1, activityItems.length)]?.message || t("noActivity");
 
   return (
-    <div className="mx-auto w-full rounded-2xl border border-foreground/15 bg-foreground/5 p-4 backdrop-blur-none sm:rounded-3xl sm:p-6 sm:backdrop-blur-xl">
+    <div className="mx-auto flex h-full w-full flex-col rounded-2xl border border-foreground/12 bg-background/72 p-4 shadow-[0_16px_40px_-34px_rgba(15,23,42,0.16)] backdrop-blur-none sm:rounded-3xl sm:p-6">
       <div className="mb-5 flex flex-col items-start justify-between gap-3 sm:mb-6 sm:flex-row">
         <div className="min-w-0">
           <h2 className="text-xl font-semibold sm:text-2xl">{t("title")}</h2>

@@ -1,6 +1,6 @@
 export default function FullPageLoader({ label = "Loading page..." }: { label?: string }) {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-6 text-foreground">
+    <div className="relative flex min-h-[calc(100dvh-3.5rem)] items-center justify-center overflow-hidden bg-background px-6 text-foreground sm:min-h-[calc(100dvh-4rem)]">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.14),transparent_55%)] dark:bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.18),transparent_60%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,rgba(56,189,248,0.10),transparent_55%)] dark:bg-[radial-gradient(circle_at_bottom,rgba(56,189,248,0.12),transparent_60%)]" />

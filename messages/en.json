@@ -12,7 +12,11 @@
     "register": "Register",
     "dashboardHome": "Home",
     "toggleNavigation": "Toggle navigation",
-    "services": "Services"
+    "services": "Services",
+    "groups": {
+      "explore": "Explore",
+      "sections": "Sections"
+    }
   },
   "footer": {
     "platform": "Platform",
@@ -20,7 +24,7 @@
     "marketplace": "Marketplace",
     "tagline": "A verified operations platform for digital work, internships, local jobs, testing, feedback, content, research, and data tasks.",
     "rights": "All rights reserved.",
-    "builtFor": "Built for moderated workflows, hiring review, payout controls, and accountable delivery.",
+    "builtFor": "Built for verified work, internships, local hiring, and trusted business operations.",
     "links": {
       "home": "Home",
       "about": "About",
@@ -40,7 +44,21 @@
     },
     "socialTitle": "Follow us",
     "socialDescription": "Stay close to new launches, support updates, and community news.",
-    "creditLine": "Designed, Developed and Maintained by FreeEarnhub"
+    "creditLine": "Designed, Developed and Maintained by FreeEarnhub",
+    "highlights": {
+      "people": {
+        "title": "For people",
+        "body": "Verified micro tasks, internships, and local roles with visible review stages."
+      },
+      "businesses": {
+        "title": "For businesses",
+        "body": "Launch moderated work and hiring with funding checks, review flow, and clear tracking."
+      },
+      "trust": {
+        "title": "Trust controls",
+        "body": "Privacy checks, approval rules, and accountable records built into every workflow."
+      }
+    }
   },
   "settings": {
     "languageTitle": "Language",
@@ -197,7 +215,7 @@
   },
   "home": {
     "landing": {
-      "heroTitle": "Verified micro-work and local jobs for people. Controlled delivery, trusted hiring, and clear tracking for businesses.",
+      "heroTitle": "Verified micro-work and local jobs for people. Trusted hiring and clear tracking for businesses.",
       "heroSubtitle": "Verified work and local hiring for people and businesses, managed in one place."
     },
     "announcements": {
@@ -206,8 +224,8 @@
     "hero": {
       "startEarning": "Start Working",
       "createCampaign": "Launch Work",
-      "secureApprovals": "Secure approvals",
-      "manualFraud": "Manual fraud checks",
+      "secureApprovals": "Trusted approvals",
+      "manualFraud": "Safer platform",
       "avgApproval": "Avg approval: {time}",
       "payoutsProtected": "Payouts protected",
       "viewDashboard": "View dashboard",
@@ -222,30 +240,32 @@
       ]
     },
     "sections": {
-      "howItWorksEyebrow": "How it works",
+      "howItWorksEyebrow": "For people",
       "howItWorksTitle": "Start working in three clear steps",
       "howItWorksSteps": [
         "Pick a verified digital task or apply for a local job or internship.",
-        "Follow the work brief or submit your application and track the review stage.",
-        "Get approved, complete the work, and receive wallet credit or hiring updates under the platform rules."
+        "Follow the brief or submit your application and stay updated in your dashboard.",
+        "Complete the work and receive earnings or hiring updates in one place."
       ],
       "forBusinessesEyebrow": "For businesses",
       "forBusinessesTitle": "Run verified work ops and local hiring without chaos",
       "forBusinessesSteps": [
-        "Fund your wallet and launch digital tasks, internships, or moderated local jobs.",
-        "Use admin review, manager checks, and privacy controls before work goes live.",
-        "Track delivery quality, applicants, spend, and approvals from one dashboard."
-      ]
+        "Add funds and post digital tasks, internships, or local jobs.",
+        "Set your requirements, publish opportunities, and start receiving responses.",
+        "Track applicants, progress, spending, and results from one dashboard."
+      ],
+      "howItWorksIntro": "A simple path for people to discover verified tasks, internships, and local jobs without confusion.",
+      "forBusinessesIntro": "One place for businesses to post work, hire people, and keep spending organized."
     },
-      "live": {
-        "title": "Live Platform Activity",
-        "subtitle": "Anonymized real-time feed. No personal data shown.",
-        "live": "Live",
-        "activeUsersLabel": "Active users",
-        "activeBusinessesLabel": "Active businesses",
-        "liveCampaignsLabel": "Live campaigns",
-        "liveJobsLabel": "Live jobs",
-        "activityHistory": "Activity History",
+    "live": {
+      "title": "Live Platform Activity",
+      "subtitle": "Anonymized real-time feed. No personal data shown.",
+      "live": "Live",
+      "activeUsersLabel": "Active users",
+      "activeBusinessesLabel": "Active businesses",
+      "liveCampaignsLabel": "Live campaigns",
+      "liveJobsLabel": "Live jobs",
+      "activityHistory": "Activity History",
       "loading": "Loading live activity...",
       "statsError": "Failed to load live stats",
       "activityError": "Failed to load live activity",
@@ -254,34 +274,34 @@
       "noLiveJobs": "No live job updates right now.",
       "noActivity": "No recent activity yet. New events will appear here.",
       "liveJobs": "Live Jobs"
+    },
+    "heroMetrics": {
+      "totalJobs": {
+        "title": "Total jobs",
+        "caption": "Roles posted on the platform"
       },
-      "heroMetrics": {
-        "totalJobs": {
-          "title": "Total jobs",
-          "caption": "Roles posted on the platform"
-        },
-        "applications": {
-          "title": "Applications",
-          "caption": "Candidate flow in review"
-        },
-        "activeHiring": {
-          "title": "Active hiring",
-          "caption": "Shortlisted, interview, and hire stages"
-        }
+      "applications": {
+        "title": "Applications",
+        "caption": "Candidate flow in review"
       },
-      "features": {
-        "items": [
+      "activeHiring": {
+        "title": "Active hiring",
+        "caption": "Shortlisted, interview, and hire stages"
+      }
+    },
+    "features": {
+      "items": [
         {
           "title": "Safe payouts",
           "body": "Every approved task is tracked clearly so users and businesses can trust the money flow."
         },
         {
           "title": "Digital work and local hiring",
-          "body": "Launch moderated micro-work, internships, and location-based jobs from one place without mixing up delivery and hiring flows."
+          "body": "Launch micro tasks, internships, and location-based jobs from one place without juggling multiple tools."
         },
         {
           "title": "Clear performance tracking",
-          "body": "See approvals, applicants, spending, and delivery quality in one place without guessing what is working."
+          "body": "See applicants, activity, spending, and results in one place without guesswork."
         }
       ]
     },
@@ -289,7 +309,7 @@
       "items": [
         {
           "title": "Real users, real work",
-          "body": "We show only anonymized public activity, moderated applications, and verified submissions to protect privacy."
+          "body": "Public activity stays privacy-safe while work and applications come from real people on the platform."
         },
         {
           "title": "Transparent costs",
@@ -297,13 +317,13 @@
         },
         {
           "title": "Reliable approvals",
-          "body": "Average approval time: {time}. We keep review updates clear so everyone knows what happens next."
+          "body": "Average response time: {time}. Everyone can see updates clearly and know what comes next."
         }
       ]
     },
     "cta": {
       "title": "Ready to work or hire?",
-      "body": "Create an account to start verified work, internships, local jobs, and moderated hiring workflows from one place."
+      "body": "Create an account to start working, hiring, and tracking opportunities from one place."
     },
     "offlineInvite": {
       "eyebrow": "Share FreeEarnHub offline",
@@ -323,35 +343,35 @@
           "tabLabel": "Start working",
           "eyebrow": "Worker walkthrough",
           "title": "Learn how people start work on FreeEarnHub",
-          "body": "Watch the full worker flow before you begin. It shows how to find verified tasks, apply to internships and jobs, and follow each review step clearly.",
+          "body": "Watch how people get started on FreeEarnHub, from finding verified tasks to applying for internships and local jobs.",
           "bullets": [
             "See where to find verified digital tasks and how to choose the right one.",
-            "Understand how job and internship applications move through review before business action.",
-            "Learn when approved work reaches your wallet and when hiring updates appear."
+            "Understand how job and internship applications stay updated in your dashboard.",
+            "Learn when earnings appear and where hiring updates show up."
           ]
         },
         {
           "id": "business",
           "tabLabel": "Run work and hiring",
           "eyebrow": "Business walkthrough",
-          "title": "Learn how businesses run verified work and hiring",
-          "body": "This guide shows the flow from funding the wallet to launching digital work, internships, and local jobs with clear review, applicant control, and delivery tracking.",
+          "title": "Learn how businesses run work and hiring on FreeEarnHub",
+          "body": "See how businesses fund their wallet, launch opportunities, and track responses from one place.",
           "bullets": [
             "Understand wallet funding, budget setup, and reward planning.",
-            "See how campaigns, jobs, and internships move through moderation before going live.",
-            "Follow approvals, applicants, spend, and delivery quality from one dashboard."
+            "Learn how to post campaigns, jobs, and internships with clear setup steps.",
+            "Track applicants, spending, and results from one dashboard."
           ]
         },
         {
           "id": "jobs",
           "tabLabel": "Jobs and internships",
           "eyebrow": "Hiring walkthrough",
-          "title": "See how moderated job applications move",
-          "body": "Follow the hiring path from application to manager review, admin review, interview scheduling, and final business action.",
+          "title": "See how job applications move on FreeEarnHub",
+          "body": "Follow the path from application to interviews, updates, and final hiring decisions.",
           "bullets": [
             "Learn which profile details help nearby roles and internships match correctly.",
-            "See how shortlist, interview, and admin verification stages stay visible to the user.",
-            "Understand when businesses can hire or reject and how updates appear in the applications page."
+            "See how shortlist, interview, and hiring stages stay visible to the applicant.",
+            "Understand how businesses make final decisions and how updates appear in the applications page."
           ]
         }
       ]
@@ -359,34 +379,34 @@
     "testimonials": {
       "eyebrow": "Community feedback",
       "title": "Why people and businesses stay with FreeEarnHub",
-      "subtitle": "Clear reviews, moderated workflows, and visible hiring and payout rules help both sides trust the platform from day one.",
+      "subtitle": "Clear updates, visible hiring progress, and simple payouts help both people and businesses trust the platform from day one.",
       "items": [
         {
-          "quote": "I can move between micro tasks and nearby job applications without relearning the whole platform. The review updates are clear, and I always know the next step.",
+          "quote": "I can move between micro tasks and nearby job applications without relearning the whole platform. The updates are clear, and I always know the next step.",
           "name": "Riya S.",
           "role": "Verified member"
         },
         {
-          "quote": "Posting local roles and tracking applicants from the same dashboard saves us a lot of back-and-forth. The moderation layer keeps hiring cleaner.",
+          "quote": "Posting local roles and tracking applicants from the same dashboard saves us a lot of back-and-forth. The hiring flow feels clear and organized.",
           "name": "Arjun K.",
           "role": "Hiring manager"
         },
         {
-          "quote": "The platform keeps digital delivery and local hiring separate, but the reporting still stays in one place. That makes day-to-day operations much easier.",
+          "quote": "The platform keeps digital work and local hiring separate, while the reporting still stays in one place. That makes day-to-day operations much easier.",
           "name": "Nadia R.",
           "role": "Operations lead"
         }
       ],
       "feedbackCardTitle": "Share your experience",
-      "feedbackCardBody": "Send a short note about your experience with work, jobs, internships, or hiring on FreeEarnHub. We hold every message for admin review before it appears publicly on the homepage.",
+      "feedbackCardBody": "Share a short note about your experience with work, jobs, internships, or hiring on FreeEarnHub. We check each message before it appears publicly on the homepage.",
       "displayNameLabel": "Public display name",
       "displayNamePlaceholder": "How should your name appear publicly?",
       "feedbackLabel": "Your feedback",
       "feedbackPlaceholder": "Tell us what feels clear, useful, or trustworthy about the work or hiring experience.",
-      "pendingHelp": "Every submission is reviewed by admin before it can appear publicly.",
+      "pendingHelp": "Each message is checked before it appears publicly on the homepage.",
       "submit": "Submit feedback",
       "submitting": "Submitting...",
-      "submitSuccess": "Feedback submitted. It will stay hidden until admin approval.",
+      "submitSuccess": "Feedback submitted. It will appear on the homepage after it is checked.",
       "submitError": "Unable to submit feedback right now.",
       "loginPrompt": "Sign in with a user or business account to share feedback about work or hiring for the community section.",
       "loginCta": "Sign in to share",
@@ -394,13 +414,13 @@
       "loggedInAs": "Signed in as {role}",
       "userRole": "verified user",
       "businessRole": "business owner",
-      "statusPending": "Your feedback is under review",
+      "statusPending": "Your feedback is being checked",
       "statusApproved": "Your feedback is approved",
       "statusRejected": "Your feedback needs another try",
-      "underReviewHelp": "Your latest feedback is being reviewed by admin. You can submit again after this review is complete.",
+      "underReviewHelp": "Your latest feedback is being checked right now. You can send another one after this review is complete.",
       "approvedHelp": "Your latest feedback is approved and can be shown publicly on the homepage.",
       "rejectedHelp": "Your latest feedback was not approved for public display. You can write a stronger one and submit again.",
-      "pendingBlockedHelp": "Your current feedback is already under review. Please wait for the admin decision before sending another one."
+      "pendingBlockedHelp": "Your current feedback is already being checked. Please wait for the result before sending another one."
     },
     "channels": {
       "whatsapp": "Join WhatsApp",
@@ -412,6 +432,17 @@
       "campaignsCompleted": "Campaigns Completed",
       "businessAccounts": "Business Accounts",
       "totalUsers": "Total Users"
+    },
+    "mobileSwipeHint": "Swipe to explore",
+    "platformCards": {
+      "eyebrow": "Why It Works",
+      "title": "Clear work, trusted hiring, and visible results",
+      "subtitle": "These cards show the signals that help people and businesses use FreeEarnHub with confidence."
+    },
+    "workflowSection": {
+      "eyebrow": "Platform Flow",
+      "title": "How it works",
+      "subtitle": "Two clear paths: one for people finding verified work, and one for businesses posting tasks, internships, and local hiring from the same platform."
     }
   },
   "about": {

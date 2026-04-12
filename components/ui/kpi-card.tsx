@@ -5,12 +5,14 @@ export function KpiCard({
   label,
   value,
   icon,
+  caption,
   tone = "default",
   className,
 }: {
   label: string;
   value: React.ReactNode;
   icon?: React.ReactNode;
+  caption?: string;
   tone?: "default" | "success" | "info" | "warning" | "danger";
   className?: string;
 }) {
@@ -29,12 +31,12 @@ export function KpiCard({
     <div
       className={cn(
         "premium-ring-hover surface-card rounded-2xl p-4 sm:p-5",
-        "flex min-h-[108px] flex-col justify-between",
+        "flex min-h-[118px] flex-col",
         className
       )}
     >
       <div className="flex items-start justify-between gap-3">
-        <p className="text-xs font-medium uppercase tracking-wide text-foreground/60">{label}</p>
+        <p className="min-h-[2rem] line-clamp-2 text-xs font-medium uppercase tracking-wide text-foreground/60">{label}</p>
         {icon ? (
           <span
             className={cn(
@@ -46,7 +48,10 @@ export function KpiCard({
           </span>
         ) : null}
       </div>
-      <p className={cn("kpi-value text-2xl font-semibold sm:text-3xl", toneClass)}>{value}</p>
+      <div className="mt-4 space-y-1.5">
+        <p className={cn("kpi-value text-2xl font-semibold sm:text-3xl", toneClass)}>{value}</p>
+        {caption ? <p className="text-xs leading-5 text-foreground/58">{caption}</p> : null}
+      </div>
     </div>
   );
 }
