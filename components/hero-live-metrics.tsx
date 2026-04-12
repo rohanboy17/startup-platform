@@ -4,7 +4,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import MetricCounter from "@/components/metric-counter";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
-import { mergeMetricMaximums } from "@/lib/display-metrics";
 
 export default function HeroLiveMetrics({
   className,
@@ -18,7 +17,7 @@ export default function HeroLiveMetrics({
     activeOnlineUsers: 0,
     activeOnlineBusinesses: 0,
     liveTasks: 0,
-    liveWithdraws: 0,
+    liveJobs: 0,
   });
   const [error, setError] = useState("");
   const [hasIntersected, setHasIntersected] = useState(false);
@@ -53,7 +52,7 @@ export default function HeroLiveMetrics({
           return;
         }
         setError("");
-        if (parsed.stats) setStats((current) => mergeMetricMaximums(current, parsed.stats!));
+        if (parsed.stats) setStats(parsed.stats);
       } catch {
         setError(t("statsError"));
       }
@@ -72,7 +71,7 @@ export default function HeroLiveMetrics({
       { label: t("activeUsersLabel"), value: stats.activeOnlineUsers, tone: "text-emerald-300" },
       { label: t("activeBusinessesLabel"), value: stats.activeOnlineBusinesses, tone: "text-sky-300" },
       { label: t("liveCampaignsLabel"), value: stats.liveTasks, tone: "text-violet-300" },
-      { label: t("liveWithdrawalsLabel"), value: stats.liveWithdraws, tone: "text-amber-300" },
+      { label: t("liveJobsLabel"), value: stats.liveJobs, tone: "text-amber-300" },
     ],
     [stats, t]
   );

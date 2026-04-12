@@ -12,7 +12,7 @@ export async function GET() {
     const activityCutoff = new Date(Date.now() - 5 * 60 * 1000);
     const eventsCutoff = new Date(Date.now() - 60 * 60 * 1000);
 
-    const [users, businesses, tasks, withdrawals, recentActivity, liveTasks, liveWithdraws] =
+    const [users, businesses, tasks, withdrawals, recentActivity, liveTasks, liveJobs, liveWithdraws] =
       await Promise.all([
         prisma.user.findMany({
           where: { role: "USER", createdAt: { gte: eventsCutoff } },
@@ -50,6 +50,11 @@ export async function GET() {
         prisma.campaign.count({
           where: {
             status: "LIVE",
+          },
+        }),
+        prisma.jobPosting.count({
+          where: {
+            status: "OPEN",
           },
         }),
         prisma.withdrawal.count({
@@ -110,6 +115,7 @@ export async function GET() {
         activeOnlineUsers,
         activeOnlineBusinesses,
         liveTasks,
+        liveJobs,
         liveWithdraws,
       },
       events,

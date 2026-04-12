@@ -237,24 +237,40 @@
         "Track delivery quality, applicants, spend, and approvals from one dashboard."
       ]
     },
-    "live": {
-      "title": "Live Platform Activity",
-      "subtitle": "Anonymized real-time feed. No personal data shown.",
-      "live": "Live",
-      "activeUsersLabel": "Active users",
-      "activeBusinessesLabel": "Active businesses",
-      "liveCampaignsLabel": "Live campaigns",
-      "liveWithdrawalsLabel": "Live withdrawals",
-      "activityHistory": "Activity History",
+      "live": {
+        "title": "Live Platform Activity",
+        "subtitle": "Anonymized real-time feed. No personal data shown.",
+        "live": "Live",
+        "activeUsersLabel": "Active users",
+        "activeBusinessesLabel": "Active businesses",
+        "liveCampaignsLabel": "Live campaigns",
+        "liveJobsLabel": "Live jobs",
+        "activityHistory": "Activity History",
       "loading": "Loading live activity...",
       "statsError": "Failed to load live stats",
       "activityError": "Failed to load live activity",
-      "noLiveWithdraw": "No live withdraw requests right now.",
+      "withdrawRequests": "Live Withdrawals",
+      "noLiveWithdraw": "No withdrawal requests right now.",
+      "noLiveJobs": "No live job updates right now.",
       "noActivity": "No recent activity yet. New events will appear here.",
-      "withdrawRequests": "Live Withdraw Requests"
-    },
-    "features": {
-      "items": [
+      "liveJobs": "Live Jobs"
+      },
+      "heroMetrics": {
+        "totalJobs": {
+          "title": "Total jobs",
+          "caption": "Roles posted on the platform"
+        },
+        "applications": {
+          "title": "Applications",
+          "caption": "Candidate flow in review"
+        },
+        "activeHiring": {
+          "title": "Active hiring",
+          "caption": "Shortlisted, interview, and hire stages"
+        }
+      },
+      "features": {
+        "items": [
         {
           "title": "Safe payouts",
           "body": "Every approved task is tracked clearly so users and businesses can trust the money flow."
@@ -287,15 +303,15 @@
     },
     "cta": {
       "title": "Ready to work or hire?",
-      "body": "Create an account to start with verified tasks, internships, local jobs, and controlled hiring workflows."
+      "body": "Create an account to start verified work, internships, local jobs, and moderated hiring workflows from one place."
     },
     "offlineInvite": {
-      "eyebrow": "Offline Invite",
-      "title": "Print this QR so anyone can join FreeEarnHub in one scan.",
-      "body": "Designed for posters, flyers, business cards, and offline campaigns. The code opens the main home page directly so new users can land on the platform without typing the address.",
+      "eyebrow": "Share FreeEarnHub offline",
+      "title": "Print this QR so people can discover work and hiring in one scan.",
+      "body": "Use it on posters, flyers, business cards, counters, or campus notices. The code opens FreeEarnHub directly so people can explore digital work, internships, and local jobs without typing the website.",
       "directLinkLabel": "Direct website link",
-      "scanLabel": "Scan To Join and Earn",
-      "marketplaceLabel": "FreeEarnHub Marketplace",
+      "scanLabel": "Scan to open FreeEarnHub",
+      "marketplaceLabel": "Work and Hiring Platform",
       "qrAlt": "QR code linking to the FreeEarnHub homepage"
     },
     "guidedVideos": {
@@ -304,63 +320,75 @@
       "items": [
         {
           "id": "earn",
-          "tabLabel": "Start earning",
-          "eyebrow": "Earning walkthrough",
-          "title": "Learn how to start earning on FreeEarnHub",
-          "body": "Watch the full earning flow before you begin. It explains how to pick tasks, submit proof, and move from review to wallet credit in simple steps.",
+          "tabLabel": "Start working",
+          "eyebrow": "Worker walkthrough",
+          "title": "Learn how people start work on FreeEarnHub",
+          "body": "Watch the full worker flow before you begin. It shows how to find verified tasks, apply to internships and jobs, and follow each review step clearly.",
           "bullets": [
-            "See where to find verified tasks and how to choose the right one.",
-            "Understand what proof to submit so your work gets approved faster.",
-            "Learn how earnings reach your wallet and when withdrawals become available."
+            "See where to find verified digital tasks and how to choose the right one.",
+            "Understand how job and internship applications move through review before business action.",
+            "Learn when approved work reaches your wallet and when hiring updates appear."
           ]
         },
         {
-          "id": "campaign",
-          "tabLabel": "Run work ops",
+          "id": "business",
+          "tabLabel": "Run work and hiring",
           "eyebrow": "Business walkthrough",
-          "title": "Learn how businesses run verified work operations",
-          "body": "This guide shows the flow from funding the wallet to launching testing, feedback, content, and data tasks with clear review and delivery tracking.",
+          "title": "Learn how businesses run verified work and hiring",
+          "body": "This guide shows the flow from funding the wallet to launching digital work, internships, and local jobs with clear review, applicant control, and delivery tracking.",
           "bullets": [
             "Understand wallet funding, budget setup, and reward planning.",
-            "See how moderated submissions move through review before settlement.",
-            "Follow approvals, spend, and delivery quality from the dashboard."
+            "See how campaigns, jobs, and internships move through moderation before going live.",
+            "Follow approvals, applicants, spend, and delivery quality from one dashboard."
+          ]
+        },
+        {
+          "id": "jobs",
+          "tabLabel": "Jobs and internships",
+          "eyebrow": "Hiring walkthrough",
+          "title": "See how moderated job applications move",
+          "body": "Follow the hiring path from application to manager review, admin review, interview scheduling, and final business action.",
+          "bullets": [
+            "Learn which profile details help nearby roles and internships match correctly.",
+            "See how shortlist, interview, and admin verification stages stay visible to the user.",
+            "Understand when businesses can hire or reject and how updates appear in the applications page."
           ]
         }
       ]
     },
     "testimonials": {
       "eyebrow": "Community feedback",
-      "title": "Why people stay with FreeEarnHub",
-      "subtitle": "Clear reviews, moderated workflows, and visible payout rules help both users and businesses trust the platform from day one.",
+      "title": "Why people and businesses stay with FreeEarnHub",
+      "subtitle": "Clear reviews, moderated workflows, and visible hiring and payout rules help both sides trust the platform from day one.",
       "items": [
         {
-          "quote": "The task flow feels easy to understand. I can see what to do, submit proof, and track the result without guessing what happens next.",
+          "quote": "I can move between micro tasks and nearby job applications without relearning the whole platform. The review updates are clear, and I always know the next step.",
           "name": "Riya S.",
-          "role": "Verified user"
+          "role": "Verified member"
         },
         {
-          "quote": "The campaign side is clean and practical. I can fund the wallet, launch work, and see what is happening without digging through complicated screens.",
+          "quote": "Posting local roles and tracking applicants from the same dashboard saves us a lot of back-and-forth. The moderation layer keeps hiring cleaner.",
           "name": "Arjun K.",
-          "role": "Business owner"
+          "role": "Hiring manager"
         },
         {
-          "quote": "The review system feels controlled and transparent. It is easier to trust a platform when the checks, statuses, and history are all visible.",
+          "quote": "The platform keeps digital delivery and local hiring separate, but the reporting still stays in one place. That makes day-to-day operations much easier.",
           "name": "Nadia R.",
           "role": "Operations lead"
         }
       ],
       "feedbackCardTitle": "Share your experience",
-      "feedbackCardBody": "Send a short note about your experience on FreeEarnHub. We hold every message for admin review before it appears publicly on the homepage.",
+      "feedbackCardBody": "Send a short note about your experience with work, jobs, internships, or hiring on FreeEarnHub. We hold every message for admin review before it appears publicly on the homepage.",
       "displayNameLabel": "Public display name",
       "displayNamePlaceholder": "How should your name appear publicly?",
       "feedbackLabel": "Your feedback",
-      "feedbackPlaceholder": "Tell us what feels clear, useful, or trustworthy about the platform.",
+      "feedbackPlaceholder": "Tell us what feels clear, useful, or trustworthy about the work or hiring experience.",
       "pendingHelp": "Every submission is reviewed by admin before it can appear publicly.",
       "submit": "Submit feedback",
       "submitting": "Submitting...",
       "submitSuccess": "Feedback submitted. It will stay hidden until admin approval.",
       "submitError": "Unable to submit feedback right now.",
-      "loginPrompt": "Sign in with a user or business account to share feedback for the community section.",
+      "loginPrompt": "Sign in with a user or business account to share feedback about work or hiring for the community section.",
       "loginCta": "Sign in to share",
       "registerCta": "Create account",
       "loggedInAs": "Signed in as {role}",

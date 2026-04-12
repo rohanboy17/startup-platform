@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 
 type Locale = "en" | "hi" | "bn";
@@ -15,10 +14,10 @@ export default function LanguageSelect({
 }) {
   const t = useTranslations();
   const activeLocale = useLocale() as Locale;
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [locale, setLocale] = useState<Locale>(activeLocale || "en");
+  const [pendingLocale, setPendingLocale] = useState<Locale | null>(null);
+  const locale = pendingLocale || activeLocale || "en";
 
   const options = useMemo(
     () => [
@@ -33,7 +32,7 @@ export default function LanguageSelect({
     async (next: Locale) => {
       setLoading(true);
       setMessage("");
-      setLocale(next);
+      setPendingLocale(next);
 
       const res = await fetch("/api/locale", {
         method: "POST",
@@ -54,12 +53,13 @@ export default function LanguageSelect({
 
       if (!res.ok) {
         setMessage(parsed.error || t("common.languageSelect.unableToChangeLanguage"));
+        setPendingLocale(null);
         return;
       }
 
-      router.refresh();
+      window.location.reload();
     },
-    [router, t]
+    [t]
   );
 
   return (

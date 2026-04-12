@@ -4,13 +4,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLiveRefresh } from "@/lib/live-refresh";
 import HeroLiveMetrics from "@/components/hero-live-metrics";
 import { useTranslations } from "next-intl";
-import { mergeMetricMaximums } from "@/lib/display-metrics";
 
 type LivePayload = {
   stats: {
     activeOnlineUsers: number;
     activeOnlineBusinesses: number;
     liveTasks: number;
+    liveJobs: number;
     liveWithdraws: number;
   };
   events: Array<{
@@ -47,14 +47,7 @@ export default function HomeLiveSection() {
 
     setError("");
     const next = parsed as LivePayload;
-    setData((current) =>
-      current
-        ? {
-            ...next,
-            stats: mergeMetricMaximums(current.stats, next.stats),
-          }
-        : next
-    );
+    setData(next);
   }, [t]);
 
   useLiveRefresh(load, 30000);

@@ -3,7 +3,16 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const [totalPayout, totalUsers, businessAccounts, totalCampaigns, tasksCompleted] = await Promise.all([
+    const [
+      totalPayout,
+      totalUsers,
+      businessAccounts,
+      totalCampaigns,
+      tasksCompleted,
+      totalJobs,
+      totalJobApplications,
+      activeHiring,
+    ] = await Promise.all([
       prisma.withdrawal.aggregate({
         where: { status: "APPROVED" },
         _sum: { amount: true },
@@ -14,6 +23,13 @@ export async function GET() {
       prisma.submission.count({
         where: { adminStatus: { in: ["ADMIN_APPROVED", "APPROVED"] } },
       }),
+      prisma.jobPosting.count(),
+      prisma.jobApplication.count(),
+      prisma.jobApplication.count({
+        where: {
+          status: { in: ["SHORTLISTED", "INTERVIEW_SCHEDULED", "HIRED"] },
+        },
+      }),
     ]);
 
     const metrics = {
@@ -22,6 +38,9 @@ export async function GET() {
       businessAccounts,
       totalCampaigns,
       tasksCompleted,
+      totalJobs,
+      totalJobApplications,
+      activeHiring,
     };
 
     return NextResponse.json({

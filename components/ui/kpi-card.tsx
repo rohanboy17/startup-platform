@@ -4,11 +4,13 @@ import { cn } from "@/lib/utils";
 export function KpiCard({
   label,
   value,
+  icon,
   tone = "default",
   className,
 }: {
   label: string;
   value: React.ReactNode;
+  icon?: React.ReactNode;
   tone?: "default" | "success" | "info" | "warning" | "danger";
   className?: string;
 }) {
@@ -31,7 +33,19 @@ export function KpiCard({
         className
       )}
     >
-      <p className="text-xs font-medium uppercase tracking-wide text-foreground/60">{label}</p>
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-xs font-medium uppercase tracking-wide text-foreground/60">{label}</p>
+        {icon ? (
+          <span
+            className={cn(
+              "inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-foreground/10 bg-foreground/[0.04]",
+              toneClass
+            )}
+          >
+            {icon}
+          </span>
+        ) : null}
+      </div>
       <p className={cn("kpi-value text-2xl font-semibold sm:text-3xl", toneClass)}>{value}</p>
     </div>
   );

@@ -56,6 +56,9 @@ export default async function Home() {
     businessAccounts,
     totalCampaigns,
     tasksCompleted,
+    totalJobs,
+    totalJobApplications,
+    activeHiring,
     approvalLogs,
     approvedCommunityFeedback,
     currentUserFeedback,
@@ -82,6 +85,13 @@ export default async function Home() {
     prisma.campaign.count(),
     prisma.submission.count({
       where: { adminStatus: { in: ["ADMIN_APPROVED", "APPROVED"] } },
+    }),
+    prisma.jobPosting.count(),
+    prisma.jobApplication.count(),
+    prisma.jobApplication.count({
+      where: {
+        status: { in: ["SHORTLISTED", "INTERVIEW_SCHEDULED", "HIRED"] },
+      },
     }),
     prisma.activityLog.findMany({
       where: { action: "ADMIN_APPROVED_SUBMISSION" },
@@ -199,9 +209,13 @@ export default async function Home() {
     businessAccounts,
     totalCampaigns,
     tasksCompleted,
+    totalJobs,
+    totalJobApplications,
+    activeHiring,
   };
   const homeEarnVideoUrl = process.env.NEXT_PUBLIC_HOME_EARNING_VIDEO_URL || null;
   const homeCampaignVideoUrl = process.env.NEXT_PUBLIC_HOME_CAMPAIGN_VIDEO_URL || null;
+  const homeJobsVideoUrl = process.env.NEXT_PUBLIC_HOME_JOBS_VIDEO_URL || null;
   const featureCards = [
     {
       title: tHome("features.items.0.title"),
@@ -321,10 +335,15 @@ export default async function Home() {
       <section className="relative mx-auto w-full max-w-screen-2xl px-4 pb-12 sm:px-6 sm:pb-16">
         <MotionSection className="rounded-[2rem] border border-foreground/10 bg-foreground/5 p-5 sm:p-7">
           <HomeGuidedVideoSection
-            items={[
-              { ...guidedVideos[0], videoUrl: homeEarnVideoUrl },
-              { ...guidedVideos[1], videoUrl: homeCampaignVideoUrl },
-            ]}
+            items={guidedVideos.map((item) => ({
+              ...item,
+              videoUrl:
+                item.id === "earn"
+                  ? homeEarnVideoUrl
+                  : item.id === "jobs"
+                    ? homeJobsVideoUrl
+                    : homeCampaignVideoUrl,
+            }))}
             openLabel={tHome("guidedVideos.openLabel")}
             fallbackLabel={tHome("guidedVideos.fallbackLabel")}
           />

@@ -1,24 +1,27 @@
 "use client";
 
+import { BriefcaseBusiness, Timer, Users } from "lucide-react";
+import { useTranslations } from "next-intl";
 import MetricCounter from "@/components/metric-counter";
 import { cn } from "@/lib/utils";
 
 type HeroFloatsProps = {
-  totalPayout: number;
-  totalUsers: number;
-  tasksCompleted: number;
-  businessAccounts: number;
+  totalJobs: number;
+  totalJobApplications: number;
+  activeHiring: number;
 };
 
 function FloatCard({
   title,
   value,
   caption,
+  icon,
   className,
 }: {
   title: string;
   value: React.ReactNode;
   caption: string;
+  icon?: React.ReactNode;
   className?: string;
 }) {
   return (
@@ -28,7 +31,14 @@ function FloatCard({
         className
       )}
     >
-      <p className="text-[10px] uppercase tracking-[0.2em] text-foreground/50 sm:text-[11px]">{title}</p>
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-[10px] uppercase tracking-[0.2em] text-foreground/50 sm:text-[11px]">{title}</p>
+        {icon ? (
+          <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-foreground/10 bg-foreground/[0.04] text-foreground/70">
+            {icon}
+          </span>
+        ) : null}
+      </div>
       <p className="mt-1.5 text-sm font-semibold text-foreground min-[360px]:text-base sm:text-lg">{value}</p>
       <p className="mt-1 text-[10px] text-foreground/60 min-[360px]:text-[11px] sm:text-xs">{caption}</p>
     </div>
@@ -36,40 +46,37 @@ function FloatCard({
 }
 
 export default function HomeHeroFloats({
-  totalPayout,
-  totalUsers,
-  tasksCompleted,
-  businessAccounts,
+  totalJobs,
+  totalJobApplications,
+  activeHiring,
 }: HeroFloatsProps) {
-  const approvalRate = totalUsers > 0 ? Math.min(99, Math.round((tasksCompleted / totalUsers) * 100)) : 0;
-  const growthRate = Math.max(1, Math.round(businessAccounts / 10));
+  const t = useTranslations("home.heroMetrics");
 
   return (
     <div className="grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 lg:grid-cols-3">
       <div>
         <FloatCard
-          title="Wallet"
-          value={
-            <>
-              INR <MetricCounter value={Math.round(totalPayout)} />
-            </>
-          }
-          caption="Total approved payouts"
+          title={t("totalJobs.title")}
+          value={<MetricCounter value={totalJobs} />}
+          caption={t("totalJobs.caption")}
+          icon={<BriefcaseBusiness size={18} />}
         />
       </div>
       <div>
         <FloatCard
-          title="Approval"
-          value={`${approvalRate}% verified`}
-          caption="Approval quality"
+          title={t("applications.title")}
+          value={<MetricCounter value={totalJobApplications} />}
+          caption={t("applications.caption")}
+          icon={<Users size={18} />}
           className="border-emerald-400/30"
         />
       </div>
       <div>
         <FloatCard
-          title="Growth"
-          value={`${growthRate}x`}
-          caption="Business momentum"
+          title={t("activeHiring.title")}
+          value={<MetricCounter value={activeHiring} />}
+          caption={t("activeHiring.caption")}
+          icon={<Timer size={18} />}
           className="border-sky-400/30"
         />
       </div>
