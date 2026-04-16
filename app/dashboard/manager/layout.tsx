@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import DashboardTabNav from "@/components/dashboard-tab-nav";
 import PresenceHeartbeat from "@/components/presence-heartbeat";
 import { getAppSettings } from "@/lib/system-settings";
+import { prisma } from "@/lib/prisma";
+import { parseProfileDetails } from "@/lib/user-profile";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -29,6 +31,12 @@ export default async function ManagerLayout({
     redirect("/maintenance");
   }
 
+  const userProfile = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { profileDetails: true },
+  });
+  const avatarUrl = parseProfileDetails(userProfile?.profileDetails).avatarUrl;
+
   return (
     <div className="dashboard-shell min-h-screen overflow-x-hidden bg-[radial-gradient(circle_at_top_left,rgba(16,185,129,0.12),transparent_30%),radial-gradient(circle_at_top_right,rgba(59,130,246,0.1),transparent_28%)] bg-background text-foreground">
       <PresenceHeartbeat />
@@ -38,6 +46,8 @@ export default async function ManagerLayout({
             displayName={displayName}
             role="MANAGER"
             userId={session.user.id}
+            avatarUrl={avatarUrl}
+            profileHref="/dashboard/manager/settings"
             items={[
               { key: "manager.overview", href: "/dashboard/manager", label: "Overview", labelKey: "overview", icon: "overview" },
               { key: "manager.submissions", href: "/dashboard/manager/submissions", label: "Campaigns Queue", labelKey: "submissionQueue", icon: "submissions" },

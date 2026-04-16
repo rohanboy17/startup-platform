@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
 export type BusinessSettings = {
+  profileImageUrl: string;
   brandName: string;
   companyName: string;
   contactEmail: string;
@@ -23,6 +24,7 @@ function keyFor(userId: string) {
 
 export function getDefaultBusinessSettings(params: { name?: string | null; email?: string | null }): BusinessSettings {
   return {
+    profileImageUrl: "",
     brandName: params.name?.trim() || "FreeEarnHub Business",
     companyName: params.name?.trim() || "",
     contactEmail: params.email?.trim() || "",
@@ -48,6 +50,8 @@ export async function getBusinessSettings(userId: string, fallback: { name?: str
 
   const raw = row.value as Partial<BusinessSettings>;
   return {
+    profileImageUrl:
+      typeof raw.profileImageUrl === "string" ? raw.profileImageUrl : defaults.profileImageUrl,
     brandName: typeof raw.brandName === "string" ? raw.brandName : defaults.brandName,
     companyName: typeof raw.companyName === "string" ? raw.companyName : defaults.companyName,
     contactEmail: typeof raw.contactEmail === "string" ? raw.contactEmail : defaults.contactEmail,

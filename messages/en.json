@@ -1018,7 +1018,8 @@
         "failedToLoadProfile": "Failed to load profile",
         "failedToLoadSkills": "Failed to load skills",
         "failedToSaveProfile": "Failed to save profile",
-        "failedToSaveSkills": "Failed to save skills"
+        "failedToSaveSkills": "Failed to save skills",
+        "failedToUploadAvatar": "Failed to upload photo"
       },
       "internshipPreferenceOptions": {
         "default": "Internship preference",
@@ -1036,7 +1037,13 @@
         "joinedJobs": "Joined jobs"
       },
       "experienceSummary": "Current experience: {label}. Approved tasks completed: {tasks}.",
-      "experienceNoData": "No recorded work yet"
+      "experienceNoData": "No recorded work yet",
+      "photoTitle": "Profile photo",
+      "photoSubtitle": "Upload a clear photo so your dashboard profile looks complete.",
+      "uploadAvatar": "Upload photo",
+      "uploadingAvatar": "Uploading...",
+      "removeAvatar": "Remove photo",
+      "avatarUploaded": "Profile photo uploaded. Save to keep it."
     },
     "notificationsPage": {
       "eyebrow": "Inbox",
@@ -2127,10 +2134,12 @@
       "errors": {
         "unexpectedServerResponse": "Unexpected server response",
         "failedToLoad": "Failed to load settings",
-        "failedToSave": "Failed to save settings"
+        "failedToSave": "Failed to save settings",
+        "failedToUploadAvatar": "Failed to upload photo"
       },
       "messages": {
-        "updated": "Settings updated"
+        "updated": "Settings updated",
+        "avatarUpdated": "Business photo updated. Save to keep it."
       },
       "profile": {
         "eyebrow": "Business profile",
@@ -2142,7 +2151,12 @@
         "supportContact": "Support contact",
         "accountEmail": "Account email: {email}",
         "kycStatus": "KYC status: {status}",
-        "joined": "Joined:"
+        "joined": "Joined:",
+        "photoTitle": "Business photo",
+        "photoSubtitle": "Upload a logo or profile image for your business dashboard.",
+        "uploadAvatar": "Upload photo",
+        "uploadingAvatar": "Uploading...",
+        "removeAvatar": "Remove photo"
       },
       "billing": {
         "eyebrow": "Billing and policies",

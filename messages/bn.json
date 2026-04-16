@@ -1018,7 +1018,8 @@
         "failedToLoadProfile": "প্রোফাইল লোড করতে ব্যর্থ হয়েছে",
         "failedToLoadSkills": "দক্ষতা লোড করতে ব্যর্থ",
         "failedToSaveProfile": "প্রোফাইল সংরক্ষণ করতে ব্যর্থ হয়েছে",
-        "failedToSaveSkills": "দক্ষতা সংরক্ষণ করতে ব্যর্থ"
+        "failedToSaveSkills": "দক্ষতা সংরক্ষণ করতে ব্যর্থ",
+        "failedToUploadAvatar": "Failed to upload photo"
       },
       "internshipPreferenceOptions": {
         "default": "ইন্টার্নশীপ পছন্দ",
@@ -1036,7 +1037,13 @@
         "joinedJobs": "চাকরিতে যোগ দিয়েছেন"
       },
       "experienceSummary": "বর্তমান অভিজ্ঞতা: {label}। অনুমোদিত কাজগুলি সম্পন্ন হয়েছে: {tasks}৷",
-      "experienceNoData": "এখনও কোন রেকর্ড করা কাজ"
+      "experienceNoData": "এখনও কোন রেকর্ড করা কাজ",
+      "photoTitle": "Profile photo",
+      "photoSubtitle": "Upload a clear photo so your dashboard profile looks complete.",
+      "uploadAvatar": "Upload photo",
+      "uploadingAvatar": "Uploading...",
+      "removeAvatar": "Remove photo",
+      "avatarUploaded": "Profile photo uploaded. Save to keep it."
     },
     "notificationsPage": {
       "eyebrow": "ইনবক্স",
@@ -2127,10 +2134,12 @@
       "errors": {
         "unexpectedServerResponse": "অপ্রত্যাশিত সার্ভার প্রতিক্রিয়া",
         "failedToLoad": "সেটিংস লোড করতে ব্যর্থ হয়েছে৷",
-        "failedToSave": "সেটিংস সংরক্ষণ করতে ব্যর্থ হয়েছে৷"
+        "failedToSave": "সেটিংস সংরক্ষণ করতে ব্যর্থ হয়েছে৷",
+        "failedToUploadAvatar": "Failed to upload photo"
       },
       "messages": {
-        "updated": "সেটিংস আপডেট করা হয়েছে"
+        "updated": "সেটিংস আপডেট করা হয়েছে",
+        "avatarUpdated": "Business photo updated. Save to keep it."
       },
       "profile": {
         "eyebrow": "ব্যবসায়িক প্রোফাইল",
@@ -2142,7 +2151,12 @@
         "supportContact": "সমর্থন যোগাযোগ",
         "accountEmail": "অ্যাকাউন্ট ইমেল: {email}",
         "kycStatus": "কেওয়াইসি স্ট্যাটাস: {status}",
-        "joined": "যোগ দিয়েছেন:"
+        "joined": "যোগ দিয়েছেন:",
+        "photoTitle": "Business photo",
+        "photoSubtitle": "Upload a logo or profile image for your business dashboard.",
+        "uploadAvatar": "Upload photo",
+        "uploadingAvatar": "Uploading...",
+        "removeAvatar": "Remove photo"
       },
       "billing": {
         "eyebrow": "বিলিং এবং নীতি",

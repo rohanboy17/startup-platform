@@ -10,6 +10,7 @@ import {
   canManageBusinessSettings,
   getBusinessContext,
 } from "@/lib/business-context";
+import { getBusinessSettings } from "@/lib/business-settings";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -38,6 +39,10 @@ export default async function BusinessLayout({
   if (settings.maintenanceMode) {
     redirect("/maintenance");
   }
+  const businessSettings = await getBusinessSettings(context.businessUserId, {
+    name: session.user.name,
+    email: session.user.email,
+  });
 
   const items = [
       { key: "business.overview", href: "/dashboard/business", label: "Overview", labelKey: "overview", icon: "overview" as const },
@@ -89,6 +94,8 @@ export default async function BusinessLayout({
             role="BUSINESS"
             userId={session.user.id}
             items={items}
+            avatarUrl={businessSettings.profileImageUrl || null}
+            profileHref="/dashboard/business/settings"
           />
         </aside>
 

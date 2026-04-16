@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useMemo, useState, type Dispatch, type SetStateAction } from "react";
+import { useCallback, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { Camera, Upload, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SectionCard } from "@/components/ui/section-card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useLiveRefresh } from "@/lib/live-refresh";
 
 type SettingsPayload = {
@@ -16,6 +18,7 @@ type SettingsPayload = {
     role: string;
     createdAt: string;
     timezone: string;
+    avatarUrl: string | null;
     address: string | null;
     city: string | null;
     state: string | null;
@@ -75,10 +78,13 @@ export default function UserProfilePanel() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [initialized, setInitialized] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const [createdAt, setCreatedAt] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
@@ -147,6 +153,7 @@ export default function UserProfilePanel() {
       setEmail(settingsPayload.profile.email);
       setRole(settingsPayload.profile.role);
       setCreatedAt(new Date(settingsPayload.profile.createdAt).toLocaleString(locale));
+      setAvatarUrl(settingsPayload.profile.avatarUrl || "");
       setName(settingsPayload.profile.name || "");
       setMobile(settingsPayload.profile.mobile || "");
       setAddress(settingsPayload.profile.address || "");
@@ -191,6 +198,32 @@ export default function UserProfilePanel() {
     return true;
   }
 
+  async function uploadAvatar(file: File) {
+    setUploadingAvatar(true);
+    setError("");
+    setMessage("");
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch("/api/upload-avatar", {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    });
+
+    const payload = (await res.json().catch(() => null)) as { error?: string; url?: string } | null;
+    setUploadingAvatar(false);
+
+    if (!res.ok || !payload?.url) {
+      setError(payload?.error || t("errors.failedToUploadAvatar"));
+      return;
+    }
+
+    setAvatarUrl(payload.url);
+    setMessage(t("avatarUploaded"));
+  }
+
   async function saveProfile() {
     setSaving(true);
     setError("");
@@ -204,6 +237,7 @@ export default function UserProfilePanel() {
         profile: {
           name,
           mobile,
+          avatarUrl,
           address,
           city,
           state,
@@ -284,6 +318,57 @@ export default function UserProfilePanel() {
             <p className="mt-1 text-sm text-foreground/70">
               {t("basicSubtitle")}
             </p>
+          </div>
+
+          <div className="flex flex-col gap-4 rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <Avatar size="lg" className="size-16 border border-foreground/10">
+                {avatarUrl ? <AvatarImage src={avatarUrl} alt={name || email} /> : null}
+                <AvatarFallback className="bg-foreground/[0.08] text-base font-semibold text-foreground">
+                  {(name || email || "U").trim().charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="text-sm font-semibold text-foreground">{t("photoTitle")}</p>
+                <p className="mt-1 text-xs text-foreground/65">{t("photoSubtitle")}</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/jpg,image/webp"
+                className="hidden"
+                onChange={(e) => {
+                  const next = e.target.files?.[0];
+                  if (next) {
+                    void uploadAvatar(next);
+                  }
+                  e.currentTarget.value = "";
+                }}
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                className="gap-2"
+                disabled={uploadingAvatar}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {uploadingAvatar ? <Upload size={16} /> : <Camera size={16} />}
+                {uploadingAvatar ? t("uploadingAvatar") : t("uploadAvatar")}
+              </Button>
+              {avatarUrl ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="gap-2"
+                  onClick={() => setAvatarUrl("")}
+                >
+                  <X size={16} />
+                  {t("removeAvatar")}
+                </Button>
+              ) : null}
+            </div>
           </div>
 
           <div className="grid gap-3 md:grid-cols-2">

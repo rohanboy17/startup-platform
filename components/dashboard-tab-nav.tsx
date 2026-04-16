@@ -6,8 +6,6 @@ import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 
 import type { ComponentType } from "react";
 import {
   KeyRound,
-  Menu,
-  X,
   BarChart3,
   Bell,
   CircleDollarSign,
@@ -31,8 +29,9 @@ import {
 } from "lucide-react";
 import { useLiveRefresh } from "@/lib/live-refresh";
 import LogoutButton from "@/components/logout-button";
-import ThemeToggle from "@/components/theme-toggle";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTranslations } from "next-intl";
+import { useDashboardMobileNav } from "@/lib/dashboard-mobile-nav";
 
 type DashboardRole = "USER" | "BUSINESS" | "MANAGER" | "ADMIN";
 type IconName =
@@ -107,12 +106,16 @@ export default function DashboardTabNav({
   role,
   userId,
   items,
+  avatarUrl = null,
+  profileHref,
   showForgotPasswordInNav = false,
 }: {
   displayName: string;
   role: DashboardRole;
   userId: string;
   items: Item[];
+  avatarUrl?: string | null;
+  profileHref: string;
   showForgotPasswordInNav?: boolean;
 }) {
   const tGreeting = useTranslations("dashboard.greeting");
@@ -121,8 +124,8 @@ export default function DashboardTabNav({
   const pathname = usePathname();
   const [alerts, setAlerts] = useState<Record<string, string>>({});
   const [counts, setCounts] = useState<Record<string, number>>({});
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [hour, setHour] = useState<number | null>(null);
+  const { open: mobileOpen, setOpen: setMobileOpen } = useDashboardMobileNav();
   const hydrated = useSyncExternalStore(
     () => () => {},
     () => true,
@@ -147,6 +150,10 @@ export default function DashboardTabNav({
     const timer = window.setInterval(updateHour, 60 * 1000);
     return () => window.clearInterval(timer);
   }, []);
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname, setMobileOpen]);
 
   useEffect(() => {
     if (!pathname) return;
@@ -200,26 +207,33 @@ export default function DashboardTabNav({
     return tGreeting("goodEvening", { name: firstName });
   }, [firstName, hour, tGreeting]);
 
+  const profileLabel = role === "USER" ? tNav("profile") : tNav("settings");
+
   return (
     <div className="space-y-3 md:space-y-4">
-      <div className="flex items-center justify-between md:block">
+      <div className="flex items-start justify-between gap-3">
         <div>
           <h1 className="text-lg font-semibold tracking-tight md:text-xl">{greeting}</h1>
           <p className="text-xs text-foreground/60 md:text-sm">{tGreeting("welcomeBack")}</p>
         </div>
-        <div className="flex items-center gap-2">
-          <ThemeToggle compact className="md:hidden" />
-          <ThemeToggle className="hidden md:inline-flex" />
-          <button
-            type="button"
-            onClick={() => setMobileOpen((prev) => !prev)}
-            className="relative inline-flex items-center justify-center rounded-lg border border-foreground/15 bg-foreground/[0.04] p-2 text-foreground/90 md:hidden"
-            aria-label={mobileOpen ? tShell("closeMenu") : tShell("openMenu")}
-          >
-            {mobileOpen ? <X size={18} /> : <Menu size={18} />}
-            {hasNavAlerts ? <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full bg-emerald-400" /> : null}
-          </button>
-        </div>
+        <Link
+          href={profileHref}
+          className="flex items-center gap-3 rounded-2xl border border-foreground/10 bg-foreground/[0.04] px-3 py-2 text-right transition hover:bg-foreground/[0.07]"
+        >
+          <div className="hidden min-w-0 sm:block">
+            <p className="truncate text-[11px] uppercase tracking-[0.18em] text-foreground/45">{profileLabel}</p>
+            <p className="truncate text-sm font-medium text-foreground">{firstName}</p>
+          </div>
+          <div className="relative">
+            <Avatar size="lg" className="size-10 border border-foreground/10">
+              {avatarUrl ? <AvatarImage src={avatarUrl} alt={displayName} /> : null}
+              <AvatarFallback className="bg-foreground/[0.08] font-semibold text-foreground">
+                {firstName.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            {hasNavAlerts ? <span className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-background bg-emerald-400" /> : null}
+          </div>
+        </Link>
       </div>
 
       <div
@@ -264,9 +278,6 @@ export default function DashboardTabNav({
         </nav>
 
         <div className="pt-1 md:pt-2">
-          <div className="mb-3 md:hidden">
-            <ThemeToggle className="w-full justify-center rounded-xl py-2 text-sm" />
-          </div>
           {showForgotPasswordInNav ? (
             <Link
               href="/forgot-password"

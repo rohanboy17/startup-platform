@@ -19,9 +19,11 @@ function isStandalone() {
 export default function PwaInstallButton({
   mobile = false,
   compact = false,
+  alwaysShow = false,
 }: {
   mobile?: boolean;
   compact?: boolean;
+  alwaysShow?: boolean;
 }) {
   const t = useTranslations("common.pwaInstall");
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
@@ -80,9 +82,9 @@ export default function PwaInstallButton({
 
   // On mobile, the browser might not expose `beforeinstallprompt` (OEM browsers, some Edge/Chrome states),
   // but users can still install via the browser menu. Keep the entry point visible.
-  const alwaysShow = mobile || compact;
+  const alwaysVisible = alwaysShow || mobile || compact;
   if (!hydrated) {
-    return alwaysShow ? (
+    return alwaysVisible ? (
       <div className={`${mobile ? "space-y-2" : "relative"}`}>
         <button
           type="button"
@@ -97,7 +99,7 @@ export default function PwaInstallButton({
       </div>
     ) : null;
   }
-  const hidden = !alwaysShow && !deferredPrompt && !isIOS;
+  const hidden = !alwaysVisible && !deferredPrompt && !isIOS;
   if (hidden) return null;
 
   return (

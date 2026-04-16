@@ -9,6 +9,7 @@ import PwaInstallButton from "@/components/pwa-install-button";
 import ThemeToggle from "@/components/theme-toggle";
 import LanguageSelect from "@/components/language-select";
 import { cn } from "@/lib/utils";
+import { useDashboardMobileNav } from "@/lib/dashboard-mobile-nav";
 
 function isDashboardPath(pathname: string) {
   return pathname.startsWith("/dashboard");
@@ -25,6 +26,7 @@ export default function SiteHeader() {
   });
   const onHome = pathname === "/";
   const onDashboard = isDashboardPath(pathname);
+  const { open: dashboardMobileOpen, toggle: toggleDashboardMobile } = useDashboardMobileNav();
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const exploreLinks = useMemo(
@@ -175,7 +177,7 @@ export default function SiteHeader() {
           <div className="w-[140px]">
             <LanguageSelect compact />
           </div>
-          <PwaInstallButton />
+          <PwaInstallButton alwaysShow />
           <Link
             href={onDashboard ? "/dashboard" : "/login"}
             className="rounded-full border border-foreground/20 bg-foreground/[0.04] px-3 py-1.5 text-xs font-medium text-foreground/75 transition hover:bg-foreground/[0.08] hover:text-foreground sm:text-sm"
@@ -192,10 +194,20 @@ export default function SiteHeader() {
           ) : null}
         </div>
 
-        {!onDashboard ? (
-          <div className="flex items-center gap-2 sm:hidden">
-            <ThemeToggle compact />
-            <PwaInstallButton compact />
+        <div className="flex items-center gap-2 sm:hidden">
+          <ThemeToggle compact />
+          <PwaInstallButton compact alwaysShow />
+          {onDashboard ? (
+            <button
+              type="button"
+              onClick={toggleDashboardMobile}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-foreground/15 bg-foreground/[0.04] text-foreground/70 transition hover:bg-foreground/[0.08]"
+              aria-label={t("toggleNavigation")}
+              aria-expanded={dashboardMobileOpen}
+            >
+              {dashboardMobileOpen ? <X size={16} /> : <Menu size={16} />}
+            </button>
+          ) : (
             <button
               type="button"
               onClick={() => setOpen((prev) => !prev)}
@@ -205,8 +217,8 @@ export default function SiteHeader() {
             >
               {open ? <X size={16} /> : <Menu size={16} />}
             </button>
-          </div>
-        ) : null}
+          )}
+        </div>
       </div>
 
       {open && !onDashboard ? (
@@ -265,9 +277,6 @@ export default function SiteHeader() {
               </div>
             ))}
             <div className="mt-2 grid grid-cols-2 gap-2">
-              <div className="col-span-2 flex justify-center">
-                <ThemeToggle />
-              </div>
               <div className="col-span-2">
                 <LanguageSelect />
               </div>
@@ -286,7 +295,6 @@ export default function SiteHeader() {
                 {t("register")}
               </Link>
             </div>
-            <PwaInstallButton mobile />
           </div>
         </div>
       ) : null}

@@ -75,6 +75,7 @@ export async function PATCH(req: Request) {
   }
 
   const nextSettings: BusinessSettings = {
+    profileImageUrl: settings.profileImageUrl.trim(),
     brandName: settings.brandName.trim(),
     companyName: settings.companyName.trim(),
     contactEmail: settings.contactEmail.trim(),

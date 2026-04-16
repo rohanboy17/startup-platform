@@ -6,6 +6,8 @@ import DashboardTabNav from "@/components/dashboard-tab-nav";
 import PresenceHeartbeat from "@/components/presence-heartbeat";
 import UserProfileCompletionPrompt from "@/components/user-profile-completion-prompt";
 import { getAppSettings } from "@/lib/system-settings";
+import { prisma } from "@/lib/prisma";
+import { parseProfileDetails } from "@/lib/user-profile";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -30,6 +32,12 @@ export default async function UserLayout({
   if (settings.maintenanceMode) {
     redirect("/maintenance");
   }
+
+  const userProfile = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { profileDetails: true },
+  });
+  const avatarUrl = parseProfileDetails(userProfile?.profileDetails).avatarUrl;
 
   const items = [
     { key: "user.overview", href: "/dashboard/user", label: "Overview", labelKey: "overview", icon: "overview" as const },
@@ -66,6 +74,8 @@ export default async function UserLayout({
             role="USER"
             userId={session.user.id}
             items={items}
+            avatarUrl={avatarUrl}
+            profileHref="/dashboard/user/profile"
           />
         </aside>
 

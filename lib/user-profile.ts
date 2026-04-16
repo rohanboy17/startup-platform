@@ -1,4 +1,5 @@
 export type UserProfileDetails = {
+  avatarUrl: string | null;
   address: string | null;
   city: string | null;
   state: string | null;
@@ -18,6 +19,7 @@ export type UserProfileDetails = {
 };
 
 export const EMPTY_PROFILE_DETAILS: UserProfileDetails = {
+  avatarUrl: null,
   address: null,
   city: null,
   state: null,
@@ -85,6 +87,7 @@ export function parseProfileDetails(input: unknown): UserProfileDetails {
 
   const source = input as Record<string, unknown>;
   return {
+    avatarUrl: normalizeText(source.avatarUrl, 240) || null,
     address: normalizeText(source.address, 240) || null,
     city: normalizeText(source.city, 80) || null,
     state: normalizeText(source.state, 80) || null,

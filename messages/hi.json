@@ -1018,7 +1018,8 @@
         "failedToLoadProfile": "प्रोफ़ाइल लोड करने में विफल",
         "failedToLoadSkills": "कौशल लोड करने में विफल",
         "failedToSaveProfile": "प्रोफ़ाइल सहेजने में विफल",
-        "failedToSaveSkills": "कौशल सहेजने में विफल"
+        "failedToSaveSkills": "कौशल सहेजने में विफल",
+        "failedToUploadAvatar": "Failed to upload photo"
       },
       "internshipPreferenceOptions": {
         "default": "इंटर्नशिप प्राथमिकता",
@@ -1036,7 +1037,13 @@
         "joinedJobs": "नौकरी ज्वाइन कर ली"
       },
       "experienceSummary": "वर्तमान अनुभव: {label}. स्वीकृत कार्य पूर्ण: {tasks}।",
-      "experienceNoData": "अभी तक कोई रिकॉर्ड किया गया कार्य नहीं"
+      "experienceNoData": "अभी तक कोई रिकॉर्ड किया गया कार्य नहीं",
+      "photoTitle": "Profile photo",
+      "photoSubtitle": "Upload a clear photo so your dashboard profile looks complete.",
+      "uploadAvatar": "Upload photo",
+      "uploadingAvatar": "Uploading...",
+      "removeAvatar": "Remove photo",
+      "avatarUploaded": "Profile photo uploaded. Save to keep it."
     },
     "notificationsPage": {
       "eyebrow": "इनबॉक्स",
@@ -2127,10 +2134,12 @@
       "errors": {
         "unexpectedServerResponse": "अप्रत्याशित सर्वर प्रतिक्रिया",
         "failedToLoad": "सेटिंग्स लोड करने में विफल",
-        "failedToSave": "सेटिंग्स सहेजने में विफल"
+        "failedToSave": "सेटिंग्स सहेजने में विफल",
+        "failedToUploadAvatar": "Failed to upload photo"
       },
       "messages": {
-        "updated": "सेटिंग्स अपडेट की गईं"
+        "updated": "सेटिंग्स अपडेट की गईं",
+        "avatarUpdated": "Business photo updated. Save to keep it."
       },
       "profile": {
         "eyebrow": "व्यवसाय प्रोफ़ाइल",
@@ -2142,7 +2151,12 @@
         "supportContact": "समर्थन संपर्क",
         "accountEmail": "खाता ईमेल: {email}",
         "kycStatus": "केवाईसी स्थिति: {status}",
-        "joined": "शामिल हुए:"
+        "joined": "शामिल हुए:",
+        "photoTitle": "Business photo",
+        "photoSubtitle": "Upload a logo or profile image for your business dashboard.",
+        "uploadAvatar": "Upload photo",
+        "uploadingAvatar": "Uploading...",
+        "removeAvatar": "Remove photo"
       },
       "billing": {
         "eyebrow": "बिलिंग और नीतियां",

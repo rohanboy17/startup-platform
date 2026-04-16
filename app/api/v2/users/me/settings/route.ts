@@ -101,6 +101,7 @@ export async function GET() {
       role: user.role,
       createdAt: user.createdAt.toISOString(),
       timezone: user.timezone,
+      avatarUrl: profileDetails.avatarUrl,
       address: profileDetails.address,
       city: profileDetails.city,
       state: profileDetails.state,
@@ -150,6 +151,7 @@ export async function POST(req: Request) {
           mobile?: unknown;
           timezone?: unknown;
           address?: unknown;
+          avatarUrl?: unknown;
           city?: unknown;
           state?: unknown;
           pincode?: unknown;
@@ -182,6 +184,7 @@ export async function POST(req: Request) {
       body.profile &&
         [
           "address",
+          "avatarUrl",
           "city",
           "state",
           "pincode",
@@ -235,6 +238,9 @@ export async function POST(req: Request) {
 
     if (typeof body.profile?.address !== "undefined") {
       nextProfileDetails.address = normalizeText(body.profile.address, 240) || null;
+    }
+    if (typeof body.profile?.avatarUrl !== "undefined") {
+      nextProfileDetails.avatarUrl = normalizeText(body.profile.avatarUrl, 240) || null;
     }
     if (typeof body.profile?.city !== "undefined") {
       nextProfileDetails.city = normalizeText(body.profile.city, 80) || null;
@@ -408,6 +414,7 @@ export async function POST(req: Request) {
         role: updated.role,
         createdAt: updated.createdAt.toISOString(),
         timezone: updated.timezone,
+        avatarUrl: profileDetails.avatarUrl,
         address: profileDetails.address,
         city: profileDetails.city,
         state: profileDetails.state,
