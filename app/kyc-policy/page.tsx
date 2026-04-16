@@ -9,18 +9,18 @@ export default async function KycPolicyPage() {
       ? {
           eyebrow: "अनुपालन",
           title: "KYC नीति",
-          description: "बिज़नेस access, fraud prevention और payout safety के लिए KYC verification rules।",
+          description: "Business access, job posting, fraud prevention और payout safety के लिए KYC verification rules।",
         }
       : locale === "bn"
         ? {
             eyebrow: "কমপ্লায়েন্স",
             title: "KYC নীতি",
-            description: "Business access, fraud prevention এবং payout safety-এর জন্য KYC verification rules।",
+            description: "Business access, job posting, fraud prevention এবং payout safety-এর জন্য KYC verification rules।",
           }
         : {
             eyebrow: "Compliance",
             title: "KYC Policy",
-            description: "Know-your-customer verification rules for business access, fraud prevention, and payout safety.",
+            description: "Know-your-customer verification rules for business access, job posting, fraud prevention, and payout safety.",
           };
 
   const sections =
@@ -28,7 +28,7 @@ export default async function KycPolicyPage() {
       ? [
           {
             title: "KYC कब आवश्यक है",
-            body: "Business campaign operations, higher-risk payout workflows, suspicious activity flags या regulatory obligations के लिए KYC आवश्यक हो सकता है।",
+            body: "Business campaign operations, job posting approval, higher-risk payout workflows, suspicious activity flags या regulatory obligations के लिए KYC आवश्यक हो सकता है।",
           },
           {
             title: "कौन-सी जानकारी मांगी जा सकती है",
@@ -41,7 +41,7 @@ export default async function KycPolicyPage() {
           },
           {
             title: "Verification outcomes",
-            body: "Accounts approved, rejected या re-submission के लिए marked हो सकते हैं। Pending KYC की स्थिति में campaign creation या payout operations review पूरा होने तक सीमित हो सकते हैं।",
+            body: "Accounts approved, rejected या re-submission के लिए marked हो सकते हैं। Pending KYC की स्थिति में campaign creation, job posting, funding use या payout operations review पूरा होने तक सीमित हो सकते हैं।",
           },
           {
             title: "Data handling",
@@ -52,7 +52,7 @@ export default async function KycPolicyPage() {
         ? [
             {
               title: "KYC কখন প্রয়োজন",
-              body: "Business campaign operations, higher-risk payout workflows, suspicious activity flags বা regulatory obligations-এর জন্য KYC প্রয়োজন হতে পারে।",
+              body: "Business campaign operations, job posting approval, higher-risk payout workflows, suspicious activity flags বা regulatory obligations-এর জন্য KYC প্রয়োজন হতে পারে।",
             },
             {
               title: "কোন তথ্য চাওয়া হতে পারে",
@@ -65,7 +65,7 @@ export default async function KycPolicyPage() {
             },
             {
               title: "Verification outcomes",
-              body: "Accounts approved, rejected বা re-submission-এর জন্য marked হতে পারে। Pending KYC থাকলে review সম্পন্ন না হওয়া পর্যন্ত campaign creation বা payout operations সীমিত হতে পারে।",
+              body: "Accounts approved, rejected বা re-submission-এর জন্য marked হতে পারে। Pending KYC থাকলে review সম্পন্ন না হওয়া পর্যন্ত campaign creation, job posting, funding use বা payout operations সীমিত হতে পারে।",
             },
             {
               title: "Data handling",
@@ -75,7 +75,7 @@ export default async function KycPolicyPage() {
         : [
             {
               title: "When KYC Is Required",
-              body: "KYC may be required for business campaign operations, higher-risk payout workflows, suspicious activity flags, or regulatory obligations.",
+              body: "KYC may be required for business campaign operations, job posting approval, higher-risk payout workflows, suspicious activity flags, or regulatory obligations.",
             },
             {
               title: "What Information May Be Requested",
@@ -88,7 +88,7 @@ export default async function KycPolicyPage() {
             },
             {
               title: "Verification Outcomes",
-              body: "Accounts may be approved, rejected, or asked for re-submission. Pending KYC can limit campaign creation or payout operations until review is complete.",
+              body: "Accounts may be approved, rejected, or asked for re-submission. Pending KYC can limit campaign creation, job posting, funding use, or payout operations until review is complete.",
             },
             {
               title: "Data Handling",
@@ -97,7 +97,7 @@ export default async function KycPolicyPage() {
           ];
 
   return (
-    <PublicPageShell eyebrow={meta.eyebrow} title={meta.title} description={meta.description} lastUpdated="April 3, 2026">
+    <PublicPageShell eyebrow={meta.eyebrow} title={meta.title} description={meta.description} lastUpdated="April 16, 2026">
       <div className="space-y-4">
         {sections.map((section) => (
           <PolicySection key={section.title} title={section.title}>

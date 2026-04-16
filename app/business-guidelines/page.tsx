@@ -26,6 +26,10 @@ const CONTENT: Record<string, { eyebrow: string; title: string; description: str
         body: "Businesses may only request data that is necessary for the task or job. Do not ask workers to submit sensitive personal data, account credentials, payment details, unlawful screenshots, or off-platform hiring requirements that bypass FreeEarnHub review controls. Businesses remain responsible for applicable law and platform-policy compliance.",
       },
       {
+        title: "In-app communication after hiring",
+        body: "Where candidate messaging is enabled, businesses should use the in-app thread professionally and only for lawful work coordination. Do not use the platform chat for harassment, off-platform payment redirection, hidden contract terms, or requests that conflict with the approved posting. Admins may review message history for safety, support, and compliance purposes.",
+      },
+      {
         title: "Review, holds, and enforcement",
         body: "FreeEarnHub may pause, reject, edit-gate, or remove campaigns and jobs that create legal, fraud, trust, privacy, or policy risk. Repeated violations can lead to account restrictions, payment holds, refund review, or permanent suspension.",
       },
@@ -51,6 +55,10 @@ const CONTENT: Record<string, { eyebrow: string; title: string; description: str
       {
         title: "Privacy और lawful use",
         body: "Business केवल वही data माँगे जो task या job के लिए आवश्यक हो। Sensitive personal data, account credentials, payment details, unlawful screenshots या FreeEarnHub review controls को bypass करने वाली off-platform hiring requirements माँगना allowed नहीं है। लागू कानून और platform-policy compliance की जिम्मेदारी business की ही रहती है।",
+      },
+      {
+        title: "Hiring के बाद in-app communication",
+        body: "जहाँ candidate messaging enabled हो, वहाँ business को in-app thread का उपयोग केवल lawful work coordination और professional communication के लिए करना चाहिए। Harassment, off-platform payment redirection, hidden contract terms या approved posting से टकराने वाली request इस chat में नहीं भेजी जानी चाहिए। Safety, support और compliance के लिए admin message history review कर सकते हैं।",
       },
       {
         title: "Review, hold और enforcement",
@@ -80,6 +88,10 @@ const CONTENT: Record<string, { eyebrow: string; title: string; description: str
         body: "Business শুধু task বা job-এর জন্য প্রয়োজনীয় data চাইতে পারবে। Sensitive personal data, account credentials, payment details, unlawful screenshot বা FreeEarnHub review controls bypass করে এমন off-platform hiring requirements চাওয়া যাবে না। প্রযোজ্য আইন এবং platform-policy compliance-এর দায়িত্ব business-এর উপরই থাকবে।",
       },
       {
+        title: "Hiring-এর পরে in-app communication",
+        body: "যেখানে candidate messaging enabled থাকে, সেখানে business-কে in-app thread শুধু lawful work coordination এবং professional communication-এর জন্য ব্যবহার করতে হবে। Harassment, off-platform payment redirection, hidden contract terms বা approved posting-এর সঙ্গে conflict করে এমন request এই chat-এ পাঠানো যাবে না। Safety, support এবং compliance-এর জন্য admin message history review করতে পারে।",
+      },
+      {
         title: "Review, hold এবং enforcement",
         body: "Legal, fraud, trust, privacy বা policy risk পাওয়া গেলে FreeEarnHub campaign এবং job pause, reject, edit-gate বা remove করতে পারে। বারবার violation হলে account restriction, payment hold, refund review বা permanent suspension হতে পারে।",
       },
@@ -96,7 +108,7 @@ export default async function BusinessGuidelinesPage() {
       eyebrow={content.eyebrow}
       title={content.title}
       description={content.description}
-      lastUpdated="April 3, 2026"
+      lastUpdated="April 16, 2026"
     >
       <div className="space-y-4">
         {content.sections.map((section) => (

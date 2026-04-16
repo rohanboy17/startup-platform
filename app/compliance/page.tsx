@@ -13,15 +13,15 @@ const CONTENT: Record<string, { eyebrow: string; title: string; description: str
     sections: [
       {
         title: "Verification and review checks",
-        body: "Accounts, campaigns, payouts, refunds, and unusual activity may be reviewed for fraud, policy, KYC, reconciliation, or legal risk before approval or release.",
+        body: "Accounts, campaigns, jobs, payouts, refunds, in-app hiring messages, and unusual activity may be reviewed for fraud, policy, KYC, reconciliation, or legal risk before approval or release.",
       },
       {
         title: "Payout and reconciliation handling",
-        body: "Wallet balances, withdrawals, business funding, and refunds are subject to ledger checks, payout-rail availability, documentation review, and settlement reconciliation. Processing windows may vary when exceptions or holds are present.",
+        body: "Wallet balances, withdrawals, business funding, approved job-budget locks, and refunds are subject to ledger checks, payout-rail availability, documentation review, and settlement reconciliation. Processing windows may vary when exceptions or holds are present.",
       },
       {
         title: "Evidence and audit trail",
-        body: "FreeEarnHub may rely on campaign records, moderation decisions, proof snapshots, transaction logs, device or IP signals, and uploaded supporting documents when resolving disputes or investigating abuse.",
+        body: "FreeEarnHub may rely on campaign records, job and application records, moderation decisions, proof snapshots, transaction logs, device or IP signals, in-app message history, and uploaded supporting documents when resolving disputes or investigating abuse.",
       },
       {
         title: "Grievance escalation",
@@ -41,15 +41,15 @@ const CONTENT: Record<string, { eyebrow: string; title: string; description: str
     sections: [
       {
         title: "Verification और review checks",
-        body: "Fraud, policy, KYC, reconciliation या legal risk के आधार पर accounts, campaigns, payouts, refunds और unusual activity को approval या release से पहले review किया जा सकता है।",
+        body: "Fraud, policy, KYC, reconciliation या legal risk के आधार पर accounts, campaigns, jobs, payouts, refunds, in-app hiring messages और unusual activity को approval या release से पहले review किया जा सकता है।",
       },
       {
         title: "Payout और reconciliation handling",
-        body: "Wallet balance, withdrawal, business funding और refund ledger checks, payout-rail availability, document review और settlement reconciliation के अधीन रहते हैं। Exception या hold होने पर processing window बदल सकती है।",
+        body: "Wallet balance, withdrawal, business funding, approved job-budget locks और refund ledger checks, payout-rail availability, document review और settlement reconciliation के अधीन रहते हैं। Exception या hold होने पर processing window बदल सकती है।",
       },
       {
         title: "Evidence और audit trail",
-        body: "Dispute resolve करने या abuse investigate करने के लिए FreeEarnHub campaign records, moderation decisions, proof snapshots, transaction logs, device/IP signals और supporting documents पर भरोसा कर सकता है।",
+        body: "Dispute resolve करने या abuse investigate करने के लिए FreeEarnHub campaign records, job और application records, moderation decisions, proof snapshots, transaction logs, device/IP signals, in-app message history और supporting documents पर भरोसा कर सकता है।",
       },
       {
         title: "Grievance escalation",
@@ -69,15 +69,15 @@ const CONTENT: Record<string, { eyebrow: string; title: string; description: str
     sections: [
       {
         title: "Verification এবং review checks",
-        body: "Fraud, policy, KYC, reconciliation বা legal risk-এর কারণে account, campaign, payout, refund এবং unusual activity approval বা release-এর আগে review করা হতে পারে।",
+        body: "Fraud, policy, KYC, reconciliation বা legal risk-এর কারণে account, campaign, job, payout, refund, in-app hiring messages এবং unusual activity approval বা release-এর আগে review করা হতে পারে।",
       },
       {
         title: "Payout এবং reconciliation handling",
-        body: "Wallet balance, withdrawal, business funding এবং refund ledger checks, payout-rail availability, document review এবং settlement reconciliation-এর অধীনে থাকে। Exception বা hold থাকলে processing window বদলাতে পারে।",
+        body: "Wallet balance, withdrawal, business funding, approved job-budget locks এবং refund ledger checks, payout-rail availability, document review এবং settlement reconciliation-এর অধীনে থাকে। Exception বা hold থাকলে processing window বদলাতে পারে।",
       },
       {
         title: "Evidence এবং audit trail",
-        body: "Dispute resolve করা বা abuse investigate করার সময় FreeEarnHub campaign records, moderation decisions, proof snapshots, transaction logs, device/IP signals এবং supporting documents ব্যবহার করতে পারে।",
+        body: "Dispute resolve করা বা abuse investigate করার সময় FreeEarnHub campaign records, job এবং application records, moderation decisions, proof snapshots, transaction logs, device/IP signals, in-app message history এবং supporting documents ব্যবহার করতে পারে।",
       },
       {
         title: "Grievance escalation",
@@ -100,7 +100,7 @@ export default async function CompliancePage() {
       eyebrow={content.eyebrow}
       title={content.title}
       description={content.description}
-      lastUpdated="April 3, 2026"
+      lastUpdated="April 16, 2026"
     >
       <div className="space-y-4">
         {content.sections.map((section) => (

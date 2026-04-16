@@ -15,17 +15,17 @@ const CONTENT: Record<string, Content> = {
     eyebrow: "Legal",
     title: "Refund Policy",
     description:
-      "How FreeEarnHub handles unused campaign budget, settlement boundaries, withdrawals, and dispute review.",
+      "How FreeEarnHub handles unused campaign and job budget, settlement boundaries, withdrawals, and dispute review.",
     sections: [
       {
         title: "Unused business budget",
         body:
-          "Businesses may request release or refund of eligible unused campaign budget that has not been consumed by approved work, locked settlement, refund hold, or compliance review.",
+          "Businesses may request release or refund of eligible unused campaign or approved-job budget that has not been consumed by approved work, locked hiring budget, settlement hold, refund hold, or compliance review.",
       },
       {
         title: "What is not refundable",
         body:
-          "Amounts already tied to approved submissions, settled rewards, fraud investigation holds, chargeback risk, or platform fee obligations are not automatically refundable. Manual review may be required before any balance is released.",
+          "Amounts already tied to approved submissions, hired or active job commitments, settled rewards, fraud investigation holds, chargeback risk, or platform fee obligations are not automatically refundable. Manual review may be required before any balance is released.",
       },
       {
         title: "User withdrawals",
@@ -48,17 +48,17 @@ const CONTENT: Record<string, Content> = {
     eyebrow: "कानूनी",
     title: "रिफंड नीति",
     description:
-      "FreeEarnHub unused campaign budget, settlement boundaries, withdrawals और dispute review को कैसे संभालता है।",
+      "FreeEarnHub unused campaign और job budget, settlement boundaries, withdrawals और dispute review को कैसे संभालता है।",
     sections: [
       {
         title: "अप्रयुक्त बिज़नेस बजट",
         body:
-          "बिज़नेस ऐसे unused campaign budget की release या refund request कर सकते हैं जो approved work, locked settlement, refund hold या compliance review में उपयोग नहीं हुआ हो।",
+          "बिज़नेस ऐसे unused campaign या approved-job budget की release या refund request कर सकते हैं जो approved work, locked hiring budget, settlement hold, refund hold या compliance review में उपयोग नहीं हुआ हो।",
       },
       {
         title: "क्या refundable नहीं है",
         body:
-          "Approved submissions, settled rewards, fraud investigation holds, chargeback risk या platform fee obligations से जुड़े amounts अपने-आप refundable नहीं होते। किसी balance को release करने से पहले manual review आवश्यक हो सकता है।",
+          "Approved submissions, hired या active job commitments, settled rewards, fraud investigation holds, chargeback risk या platform fee obligations से जुड़े amounts अपने-आप refundable नहीं होते। किसी balance को release करने से पहले manual review आवश्यक हो सकता है।",
       },
       {
         title: "यूज़र withdrawals",
@@ -81,17 +81,17 @@ const CONTENT: Record<string, Content> = {
     eyebrow: "আইনি",
     title: "রিফান্ড নীতি",
     description:
-      "FreeEarnHub কীভাবে unused campaign budget, settlement boundaries, withdrawals এবং dispute review পরিচালনা করে।",
+      "FreeEarnHub কীভাবে unused campaign এবং job budget, settlement boundaries, withdrawals এবং dispute review পরিচালনা করে।",
     sections: [
       {
         title: "অব্যবহৃত ব্যবসার বাজেট",
         body:
-          "ব্যবসা এমন unused campaign budget-এর release বা refund request করতে পারে যা approved work, locked settlement, refund hold বা compliance review-এ খরচ হয়নি।",
+          "ব্যবসা এমন unused campaign বা approved-job budget-এর release বা refund request করতে পারে যা approved work, locked hiring budget, settlement hold, refund hold বা compliance review-এ খরচ হয়নি।",
       },
       {
         title: "কী refundable নয়",
         body:
-          "Approved submissions, settled rewards, fraud investigation holds, chargeback risk বা platform fee obligations-এর সাথে যুক্ত amounts স্বয়ংক্রিয়ভাবে refundable নয়। কোনো balance release করার আগে manual review প্রয়োজন হতে পারে।",
+          "Approved submissions, hired বা active job commitments, settled rewards, fraud investigation holds, chargeback risk বা platform fee obligations-এর সাথে যুক্ত amounts স্বয়ংক্রিয়ভাবে refundable নয়। কোনো balance release করার আগে manual review প্রয়োজন হতে পারে।",
       },
       {
         title: "ব্যবহারকারীর withdrawals",
@@ -121,7 +121,7 @@ export default async function RefundPolicyPage() {
       eyebrow={content.eyebrow}
       title={content.title}
       description={content.description}
-      lastUpdated="April 3, 2026"
+      lastUpdated="April 16, 2026"
     >
       <div className="space-y-4">
         {content.sections.map((section) => (

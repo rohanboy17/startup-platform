@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { usePerformanceReducedMotion } from "@/lib/use-performance-reduced-motion";
+import { cn } from "@/lib/utils";
 
 type HomeHeroOfferingsProps = {
   phrases: string[];
@@ -65,8 +66,15 @@ export default function HomeHeroOfferings({ phrases, className }: HomeHeroOfferi
 
   if (reduceMotion || safePhrases.length === 1) {
     return (
-      <span className={className} style={maxPhraseLength ? { minWidth: `${maxPhraseLength + 1}ch` } : undefined}>
-        {safePhrases[0]}
+      <span className={cn(className, "min-h-0 whitespace-normal")} aria-label={safePhrases.join(", ")}>
+        <span className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-current">
+          {safePhrases.map((phrase, index) => (
+            <Fragment key={phrase}>
+              {index > 0 ? <span className="text-foreground/35">•</span> : null}
+              <span className="whitespace-normal">{phrase}</span>
+            </Fragment>
+          ))}
+        </span>
       </span>
     );
   }

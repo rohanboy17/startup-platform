@@ -132,17 +132,17 @@
       "side": {
         "eyebrow": "Get Started",
         "title": "Create your account in just a few minutes.",
-        "subtitle": "Join as a user to earn from verified tasks, or as a business to launch real campaigns.",
+        "subtitle": "Join as a person to find verified work, internships, and local jobs, or as a business to post campaigns and hire from one place.",
         "bullets": {
-          "unified": "One account for user or business access",
+          "unified": "One account for work, internships, jobs, or business hiring",
           "mobileIdentity": "Mobile-number based sign-up support",
-          "wallet": "Secure wallet and payout setup"
+          "wallet": "Payouts, hiring updates, and wallet setup in one account"
         }
       },
       "card": {
         "eyebrow": "Create New Account",
         "title": "Join FreeEarnHub",
-        "subtitle": "Register with your mobile number and start earning or creating campaigns."
+        "subtitle": "Register with your mobile number and start working, applying for jobs and internships, or hiring from one place."
       },
       "form": {
         "fullName": "Full name",
@@ -231,12 +231,12 @@
       "viewDashboard": "View dashboard",
       "offeringsLabel": "Built for Verified",
       "offerings": [
+        "Local jobs",
         "Micro tasks",
         "Digital works",
         "Internships",
         "On-site jobs",
-        "Office works",
-        "Local jobs"
+        "Office works"
       ]
     },
     "sections": {
