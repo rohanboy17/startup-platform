@@ -132,7 +132,8 @@ export async function POST(req: Request) {
       jobType: normalizeOptionalText(body.jobType, 120),
       customJobType: normalizeOptionalText(body.customJobType, 160),
     },
-    settings.jobCategories
+    settings.jobCategories,
+    settings.workTaxonomy
   );
   const workMode = normalizeOptionalText(body.workMode, 32);
   const employmentType = normalizeOptionalText(body.employmentType, 32);
@@ -211,7 +212,9 @@ export async function POST(req: Request) {
         title,
         description,
         jobCategory: selection.jobCategory,
+        jobCategorySlug: selection.jobCategorySlug,
         jobType: selection.jobType,
+        jobTypeSlug: selection.jobTypeSlug,
         customJobType: selection.customJobType,
         workMode: workMode as "WORK_FROM_OFFICE" | "WORK_IN_FIELD" | "HYBRID",
         employmentType: employmentType as "FULL_TIME" | "PART_TIME" | "CONTRACT" | "DAILY_GIG" | "INTERNSHIP",

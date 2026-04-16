@@ -267,7 +267,7 @@ export async function PUT(
     taskCategory: body.taskCategory ?? campaign.taskCategory,
     taskType: body.taskType ?? campaign.taskType,
     customTask: body.customTask === undefined ? campaign.customTask : body.customTask,
-  }, appSettings.taskCategories);
+  }, appSettings.taskCategories, appSettings.workTaxonomy);
   const taskLink = body.taskLink === undefined ? campaign.taskLink : body.taskLink?.trim() || null;
   const tutorialVideoUrl =
     body.tutorialVideoUrl === undefined
@@ -340,8 +340,11 @@ export async function PUT(
         title,
         description,
         category,
+        categorySlug: category.toLowerCase(),
         taskCategory: normalizedTaskSelection.taskCategory,
+        taskCategorySlug: normalizedTaskSelection.taskCategorySlug,
         taskType: normalizedTaskSelection.taskType,
+        taskTypeSlug: normalizedTaskSelection.taskTypeSlug,
         customTask: normalizedTaskSelection.customTask,
         taskLink,
         tutorialVideoUrl,

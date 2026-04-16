@@ -200,7 +200,7 @@ export async function PUT(
     taskCategory: body.taskCategory ?? campaign.taskCategory,
     taskType: body.taskType ?? campaign.taskType,
     customTask: body.customTask === undefined ? campaign.customTask : body.customTask,
-  }, appSettings.taskCategories);
+  }, appSettings.taskCategories, appSettings.workTaxonomy);
   const taskLink = body.taskLink === undefined ? campaign.taskLink : body.taskLink?.trim() || null;
   const rewardPerTask = Number(body.rewardPerTask ?? campaign.rewardPerTask);
   const totalBudget = Number(body.totalBudget ?? campaign.totalBudget);
@@ -336,8 +336,11 @@ export async function PUT(
         title,
         description,
         category,
+        categorySlug: category,
         taskCategory: normalizedTaskSelection.taskCategory,
+        taskCategorySlug: normalizedTaskSelection.taskCategorySlug,
         taskType: normalizedTaskSelection.taskType,
+        taskTypeSlug: normalizedTaskSelection.taskTypeSlug,
         customTask: normalizedTaskSelection.customTask,
         taskLink,
         rewardPerTask,
@@ -459,8 +462,11 @@ export async function POST(
         title: `${sourceCampaign.title} (Copy)`,
         description: sourceCampaign.description,
         category: sourceCampaign.category,
+        categorySlug: sourceCampaign.categorySlug ?? sourceCampaign.category,
         taskCategory: sourceCampaign.taskCategory,
+        taskCategorySlug: sourceCampaign.taskCategorySlug,
         taskType: sourceCampaign.taskType,
+        taskTypeSlug: sourceCampaign.taskTypeSlug,
         customTask: sourceCampaign.customTask,
         taskLink: sourceCampaign.taskLink,
         tutorialVideoUrl: sourceCampaign.tutorialVideoUrl,

@@ -35,7 +35,9 @@ type BusinessCampaignEditorProps = {
     description: string;
     category: string;
     taskCategory: string;
+    taskCategorySlug?: string | null;
     taskType: string;
+    taskTypeSlug?: string | null;
     customTask: string | null;
     taskLink: string | null;
     rewardPerTask: number;
@@ -56,7 +58,9 @@ export default function BusinessCampaignEditor({
   const router = useRouter();
   const initialTaskSelectionRef = useRef({
     taskCategory: campaign.taskCategory,
+    taskCategorySlug: campaign.taskCategorySlug || null,
     taskType: campaign.taskType,
+    taskTypeSlug: campaign.taskTypeSlug || null,
   });
   const [taskCategories, setTaskCategories] = useState<TaskCategoryOption[]>(DEFAULT_TASK_CATEGORIES);
   const [campaignCategoryOptions, setCampaignCategoryOptions] = useState<CampaignCategoryOption[]>(CAMPAIGN_CATEGORY_OPTIONS);
@@ -110,12 +114,20 @@ export default function BusinessCampaignEditor({
           );
         }
         if (data.taskCategories?.length) {
-          const nextTaskCategory = isValidTaskCategory(initialTaskSelectionRef.current.taskCategory, data.taskCategories)
-            ? initialTaskSelectionRef.current.taskCategory
-            : data.taskCategories[0]?.name || "Other";
-          const nextTaskType = isValidTaskType(nextTaskCategory, initialTaskSelectionRef.current.taskType, data.taskCategories)
-            ? initialTaskSelectionRef.current.taskType
-            : getTaskTypesForCategory(nextTaskCategory, data.taskCategories)[0] || "Other";
+          const categoryBySlug = data.taskCategories.find(
+            (item) => item.slug === initialTaskSelectionRef.current.taskCategorySlug
+          );
+          const nextTaskCategory = categoryBySlug?.name
+            || (isValidTaskCategory(initialTaskSelectionRef.current.taskCategory, data.taskCategories)
+              ? initialTaskSelectionRef.current.taskCategory
+              : data.taskCategories[0]?.name || "Other");
+          const nextTaskTypeBySlug = data.taskCategories
+            .find((item) => item.name === nextTaskCategory)
+            ?.types.find((item) => item.slug === initialTaskSelectionRef.current.taskTypeSlug)?.label;
+          const nextTaskType = nextTaskTypeBySlug
+            || (isValidTaskType(nextTaskCategory, initialTaskSelectionRef.current.taskType, data.taskCategories)
+              ? initialTaskSelectionRef.current.taskType
+              : getTaskTypesForCategory(nextTaskCategory, data.taskCategories)[0] || "Other");
           setTaskCategories(data.taskCategories);
           setTaskCategory(nextTaskCategory);
           setTaskType(nextTaskType);

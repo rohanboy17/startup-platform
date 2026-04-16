@@ -7,7 +7,7 @@ import AdminCampaignRepeatControls from "@/components/admin-campaign-repeat-cont
 import { getCampaignCategoryLabel } from "@/lib/campaign-options";
 import { formatMoney } from "@/lib/format-money";
 import { getAppSettings } from "@/lib/system-settings";
-import { getEffectiveTaskLabel } from "@/lib/task-categories";
+import { getTaskCategoryLabel, getTaskTypeLabel } from "@/lib/task-categories";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -215,7 +215,15 @@ export default async function AdminCampaignsPage({
                   Category: {getCampaignCategoryLabel(campaign.category, undefined, settings.campaignCategoryOptions)}
                 </p>
                 <p className="text-sm text-foreground/70">
-                  Task category: {campaign.taskCategory} | Task type: {getEffectiveTaskLabel(campaign.taskType, campaign.customTask)}
+                  Task category:{" "}
+                  {getTaskCategoryLabel(campaign.taskCategorySlug, campaign.taskCategory, settings.workTaxonomy)} | Task type:{" "}
+                  {getTaskTypeLabel(
+                    campaign.taskCategorySlug,
+                    campaign.taskTypeSlug,
+                    campaign.taskType,
+                    campaign.customTask,
+                    settings.workTaxonomy
+                  )}
                 </p>
                 <p className="text-sm text-foreground/70">{campaign.description}</p>
                 <p className="break-all text-sm text-foreground/70">
@@ -290,7 +298,9 @@ export default async function AdminCampaignsPage({
                   initialDescription={campaign.description}
                   initialCategory={campaign.category}
                   initialTaskCategory={campaign.taskCategory}
+                  initialTaskCategorySlug={campaign.taskCategorySlug}
                   initialTaskType={campaign.taskType}
+                  initialTaskTypeSlug={campaign.taskTypeSlug}
                   initialCustomTask={campaign.customTask}
                   initialTaskLink={campaign.taskLink}
                   initialTutorialVideoUrl={campaign.tutorialVideoUrl}

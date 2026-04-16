@@ -84,7 +84,7 @@ export async function POST(req: Request) {
     taskCategory,
     taskType,
     customTask,
-  }, appSettings.taskCategories);
+  }, appSettings.taskCategories, appSettings.workTaxonomy);
 
   if ("error" in normalizedTaskSelection) {
     return NextResponse.json({ error: normalizedTaskSelection.error }, { status: 400 });
@@ -142,8 +142,11 @@ export async function POST(req: Request) {
         title,
         description,
         category: normalizedCategory,
+        categorySlug: normalizedCategory,
         taskCategory: normalizedTaskSelection.taskCategory,
+        taskCategorySlug: normalizedTaskSelection.taskCategorySlug,
         taskType: normalizedTaskSelection.taskType,
+        taskTypeSlug: normalizedTaskSelection.taskTypeSlug,
         customTask: normalizedTaskSelection.customTask,
         taskLink: normalizeExternalUrl(taskLink),
         rewardPerTask: reward,

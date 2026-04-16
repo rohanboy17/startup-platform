@@ -30,7 +30,9 @@ type JobPayload = {
     title: string;
     description: string;
     jobCategory: string;
+    jobCategorySlug?: string | null;
     jobType: string;
+    jobTypeSlug?: string | null;
     customJobType: string | null;
     workMode: string;
     employmentType: string;
@@ -98,6 +100,11 @@ type JobPayload = {
       };
     }>;
   };
+  jobCategories?: Array<{
+    name: string;
+    slug: string;
+    types: Array<{ slug: string; label: string }>;
+  }>;
   error?: string;
 };
 
@@ -282,6 +289,14 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
 
   const { job, accessRole } = data;
   const canManage = accessRole === "OWNER" || accessRole === "EDITOR";
+  const currentCategoryLabel =
+    data.jobCategories?.find((item) => item.slug === job.jobCategorySlug)?.name || job.jobCategory;
+  const currentTypeLabel =
+    data.jobCategories
+      ?.find((item) => item.slug === job.jobCategorySlug)
+      ?.types.find((item) => item.slug === job.jobTypeSlug)?.label
+    || job.customJobType
+    || job.jobType;
 
   return (
     <div className="space-y-6">
@@ -301,8 +316,8 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
             </div>
             <p className="text-sm text-foreground/70">{job.description}</p>
             <div className="flex flex-wrap gap-3 text-xs text-foreground/60">
-              <span>{job.jobCategory}</span>
-              <span>{job.customJobType || job.jobType}</span>
+              <span>{currentCategoryLabel}</span>
+              <span>{currentTypeLabel}</span>
               <span>{job.city}, {job.state}</span>
               {job.hiringRadiusKm ? <span>{t("job.radius", { value: job.hiringRadiusKm })}</span> : null}
               <span>{t("job.payLine", { amount: formatMoney(job.payAmount), unit: t(`payUnits.${job.payUnit}`) })}</span>
@@ -412,7 +427,9 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
             title: job.title,
             description: job.description,
             jobCategory: job.jobCategory,
+            jobCategorySlug: job.jobCategorySlug,
             jobType: job.jobType,
+            jobTypeSlug: job.jobTypeSlug,
             customJobType: job.customJobType,
             workMode: job.workMode,
             employmentType: job.employmentType,

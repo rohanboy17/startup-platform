@@ -303,7 +303,8 @@ export async function PUT(
           ? existing.customJobType
           : normalizeOptionalText(body.customJobType, 160),
     },
-    settings.jobCategories
+    settings.jobCategories,
+    settings.workTaxonomy
   );
   const workMode = normalizeOptionalText(body.workMode, 32) || existing.workMode;
   const employmentType = normalizeOptionalText(body.employmentType, 32) || existing.employmentType;
@@ -394,7 +395,9 @@ export async function PUT(
         title,
         description,
         jobCategory: selection.jobCategory,
+        jobCategorySlug: selection.jobCategorySlug,
         jobType: selection.jobType,
+        jobTypeSlug: selection.jobTypeSlug,
         customJobType: selection.customJobType,
         workMode: workMode as "WORK_FROM_OFFICE" | "WORK_IN_FIELD" | "HYBRID",
         employmentType: employmentType as "FULL_TIME" | "PART_TIME" | "CONTRACT" | "DAILY_GIG" | "INTERNSHIP",

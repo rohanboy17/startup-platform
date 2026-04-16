@@ -228,8 +228,11 @@ model Campaign {
   title           String
   description     String
   category        String
+  categorySlug    String?
   taskCategory    String                @default("Other")
+  taskCategorySlug String?
   taskType        String                @default("Other")
+  taskTypeSlug    String?
   customTask      String?
   taskLink        String?
   tutorialVideoUrl String?
@@ -320,7 +323,9 @@ model JobPosting {
   title               String
   description         String
   jobCategory         String
+  jobCategorySlug     String?
   jobType             String
+  jobTypeSlug         String?
   customJobType       String?
   workMode            JobWorkMode
   employmentType      JobEmploymentType

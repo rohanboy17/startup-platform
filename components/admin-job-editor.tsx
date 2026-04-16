@@ -24,7 +24,9 @@ type JobShape = {
   title: string;
   description: string;
   jobCategory: string;
+  jobCategorySlug?: string | null;
   jobType: string;
+  jobTypeSlug?: string | null;
   customJobType: string | null;
   workMode: string;
   employmentType: string;
@@ -64,7 +66,9 @@ export default function AdminJobEditor({
   const router = useRouter();
   const initialSelectionRef = useRef({
     jobCategory: initialJob.jobCategory,
+    jobCategorySlug: initialJob.jobCategorySlug || null,
     jobType: initialJob.jobType,
+    jobTypeSlug: initialJob.jobTypeSlug || null,
   });
 
   const [title, setTitle] = useState(initialJob.title);
@@ -120,16 +124,25 @@ export default function AdminJobEditor({
             })
           : {};
         if (data.jobCategories?.length) {
-          const nextCategory = data.jobCategories.some((item) => item.name === initialSelectionRef.current.jobCategory)
-            ? initialSelectionRef.current.jobCategory
-            : data.jobCategories[0]?.name || "Other";
+          const categoryBySlug = data.jobCategories.find(
+            (item) => item.slug === initialSelectionRef.current.jobCategorySlug
+          );
+          const nextCategory = categoryBySlug?.name
+            || (data.jobCategories.some((item) => item.name === initialSelectionRef.current.jobCategory)
+              ? initialSelectionRef.current.jobCategory
+              : data.jobCategories[0]?.name || "Other");
           const nextTypes = getJobTypesForCategory(nextCategory, data.jobCategories);
+          const nextTypeBySlug = data.jobCategories
+            .find((item) => item.name === nextCategory)
+            ?.types.find((item) => item.slug === initialSelectionRef.current.jobTypeSlug)?.label;
           setJobCategories(data.jobCategories);
           setJobCategory(nextCategory);
           setJobType(
-            nextTypes.includes(initialSelectionRef.current.jobType)
+            nextTypeBySlug
+              || (nextTypes.includes(initialSelectionRef.current.jobType)
               ? initialSelectionRef.current.jobType
               : nextTypes[0] || "Other"
+            )
           );
         }
         if (data.jobWorkModes?.length) {

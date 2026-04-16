@@ -1,12 +1,17 @@
 export type WorkSurface = "profile" | "job" | "campaign";
 
+export type WorkTaxonomyType = {
+  slug: string;
+  label: string;
+};
+
 export type WorkTaxonomyCategory = {
   slug: string;
   label: string;
   description: string;
   surfaces: WorkSurface[];
-  jobTypes: string[];
-  taskTypes: string[];
+  jobTypes: WorkTaxonomyType[];
+  taskTypes: WorkTaxonomyType[];
 };
 
 export type CampaignCategoryOption = {
@@ -27,13 +32,24 @@ export type WorkModeOption = TaxonomySelectOption & {
 
 export type JobCategoryOption = {
   name: string;
+  slug: string;
   items: string[];
+  types: WorkTaxonomyType[];
 };
 
 export type TaskCategoryOption = {
   name: string;
+  slug: string;
   items: string[];
+  types: WorkTaxonomyType[];
 };
+
+function typeList(labels: string[]): WorkTaxonomyType[] {
+  return labels.map((label) => ({
+    slug: normalizeSlug(label),
+    label,
+  }));
+}
 
 const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
   {
@@ -42,7 +58,7 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
     description: "Customer insight, listing checks, onboarding tests, and structured feedback work.",
     surfaces: ["profile", "campaign"],
     jobTypes: [],
-    taskTypes: [
+    taskTypes: typeList([
       "Google Business Profile QA",
       "Local Listing Accuracy Audit",
       "Website Journey Test",
@@ -53,7 +69,7 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
       "Content Appeal Feedback",
       "Campaign Message Clarity Test",
       "Screenshot-Based Listing Audit",
-    ],
+    ]),
   },
   {
     slug: "content-writing",
@@ -61,7 +77,7 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
     description: "Writing, editing, translations, and content delivery work.",
     surfaces: ["profile", "campaign"],
     jobTypes: [],
-    taskTypes: [
+    taskTypes: typeList([
       "Article Writing",
       "Blog Writing",
       "Product Description",
@@ -70,7 +86,7 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
       "Translation Work",
       "Proofreading / Editing",
       "Help Center Writing",
-    ],
+    ]),
   },
   {
     slug: "data-research-operations",
@@ -78,7 +94,7 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
     description: "Data tasks, research support, spreadsheets, and structured operations work.",
     surfaces: ["profile", "campaign"],
     jobTypes: [],
-    taskTypes: [
+    taskTypes: typeList([
       "Data Entry",
       "Form Filling",
       "Survey Completion",
@@ -87,7 +103,7 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
       "Spreadsheet Work",
       "Lead List Verification",
       "Manual Research Task",
-    ],
+    ]),
   },
   {
     slug: "design-creative-delivery",
@@ -95,7 +111,7 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
     description: "Creative production, visual assets, and design delivery work.",
     surfaces: ["profile", "campaign"],
     jobTypes: [],
-    taskTypes: [
+    taskTypes: typeList([
       "Graphic Design",
       "Logo Design",
       "Video Editing",
@@ -104,7 +120,7 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
       "UI/UX Design",
       "Creative Asset Refresh",
       "Content Creation",
-    ],
+    ]),
   },
   {
     slug: "testing-feedback",
@@ -112,14 +128,14 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
     description: "Product testing, usability checks, bug feedback, and review-ready insights.",
     surfaces: ["profile", "campaign"],
     jobTypes: [],
-    taskTypes: [
+    taskTypes: typeList([
       "App Testing",
       "Website Testing",
       "Bug Reporting",
       "Feature Feedback",
       "Beta Testing",
       "Usability Feedback",
-    ],
+    ]),
   },
   {
     slug: "support-moderation-community",
@@ -127,14 +143,14 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
     description: "Support drafts, moderation, tagging, and inbox or community support.",
     surfaces: ["profile", "campaign"],
     jobTypes: [],
-    taskTypes: [
+    taskTypes: typeList([
       "Comment Moderation Support",
       "Community Moderation",
       "Support Reply Drafting",
       "Sentiment Tagging",
       "FAQ Tagging",
       "Inbox Triage",
-    ],
+    ]),
   },
   {
     slug: "research-growth-ops",
@@ -142,26 +158,26 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
     description: "Research snapshots, enrichment, SEO support, and growth operations work.",
     surfaces: ["profile", "campaign"],
     jobTypes: [],
-    taskTypes: [
+    taskTypes: typeList([
       "Competitor Research Snapshot",
       "Lead Qualification",
       "Listing Data Enrichment",
       "SEO Metadata Review",
       "Catalog Cleanup",
-    ],
+    ]),
   },
   {
     slug: "field-operations-audits",
     label: "Field Operations & Audits",
     description: "Store visits, local checks, mystery audits, and field verification work.",
     surfaces: ["profile", "job"],
-    jobTypes: [
+    jobTypes: typeList([
       "Store Visit Audit",
       "Retail Shelf Check",
       "Field Survey Visit",
       "Mystery Audit Support",
       "Local Verification Visit",
-    ],
+    ]),
     taskTypes: [],
   },
   {
@@ -169,13 +185,13 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
     label: "Office & Admin Support",
     description: "Office assistance, documentation, desk support, and admin operations.",
     surfaces: ["profile", "job"],
-    jobTypes: [
+    jobTypes: typeList([
       "Office Assistant",
       "Back Office Support",
       "Document Handling",
       "Reception Support",
       "Inventory Desk Support",
-    ],
+    ]),
     taskTypes: [],
   },
   {
@@ -183,13 +199,13 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
     label: "Delivery & Logistics Support",
     description: "Pickup, dispatch, warehouse support, and local logistics work.",
     surfaces: ["profile", "job"],
-    jobTypes: [
+    jobTypes: typeList([
       "Local Delivery Support",
       "Pickup Coordination",
       "Warehouse Sorting",
       "Dispatch Support",
       "Route Assistance",
-    ],
+    ]),
     taskTypes: [],
   },
   {
@@ -197,13 +213,13 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
     label: "Event & Promotion Support",
     description: "Event crews, registration desks, sampling, and venue support work.",
     surfaces: ["profile", "job"],
-    jobTypes: [
+    jobTypes: typeList([
       "Event Crew Support",
       "Brand Promoter",
       "Sampling Support",
       "Registration Desk Support",
       "Venue Assistance",
-    ],
+    ]),
     taskTypes: [],
   },
   {
@@ -211,13 +227,13 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
     label: "Sales & Customer Support",
     description: "Sales assistance, lead collection, telecalling, and customer-facing support.",
     surfaces: ["profile", "job"],
-    jobTypes: [
+    jobTypes: typeList([
       "In-Store Sales Support",
       "Lead Collection Support",
       "Field Sales Support",
       "Customer Help Desk",
       "Telecalling Support",
-    ],
+    ]),
     taskTypes: [],
   },
   {
@@ -225,13 +241,13 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
     label: "Skilled Services",
     description: "Technical visits, installations, maintenance, and specialist support.",
     surfaces: ["profile", "job"],
-    jobTypes: [
+    jobTypes: typeList([
       "Technician Visit",
       "Installation Support",
       "Maintenance Visit",
       "Device Setup Support",
       "Photography Visit",
-    ],
+    ]),
     taskTypes: [],
   },
   {
@@ -239,8 +255,8 @@ const DEFAULT_WORK_TAXONOMY_CATEGORIES: WorkTaxonomyCategory[] = [
     label: "Other",
     description: "Custom work areas that do not fit the standard catalog yet.",
     surfaces: ["profile", "job", "campaign"],
-    jobTypes: ["Other"],
-    taskTypes: ["Other"],
+    jobTypes: typeList(["Other"]),
+    taskTypes: typeList(["Other"]),
   },
 ];
 
@@ -305,17 +321,25 @@ function normalizeSlug(input: unknown) {
   return value.slice(0, 60);
 }
 
-function normalizeStringArray(input: unknown, maxItems = 20, maxLength = 120) {
+function normalizeTypeList(input: unknown, maxItems = 24, maxLength = 120) {
   if (!Array.isArray(input)) return [];
   const seen = new Set<string>();
-  const values: string[] = [];
+  const values: WorkTaxonomyType[] = [];
   for (const item of input) {
-    const normalized = normalizeText(item, maxLength);
-    if (!normalized) continue;
-    const key = normalized.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    values.push(normalized);
+    if (typeof item === "string") {
+      const label = normalizeText(item, maxLength);
+      const slug = normalizeSlug(label);
+      if (!label || !slug || seen.has(slug)) continue;
+      seen.add(slug);
+      values.push({ slug, label });
+    } else if (item && typeof item === "object" && !Array.isArray(item)) {
+      const record = item as Record<string, unknown>;
+      const label = normalizeText(record.label, maxLength);
+      const slug = normalizeSlug(record.slug || label);
+      if (!label || !slug || seen.has(slug)) continue;
+      seen.add(slug);
+      values.push({ slug, label });
+    }
     if (values.length >= maxItems) break;
   }
   return values;
@@ -353,8 +377,8 @@ export function normalizeWorkTaxonomyConfig(input: unknown): WorkTaxonomyCategor
       const slug = normalizeSlug(record.slug || label);
       const description = normalizeText(record.description, 240);
       const surfaces = normalizeSurfaceArray(record.surfaces);
-      const jobTypes = normalizeStringArray(record.jobTypes, 24, 120);
-      const taskTypes = normalizeStringArray(record.taskTypes, 24, 120);
+      const jobTypes = normalizeTypeList(record.jobTypes, 24, 120);
+      const taskTypes = normalizeTypeList(record.taskTypes, 24, 120);
       if (!label || !slug || !description || surfaces.length === 0) return null;
       if (seenSlugs.has(slug)) return null;
       if (!jobTypes.length && !taskTypes.length) return null;
@@ -370,8 +394,8 @@ export function normalizeWorkTaxonomyConfig(input: unknown): WorkTaxonomyCategor
       label: "Other",
       description: "Custom work areas that do not fit the standard catalog yet.",
       surfaces: ["profile", "job", "campaign"],
-      jobTypes: ["Other"],
-      taskTypes: ["Other"],
+      jobTypes: typeList(["Other"]),
+      taskTypes: typeList(["Other"]),
     });
   }
   return normalized;
@@ -381,7 +405,8 @@ export function getLaunchSafeWorkTaxonomy(input: unknown): WorkTaxonomyCategory[
   const normalized = normalizeWorkTaxonomyConfig(input);
   const hasUnsafeTaskContent = normalized.some(
     (category) =>
-      isUnsafeTaskCatalogLabel(category.label) || category.taskTypes.some((item) => isUnsafeTaskCatalogLabel(item))
+      isUnsafeTaskCatalogLabel(category.label) ||
+      category.taskTypes.some((item) => isUnsafeTaskCatalogLabel(item.label))
   );
   return hasUnsafeTaskContent ? DEFAULT_WORK_TAXONOMY_CATEGORIES : normalized;
 }
@@ -543,14 +568,18 @@ export const JOB_WORK_MODE_OPTIONS = getJobWorkModeOptions();
 export function getJobCategoryOptions(taxonomy: WorkTaxonomyCategory[] = WORK_TAXONOMY_CATEGORIES): JobCategoryOption[] {
   return taxonomy.filter((category) => category.jobTypes.length > 0).map((category) => ({
     name: category.label,
-    items: [...category.jobTypes],
+    slug: category.slug,
+    items: category.jobTypes.map((item) => item.label),
+    types: [...category.jobTypes],
   }));
 }
 
 export function getTaskCategoryOptions(taxonomy: WorkTaxonomyCategory[] = WORK_TAXONOMY_CATEGORIES): TaskCategoryOption[] {
   return taxonomy.filter((category) => category.taskTypes.length > 0).map((category) => ({
     name: category.label,
-    items: [...category.taskTypes],
+    slug: category.slug,
+    items: category.taskTypes.map((item) => item.label),
+    types: [...category.taskTypes],
   }));
 }
 
@@ -572,6 +601,33 @@ export function getWorkTaxonomyCategoryByLabel(
   const normalized = label.trim().toLowerCase();
   if (!normalized) return null;
   return taxonomy.find((category) => category.label.toLowerCase() === normalized) || null;
+}
+
+export function getWorkTaxonomyTypeByLabel(
+  categorySlug: string | null | undefined,
+  label: string | null | undefined,
+  surface: "job" | "campaign",
+  taxonomy: WorkTaxonomyCategory[] = WORK_TAXONOMY_CATEGORIES
+) {
+  if (!categorySlug || !label) return null;
+  const category = getWorkTaxonomyCategoryBySlug(categorySlug, taxonomy);
+  if (!category) return null;
+  const normalized = label.trim().toLowerCase();
+  const items = surface === "job" ? category.jobTypes : category.taskTypes;
+  return items.find((item) => item.label.toLowerCase() === normalized) || null;
+}
+
+export function getWorkTaxonomyTypeBySlug(
+  categorySlug: string | null | undefined,
+  typeSlug: string | null | undefined,
+  surface: "job" | "campaign",
+  taxonomy: WorkTaxonomyCategory[] = WORK_TAXONOMY_CATEGORIES
+) {
+  if (!categorySlug || !typeSlug) return null;
+  const category = getWorkTaxonomyCategoryBySlug(categorySlug, taxonomy);
+  if (!category) return null;
+  const items = surface === "job" ? category.jobTypes : category.taskTypes;
+  return items.find((item) => item.slug === typeSlug) || null;
 }
 
 export function getWorkTaxonomyCategoryBySlug(

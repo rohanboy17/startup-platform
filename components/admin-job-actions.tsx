@@ -21,7 +21,9 @@ export default function AdminJobActions({
     title: string;
     description: string;
     jobCategory: string;
+    jobCategorySlug?: string | null;
     jobType: string;
+    jobTypeSlug?: string | null;
     customJobType: string | null;
     workMode: string;
     employmentType: string;

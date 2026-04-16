@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent } from "@/components/ui/card";
 import AdminJobApplicationActions from "@/components/admin-job-application-actions";
+import { getJobCategoryLabel, getJobTypeLabel } from "@/lib/job-categories";
 import { getPhysicalWorkPayoutBreakdown } from "@/lib/commission";
 import { formatMoney } from "@/lib/format-money";
 import { parseProfileDetails } from "@/lib/user-profile";
@@ -58,7 +59,9 @@ export default async function AdminJobApplicantsPage({
           status: true,
           employmentType: true,
           jobCategory: true,
+          jobCategorySlug: true,
           jobType: true,
+          jobTypeSlug: true,
           customJobType: true,
           city: true,
           state: true,
@@ -184,7 +187,19 @@ export default async function AdminJobApplicantsPage({
                   <div className="grid gap-4 text-sm text-foreground/70 md:grid-cols-2 xl:grid-cols-4">
                     <div>
                       <span className="text-foreground/50">{t("labels.category")}:</span>{" "}
-                      {application.job.jobCategory} / {application.job.customJobType || application.job.jobType}
+                      {getJobCategoryLabel(
+                        application.job.jobCategorySlug,
+                        application.job.jobCategory,
+                        settings.workTaxonomy
+                      )}{" "}
+                      /{" "}
+                      {getJobTypeLabel(
+                        application.job.jobCategorySlug,
+                        application.job.jobTypeSlug,
+                        application.job.jobType,
+                        application.job.customJobType,
+                        settings.workTaxonomy
+                      )}
                     </div>
                     <div>
                       <span className="text-foreground/50">{t("labels.location")}:</span> {application.job.city}, {application.job.state}

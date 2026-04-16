@@ -8,6 +8,7 @@ import { getPhysicalWorkPayoutBreakdown } from "@/lib/commission";
 import AdminJobActions from "@/components/admin-job-actions";
 import JobApplicationChatPanel from "@/components/job-application-chat-panel";
 import { isJobApplicationChatOpen } from "@/lib/job-application-chat-access";
+import { getJobCategoryLabel, getJobTypeLabel } from "@/lib/job-categories";
 import { getAppSettings } from "@/lib/system-settings";
 import { getTaxonomyOptionLabel } from "@/lib/work-taxonomy";
 import { getTranslations } from "next-intl/server";
@@ -179,7 +180,14 @@ export default async function AdminJobsPage({
                   <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4 text-sm text-foreground/70">
                     <div>
                       <span className="text-foreground/50">{t("labels.category")}:</span>{" "}
-                      {job.jobCategory} / {job.customJobType || job.jobType}
+                      {getJobCategoryLabel(job.jobCategorySlug, job.jobCategory, settings.workTaxonomy)} /{" "}
+                      {getJobTypeLabel(
+                        job.jobCategorySlug,
+                        job.jobTypeSlug,
+                        job.jobType,
+                        job.customJobType,
+                        settings.workTaxonomy
+                      )}
                     </div>
                     <div>
                       <span className="text-foreground/50">{t("labels.location")}:</span>{" "}
@@ -223,7 +231,9 @@ export default async function AdminJobsPage({
                         title: job.title,
                       description: job.description,
                       jobCategory: job.jobCategory,
+                      jobCategorySlug: job.jobCategorySlug,
                       jobType: job.jobType,
+                      jobTypeSlug: job.jobTypeSlug,
                       customJobType: job.customJobType,
                       workMode: job.workMode,
                       employmentType: job.employmentType,

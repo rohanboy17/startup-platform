@@ -8,7 +8,7 @@ import { getBusinessContext } from "@/lib/business-context";
 import { getCampaignCategoryLabel } from "@/lib/campaign-options";
 import { formatMoney } from "@/lib/format-money";
 import { getAppSettings } from "@/lib/system-settings";
-import { getEffectiveTaskLabel } from "@/lib/task-categories";
+import { getTaskCategoryLabel, getTaskTypeLabel } from "@/lib/task-categories";
 import { Card, CardContent } from "@/components/ui/card";
 import BusinessCampaignEditor from "@/components/business-campaign-editor";
 import CampaignTutorialVideo from "@/components/campaign-tutorial-video";
@@ -81,7 +81,13 @@ export default async function BusinessCampaignDetailPage({
     campaign.rewardPerTask > 0 ? Math.floor(campaign.totalBudget / campaign.rewardPerTask) : 0;
   const usedSlots = campaign.submissions.length;
   const deployment = campaign.totalBudget > 0 ? Math.round((spentBudget / campaign.totalBudget) * 100) : 0;
-  const effectiveTaskLabel = getEffectiveTaskLabel(campaign.taskType, campaign.customTask);
+  const effectiveTaskLabel = getTaskTypeLabel(
+    campaign.taskCategorySlug,
+    campaign.taskTypeSlug,
+    campaign.taskType,
+    campaign.customTask,
+    settings.workTaxonomy
+  );
 
   const activityItems = [
     {
@@ -145,7 +151,9 @@ export default async function BusinessCampaignDetailPage({
           description: campaign.description,
           category: campaign.category,
           taskCategory: campaign.taskCategory,
+          taskCategorySlug: campaign.taskCategorySlug,
           taskType: campaign.taskType,
+          taskTypeSlug: campaign.taskTypeSlug,
           customTask: campaign.customTask,
           taskLink: campaign.taskLink,
           rewardPerTask: campaign.rewardPerTask,
@@ -173,7 +181,9 @@ export default async function BusinessCampaignDetailPage({
         <Card className="rounded-3xl border-foreground/10 bg-background/50 shadow-xl shadow-black/5 backdrop-blur-md">
           <CardContent className="p-5">
             <p className="text-sm text-foreground/60">{t("cards.taskCategory")}</p>
-            <p className="mt-2 text-lg font-semibold text-foreground">{campaign.taskCategory}</p>
+            <p className="mt-2 text-lg font-semibold text-foreground">
+              {getTaskCategoryLabel(campaign.taskCategorySlug, campaign.taskCategory, settings.workTaxonomy)}
+            </p>
           </CardContent>
         </Card>
         <Card className="rounded-3xl border-foreground/10 bg-background/50 shadow-xl shadow-black/5 backdrop-blur-md">
