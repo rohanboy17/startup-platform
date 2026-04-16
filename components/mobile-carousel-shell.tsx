@@ -21,6 +21,8 @@ export default function MobileCarouselShell({
 }: MobileCarouselShellProps) {
   const t = useTranslations("home");
   const trackRef = useRef<HTMLDivElement | null>(null);
+  const updateTimeoutsRef = useRef<number[]>([]);
+  const mountFrameRef = useRef<number | null>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const [showControls, setShowControls] = useState(false);
@@ -29,60 +31,103 @@ export default function MobileCarouselShell({
     const node = trackRef.current;
     if (!node) return;
 
+    const items = Array.from(node.children).filter(
+      (child): child is HTMLElement => child instanceof HTMLElement
+    );
     const maxScrollLeft = Math.max(0, node.scrollWidth - node.clientWidth);
-    const hasOverflow = maxScrollLeft > 8;
-    const firstChild = node.firstElementChild as HTMLElement | null;
-    const lastChild = node.lastElementChild as HTMLElement | null;
+    const hasOverflow = maxScrollLeft > 8 && items.length > 1;
 
     setShowControls(hasOverflow);
 
-    if (!hasOverflow || !firstChild || !lastChild) {
+    if (!hasOverflow) {
       setCanScrollLeft(false);
       setCanScrollRight(false);
       return;
     }
 
-    const containerRect = node.getBoundingClientRect();
-    const firstRect = firstChild.getBoundingClientRect();
-    const lastRect = lastChild.getBoundingClientRect();
-    const tolerance = 6;
+    const scrollLeft = Math.min(Math.max(node.scrollLeft, 0), maxScrollLeft);
+    let activeIndex = 0;
+    let smallestDistance = Number.POSITIVE_INFINITY;
 
-    setCanScrollLeft(firstRect.left < containerRect.left - tolerance);
-    setCanScrollRight(lastRect.right > containerRect.right + tolerance);
+    items.forEach((item, index) => {
+      const distance = Math.abs(item.offsetLeft - scrollLeft);
+      if (distance < smallestDistance) {
+        smallestDistance = distance;
+        activeIndex = index;
+      }
+    });
+
+    setCanScrollLeft(activeIndex > 0);
+    setCanScrollRight(activeIndex < items.length - 1);
   }, []);
+
+  const scheduleControlUpdates = useCallback(() => {
+    updateControls();
+    updateTimeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
+    updateTimeoutsRef.current = [120, 260, 420].map((delayMs) =>
+      window.setTimeout(updateControls, delayMs)
+    );
+  }, [updateControls]);
 
   useEffect(() => {
     const node = trackRef.current;
     if (!node) return;
 
-    updateControls();
+    mountFrameRef.current = window.requestAnimationFrame(scheduleControlUpdates);
 
     const handleScroll = () => updateControls();
+    const handleSettle = () => scheduleControlUpdates();
     node.addEventListener("scroll", handleScroll, { passive: true });
+    node.addEventListener("touchend", handleSettle, { passive: true });
+    node.addEventListener("pointerup", handleSettle, { passive: true });
+    node.addEventListener("scrollend", handleSettle as EventListener, { passive: true });
 
     const resizeObserver =
       typeof ResizeObserver !== "undefined"
-        ? new ResizeObserver(() => updateControls())
+        ? new ResizeObserver(() => scheduleControlUpdates())
         : null;
 
     resizeObserver?.observe(node);
-    window.addEventListener("resize", updateControls);
+    Array.from(node.children).forEach((child) => resizeObserver?.observe(child));
+    window.addEventListener("resize", scheduleControlUpdates);
 
     return () => {
       node.removeEventListener("scroll", handleScroll);
+      node.removeEventListener("touchend", handleSettle);
+      node.removeEventListener("pointerup", handleSettle);
+      node.removeEventListener("scrollend", handleSettle as EventListener);
       resizeObserver?.disconnect();
-      window.removeEventListener("resize", updateControls);
+      window.removeEventListener("resize", scheduleControlUpdates);
+      if (mountFrameRef.current !== null) {
+        window.cancelAnimationFrame(mountFrameRef.current);
+      }
+      updateTimeoutsRef.current.forEach((timeoutId) => window.clearTimeout(timeoutId));
     };
-  }, [children, updateControls]);
+  }, [children, scheduleControlUpdates, updateControls]);
 
   const scrollByAmount = (direction: -1 | 1) => {
     const node = trackRef.current;
     if (!node) return;
-    const amount = Math.max(node.clientWidth * 0.82, 220);
-    node.scrollBy({ left: direction * amount, behavior: "smooth" });
-    requestAnimationFrame(updateControls);
-    window.setTimeout(updateControls, 220);
-    window.setTimeout(updateControls, 420);
+    const items = Array.from(node.children).filter(
+      (child): child is HTMLElement => child instanceof HTMLElement
+    );
+    if (items.length === 0) return;
+
+    const scrollLeft = node.scrollLeft;
+    let activeIndex = 0;
+    let smallestDistance = Number.POSITIVE_INFINITY;
+
+    items.forEach((item, index) => {
+      const distance = Math.abs(item.offsetLeft - scrollLeft);
+      if (distance < smallestDistance) {
+        smallestDistance = distance;
+        activeIndex = index;
+      }
+    });
+
+    const targetIndex = Math.max(0, Math.min(items.length - 1, activeIndex + direction));
+    node.scrollTo({ left: items[targetIndex].offsetLeft, behavior: "smooth" });
+    requestAnimationFrame(scheduleControlUpdates);
   };
 
   return (
@@ -105,10 +150,10 @@ export default function MobileCarouselShell({
             onClick={() => scrollByAmount(-1)}
             disabled={!canScrollLeft}
             className={cn(
-              "inline-flex h-9 w-9 items-center justify-center rounded-full border transition",
+              "inline-flex h-9 w-9 items-center justify-center rounded-full border transition-colors duration-200",
               canScrollLeft
-                ? "border-foreground/15 bg-background/80 text-foreground/70 hover:bg-foreground/8"
-                : "cursor-not-allowed border-foreground/8 bg-foreground/[0.03] text-foreground/25"
+                ? "border-foreground/85 bg-foreground text-background shadow-[0_8px_20px_-12px_rgba(15,23,42,0.55)] hover:bg-foreground/90"
+                : "cursor-not-allowed border-foreground/10 bg-background/70 text-foreground/25 shadow-none"
             )}
           >
             <ChevronLeft size={16} />
@@ -119,10 +164,10 @@ export default function MobileCarouselShell({
             onClick={() => scrollByAmount(1)}
             disabled={!canScrollRight}
             className={cn(
-              "inline-flex h-9 w-9 items-center justify-center rounded-full border transition",
+              "inline-flex h-9 w-9 items-center justify-center rounded-full border transition-colors duration-200",
               canScrollRight
-                ? "border-foreground/15 bg-background/80 text-foreground/70 hover:bg-foreground/8"
-                : "cursor-not-allowed border-foreground/8 bg-foreground/[0.03] text-foreground/25"
+                ? "border-foreground/85 bg-foreground text-background shadow-[0_8px_20px_-12px_rgba(15,23,42,0.55)] hover:bg-foreground/90"
+                : "cursor-not-allowed border-foreground/10 bg-background/70 text-foreground/25 shadow-none"
             )}
           >
             <ChevronRight size={16} />

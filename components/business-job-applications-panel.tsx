@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import JobApplicationChatPanel from "@/components/job-application-chat-panel";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -561,6 +562,14 @@ export default function BusinessJobApplicationsPanel() {
                     ) : null}
                   </div>
                 </div>
+
+                {["HIRED", "JOINED"].includes(application.status) ? (
+                  <JobApplicationChatPanel
+                    mode="business"
+                    jobId={application.job.id}
+                    applicationId={application.id}
+                  />
+                ) : null}
 
                 {canManage ? (
                   <div className="flex flex-wrap gap-2">

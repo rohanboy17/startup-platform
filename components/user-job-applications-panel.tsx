@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import JobApplicationChatPanel from "@/components/job-application-chat-panel";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -272,6 +273,10 @@ export default function UserJobApplicationsPanel() {
                   <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("joinedAt")}</p>
                   <p className="mt-2 text-sm text-foreground/75">{new Date(application.joinedAt).toLocaleString(locale)}</p>
                 </div>
+              ) : null}
+
+              {["HIRED", "JOINED"].includes(application.status) ? (
+                <JobApplicationChatPanel mode="user" applicationId={application.id} />
               ) : null}
             </SectionCard>
           ))}

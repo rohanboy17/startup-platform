@@ -6,6 +6,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { formatMoney } from "@/lib/format-money";
 import { getPhysicalWorkPayoutBreakdown } from "@/lib/commission";
 import AdminJobActions from "@/components/admin-job-actions";
+import JobApplicationChatPanel from "@/components/job-application-chat-panel";
 import { getTranslations } from "next-intl/server";
 
 type SearchParams = {
@@ -69,6 +70,13 @@ export default async function AdminJobsPage({
           select: {
             id: true,
             status: true,
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
           },
         },
       },
@@ -144,6 +152,7 @@ export default async function AdminJobsPage({
             const applied = job.applications.filter((item) => item.status === "APPLIED").length;
             const shortlisted = job.applications.filter((item) => item.status === "SHORTLISTED").length;
             const hired = job.applications.filter((item) => ["HIRED", "JOINED"].includes(item.status)).length;
+            const hiredApplications = job.applications.filter((item) => ["HIRED", "JOINED"].includes(item.status));
 
             return (
               <Card key={job.id} className="rounded-2xl border-foreground/10 bg-background/60">
@@ -223,6 +232,39 @@ export default async function AdminJobsPage({
                         minEducation: job.minEducation,
                       }}
                     />
+
+                  {hiredApplications.length > 0 ? (
+                    <div className="space-y-4 rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/55">
+                          {t("chat.title")}
+                        </p>
+                        <p className="mt-1 text-sm text-foreground/65">{t("chat.subtitle")}</p>
+                      </div>
+                      <div className="space-y-4">
+                        {hiredApplications.map((application) => (
+                          <div
+                            key={application.id}
+                            className="space-y-3 rounded-2xl border border-foreground/10 bg-background/70 p-4"
+                          >
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <div>
+                                <p className="font-medium text-foreground">
+                                  {application.user.name || application.user.email}
+                                </p>
+                                <p className="text-sm text-foreground/60">{t(`cards.${application.status === "JOINED" ? "joined" : "hired"}`)}</p>
+                              </div>
+                              <StatusBadge
+                                label={t(`applicationStatus.${application.status}`)}
+                                tone={application.status === "JOINED" ? "success" : "info"}
+                              />
+                            </div>
+                            <JobApplicationChatPanel mode="admin" applicationId={application.id} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
                 </CardContent>
               </Card>
             );

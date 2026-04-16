@@ -7,7 +7,7 @@ import HomeLiveSection from "@/components/home-live-section";
 import MotionSection from "@/components/motion-section";
 import HomeHeroText from "@/components/home-hero-text";
 import HomeParallaxOrbs from "@/components/home-parallax-orbs";
-import { MotionItem, MotionStagger } from "@/components/motion-stagger";
+import { MotionItem } from "@/components/motion-stagger";
 import { getFeatureFlag } from "@/lib/cms";
 import { prisma } from "@/lib/prisma";
 import HomeLiveFloatsAndStats from "@/components/home-live-floats-and-stats";
@@ -362,8 +362,8 @@ export default async function Home() {
             {tHome("workflowSection.subtitle")}
           </p>
         </div>
-        <MotionStagger className="grid gap-6 lg:grid-cols-2">
-          <MotionItem className="relative overflow-hidden rounded-[2rem] border border-foreground/10 bg-background/70 p-6 shadow-[0_18px_45px_-36px_rgba(15,23,42,0.18)] sm:p-8">
+        <MobileCarouselShell className="-mx-1 flex snap-x snap-mandatory gap-5 overflow-x-auto px-1 pb-2 no-scrollbar md:mx-0 md:grid md:overflow-visible md:px-0 md:pb-0 lg:grid-cols-2">
+          <MotionItem className="relative min-w-[86%] max-w-[24rem] snap-start overflow-hidden rounded-[2rem] border border-foreground/10 bg-background/70 p-6 shadow-[0_18px_45px_-36px_rgba(15,23,42,0.18)] sm:max-w-[28rem] sm:p-8 md:min-w-0 md:max-w-none">
             <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-emerald-400/0 via-emerald-400/70 to-sky-400/0" />
             <div className="space-y-4">
               <p className="text-sm font-semibold uppercase tracking-wide text-foreground/60">{tHome("sections.howItWorksEyebrow")}</p>
@@ -387,7 +387,7 @@ export default async function Home() {
               </ul>
             </div>
           </MotionItem>
-          <MotionItem className="relative overflow-hidden rounded-[2rem] border border-foreground/10 bg-background/70 p-6 shadow-[0_18px_45px_-36px_rgba(15,23,42,0.18)] sm:p-8">
+          <MotionItem className="relative min-w-[86%] max-w-[24rem] snap-start overflow-hidden rounded-[2rem] border border-foreground/10 bg-background/70 p-6 shadow-[0_18px_45px_-36px_rgba(15,23,42,0.18)] sm:max-w-[28rem] sm:p-8 md:min-w-0 md:max-w-none">
             <div className="absolute inset-x-6 top-0 h-px bg-gradient-to-r from-sky-400/0 via-sky-400/70 to-violet-400/0" />
             <div className="space-y-4">
               <p className="text-sm font-semibold uppercase tracking-wide text-foreground/60">{tHome("sections.forBusinessesEyebrow")}</p>
@@ -411,7 +411,7 @@ export default async function Home() {
               </ul>
             </div>
           </MotionItem>
-        </MotionStagger>
+        </MobileCarouselShell>
       </section>
 
       {platformCards.length > 0 ? (

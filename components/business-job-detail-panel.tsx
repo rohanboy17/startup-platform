@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import BusinessJobEditor from "@/components/business-job-editor";
+import JobApplicationChatPanel from "@/components/job-application-chat-panel";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -567,6 +568,16 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
                     ) : null}
                   </div>
                 </div>
+
+                {["HIRED", "JOINED"].includes(application.status) ? (
+                  <div className="mt-4">
+                    <JobApplicationChatPanel
+                      mode="business"
+                      jobId={jobId}
+                      applicationId={application.id}
+                    />
+                  </div>
+                ) : null}
               </div>
             ))}
           </div>

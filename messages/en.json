@@ -3648,7 +3648,16 @@
         "openings": "Openings",
         "applied": "Applied",
         "shortlisted": "Shortlisted",
-        "hired": "Hired"
+        "hired": "Hired",
+        "joined": "Joined"
+      },
+      "applicationStatus": {
+        "HIRED": "Hired",
+        "JOINED": "Joined"
+      },
+      "chat": {
+        "title": "Hired candidate messages",
+        "subtitle": "Admin can view every business-candidate chat linked to hired roles here."
       },
       "fallback": {
         "business": "Business"
@@ -3721,6 +3730,36 @@
         "actionFailed": "Failed to update application",
         "unexpected": "Unexpected server response"
       }
+    }
+  },
+  "jobChat": {
+    "loading": "Loading messages...",
+    "title": "Direct messages",
+    "subtitleBusiness": "Chat with {candidate} about \"{job}\" once the candidate is hired.",
+    "subtitleUser": "Chat with {business} about \"{job}\" after you are hired.",
+    "subtitleAdmin": "Admin view of the message thread between {business} and {candidate}.",
+    "adminVisible": "Visible to admin",
+    "empty": "No messages yet. Start the conversation here after hiring is confirmed.",
+    "placeholder": "Type your message here",
+    "note": "Messages stay inside FreeEarnHub and are visible to admin.",
+    "send": "Send message",
+    "sending": "Sending...",
+    "availableAfterHire": "Messaging becomes available after the application is marked as hired.",
+    "roles": {
+      "business": "Business",
+      "candidate": "Candidate"
+    },
+    "fallback": {
+      "business": "Business",
+      "candidate": "Candidate"
+    },
+    "messages": {
+      "sent": "Message sent"
+    },
+    "errors": {
+      "unexpected": "Unexpected server response",
+      "failedToLoad": "Failed to load messages",
+      "failedToSend": "Failed to send message"
     }
   },
   "manager": {

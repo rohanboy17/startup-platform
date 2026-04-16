@@ -90,6 +90,7 @@ model User {
   communityFeedback CommunityFeedback[] @relation("CommunityFeedbackAuthor")
   reviewedCommunityFeedback CommunityFeedback[] @relation("CommunityFeedbackReviewer")
   jobApplications JobApplication[]
+  sentJobApplicationMessages JobApplicationMessage[] @relation("JobApplicationMessageSender")
   deletedAt DateTime?
   deletedByUserId String?
   deletionReason String?
@@ -381,10 +382,26 @@ model JobApplication {
 
   job              JobPosting           @relation(fields: [jobId], references: [id])
   user             User                 @relation(fields: [userId], references: [id])
+  messages         JobApplicationMessage[]
 
   @@unique([jobId, userId])
   @@index([jobId, status, createdAt])
   @@index([userId, status, createdAt])
+}
+
+model JobApplicationMessage {
+  id             String                          @id @default(cuid())
+  applicationId  String
+  senderUserId   String
+  senderRole     JobApplicationMessageSenderRole
+  message        String
+  createdAt      DateTime                        @default(now())
+
+  application    JobApplication                  @relation(fields: [applicationId], references: [id])
+  senderUser     User                            @relation("JobApplicationMessageSender", fields: [senderUserId], references: [id])
+
+  @@index([applicationId, createdAt])
+  @@index([senderUserId, createdAt])
 }
 
 model AdWatchSession {
@@ -948,4 +965,9 @@ enum JobApplicationStatus {
   HIRED
   JOINED
   WITHDRAWN
+}
+
+enum JobApplicationMessageSenderRole {
+  USER
+  BUSINESS
 }

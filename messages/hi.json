@@ -3648,7 +3648,8 @@
         "openings": "उद्घाटन",
         "applied": "आवेदित",
         "shortlisted": "चुने",
-        "hired": "काम पर रखा"
+        "hired": "काम पर रखा",
+        "joined": "Joined"
       },
       "fallback": {
         "business": "व्यापार"
@@ -3720,6 +3721,14 @@
         "saved": "समीक्षा सहेजी गई",
         "actionFailed": "एप्लिकेशन अपडेट करने में विफल",
         "unexpected": "अप्रत्याशित सर्वर प्रतिक्रिया"
+      },
+      "applicationStatus": {
+        "HIRED": "Hired",
+        "JOINED": "Joined"
+      },
+      "chat": {
+        "title": "Hired candidate messages",
+        "subtitle": "Admin can view every business-candidate chat linked to hired roles here."
       }
     }
   },
@@ -4243,6 +4252,36 @@
         "title": "What this unlocks",
         "body": "Once connected, admin broadcasts and important workflow events can be delivered through in-app, email, SMS, push, and Telegram without changing your core moderation or payout logic."
       }
+    }
+  },
+  "jobChat": {
+    "loading": "Loading messages...",
+    "title": "Direct messages",
+    "subtitleBusiness": "Chat with {candidate} about \"{job}\" once the candidate is hired.",
+    "subtitleUser": "Chat with {business} about \"{job}\" after you are hired.",
+    "subtitleAdmin": "Admin view of the message thread between {business} and {candidate}.",
+    "adminVisible": "Visible to admin",
+    "empty": "No messages yet. Start the conversation here after hiring is confirmed.",
+    "placeholder": "Type your message here",
+    "note": "Messages stay inside FreeEarnHub and are visible to admin.",
+    "send": "Send message",
+    "sending": "Sending...",
+    "availableAfterHire": "Messaging becomes available after the application is marked as hired.",
+    "roles": {
+      "business": "Business",
+      "candidate": "Candidate"
+    },
+    "fallback": {
+      "business": "Business",
+      "candidate": "Candidate"
+    },
+    "messages": {
+      "sent": "Message sent"
+    },
+    "errors": {
+      "unexpected": "Unexpected server response",
+      "failedToLoad": "Failed to load messages",
+      "failedToSend": "Failed to send message"
     }
   }
 }
