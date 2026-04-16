@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Keep web lint focused on web app; mobile app has its own lint config.
+    "freeearnhub-app/**",
   ]),
   {
     rules: {

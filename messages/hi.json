@@ -4458,7 +4458,7 @@
     },
     "submitCampaignModal": {
       "title": "Submit Campaign Proof",
-      "placeholder": "Paste proof link or details...",
+      "placeholder": "????? ???? ?? ????? ????? ????...",
       "actions": {
         "open": "Submit",
         "submitting": "Submitting...",
@@ -4535,7 +4535,7 @@
     "subtitleAdmin": "Admin can view the chat between {business} and {candidate}.",
     "adminVisible": "Visible to admin",
     "empty": "No messages yet. Start the conversation once business review is active.",
-    "placeholder": "Type your message here",
+    "placeholder": "???? ????? ???? ?????",
     "note": "Messages stay inside FreeEarnHub, remain visible to admin, and contact sharing is blocked.",
     "send": "Send message",
     "sending": "Sending...",
@@ -4558,3 +4558,4 @@
     }
   }
 }
+
