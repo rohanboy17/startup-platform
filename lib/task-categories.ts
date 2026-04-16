@@ -1,101 +1,8 @@
-export type TaskCategoryOption = {
-  name: string;
-  items: string[];
-};
+import { getTaskCategoryOptions, type TaskCategoryOption } from "@/lib/work-taxonomy";
 
-export const DEFAULT_TASK_CATEGORIES: TaskCategoryOption[] = [
-  {
-    name: "Listing, Insight & Experience QA",
-    items: [
-      "Google Business Profile QA",
-      "Local Listing Accuracy Audit",
-      "Website Journey Test",
-      "Landing Page UX Test",
-      "App Listing QA",
-      "App Onboarding Test",
-      "Video Watchability Feedback",
-      "Content Appeal Feedback",
-      "Campaign Message Clarity Test",
-      "Screenshot-Based Listing Audit",
-    ],
-  },
-  {
-    name: "Content & Writing",
-    items: [
-      "Article Writing",
-      "Blog Writing",
-      "Product Description",
-      "Caption Writing",
-      "Copywriting",
-      "Translation Work",
-      "Proofreading / Editing",
-      "Help Center Writing",
-    ],
-  },
-  {
-    name: "Data, Research & Operations",
-    items: [
-      "Data Entry",
-      "Form Filling",
-      "Survey Completion",
-      "Image Tagging",
-      "Product Listing",
-      "Spreadsheet Work",
-      "Lead List Verification",
-      "Manual Research Task",
-    ],
-  },
-  {
-    name: "Design & Creative Delivery",
-    items: [
-      "Graphic Design",
-      "Logo Design",
-      "Video Editing",
-      "Photo Editing",
-      "Web Design",
-      "UI/UX Design",
-      "Creative Asset Refresh",
-      "Content Creation",
-    ],
-  },
-  {
-    name: "Testing & Feedback",
-    items: [
-      "App Testing",
-      "Website Testing",
-      "Bug Reporting",
-      "Feature Feedback",
-      "Beta Testing",
-      "Usability Feedback",
-    ],
-  },
-  {
-    name: "Support, Moderation & Community",
-    items: [
-      "Comment Moderation Support",
-      "Community Moderation",
-      "Support Reply Drafting",
-      "Sentiment Tagging",
-      "FAQ Tagging",
-      "Inbox Triage",
-    ],
-  },
-  {
-    name: "Research & Growth Ops",
-    items: [
-      "Competitor Research Snapshot",
-      "Lead Qualification",
-      "Listing Data Enrichment",
-      "SEO Metadata Review",
-      "Catalog Cleanup",
-    ],
-  },
-  {
-    name: "Other",
-    items: ["Other"],
-  },
-] as const as TaskCategoryOption[];
+export type { TaskCategoryOption };
 
+export const DEFAULT_TASK_CATEGORIES: TaskCategoryOption[] = getTaskCategoryOptions();
 export const TASK_CATEGORIES = DEFAULT_TASK_CATEGORIES;
 
 const UNSAFE_TASK_CATEGORY_NAMES = new Set([
@@ -178,7 +85,7 @@ export function getTaskTypesForCategory(
   categories: TaskCategoryOption[] = DEFAULT_TASK_CATEGORIES
 ): string[] {
   const category = categories.find((item) => item.name === taskCategory);
-  return Array.from(category?.items ?? categories[0]?.items ?? ["Other"]) as string[];
+  return Array.from(category?.items ?? categories[0]?.items ?? ["Other"]);
 }
 
 export function isValidTaskCategory(
@@ -204,11 +111,14 @@ export function getEffectiveTaskLabel(taskType: string | null | undefined, custo
   return taskType;
 }
 
-export function normalizeTaskSelection(input: {
-  taskCategory?: string | null;
-  taskType?: string | null;
-  customTask?: string | null;
-}, categories: TaskCategoryOption[] = DEFAULT_TASK_CATEGORIES) {
+export function normalizeTaskSelection(
+  input: {
+    taskCategory?: string | null;
+    taskType?: string | null;
+    customTask?: string | null;
+  },
+  categories: TaskCategoryOption[] = DEFAULT_TASK_CATEGORIES
+) {
   const taskCategory = input.taskCategory?.trim() || "";
   const taskType = input.taskType?.trim() || "";
   const customTask = input.customTask?.trim() || null;

@@ -89,13 +89,13 @@ export default function SiteHeader() {
   }, []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-foreground/10 bg-background/82 shadow-[0_8px_30px_-24px_rgba(0,0,0,0.24)] backdrop-blur-2xl supports-[backdrop-filter]:bg-background/72">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-foreground/10 bg-background/82 shadow-[0_10px_36px_-28px_rgba(0,0,0,0.24)] backdrop-blur-2xl supports-[backdrop-filter]:bg-background/72">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-full bg-[radial-gradient(circle_at_15%_-20%,rgba(16,185,129,0.2),transparent_40%),radial-gradient(circle_at_85%_-20%,rgba(56,189,248,0.16),transparent_40%)]" />
-      <div className="relative mx-auto flex h-14 w-full max-w-screen-2xl items-center gap-2 px-3 sm:h-16 sm:px-6">
-        <div className="flex min-w-0 flex-1 items-center gap-2">
+      <div className="relative mx-auto flex h-14 w-full max-w-screen-2xl items-center gap-3 px-3 sm:h-16 sm:gap-4 sm:px-6">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3">
           <Link
             href={onDashboard ? "/dashboard" : "/"}
-            className="inline-flex items-center gap-2 rounded-xl border border-foreground/10 bg-foreground/[0.04] px-2.5 py-1.5 text-sm font-semibold tracking-tight text-foreground transition hover:bg-foreground/[0.08]"
+            className="inline-flex items-center gap-2 rounded-2xl border border-foreground/10 bg-foreground/[0.04] px-3 py-2 text-sm font-semibold tracking-tight text-foreground transition hover:bg-foreground/[0.08]"
           >
             <span className="h-2.5 w-2.5 rounded-full bg-gradient-to-br from-emerald-400 to-sky-400" />
             <span>FreeEarnHub</span>
@@ -172,7 +172,7 @@ export default function SiteHeader() {
           ) : null}
         </div>
 
-        <div className="hidden items-center gap-2 sm:flex">
+        <div className="hidden items-center gap-2.5 sm:flex">
           <ThemeToggle />
           <div className="w-[140px]">
             <LanguageSelect compact />
@@ -194,7 +194,7 @@ export default function SiteHeader() {
           ) : null}
         </div>
 
-        <div className="flex items-center gap-2 sm:hidden">
+        <div className="flex items-center gap-2.5 sm:hidden">
           <ThemeToggle compact />
           <PwaInstallButton compact alwaysShow />
           {onDashboard ? (

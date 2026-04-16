@@ -7,6 +7,9 @@ import { formatMoney } from "@/lib/format-money";
 import { getPhysicalWorkPayoutBreakdown } from "@/lib/commission";
 import AdminJobActions from "@/components/admin-job-actions";
 import JobApplicationChatPanel from "@/components/job-application-chat-panel";
+import { isJobApplicationChatOpen } from "@/lib/job-application-chat-access";
+import { getAppSettings } from "@/lib/system-settings";
+import { getTaxonomyOptionLabel } from "@/lib/work-taxonomy";
 import { getTranslations } from "next-intl/server";
 
 type SearchParams = {
@@ -35,7 +38,7 @@ export default async function AdminJobsPage({
   const statusFilter = params.status || "ALL";
   const limit = params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
 
-  const [pendingCount, openCount, pausedCount, filledCount, closedCount, rejectedCount, jobs] = await Promise.all([
+  const [pendingCount, openCount, pausedCount, filledCount, closedCount, rejectedCount, jobs, settings] = await Promise.all([
     prisma.jobPosting.count({ where: { status: "PENDING_REVIEW" } }),
     prisma.jobPosting.count({ where: { status: "OPEN" } }),
     prisma.jobPosting.count({ where: { status: "PAUSED" } }),
@@ -70,6 +73,7 @@ export default async function AdminJobsPage({
           select: {
             id: true,
             status: true,
+            adminStatus: true,
             user: {
               select: {
                 id: true,
@@ -83,6 +87,7 @@ export default async function AdminJobsPage({
       orderBy: { createdAt: "desc" },
       ...(limit ? { take: limit } : {}),
     }),
+    getAppSettings(),
   ]);
 
   return (
@@ -152,7 +157,9 @@ export default async function AdminJobsPage({
             const applied = job.applications.filter((item) => item.status === "APPLIED").length;
             const shortlisted = job.applications.filter((item) => item.status === "SHORTLISTED").length;
             const hired = job.applications.filter((item) => ["HIRED", "JOINED"].includes(item.status)).length;
-            const hiredApplications = job.applications.filter((item) => ["HIRED", "JOINED"].includes(item.status));
+            const liveChatApplications = job.applications.filter((item) =>
+              isJobApplicationChatOpen(item.status, item.adminStatus)
+            );
 
             return (
               <Card key={job.id} className="rounded-2xl border-foreground/10 bg-background/60">
@@ -180,7 +187,8 @@ export default async function AdminJobsPage({
                     </div>
                     <div>
                       <span className="text-foreground/50">{t("labels.pay")}:</span>{" "}
-                      INR {formatMoney(job.payAmount)} / {t(`payUnits.${job.payUnit}`)}
+                      INR {formatMoney(job.payAmount)} /{" "}
+                      {getTaxonomyOptionLabel(job.payUnit, settings.jobPayUnitOptions, job.payUnit)}
                     </div>
                     <div>
                       <span className="text-foreground/50">{t("labels.workerPayout")}:</span>{" "}
@@ -188,7 +196,12 @@ export default async function AdminJobsPage({
                     </div>
                     <div>
                       <span className="text-foreground/50">{t("labels.workType")}:</span>{" "}
-                      {t(`workModes.${job.workMode}`)} / {t(`employmentTypes.${job.employmentType}`)}
+                      {getTaxonomyOptionLabel(job.workMode, settings.jobWorkModeOptions, job.workMode)} /{" "}
+                      {getTaxonomyOptionLabel(
+                        job.employmentType,
+                        settings.jobEmploymentTypeOptions,
+                        job.employmentType
+                      )}
                     </div>
                   </div>
 
@@ -233,7 +246,7 @@ export default async function AdminJobsPage({
                       }}
                     />
 
-                  {hiredApplications.length > 0 ? (
+                  {liveChatApplications.length > 0 ? (
                     <div className="space-y-4 rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
                       <div>
                         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/55">
@@ -242,7 +255,7 @@ export default async function AdminJobsPage({
                         <p className="mt-1 text-sm text-foreground/65">{t("chat.subtitle")}</p>
                       </div>
                       <div className="space-y-4">
-                        {hiredApplications.map((application) => (
+                        {liveChatApplications.map((application) => (
                           <div
                             key={application.id}
                             className="space-y-3 rounded-2xl border border-foreground/10 bg-background/70 p-4"
@@ -252,11 +265,23 @@ export default async function AdminJobsPage({
                                 <p className="font-medium text-foreground">
                                   {application.user.name || application.user.email}
                                 </p>
-                                <p className="text-sm text-foreground/60">{t(`cards.${application.status === "JOINED" ? "joined" : "hired"}`)}</p>
+                                <p className="text-sm text-foreground/60">
+                                  {application.status === "JOINED"
+                                    ? t("cards.joined")
+                                    : application.status === "HIRED"
+                                      ? t("cards.hired")
+                                      : t("chat.unlocked")}
+                                </p>
                               </div>
                               <StatusBadge
                                 label={t(`applicationStatus.${application.status}`)}
-                                tone={application.status === "JOINED" ? "success" : "info"}
+                                tone={
+                                  application.status === "JOINED"
+                                    ? "success"
+                                    : application.status === "HIRED"
+                                      ? "info"
+                                      : "warning"
+                                }
                               />
                             </div>
                             <JobApplicationChatPanel mode="admin" applicationId={application.id} />

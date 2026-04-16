@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
-import { CAMPAIGN_CATEGORY_OPTIONS } from "@/lib/campaign-options";
 import { canManageBusinessCampaigns, getBusinessContext } from "@/lib/business-context";
 import { validateCampaignPolicy } from "@/lib/campaign-policy";
 import { normalizeExternalUrl } from "@/lib/external-url";
@@ -66,7 +65,8 @@ export async function POST(req: Request) {
   const reward = Number(rewardPerTask);
   const budget = Number(totalBudget);
   const normalizedCategory = category?.trim().toLowerCase() || "";
-  const allowedCategories = new Set<string>(CAMPAIGN_CATEGORY_OPTIONS.map((item) => item.value));
+  const appSettings = await getAppSettings();
+  const allowedCategories = new Set<string>(appSettings.campaignCategoryOptions.map((item) => item.value));
 
   if (!title || !description || !normalizedCategory || Number.isNaN(reward) || Number.isNaN(budget)) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -80,7 +80,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid category type" }, { status: 400 });
   }
 
-  const appSettings = await getAppSettings();
   const normalizedTaskSelection = normalizeTaskSelection({
     taskCategory,
     taskType,

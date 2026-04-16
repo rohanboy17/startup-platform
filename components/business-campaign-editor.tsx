@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   CAMPAIGN_CATEGORY_OPTIONS,
+  type CampaignCategoryOption,
   getCampaignCategoryLabel,
 } from "@/lib/campaign-options";
 import { formatMoney } from "@/lib/format-money";
@@ -58,6 +59,7 @@ export default function BusinessCampaignEditor({
     taskType: campaign.taskType,
   });
   const [taskCategories, setTaskCategories] = useState<TaskCategoryOption[]>(DEFAULT_TASK_CATEGORIES);
+  const [campaignCategoryOptions, setCampaignCategoryOptions] = useState<CampaignCategoryOption[]>(CAMPAIGN_CATEGORY_OPTIONS);
   const [title, setTitle] = useState(campaign.title);
   const [description, setDescription] = useState(campaign.description);
   const [category, setCategory] = useState(campaign.category);
@@ -88,12 +90,25 @@ export default function BusinessCampaignEditor({
 
   useEffect(() => {
     let active = true;
-    async function loadTaskCategories() {
-      const res = await fetch("/api/task-categories", { credentials: "include", cache: "no-store" });
+    async function loadTaxonomy() {
+      const res = await fetch("/api/work-taxonomy", { credentials: "include", cache: "no-store" });
       const raw = await res.text();
       if (!active) return;
       try {
-        const data = raw ? (JSON.parse(raw) as { taskCategories?: TaskCategoryOption[] }) : {};
+        const data = raw
+          ? (JSON.parse(raw) as {
+              taskCategories?: TaskCategoryOption[];
+              campaignCategoryOptions?: CampaignCategoryOption[];
+            })
+          : {};
+        if (data.campaignCategoryOptions?.length) {
+          setCampaignCategoryOptions(data.campaignCategoryOptions);
+          setCategory((current) =>
+            data.campaignCategoryOptions?.some((option) => option.value === current)
+              ? current
+              : data.campaignCategoryOptions?.[0]?.value || current
+          );
+        }
         if (data.taskCategories?.length) {
           const nextTaskCategory = isValidTaskCategory(initialTaskSelectionRef.current.taskCategory, data.taskCategories)
             ? initialTaskSelectionRef.current.taskCategory
@@ -109,7 +124,7 @@ export default function BusinessCampaignEditor({
         // keep defaults
       }
     }
-    void loadTaskCategories();
+    void loadTaxonomy();
     return () => {
       active = false;
     };
@@ -261,9 +276,9 @@ export default function BusinessCampaignEditor({
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none"
               >
-                {CAMPAIGN_CATEGORY_OPTIONS.map((option) => (
+                {campaignCategoryOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {getCampaignCategoryLabel(option.value, tCategories)}
+                    {getCampaignCategoryLabel(option.value, tCategories, campaignCategoryOptions)}
                   </option>
                 ))}
               </select>
@@ -375,7 +390,9 @@ export default function BusinessCampaignEditor({
         <div className="space-y-4">
           <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
             <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("side.currentCategory")}</p>
-            <p className="mt-2 text-sm text-foreground">{getCampaignCategoryLabel(category, tCategories)}</p>
+            <p className="mt-2 text-sm text-foreground">
+              {getCampaignCategoryLabel(category, tCategories, campaignCategoryOptions)}
+            </p>
             <p className="mt-2 text-xs uppercase tracking-[0.2em] text-foreground/40">{t("side.currentTaskCategory")}</p>
             <p className="mt-2 text-sm text-foreground">{taskCategory}</p>
             <p className="mt-2 text-xs uppercase tracking-[0.2em] text-foreground/40">{t("side.currentTaskType")}</p>

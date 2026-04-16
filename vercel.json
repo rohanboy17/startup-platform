@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/reset-levels",
       "schedule": "30 18 * * *"
+    },
+    {
+      "path": "/api/cron/job-interview-reminders",
+      "schedule": "*/15 * * * *"
     }
   ]
 }

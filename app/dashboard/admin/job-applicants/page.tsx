@@ -7,6 +7,8 @@ import { parseProfileDetails } from "@/lib/user-profile";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { getAppSettings } from "@/lib/system-settings";
+import { getTaxonomyOptionLabel } from "@/lib/work-taxonomy";
 import { getWorkExperienceMap } from "@/lib/work-experience";
 import { getTranslations } from "next-intl/server";
 
@@ -25,6 +27,7 @@ export default async function AdminJobApplicantsPage({
   const params = await searchParams;
   const q = params.q?.trim() || "";
   const limit = params.limit === "ALL" ? null : [5, 10, 20].includes(Number(params.limit)) ? Number(params.limit) : 10;
+  const settings = await getAppSettings();
 
   const pendingJobApplications = await prisma.jobApplication.findMany({
     where: {
@@ -187,7 +190,12 @@ export default async function AdminJobApplicantsPage({
                       <span className="text-foreground/50">{t("labels.location")}:</span> {application.job.city}, {application.job.state}
                     </div>
                     <div>
-                      <span className="text-foreground/50">{t("labels.pay")}:</span> INR {formatMoney(application.job.payAmount)} / {application.job.payUnit}
+                      <span className="text-foreground/50">{t("labels.pay")}:</span> INR {formatMoney(application.job.payAmount)} /{" "}
+                      {getTaxonomyOptionLabel(
+                        application.job.payUnit,
+                        settings.jobPayUnitOptions,
+                        application.job.payUnit
+                      )}
                     </div>
                     <div>
                       <span className="text-foreground/50">{t("labels.workerPayout")}:</span> INR {formatMoney(payout.workerAmount)}

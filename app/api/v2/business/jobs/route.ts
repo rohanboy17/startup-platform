@@ -4,13 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
 import { PHYSICAL_WORK_COMMISSION_RATE } from "@/lib/commission";
 import { canManageBusinessCampaigns, getBusinessContext } from "@/lib/business-context";
-import {
-  DEFAULT_JOB_CATEGORIES,
-  JOB_EMPLOYMENT_TYPE_OPTIONS,
-  JOB_PAY_UNIT_OPTIONS,
-  JOB_WORK_MODE_OPTIONS,
-  normalizeJobSelection,
-} from "@/lib/job-categories";
+import { normalizeJobSelection } from "@/lib/job-categories";
 import {
   normalizeCoordinate,
   normalizeJobDate,
@@ -21,10 +15,7 @@ import {
   normalizeRadiusKm,
   normalizeStringArray,
 } from "@/lib/jobs";
-
-const WORK_MODES = new Set<string>(JOB_WORK_MODE_OPTIONS.map((item) => item.value));
-const EMPLOYMENT_TYPES = new Set<string>(JOB_EMPLOYMENT_TYPE_OPTIONS.map((item) => item.value));
-const PAY_UNITS = new Set<string>(JOB_PAY_UNIT_OPTIONS.map((item) => item.value));
+import { getAppSettings } from "@/lib/system-settings";
 
 export async function GET() {
   const session = await auth();
@@ -56,11 +47,15 @@ export async function GET() {
       hired: job.applications.filter((item) => ["HIRED", "JOINED"].includes(item.status)).length,
     },
   }));
+  const settings = await getAppSettings();
 
   return NextResponse.json({
     accessRole: context.accessRole,
     jobs: jobsWithMetrics,
-    jobCategories: DEFAULT_JOB_CATEGORIES,
+    jobCategories: settings.jobCategories,
+    jobWorkModes: settings.jobWorkModeOptions,
+    jobEmploymentTypeOptions: settings.jobEmploymentTypeOptions,
+    jobPayUnitOptions: settings.jobPayUnitOptions,
   });
 }
 
@@ -124,6 +119,10 @@ export async function POST(req: Request) {
   if (!body) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
+  const settings = await getAppSettings();
+  const workModes = new Set(settings.jobWorkModeOptions.map((item) => item.value));
+  const employmentTypes = new Set(settings.jobEmploymentTypeOptions.map((item) => item.value));
+  const payUnits = new Set(settings.jobPayUnitOptions.map((item) => item.value));
 
   const title = normalizeOptionalText(body.title, 120);
   const description = normalizeOptionalText(body.description, 2000);
@@ -133,7 +132,7 @@ export async function POST(req: Request) {
       jobType: normalizeOptionalText(body.jobType, 120),
       customJobType: normalizeOptionalText(body.customJobType, 160),
     },
-    DEFAULT_JOB_CATEGORIES
+    settings.jobCategories
   );
   const workMode = normalizeOptionalText(body.workMode, 32);
   const employmentType = normalizeOptionalText(body.employmentType, 32);
@@ -160,13 +159,13 @@ export async function POST(req: Request) {
   if ("error" in selection) {
     return NextResponse.json({ error: selection.error }, { status: 400 });
   }
-  if (!workMode || !WORK_MODES.has(workMode)) {
+  if (!workMode || !workModes.has(workMode)) {
     return NextResponse.json({ error: "Invalid work mode" }, { status: 400 });
   }
-  if (!employmentType || !EMPLOYMENT_TYPES.has(employmentType)) {
+  if (!employmentType || !employmentTypes.has(employmentType)) {
     return NextResponse.json({ error: "Invalid employment type" }, { status: 400 });
   }
-  if (!payUnit || !PAY_UNITS.has(payUnit)) {
+  if (!payUnit || !payUnits.has(payUnit)) {
     return NextResponse.json({ error: "Invalid pay unit" }, { status: 400 });
   }
   if (Number.isNaN(openings) || openings < 1 || openings > 500) {

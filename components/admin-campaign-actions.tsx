@@ -6,6 +6,11 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
 import {
+  CAMPAIGN_CATEGORY_OPTIONS,
+  type CampaignCategoryOption,
+  getCampaignCategoryLabel,
+} from "@/lib/campaign-options";
+import {
   DEFAULT_TASK_CATEGORIES,
   type TaskCategoryOption,
   getTaskTypesForCategory,
@@ -57,6 +62,7 @@ export default function AdminCampaignActions({
     taskType: initialTaskType,
   });
   const [taskCategories, setTaskCategories] = useState<TaskCategoryOption[]>(DEFAULT_TASK_CATEGORIES);
+  const [campaignCategoryOptions, setCampaignCategoryOptions] = useState<CampaignCategoryOption[]>(CAMPAIGN_CATEGORY_OPTIONS);
   const [loading, setLoading] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [title, setTitle] = useState(initialTitle);
@@ -85,12 +91,25 @@ export default function AdminCampaignActions({
 
   useEffect(() => {
     let active = true;
-    async function loadTaskCategories() {
-      const res = await fetch("/api/task-categories", { credentials: "include", cache: "no-store" });
+    async function loadTaxonomy() {
+      const res = await fetch("/api/work-taxonomy", { credentials: "include", cache: "no-store" });
       const raw = await res.text();
       if (!active) return;
       try {
-        const data = raw ? (JSON.parse(raw) as { taskCategories?: TaskCategoryOption[] }) : {};
+        const data = raw
+          ? (JSON.parse(raw) as {
+              taskCategories?: TaskCategoryOption[];
+              campaignCategoryOptions?: CampaignCategoryOption[];
+            })
+          : {};
+        if (data.campaignCategoryOptions?.length) {
+          setCampaignCategoryOptions(data.campaignCategoryOptions);
+          setCategory((current) =>
+            data.campaignCategoryOptions?.some((option) => option.value === current)
+              ? current
+              : data.campaignCategoryOptions?.[0]?.value || current
+          );
+        }
         if (data.taskCategories?.length) {
           const nextTaskCategory = isValidTaskCategory(initialTaskSelectionRef.current.taskCategory, data.taskCategories)
             ? initialTaskSelectionRef.current.taskCategory
@@ -106,7 +125,7 @@ export default function AdminCampaignActions({
         // keep defaults
       }
     }
-    void loadTaskCategories();
+    void loadTaxonomy();
     return () => {
       active = false;
     };
@@ -314,12 +333,17 @@ export default function AdminCampaignActions({
             className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
             placeholder={t("fields.title")}
           />
-          <input
+          <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground"
-            placeholder={t("fields.category")}
-          />
+          >
+            {campaignCategoryOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {getCampaignCategoryLabel(option.value, undefined, campaignCategoryOptions)}
+              </option>
+            ))}
+          </select>
           <select
             value={taskCategory}
             onChange={(e) => {

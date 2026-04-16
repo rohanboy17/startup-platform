@@ -1,5 +1,28 @@
 import { prisma } from "@/lib/prisma";
-import { DEFAULT_TASK_CATEGORIES, getLaunchSafeTaskCategories, type TaskCategoryOption } from "@/lib/task-categories";
+import {
+  CAMPAIGN_CATEGORY_OPTIONS,
+  getJobCategoryOptions,
+  getJobWorkModeOptions,
+  getLaunchSafeWorkTaxonomy,
+  getProfileWorkModeOptions,
+  getTaskCategoryOptions,
+  INTERNSHIP_PREFERENCE_OPTIONS,
+  JOB_EMPLOYMENT_TYPE_OPTIONS,
+  JOB_PAY_UNIT_OPTIONS,
+  normalizeCampaignCategoryOptions,
+  normalizeTaxonomySelectOptions,
+  normalizeWorkModeOptions,
+  type CampaignCategoryOption,
+  type JobCategoryOption,
+  type TaskCategoryOption,
+  type TaxonomySelectOption,
+  type WorkModeOption,
+  type WorkTaxonomyCategory,
+  WORK_MODE_OPTIONS,
+  WORK_TIME_OPTIONS,
+  WORKING_PREFERENCE_OPTIONS,
+  WORK_TAXONOMY_CATEGORIES,
+} from "@/lib/work-taxonomy";
 
 export type AppSettings = {
   commissionRateDefault: number;
@@ -14,7 +37,18 @@ export type AppSettings = {
   adMaxViewsPerDay: number;
   adCooldownSeconds: number;
   adWatchSeconds: number;
+  workTaxonomy: WorkTaxonomyCategory[];
+  campaignCategoryOptions: CampaignCategoryOption[];
   taskCategories: TaskCategoryOption[];
+  jobCategories: JobCategoryOption[];
+  workModeOptions: WorkModeOption[];
+  profileWorkModeOptions: TaxonomySelectOption[];
+  jobWorkModeOptions: TaxonomySelectOption[];
+  workTimeOptions: TaxonomySelectOption[];
+  workingPreferenceOptions: TaxonomySelectOption[];
+  internshipPreferenceOptions: TaxonomySelectOption[];
+  jobEmploymentTypeOptions: TaxonomySelectOption[];
+  jobPayUnitOptions: TaxonomySelectOption[];
 };
 
 export function isBonusAdsLockedForLaunch() {
@@ -34,8 +68,53 @@ const DEFAULT_SETTINGS: AppSettings = {
   adMaxViewsPerDay: 5,
   adCooldownSeconds: 60,
   adWatchSeconds: 20,
-  taskCategories: DEFAULT_TASK_CATEGORIES,
+  workTaxonomy: WORK_TAXONOMY_CATEGORIES,
+  campaignCategoryOptions: CAMPAIGN_CATEGORY_OPTIONS,
+  taskCategories: getTaskCategoryOptions(WORK_TAXONOMY_CATEGORIES),
+  jobCategories: getJobCategoryOptions(WORK_TAXONOMY_CATEGORIES),
+  workModeOptions: WORK_MODE_OPTIONS,
+  profileWorkModeOptions: getProfileWorkModeOptions(WORK_MODE_OPTIONS),
+  jobWorkModeOptions: getJobWorkModeOptions(WORK_MODE_OPTIONS),
+  workTimeOptions: WORK_TIME_OPTIONS,
+  workingPreferenceOptions: WORKING_PREFERENCE_OPTIONS,
+  internshipPreferenceOptions: INTERNSHIP_PREFERENCE_OPTIONS,
+  jobEmploymentTypeOptions: JOB_EMPLOYMENT_TYPE_OPTIONS,
+  jobPayUnitOptions: JOB_PAY_UNIT_OPTIONS,
 };
+
+function buildDerivedSettings(raw: Partial<AppSettings>) {
+  const workTaxonomy = getLaunchSafeWorkTaxonomy(raw.workTaxonomy);
+  const campaignCategoryOptions = normalizeCampaignCategoryOptions(raw.campaignCategoryOptions);
+  const workModeOptions = normalizeWorkModeOptions(raw.workModeOptions);
+  const workTimeOptions = normalizeTaxonomySelectOptions(raw.workTimeOptions, WORK_TIME_OPTIONS);
+  const workingPreferenceOptions = normalizeTaxonomySelectOptions(
+    raw.workingPreferenceOptions,
+    WORKING_PREFERENCE_OPTIONS
+  );
+  const internshipPreferenceOptions = normalizeTaxonomySelectOptions(
+    raw.internshipPreferenceOptions,
+    INTERNSHIP_PREFERENCE_OPTIONS
+  );
+  const jobEmploymentTypeOptions = normalizeTaxonomySelectOptions(
+    raw.jobEmploymentTypeOptions,
+    JOB_EMPLOYMENT_TYPE_OPTIONS
+  );
+  const jobPayUnitOptions = normalizeTaxonomySelectOptions(raw.jobPayUnitOptions, JOB_PAY_UNIT_OPTIONS);
+  return {
+    workTaxonomy,
+    campaignCategoryOptions,
+    taskCategories: getTaskCategoryOptions(workTaxonomy),
+    jobCategories: getJobCategoryOptions(workTaxonomy),
+    workModeOptions,
+    profileWorkModeOptions: getProfileWorkModeOptions(workModeOptions),
+    jobWorkModeOptions: getJobWorkModeOptions(workModeOptions),
+    workTimeOptions,
+    workingPreferenceOptions,
+    internshipPreferenceOptions,
+    jobEmploymentTypeOptions,
+    jobPayUnitOptions,
+  };
+}
 
 export async function getAppSettings(): Promise<AppSettings> {
   const row = await prisma.systemSetting.findUnique({ where: { key: "app.core" } });
@@ -43,6 +122,7 @@ export async function getAppSettings(): Promise<AppSettings> {
 
   const raw = row.value as Partial<AppSettings>;
   const bonusAdsLockedForLaunch = isBonusAdsLockedForLaunch();
+  const derived = buildDerivedSettings(raw);
   return {
     commissionRateDefault:
       typeof raw.commissionRateDefault === "number"
@@ -92,21 +172,24 @@ export async function getAppSettings(): Promise<AppSettings> {
       typeof raw.adWatchSeconds === "number" && raw.adWatchSeconds >= 5
         ? Math.min(Math.max(Math.floor(raw.adWatchSeconds), 5), 300)
         : DEFAULT_SETTINGS.adWatchSeconds,
-    taskCategories: getLaunchSafeTaskCategories(raw.taskCategories),
+    ...derived,
   };
 }
 
 export async function updateAppSettings(value: Partial<AppSettings>) {
   const current = await getAppSettings();
   const bonusAdsLockedForLaunch = isBonusAdsLockedForLaunch();
-  const merged: AppSettings = {
+  const mergedBase: Partial<AppSettings> = {
     ...current,
     ...value,
     bonusAdsEnabled: bonusAdsLockedForLaunch ? false : Boolean(value.bonusAdsEnabled ?? current.bonusAdsEnabled),
-    taskCategories:
-      value.taskCategories !== undefined
-        ? getLaunchSafeTaskCategories(value.taskCategories)
-        : current.taskCategories,
+  };
+  const derived = buildDerivedSettings(mergedBase);
+  const merged: AppSettings = {
+    ...current,
+    ...value,
+    bonusAdsEnabled: mergedBase.bonusAdsEnabled as boolean,
+    ...derived,
   };
 
   return prisma.systemSetting.upsert({

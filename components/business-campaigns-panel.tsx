@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { ArrowRight, PauseCircle, PlayCircle, Search, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { getCampaignCategoryLabel } from "@/lib/campaign-options";
+import { CAMPAIGN_CATEGORY_OPTIONS, getCampaignCategoryLabel, type CampaignCategoryOption } from "@/lib/campaign-options";
 import { toDateLocale } from "@/lib/date-locale";
 import { formatMoney } from "@/lib/format-money";
 import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
@@ -49,10 +49,10 @@ function statusTone(status: CampaignStatus) {
 
 export default function BusinessCampaignsPanel() {
   const t = useTranslations("business.campaignsPanel");
-  const tCategories = useTranslations("business.categories");
   const locale = useLocale();
   const dateLocale = toDateLocale(locale);
   const [accessRole, setAccessRole] = useState<"OWNER" | "EDITOR" | "VIEWER">("OWNER");
+  const [campaignCategoryOptions, setCampaignCategoryOptions] = useState<CampaignCategoryOption[]>(CAMPAIGN_CATEGORY_OPTIONS);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
@@ -104,6 +104,27 @@ export default function BusinessCampaignsPanel() {
   }, [t]);
 
   useLiveRefresh(load, 10000);
+
+  useEffect(() => {
+    let active = true;
+    async function loadTaxonomy() {
+      const res = await fetch("/api/work-taxonomy", { cache: "no-store" });
+      const raw = await res.text();
+      if (!active) return;
+      try {
+        const parsed = raw ? (JSON.parse(raw) as { campaignCategoryOptions?: CampaignCategoryOption[] }) : {};
+        if (parsed.campaignCategoryOptions?.length) {
+          setCampaignCategoryOptions(parsed.campaignCategoryOptions);
+        }
+      } catch {
+        // keep fallback options
+      }
+    }
+    void loadTaxonomy();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const filteredCampaigns = useMemo(() => {
     return campaigns.filter((campaign) => {
@@ -259,7 +280,7 @@ export default function BusinessCampaignsPanel() {
                       </div>
                       <p className="break-words text-sm text-foreground/60">{campaign.description}</p>
                       <div className="flex flex-wrap gap-3 text-xs text-foreground/60">
-                        <span>{getCampaignCategoryLabel(campaign.category, tCategories)}</span>
+                        <span>{getCampaignCategoryLabel(campaign.category, undefined, campaignCategoryOptions)}</span>
                         <span>{t("card.created", { date: timeLabel(campaign.createdAt) })}</span>
                         {campaign.taskLink ? <span>{t("card.taskLinkAttached")}</span> : null}
                       </div>

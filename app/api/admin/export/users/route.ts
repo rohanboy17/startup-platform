@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getAppSettings } from "@/lib/system-settings";
 import { parseProfileDetails } from "@/lib/user-profile";
+import { getTaxonomyOptionLabel } from "@/lib/work-taxonomy";
 import type { Prisma, Role, UserAccountStatus } from "@prisma/client";
 
 function escapeCsv(value: string | number | boolean | null | undefined) {
@@ -58,6 +60,8 @@ export async function GET(req: Request) {
   } else if (flagged === "CLEAR") {
     where.isSuspicious = false;
   }
+
+  const settings = await getAppSettings();
 
   const users = await prisma.user.findMany({
     where,
@@ -128,8 +132,14 @@ export async function GET(req: Request) {
         escapeCsv(user.isSuspicious),
         escapeCsv(user.suspiciousReason),
         escapeCsv(user.ipAddress),
-        escapeCsv(profile.workMode),
-        escapeCsv(profile.workingPreference),
+        escapeCsv(getTaxonomyOptionLabel(profile.workMode, settings.profileWorkModeOptions, profile.workMode)),
+        escapeCsv(
+          getTaxonomyOptionLabel(
+            profile.workingPreference,
+            settings.workingPreferenceOptions,
+            profile.workingPreference
+          )
+        ),
         escapeCsv(profile.educationQualification),
         escapeCsv(profile.languages.join(" | ")),
         escapeCsv(user.createdAt.toISOString()),

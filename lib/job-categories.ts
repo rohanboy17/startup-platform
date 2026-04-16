@@ -1,74 +1,15 @@
-export type JobCategoryOption = {
-  name: string;
-  items: string[];
-};
+import {
+  getJobCategoryOptions,
+  getWorkTaxonomyCategoryByLabel,
+  JOB_EMPLOYMENT_TYPE_OPTIONS,
+  JOB_PAY_UNIT_OPTIONS,
+  JOB_WORK_MODE_OPTIONS,
+  type JobCategoryOption,
+} from "@/lib/work-taxonomy";
 
-export const DEFAULT_JOB_CATEGORIES: JobCategoryOption[] = [
-  {
-    name: "Field Operations & Audits",
-    items: [
-      "Store Visit Audit",
-      "Retail Shelf Check",
-      "Field Survey Visit",
-      "Mystery Audit Support",
-      "Local Verification Visit",
-    ],
-  },
-  {
-    name: "Office & Admin Support",
-    items: [
-      "Office Assistant",
-      "Back Office Support",
-      "Document Handling",
-      "Reception Support",
-      "Inventory Desk Support",
-    ],
-  },
-  {
-    name: "Delivery & Logistics Support",
-    items: [
-      "Local Delivery Support",
-      "Pickup Coordination",
-      "Warehouse Sorting",
-      "Dispatch Support",
-      "Route Assistance",
-    ],
-  },
-  {
-    name: "Event & Promotion Support",
-    items: [
-      "Event Crew Support",
-      "Brand Promoter",
-      "Sampling Support",
-      "Registration Desk Support",
-      "Venue Assistance",
-    ],
-  },
-  {
-    name: "Sales & Customer Support",
-    items: [
-      "In-Store Sales Support",
-      "Lead Collection Support",
-      "Field Sales Support",
-      "Customer Help Desk",
-      "Telecalling Support",
-    ],
-  },
-  {
-    name: "Skilled Services",
-    items: [
-      "Technician Visit",
-      "Installation Support",
-      "Maintenance Visit",
-      "Device Setup Support",
-      "Photography Visit",
-    ],
-  },
-  {
-    name: "Other",
-    items: ["Other"],
-  },
-];
+export type { JobCategoryOption };
+
+export const DEFAULT_JOB_CATEGORIES: JobCategoryOption[] = getJobCategoryOptions();
 
 export function getJobTypesForCategory(
   jobCategory: string,
@@ -99,11 +40,18 @@ export function getEffectiveJobTypeLabel(jobType: string | null | undefined, cus
   return jobType;
 }
 
-export function normalizeJobSelection(input: {
-  jobCategory?: string | null;
-  jobType?: string | null;
-  customJobType?: string | null;
-}, categories: JobCategoryOption[] = DEFAULT_JOB_CATEGORIES) {
+export function getJobCategorySlug(jobCategory: string | null | undefined) {
+  return getWorkTaxonomyCategoryByLabel(jobCategory)?.slug ?? null;
+}
+
+export function normalizeJobSelection(
+  input: {
+    jobCategory?: string | null;
+    jobType?: string | null;
+    customJobType?: string | null;
+  },
+  categories: JobCategoryOption[] = DEFAULT_JOB_CATEGORIES
+) {
   const jobCategory = input.jobCategory?.trim() || "";
   const jobType = input.jobType?.trim() || "";
   const customJobType = input.customJobType?.trim() || null;
@@ -123,24 +71,8 @@ export function normalizeJobSelection(input: {
   };
 }
 
-export const JOB_WORK_MODE_OPTIONS = [
-  { value: "WORK_FROM_OFFICE", label: "Office" },
-  { value: "WORK_IN_FIELD", label: "Field" },
-  { value: "HYBRID", label: "Hybrid" },
-] as const;
-
-export const JOB_EMPLOYMENT_TYPE_OPTIONS = [
-  { value: "FULL_TIME", label: "Full-time" },
-  { value: "PART_TIME", label: "Part-time" },
-  { value: "CONTRACT", label: "Contract" },
-  { value: "DAILY_GIG", label: "Daily gig" },
-  { value: "INTERNSHIP", label: "Internship" },
-] as const;
-
-export const JOB_PAY_UNIT_OPTIONS = [
-  { value: "HOURLY", label: "Hourly" },
-  { value: "DAILY", label: "Daily" },
-  { value: "WEEKLY", label: "Weekly" },
-  { value: "MONTHLY", label: "Monthly" },
-  { value: "FIXED", label: "Fixed" },
-] as const;
+export {
+  JOB_EMPLOYMENT_TYPE_OPTIONS,
+  JOB_PAY_UNIT_OPTIONS,
+  JOB_WORK_MODE_OPTIONS,
+};

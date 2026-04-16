@@ -7,6 +7,7 @@ import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
 import { getBusinessContext } from "@/lib/business-context";
 import { getCampaignCategoryLabel } from "@/lib/campaign-options";
 import { formatMoney } from "@/lib/format-money";
+import { getAppSettings } from "@/lib/system-settings";
 import { getEffectiveTaskLabel } from "@/lib/task-categories";
 import { Card, CardContent } from "@/components/ui/card";
 import BusinessCampaignEditor from "@/components/business-campaign-editor";
@@ -37,7 +38,7 @@ export default async function BusinessCampaignDetailPage({
   }
 
   const { campaignId } = await params;
-  const [campaign, wallet] = await Promise.all([
+  const [campaign, wallet, settings] = await Promise.all([
     prisma.campaign.findFirst({
       where: {
         id: campaignId,
@@ -61,6 +62,7 @@ export default async function BusinessCampaignDetailPage({
       },
     }),
     ensureBusinessWalletSynced(context.businessUserId),
+    getAppSettings(),
   ]);
 
   if (!campaign) {
@@ -163,7 +165,9 @@ export default async function BusinessCampaignDetailPage({
         <Card className="rounded-3xl border-foreground/10 bg-background/50 shadow-xl shadow-black/5 backdrop-blur-md">
           <CardContent className="p-5">
             <p className="text-sm text-foreground/60">{t("cards.campaignCategory")}</p>
-            <p className="mt-2 text-lg font-semibold text-foreground">{getCampaignCategoryLabel(campaign.category)}</p>
+            <p className="mt-2 text-lg font-semibold text-foreground">
+              {getCampaignCategoryLabel(campaign.category, undefined, settings.campaignCategoryOptions)}
+            </p>
           </CardContent>
         </Card>
         <Card className="rounded-3xl border-foreground/10 bg-background/50 shadow-xl shadow-black/5 backdrop-blur-md">

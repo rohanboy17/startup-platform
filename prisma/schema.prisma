@@ -383,6 +383,8 @@ model JobApplication {
   job              JobPosting           @relation(fields: [jobId], references: [id])
   user             User                 @relation(fields: [userId], references: [id])
   messages         JobApplicationMessage[]
+  interviews       JobApplicationInterview[]
+  chatFlags        JobApplicationChatFlag[]
 
   @@unique([jobId, userId])
   @@index([jobId, status, createdAt])
@@ -402,6 +404,65 @@ model JobApplicationMessage {
 
   @@index([applicationId, createdAt])
   @@index([senderUserId, createdAt])
+}
+
+model JobApplicationInterview {
+  id                        String                       @id @default(cuid())
+  applicationId             String
+  roundNumber               Int
+  title                     String?
+  status                    JobInterviewStatus           @default(SCHEDULED)
+  mode                      JobInterviewMode             @default(VIRTUAL)
+  scheduledAt               DateTime
+  durationMinutes           Int                          @default(30)
+  timezone                  String                       @default("Asia/Calcutta")
+  locationNote              String?
+  meetingProvider           String?
+  meetingUrl                String?
+  adminNote                 String?
+  interviewerNotes          String?
+  scorecard                 Json?
+  rescheduledAt             DateTime?
+  rescheduleReason          String?
+  cancelledAt               DateTime?
+  cancelledReason           String?
+  completedAt               DateTime?
+  attendanceStatus          JobInterviewAttendanceStatus @default(PENDING)
+  attendedAt                DateTime?
+  attendanceMarkedAt        DateTime?
+  attendanceMarkedByUserId  String?
+  meetingSharedAt           DateTime?
+  meetingSharedByBusinessId String?
+  reminderSentAt            DateTime?
+  createdByUserId           String?
+  updatedByUserId           String?
+  createdAt                 DateTime                     @default(now())
+  updatedAt                 DateTime                     @updatedAt
+
+  application               JobApplication               @relation(fields: [applicationId], references: [id])
+
+  @@unique([applicationId, roundNumber])
+  @@index([applicationId, scheduledAt])
+  @@index([status, scheduledAt])
+}
+
+model JobApplicationChatFlag {
+  id               String                          @id @default(cuid())
+  applicationId    String
+  senderUserId     String
+  senderRole       JobApplicationMessageSenderRole
+  message          String
+  detectedReasons  String[]                       @default([])
+  status           JobChatFlagStatus              @default(PENDING)
+  adminNote        String?
+  reviewedAt       DateTime?
+  reviewedByUserId String?
+  createdAt        DateTime                       @default(now())
+
+  application      JobApplication                 @relation(fields: [applicationId], references: [id])
+
+  @@index([applicationId, createdAt])
+  @@index([status, createdAt])
 }
 
 model AdWatchSession {
@@ -970,4 +1031,28 @@ enum JobApplicationStatus {
 enum JobApplicationMessageSenderRole {
   USER
   BUSINESS
+}
+
+enum JobInterviewStatus {
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum JobInterviewMode {
+  VIRTUAL
+  IN_PERSON
+  PHONE
+}
+
+enum JobInterviewAttendanceStatus {
+  PENDING
+  ATTENDED
+  NO_SHOW
+}
+
+enum JobChatFlagStatus {
+  PENDING
+  REVIEWED
+  DISMISSED
 }

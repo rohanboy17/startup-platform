@@ -1,3 +1,5 @@
+import { normalizeProfileWorkCategorySlugs, type WorkTaxonomyCategory } from "@/lib/work-taxonomy";
+
 export type UserProfileDetails = {
   avatarUrl: string | null;
   address: string | null;
@@ -15,6 +17,7 @@ export type UserProfileDetails = {
   workTime: string | null;
   workingPreference: string | null;
   internshipPreference: string | null;
+  preferredWorkCategories: string[];
   languages: string[];
 };
 
@@ -35,6 +38,7 @@ export const EMPTY_PROFILE_DETAILS: UserProfileDetails = {
   workTime: null,
   workingPreference: null,
   internshipPreference: null,
+  preferredWorkCategories: [],
   languages: [],
 };
 
@@ -80,7 +84,10 @@ function normalizeStringArray(input: unknown, maxItems = 10, maxLength = 40) {
   return values;
 }
 
-export function parseProfileDetails(input: unknown): UserProfileDetails {
+export function parseProfileDetails(
+  input: unknown,
+  taxonomy?: WorkTaxonomyCategory[]
+): UserProfileDetails {
   if (!input || typeof input !== "object" || Array.isArray(input)) {
     return { ...EMPTY_PROFILE_DETAILS };
   }
@@ -103,6 +110,7 @@ export function parseProfileDetails(input: unknown): UserProfileDetails {
     workTime: normalizeText(source.workTime, 48) || null,
     workingPreference: normalizeText(source.workingPreference, 64) || null,
     internshipPreference: normalizeText(source.internshipPreference, 64) || null,
+    preferredWorkCategories: normalizeProfileWorkCategorySlugs(source.preferredWorkCategories, 8, taxonomy),
     languages: normalizeStringArray(source.languages, 10, 40),
   };
 }
@@ -137,6 +145,7 @@ export type ProfileCompletionSource = {
   workTime?: string | null;
   workingPreference?: string | null;
   internshipPreference?: string | null;
+  preferredWorkCategories?: string[];
   languages?: string[];
 };
 

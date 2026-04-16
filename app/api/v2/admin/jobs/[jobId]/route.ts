@@ -5,13 +5,7 @@ import { sendInAppNotification } from "@/lib/notify";
 import { PHYSICAL_WORK_COMMISSION_RATE } from "@/lib/commission";
 import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
 import { applyJobBudgetDelta, getJobBudgetDelta } from "@/lib/job-budget";
-import {
-  DEFAULT_JOB_CATEGORIES,
-  JOB_EMPLOYMENT_TYPE_OPTIONS,
-  JOB_PAY_UNIT_OPTIONS,
-  JOB_WORK_MODE_OPTIONS,
-  normalizeJobSelection,
-} from "@/lib/job-categories";
+import { normalizeJobSelection } from "@/lib/job-categories";
 import {
   normalizeCoordinate,
   normalizeJobDate,
@@ -22,11 +16,9 @@ import {
   normalizeRadiusKm,
   normalizeStringArray,
 } from "@/lib/jobs";
+import { getAppSettings } from "@/lib/system-settings";
 
 type JobAction = "APPROVE" | "REJECT" | "PAUSE" | "REOPEN" | "CLOSE" | "FILL";
-const WORK_MODES = new Set<string>(JOB_WORK_MODE_OPTIONS.map((item) => item.value));
-const EMPLOYMENT_TYPES = new Set<string>(JOB_EMPLOYMENT_TYPE_OPTIONS.map((item) => item.value));
-const PAY_UNITS = new Set<string>(JOB_PAY_UNIT_OPTIONS.map((item) => item.value));
 
 export async function PATCH(
   req: Request,
@@ -264,6 +256,10 @@ export async function PUT(
   if (!body) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
+  const settings = await getAppSettings();
+  const workModes = new Set(settings.jobWorkModeOptions.map((item) => item.value));
+  const employmentTypes = new Set(settings.jobEmploymentTypeOptions.map((item) => item.value));
+  const payUnits = new Set(settings.jobPayUnitOptions.map((item) => item.value));
 
   const title = normalizeOptionalText(body.title, 120) || existing.title;
   const description = normalizeOptionalText(body.description, 2000) || existing.description;
@@ -276,7 +272,7 @@ export async function PUT(
           ? existing.customJobType
           : normalizeOptionalText(body.customJobType, 160),
     },
-    DEFAULT_JOB_CATEGORIES
+    settings.jobCategories
   );
   const workMode = normalizeOptionalText(body.workMode, 32) || existing.workMode;
   const employmentType = normalizeOptionalText(body.employmentType, 32) || existing.employmentType;
@@ -311,13 +307,13 @@ export async function PUT(
   if ("error" in selection) {
     return NextResponse.json({ error: selection.error }, { status: 400 });
   }
-  if (!WORK_MODES.has(String(workMode))) {
+  if (!workModes.has(String(workMode))) {
     return NextResponse.json({ error: "Invalid work mode" }, { status: 400 });
   }
-  if (!EMPLOYMENT_TYPES.has(String(employmentType))) {
+  if (!employmentTypes.has(String(employmentType))) {
     return NextResponse.json({ error: "Invalid employment type" }, { status: 400 });
   }
-  if (!PAY_UNITS.has(String(payUnit))) {
+  if (!payUnits.has(String(payUnit))) {
     return NextResponse.json({ error: "Invalid pay unit" }, { status: 400 });
   }
   if (Number.isNaN(Number(openings)) || Number(openings) < 1 || Number(openings) > 500) {

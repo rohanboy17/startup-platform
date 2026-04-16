@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { Camera, Upload, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,22 @@ import { Input } from "@/components/ui/input";
 import { SectionCard } from "@/components/ui/section-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useLiveRefresh } from "@/lib/live-refresh";
+import {
+  INTERNSHIP_PREFERENCE_OPTIONS,
+  PROFILE_WORK_CATEGORY_OPTIONS,
+  PROFILE_WORK_MODE_OPTIONS,
+  type TaxonomySelectOption,
+  WORK_TIME_OPTIONS,
+  WORKING_PREFERENCE_OPTIONS,
+} from "@/lib/work-taxonomy";
+
+type ProfileWorkCategoryOption = {
+  value: string;
+  label: string;
+  description?: string;
+};
+
+type SelectOption = TaxonomySelectOption;
 
 type SettingsPayload = {
   profile: {
@@ -34,6 +50,7 @@ type SettingsPayload = {
     workTime: string | null;
     workingPreference: string | null;
     internshipPreference: string | null;
+    preferredWorkCategories: string[];
     languages: string[];
   };
   experience?: {
@@ -103,6 +120,18 @@ export default function UserProfilePanel() {
   const [workTime, setWorkTime] = useState("");
   const [workingPreference, setWorkingPreference] = useState("");
   const [internshipPreference, setInternshipPreference] = useState("");
+  const [profileWorkModes, setProfileWorkModes] = useState<SelectOption[]>(PROFILE_WORK_MODE_OPTIONS);
+  const [workTimeOptions, setWorkTimeOptions] = useState<SelectOption[]>(WORK_TIME_OPTIONS);
+  const [workingPreferenceOptions, setWorkingPreferenceOptions] = useState<SelectOption[]>(
+    WORKING_PREFERENCE_OPTIONS
+  );
+  const [internshipPreferenceOptions, setInternshipPreferenceOptions] = useState<SelectOption[]>(
+    INTERNSHIP_PREFERENCE_OPTIONS
+  );
+  const [preferredWorkCategories, setPreferredWorkCategories] = useState<string[]>([]);
+  const [profileWorkCategories, setProfileWorkCategories] = useState<ProfileWorkCategoryOption[]>(
+    PROFILE_WORK_CATEGORY_OPTIONS
+  );
   const [experience, setExperience] = useState<SettingsPayload["experience"]>(null);
   const [languages, setLanguages] = useState<string[]>([]);
   const [languageInput, setLanguageInput] = useState("");
@@ -171,6 +200,7 @@ export default function UserProfilePanel() {
       setWorkTime(settingsPayload.profile.workTime || "");
       setWorkingPreference(settingsPayload.profile.workingPreference || "");
       setInternshipPreference(settingsPayload.profile.internshipPreference || "");
+      setPreferredWorkCategories(settingsPayload.profile.preferredWorkCategories || []);
       setLanguages(settingsPayload.profile.languages || []);
       setSkills(skillsPayload.skills.map((item) => item.label));
       setInitialized(true);
@@ -180,6 +210,47 @@ export default function UserProfilePanel() {
   }, [initialized, locale, t]);
 
   useLiveRefresh(load, 60000);
+
+  useEffect(() => {
+    let active = true;
+    async function loadWorkTaxonomy() {
+      const res = await fetch("/api/work-taxonomy", { cache: "no-store" });
+      const raw = await res.text();
+      if (!active) return;
+      try {
+        const parsed = raw
+          ? (JSON.parse(raw) as {
+              profileWorkCategories?: ProfileWorkCategoryOption[];
+              profileWorkModes?: SelectOption[];
+              workTimeOptions?: SelectOption[];
+              workingPreferenceOptions?: SelectOption[];
+              internshipPreferenceOptions?: SelectOption[];
+            })
+          : {};
+        if (parsed.profileWorkCategories?.length) {
+          setProfileWorkCategories(parsed.profileWorkCategories);
+        }
+        if (parsed.profileWorkModes?.length) {
+          setProfileWorkModes(parsed.profileWorkModes);
+        }
+        if (parsed.workTimeOptions?.length) {
+          setWorkTimeOptions(parsed.workTimeOptions);
+        }
+        if (parsed.workingPreferenceOptions?.length) {
+          setWorkingPreferenceOptions(parsed.workingPreferenceOptions);
+        }
+        if (parsed.internshipPreferenceOptions?.length) {
+          setInternshipPreferenceOptions(parsed.internshipPreferenceOptions);
+        }
+      } catch {
+        // keep empty fallback
+      }
+    }
+    void loadWorkTaxonomy();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const age = useMemo(() => calculateAge(dateOfBirth), [dateOfBirth]);
 
@@ -253,6 +324,7 @@ export default function UserProfilePanel() {
           workTime: workTime || null,
           workingPreference: workingPreference || null,
           internshipPreference: internshipPreference || null,
+          preferredWorkCategories,
           languages,
         },
       }),
@@ -320,14 +392,16 @@ export default function UserProfilePanel() {
             </p>
           </div>
 
-          <div className="flex flex-col gap-4 rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 rounded-[1.6rem] border border-foreground/10 bg-gradient-to-br from-foreground/[0.05] via-background/80 to-foreground/[0.02] p-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-4">
-              <Avatar size="lg" className="size-16 border border-foreground/10">
-                {avatarUrl ? <AvatarImage src={avatarUrl} alt={name || email} /> : null}
-                <AvatarFallback className="bg-foreground/[0.08] text-base font-semibold text-foreground">
-                  {(name || email || "U").trim().charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
+              <div className="rounded-[1.35rem] bg-gradient-to-br from-emerald-400/18 via-sky-400/12 to-transparent p-[3px] shadow-[0_18px_38px_-30px_rgba(15,23,42,0.35)]">
+                <Avatar size="lg" className="size-[4.5rem] border border-background/90 bg-background">
+                  {avatarUrl ? <AvatarImage src={avatarUrl} alt={name || email} /> : null}
+                  <AvatarFallback className="bg-foreground/[0.08] text-base font-semibold text-foreground">
+                    {(name || email || "U").trim().charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
               <div>
                 <p className="text-sm font-semibold text-foreground">{t("photoTitle")}</p>
                 <p className="mt-1 text-xs text-foreground/65">{t("photoSubtitle")}</p>
@@ -350,7 +424,7 @@ export default function UserProfilePanel() {
               <Button
                 type="button"
                 variant="secondary"
-                className="gap-2"
+                className="min-h-11 gap-2"
                 disabled={uploadingAvatar}
                 onClick={() => fileInputRef.current?.click()}
               >
@@ -361,7 +435,7 @@ export default function UserProfilePanel() {
                 <Button
                   type="button"
                   variant="ghost"
-                  className="gap-2"
+                  className="min-h-11 gap-2"
                   onClick={() => setAvatarUrl("")}
                 >
                   <X size={16} />
@@ -485,9 +559,11 @@ export default function UserProfilePanel() {
               className="min-h-11 rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground"
             >
               <option value="">{t("workModeOptions.default")}</option>
-              <option value="WORK_FROM_HOME">{t("workModeOptions.WORK_FROM_HOME")}</option>
-              <option value="WORK_FROM_OFFICE">{t("workModeOptions.WORK_FROM_OFFICE")}</option>
-              <option value="WORK_IN_FIELD">{t("workModeOptions.WORK_IN_FIELD")}</option>
+              {profileWorkModes.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
             <select
               value={workTime}
@@ -495,8 +571,11 @@ export default function UserProfilePanel() {
               className="min-h-11 rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground"
             >
               <option value="">{t("workTimeOptions.default")}</option>
-              <option value="FULL_TIME">{t("workTimeOptions.FULL_TIME")}</option>
-              <option value="PART_TIME">{t("workTimeOptions.PART_TIME")}</option>
+              {workTimeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -506,9 +585,11 @@ export default function UserProfilePanel() {
             className="min-h-11 w-full rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground"
           >
             <option value="">{t("workingPreferenceOptions.default")}</option>
-            <option value="SALARIED">{t("workingPreferenceOptions.SALARIED")}</option>
-            <option value="FREELANCE_CONTRACTUAL">{t("workingPreferenceOptions.FREELANCE_CONTRACTUAL")}</option>
-            <option value="DAY_BASIS">{t("workingPreferenceOptions.DAY_BASIS")}</option>
+            {workingPreferenceOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
 
           <select
@@ -517,10 +598,50 @@ export default function UserProfilePanel() {
             className="min-h-11 w-full rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground"
           >
             <option value="">{t("internshipPreferenceOptions.default")}</option>
-            <option value="OPEN_TO_INTERNSHIP">{t("internshipPreferenceOptions.OPEN_TO_INTERNSHIP")}</option>
-            <option value="INTERNSHIP_ONLY">{t("internshipPreferenceOptions.INTERNSHIP_ONLY")}</option>
-            <option value="NOT_INTERESTED">{t("internshipPreferenceOptions.NOT_INTERESTED")}</option>
+            {internshipPreferenceOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
+
+          <div className="space-y-3 rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
+            <div>
+              <p className="text-sm font-medium text-foreground">{t("preferredCategoriesTitle")}</p>
+              <p className="mt-1 text-sm text-foreground/70">{t("preferredCategoriesSubtitle")}</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {profileWorkCategories.map((option) => {
+                const active = preferredWorkCategories.includes(option.value);
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() =>
+                      setPreferredWorkCategories((current) =>
+                        active
+                          ? current.filter((item) => item !== option.value)
+                          : current.length >= 8
+                            ? current
+                            : [...current, option.value]
+                      )
+                    }
+                    className={`inline-flex items-center rounded-full border px-3 py-1.5 text-xs transition ${
+                      active
+                        ? "border-emerald-500/35 bg-emerald-500/12 text-emerald-700 dark:text-emerald-200"
+                        : "border-foreground/10 bg-background/70 text-foreground/75 hover:bg-foreground/[0.05]"
+                    }`}
+                    title={option.description}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-xs text-foreground/60">
+              {t("preferredCategoriesCount", { count: preferredWorkCategories.length })}
+            </p>
+          </div>
 
           <Input
             placeholder={t("placeholders.educationQualification")}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Area, Bar, BarChart, CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,7 +14,7 @@ import {
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { getCampaignCategoryLabel } from "@/lib/campaign-options";
+import { CAMPAIGN_CATEGORY_OPTIONS, getCampaignCategoryLabel, type CampaignCategoryOption } from "@/lib/campaign-options";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
 
@@ -65,9 +65,9 @@ type Analytics = {
 
 export default function BusinessAnalyticsPanel() {
   const t = useTranslations("business.analyticsPanel");
-  const tCategories = useTranslations("business.categories");
   const [data, setData] = useState<Analytics | null>(null);
   const [error, setError] = useState("");
+  const [campaignCategoryOptions, setCampaignCategoryOptions] = useState<CampaignCategoryOption[]>(CAMPAIGN_CATEGORY_OPTIONS);
 
   const trendChartConfig = {
     spend: { label: t("charts.trend.spend"), color: "#10b981" },
@@ -114,6 +114,27 @@ export default function BusinessAnalyticsPanel() {
   }, [t]);
 
   useLiveRefresh(load, 10000);
+
+  useEffect(() => {
+    let active = true;
+    async function loadTaxonomy() {
+      const res = await fetch("/api/work-taxonomy", { cache: "no-store" });
+      const raw = await res.text();
+      if (!active) return;
+      try {
+        const parsed = raw ? (JSON.parse(raw) as { campaignCategoryOptions?: CampaignCategoryOption[] }) : {};
+        if (parsed.campaignCategoryOptions?.length) {
+          setCampaignCategoryOptions(parsed.campaignCategoryOptions);
+        }
+      } catch {
+        // keep fallback options
+      }
+    }
+    void loadTaxonomy();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   if (error) return <p className="text-sm text-rose-600 dark:text-rose-300">{error}</p>;
   if (!data) return <p className="text-sm text-foreground/60">{t("loading")}</p>;
@@ -170,7 +191,9 @@ export default function BusinessAnalyticsPanel() {
                 {data.categoryPerformance.map((row) => (
                   <div key={row.category} className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      <p className="font-medium text-foreground">{getCampaignCategoryLabel(row.category, tCategories)}</p>
+                      <p className="font-medium text-foreground">
+                        {getCampaignCategoryLabel(row.category, undefined, campaignCategoryOptions)}
+                      </p>
                       <StatusBadge label={`${row.approvalRate.toFixed(2)}%`} tone="success" />
                     </div>
                     <p className="mt-1 text-xs text-foreground/60">
@@ -233,7 +256,7 @@ export default function BusinessAnalyticsPanel() {
                       <div>
                         <p className="break-words font-medium text-foreground">{campaign.title}</p>
                         <p className="mt-1 text-xs text-foreground/60">
-                          {getCampaignCategoryLabel(campaign.category, tCategories)} | {campaign.status}
+                          {getCampaignCategoryLabel(campaign.category, undefined, campaignCategoryOptions)} | {campaign.status}
                         </p>
                       </div>
                       <span className="text-sm text-emerald-700 dark:text-emerald-200">

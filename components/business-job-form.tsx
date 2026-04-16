@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,7 @@ import { SectionCard } from "@/components/ui/section-card";
 import { formatMoney } from "@/lib/format-money";
 import {
   DEFAULT_JOB_CATEGORIES,
+  type JobCategoryOption,
   getEffectiveJobTypeLabel,
   getJobTypesForCategory,
   JOB_EMPLOYMENT_TYPE_OPTIONS,
@@ -17,22 +18,37 @@ import {
 } from "@/lib/job-categories";
 import { getPhysicalWorkPayoutBreakdown } from "@/lib/commission";
 import { getJobBudgetRequired } from "@/lib/jobs";
+import type { TaxonomySelectOption } from "@/lib/work-taxonomy";
 
 function normalizeChip(value: string, max = 48) {
   return value.trim().slice(0, max);
 }
 
+function getOptionLabel(value: string, options: TaxonomySelectOption[], fallback: string) {
+  return options.find((option) => option.value === value)?.label ?? fallback;
+}
+
 export default function BusinessJobForm() {
   const t = useTranslations("business.jobForm");
   const router = useRouter();
-  const defaultCategory = DEFAULT_JOB_CATEGORIES[0]?.name || "Other";
+  const [jobCategories, setJobCategories] = useState<JobCategoryOption[]>(DEFAULT_JOB_CATEGORIES);
+  const defaultCategory = jobCategories[0]?.name || "Other";
+  const defaultJobType = getJobTypesForCategory(defaultCategory)[0] || "Other";
+  const initialSelectionRef = useRef({
+    jobCategory: defaultCategory,
+    jobType: defaultJobType,
+  });
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [jobCategory, setJobCategory] = useState(defaultCategory);
-  const [jobType, setJobType] = useState(getJobTypesForCategory(defaultCategory)[0] || "Other");
+  const [jobType, setJobType] = useState(defaultJobType);
   const [customJobType, setCustomJobType] = useState("");
   const [workMode, setWorkMode] = useState("WORK_IN_FIELD");
   const [employmentType, setEmploymentType] = useState("DAILY_GIG");
+  const [jobWorkModes, setJobWorkModes] = useState<TaxonomySelectOption[]>(JOB_WORK_MODE_OPTIONS);
+  const [jobEmploymentTypeOptions, setJobEmploymentTypeOptions] = useState<TaxonomySelectOption[]>(
+    JOB_EMPLOYMENT_TYPE_OPTIONS
+  );
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [pincode, setPincode] = useState("");
@@ -43,6 +59,7 @@ export default function BusinessJobForm() {
   const [openings, setOpenings] = useState("1");
   const [payAmount, setPayAmount] = useState("");
   const [payUnit, setPayUnit] = useState("DAILY");
+  const [jobPayUnitOptions, setJobPayUnitOptions] = useState<TaxonomySelectOption[]>(JOB_PAY_UNIT_OPTIONS);
   const [shiftSummary, setShiftSummary] = useState("");
   const [startDate, setStartDate] = useState("");
   const [applicationDeadline, setApplicationDeadline] = useState("");
@@ -54,7 +71,65 @@ export default function BusinessJobForm() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const jobTypes = useMemo(() => getJobTypesForCategory(jobCategory), [jobCategory]);
+  useEffect(() => {
+    let active = true;
+    async function loadTaxonomy() {
+      const res = await fetch("/api/work-taxonomy", { credentials: "include", cache: "no-store" });
+      const raw = await res.text();
+      if (!active) return;
+      try {
+        const data = raw
+          ? (JSON.parse(raw) as {
+              jobCategories?: JobCategoryOption[];
+              jobWorkModes?: TaxonomySelectOption[];
+              jobEmploymentTypeOptions?: TaxonomySelectOption[];
+              jobPayUnitOptions?: TaxonomySelectOption[];
+            })
+          : {};
+        if (data.jobCategories?.length) {
+          const nextCategory = data.jobCategories.some((item) => item.name === initialSelectionRef.current.jobCategory)
+            ? initialSelectionRef.current.jobCategory
+            : data.jobCategories[0]?.name || "Other";
+          const nextType = getJobTypesForCategory(nextCategory, data.jobCategories);
+          setJobCategories(data.jobCategories);
+          setJobCategory(nextCategory);
+          setJobType(nextType.includes(initialSelectionRef.current.jobType) ? initialSelectionRef.current.jobType : nextType[0] || "Other");
+        }
+        if (data.jobWorkModes?.length) {
+          setJobWorkModes(data.jobWorkModes);
+          setWorkMode((current) =>
+            data.jobWorkModes?.some((item) => item.value === current)
+              ? current
+              : data.jobWorkModes?.[0]?.value || current
+          );
+        }
+        if (data.jobEmploymentTypeOptions?.length) {
+          setJobEmploymentTypeOptions(data.jobEmploymentTypeOptions);
+          setEmploymentType((current) =>
+            data.jobEmploymentTypeOptions?.some((item) => item.value === current)
+              ? current
+              : data.jobEmploymentTypeOptions?.[0]?.value || current
+          );
+        }
+        if (data.jobPayUnitOptions?.length) {
+          setJobPayUnitOptions(data.jobPayUnitOptions);
+          setPayUnit((current) =>
+            data.jobPayUnitOptions?.some((item) => item.value === current)
+              ? current
+              : data.jobPayUnitOptions?.[0]?.value || current
+          );
+        }
+      } catch {
+        // keep default categories
+      }
+    }
+    void loadTaxonomy();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const jobTypes = useMemo(() => getJobTypesForCategory(jobCategory, jobCategories), [jobCategory, jobCategories]);
   const needsCustomType = jobType === "Other";
   const effectiveTypeLabel = getEffectiveJobTypeLabel(jobType, customJobType);
   const numericOpenings = Number(openings) > 0 ? Number(openings) : 0;
@@ -175,11 +250,11 @@ export default function BusinessJobForm() {
             onChange={(e) => {
               const next = e.target.value;
               setJobCategory(next);
-              setJobType(getJobTypesForCategory(next)[0] || "Other");
+              setJobType(getJobTypesForCategory(next, jobCategories)[0] || "Other");
             }}
             className="min-h-11 rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground"
           >
-            {DEFAULT_JOB_CATEGORIES.map((category) => (
+            {jobCategories.map((category) => (
               <option key={category.name} value={category.name}>
                 {category.name}
               </option>
@@ -213,9 +288,9 @@ export default function BusinessJobForm() {
             onChange={(e) => setWorkMode(e.target.value)}
             className="min-h-11 rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground"
           >
-            {JOB_WORK_MODE_OPTIONS.map((item) => (
+            {jobWorkModes.map((item) => (
               <option key={item.value} value={item.value}>
-                {t(`workModes.${item.value}`)}
+                {item.label}
               </option>
             ))}
           </select>
@@ -224,9 +299,9 @@ export default function BusinessJobForm() {
             onChange={(e) => setEmploymentType(e.target.value)}
             className="min-h-11 rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground"
           >
-            {JOB_EMPLOYMENT_TYPE_OPTIONS.map((item) => (
+            {jobEmploymentTypeOptions.map((item) => (
               <option key={item.value} value={item.value}>
-                {t(`employmentTypes.${item.value}`)}
+                {item.label}
               </option>
             ))}
           </select>
@@ -299,9 +374,9 @@ export default function BusinessJobForm() {
             onChange={(e) => setPayUnit(e.target.value)}
             className="min-h-11 rounded-xl border border-foreground/15 bg-background/70 px-3 text-sm text-foreground"
           >
-            {JOB_PAY_UNIT_OPTIONS.map((item) => (
+            {jobPayUnitOptions.map((item) => (
               <option key={item.value} value={item.value}>
-                {t(`payUnits.${item.value}`)}
+                {item.label}
               </option>
             ))}
           </select>
@@ -451,7 +526,8 @@ export default function BusinessJobForm() {
           <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
             <p className="text-xs uppercase tracking-[0.2em] text-foreground/55">{t("preview.workSetup")}</p>
             <p className="mt-2 text-sm font-semibold text-foreground">
-              {t(`workModes.${workMode}`)} | {t(`employmentTypes.${employmentType}`)}
+              {getOptionLabel(workMode, jobWorkModes, workMode)} |{" "}
+              {getOptionLabel(employmentType, jobEmploymentTypeOptions, employmentType)}
             </p>
           </div>
           <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
@@ -461,7 +537,7 @@ export default function BusinessJobForm() {
           <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
             <p className="text-xs uppercase tracking-[0.2em] text-foreground/55">{t("preview.pay")}</p>
             <p className="mt-2 text-sm font-semibold text-foreground">
-              {payAmount || "-"} / {t(`payUnits.${payUnit}`)}
+              {payAmount || "-"} / {getOptionLabel(payUnit, jobPayUnitOptions, payUnit)}
             </p>
           </div>
           <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">

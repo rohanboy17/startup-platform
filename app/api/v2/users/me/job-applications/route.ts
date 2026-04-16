@@ -14,6 +14,9 @@ export async function GET() {
   const applications = await prisma.jobApplication.findMany({
     where: { userId: session.user.id },
     include: {
+      interviews: {
+        orderBy: { roundNumber: "asc" },
+      },
       job: {
         include: {
           business: {
@@ -53,6 +56,32 @@ export async function GET() {
       joinedAt: application.joinedAt?.toISOString() || null,
       reviewedAt: application.reviewedAt?.toISOString() || null,
       createdAt: application.createdAt.toISOString(),
+      interviews: application.interviews.map((interview) => ({
+        id: interview.id,
+        roundNumber: interview.roundNumber,
+        title: interview.title,
+        status: interview.status,
+        mode: interview.mode,
+        scheduledAt: interview.scheduledAt.toISOString(),
+        durationMinutes: interview.durationMinutes,
+        timezone: interview.timezone,
+        locationNote: interview.locationNote,
+        meetingProvider: interview.meetingProvider,
+        meetingUrl: interview.meetingUrl,
+        adminNote: interview.adminNote,
+        interviewerNotes: interview.interviewerNotes,
+        scorecard: interview.scorecard,
+        rescheduledAt: interview.rescheduledAt?.toISOString() || null,
+        rescheduleReason: interview.rescheduleReason,
+        cancelledAt: interview.cancelledAt?.toISOString() || null,
+        cancelledReason: interview.cancelledReason,
+        completedAt: interview.completedAt?.toISOString() || null,
+        attendanceStatus: interview.attendanceStatus,
+        attendedAt: interview.attendedAt?.toISOString() || null,
+        attendanceMarkedAt: interview.attendanceMarkedAt?.toISOString() || null,
+        meetingSharedAt: interview.meetingSharedAt?.toISOString() || null,
+        reminderSentAt: interview.reminderSentAt?.toISOString() || null,
+      })),
       job: {
         id: application.job.id,
         title: application.job.title,

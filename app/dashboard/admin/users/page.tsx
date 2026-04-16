@@ -12,7 +12,9 @@ import { formatMoney } from "@/lib/format-money";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { getAppSettings } from "@/lib/system-settings";
 import { calculateAgeFromDate, parseProfileDetails } from "@/lib/user-profile";
+import { getTaxonomyOptionLabel } from "@/lib/work-taxonomy";
 
 type SearchParams = {
   q?: string;
@@ -59,9 +61,10 @@ export default async function AdminUsersPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const [t, locale] = await Promise.all([
+  const [t, locale, settings] = await Promise.all([
     getTranslations("admin.usersPage"),
     getLocale(),
+    getAppSettings(),
   ]);
   const params = await searchParams;
   const q = params.q?.trim() || "";
@@ -406,9 +409,11 @@ export default async function AdminUsersPage({
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             >
               <option value="ALL">{t("filters.workModeAll")}</option>
-              <option value="WORK_FROM_HOME">{t("filters.workModeHome")}</option>
-              <option value="WORK_FROM_OFFICE">{t("filters.workModeOffice")}</option>
-              <option value="WORK_IN_FIELD">{t("filters.workModeField")}</option>
+              {settings.profileWorkModeOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
             <select
               name="workingPreference"
@@ -416,9 +421,11 @@ export default async function AdminUsersPage({
               className="rounded-md border border-foreground/15 bg-background/60 px-3 py-2 text-sm text-foreground shadow-sm outline-none transition focus:border-foreground/25 focus:ring-2 focus:ring-foreground/10"
             >
               <option value="ALL">{t("filters.preferenceAll")}</option>
-              <option value="SALARIED">{t("filters.preferenceSalaried")}</option>
-              <option value="FREELANCE_CONTRACTUAL">{t("filters.preferenceFreelance")}</option>
-              <option value="DAY_BASIS">{t("filters.preferenceDayBasis")}</option>
+              {settings.workingPreferenceOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
             <input
               type="text"
@@ -738,16 +745,32 @@ export default async function AdminUsersPage({
                       </p>
                       <p>
                         <span className="text-foreground/60">Work mode:</span>{" "}
-                        <span className="font-medium">{formatEnumLabel(profile.workMode)}</span>
+                        <span className="font-medium">
+                          {getTaxonomyOptionLabel(
+                            profile.workMode,
+                            settings.profileWorkModeOptions,
+                            formatEnumLabel(profile.workMode)
+                          )}
+                        </span>
                       </p>
                       <p>
                         <span className="text-foreground/60">Work time:</span>{" "}
-                        <span className="font-medium">{formatEnumLabel(profile.workTime)}</span>
+                        <span className="font-medium">
+                          {getTaxonomyOptionLabel(
+                            profile.workTime,
+                            settings.workTimeOptions,
+                            formatEnumLabel(profile.workTime)
+                          )}
+                        </span>
                       </p>
                       <p>
                         <span className="text-foreground/60">Work preference:</span>{" "}
                         <span className="font-medium">
-                          {formatEnumLabel(profile.workingPreference)}
+                          {getTaxonomyOptionLabel(
+                            profile.workingPreference,
+                            settings.workingPreferenceOptions,
+                            formatEnumLabel(profile.workingPreference)
+                          )}
                         </span>
                       </p>
                       <p className="break-words">

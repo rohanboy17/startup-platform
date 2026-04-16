@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   CAMPAIGN_CATEGORY_OPTIONS,
+  type CampaignCategoryOption,
   getCampaignCategoryLabel,
 } from "@/lib/campaign-options";
 import { formatMoney } from "@/lib/format-money";
@@ -26,6 +27,7 @@ export default function CreateCampaign() {
   const tBusiness = useTranslations("business");
   const t = useTranslations("business.create");
   const tCategories = useTranslations("business.categories");
+  const [campaignCategoryOptions, setCampaignCategoryOptions] = useState<CampaignCategoryOption[]>(CAMPAIGN_CATEGORY_OPTIONS);
   const [taskCategories, setTaskCategories] = useState<TaskCategoryOption[]>(DEFAULT_TASK_CATEGORIES);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -84,12 +86,25 @@ export default function CreateCampaign() {
       }
     }
 
-    async function loadTaskCategories() {
-      const res = await fetch("/api/task-categories", { credentials: "include", cache: "no-store" });
+    async function loadTaxonomy() {
+      const res = await fetch("/api/work-taxonomy", { credentials: "include", cache: "no-store" });
       const raw = await res.text();
       if (!active) return;
       try {
-        const data = raw ? (JSON.parse(raw) as { taskCategories?: TaskCategoryOption[] }) : {};
+        const data = raw
+          ? (JSON.parse(raw) as {
+              taskCategories?: TaskCategoryOption[];
+              campaignCategoryOptions?: CampaignCategoryOption[];
+            })
+          : {};
+        if (data.campaignCategoryOptions?.length) {
+          setCampaignCategoryOptions(data.campaignCategoryOptions);
+          setCategory((current) =>
+            data.campaignCategoryOptions?.some((option) => option.value === current)
+              ? current
+              : data.campaignCategoryOptions?.[0]?.value || current
+          );
+        }
         if (data.taskCategories?.length) {
           const nextTaskCategory = isValidTaskCategory(DEFAULT_TASK_CATEGORY, data.taskCategories)
             ? DEFAULT_TASK_CATEGORY
@@ -109,7 +124,7 @@ export default function CreateCampaign() {
 
     void loadFundingState();
     void loadKycStatus();
-    void loadTaskCategories();
+    void loadTaxonomy();
 
     return () => {
       active = false;
@@ -189,7 +204,7 @@ export default function CreateCampaign() {
     setMessage(t("messages.created"));
     setTitle("");
     setDescription("");
-    setCategory(DEFAULT_CATEGORY);
+    setCategory(campaignCategoryOptions[0]?.value || DEFAULT_CATEGORY);
     const resetTaskCategory = taskCategories[0]?.name || DEFAULT_TASK_CATEGORY;
     setTaskCategory(resetTaskCategory);
     setTaskType(getTaskTypesForCategory(resetTaskCategory, taskCategories)[0] || "Other");
@@ -262,9 +277,9 @@ export default function CreateCampaign() {
                 onChange={(e) => setCategory(e.target.value)}
                 className="w-full rounded-xl border border-foreground/15 bg-background/70 px-4 py-3 text-sm text-foreground outline-none"
               >
-                {CAMPAIGN_CATEGORY_OPTIONS.map((option) => (
+                {campaignCategoryOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {getCampaignCategoryLabel(option.value, tCategories)}
+                    {getCampaignCategoryLabel(option.value, tCategories, campaignCategoryOptions)}
                   </option>
                 ))}
               </select>
@@ -393,7 +408,9 @@ export default function CreateCampaign() {
 
           <div className="rounded-2xl border border-foreground/10 bg-background/60 p-4">
             <p className="text-xs uppercase tracking-[0.2em] text-foreground/40">{t("preview.categoryLabel")}</p>
-            <p className="mt-2 text-sm text-foreground">{getCampaignCategoryLabel(category, tCategories)}</p>
+              <p className="mt-2 text-sm text-foreground">
+                {getCampaignCategoryLabel(category, tCategories, campaignCategoryOptions)}
+              </p>
             <p className="mt-1 text-sm text-foreground/60">
               {t("preview.taskCategoryLabel")}: {taskCategory}
             </p>

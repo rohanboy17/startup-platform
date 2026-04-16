@@ -22,13 +22,13 @@ export async function GET(
     select: {
       id: true,
       status: true,
+      adminStatus: true,
       job: {
         select: {
           title: true,
           business: {
             select: {
               name: true,
-              email: true,
             },
           },
         },
@@ -36,7 +36,6 @@ export async function GET(
       user: {
         select: {
           name: true,
-          email: true,
         },
       },
     },
@@ -58,9 +57,9 @@ export async function GET(
     thread: {
       applicationId: application.id,
       status: application.status,
-      isLive: isJobApplicationChatOpen(application.status),
-      candidateName: application.user.name || application.user.email || "Candidate",
-      businessName: application.job.business.name || application.job.business.email || "Business",
+      isLive: isJobApplicationChatOpen(application.status, application.adminStatus),
+      candidateName: application.user.name || "Candidate",
+      businessName: application.job.business.name || "Business",
       jobTitle: application.job.title,
     },
   });

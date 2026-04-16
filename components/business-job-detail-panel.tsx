@@ -1,14 +1,16 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import BusinessJobEditor from "@/components/business-job-editor";
 import JobApplicationChatPanel from "@/components/job-application-chat-panel";
+import JobInterviewRounds, { type JobInterviewRound } from "@/components/job-interview-rounds";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { formatMoney } from "@/lib/format-money";
+import { isJobApplicationChatOpen } from "@/lib/job-application-chat-access";
 import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
 
 type ApplicationStatus =
@@ -64,6 +66,7 @@ type JobPayload = {
       interviewAt: string | null;
       joinedAt: string | null;
       createdAt: string;
+      interviews: JobInterviewRound[];
       user: {
         id: string;
         name: string | null;
@@ -77,6 +80,8 @@ type JobPayload = {
           workTime: string | null;
           workingPreference: string | null;
           internshipPreference: string | null;
+          preferredWorkCategories: string[];
+          preferredWorkCategoryLabels: string[];
           educationQualification: string | null;
           languages: string[];
         };
@@ -114,6 +119,7 @@ function moderationLabel(application: JobPayload["job"]["applications"][number],
 
 export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
   const t = useTranslations("business.jobDetail");
+  const locale = useLocale();
   const [data, setData] = useState<JobPayload | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -121,6 +127,7 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
   const [busyKey, setBusyKey] = useState("");
   const [editOpen, setEditOpen] = useState(false);
   const [applicationNotes, setApplicationNotes] = useState<Record<string, string>>({});
+  const [meetingDrafts, setMeetingDrafts] = useState<Record<string, { meetingProvider: string; meetingUrl: string; locationNote: string }>>({});
 
   const load = useCallback(async () => {
     const res = await fetch(`/api/v2/business/jobs/${jobId}`, { credentials: "include" });
@@ -143,6 +150,21 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
         for (const item of parsed.job.applications) {
           if (typeof next[item.id] === "undefined") {
             next[item.id] = item.businessNote || "";
+          }
+        }
+        return next;
+      });
+      setMeetingDrafts((current) => {
+        const next = { ...current };
+        for (const application of parsed.job.applications) {
+          for (const interview of application.interviews) {
+            if (typeof next[interview.id] === "undefined") {
+              next[interview.id] = {
+                meetingProvider: interview.meetingProvider || "",
+                meetingUrl: interview.meetingUrl || "",
+                locationNote: interview.locationNote || "",
+              };
+            }
           }
         }
         return next;
@@ -207,6 +229,36 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
       body: JSON.stringify(payload),
       credentials: "include",
     });
+    const raw = await res.text();
+    let parsed: { error?: string; message?: string } = {};
+    try {
+      parsed = raw ? (JSON.parse(raw) as typeof parsed) : {};
+    } catch {
+      parsed = { error: t("errors.unexpectedServerResponse") };
+    }
+    setBusyKey("");
+    if (!res.ok) {
+      setMessage(parsed.error || t("errors.actionFailed"));
+      return;
+    }
+    setMessage(parsed.message || t("messages.updated"));
+    emitDashboardLiveRefresh();
+    void load();
+  }
+
+  async function updateInterviewMeetingDetails(applicationId: string, interviewId: string) {
+    setBusyKey(`interview:${interviewId}`);
+    setMessage("");
+    const draft = meetingDrafts[interviewId] || { meetingProvider: "", meetingUrl: "", locationNote: "" };
+    const res = await fetch(
+      `/api/v2/business/jobs/${jobId}/applications/${applicationId}/interviews/${interviewId}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(draft),
+        credentials: "include",
+      }
+    );
     const raw = await res.text();
     let parsed: { error?: string; message?: string } = {};
     try {
@@ -521,6 +573,26 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
                   </div>
                 </div>
 
+                <div className="mt-4 rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">
+                    {t("application.preferredCategories")}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {application.user.profile.preferredWorkCategoryLabels.length === 0 ? (
+                      <span className="text-sm text-foreground/60">{t("application.notProvided")}</span>
+                    ) : (
+                      application.user.profile.preferredWorkCategoryLabels.map((label, index) => (
+                        <span
+                          key={`${application.id}:preferred:${index}:${label}`}
+                          className="rounded-full border border-foreground/10 px-3 py-1 text-xs text-foreground/80"
+                        >
+                          {label}
+                        </span>
+                      ))
+                    )}
+                  </div>
+                </div>
+
                 <div className="mt-4 grid gap-4 xl:grid-cols-2">
                   <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
                     <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("application.businessNote")}</p>
@@ -569,7 +641,57 @@ export default function BusinessJobDetailPanel({ jobId }: { jobId: string }) {
                   </div>
                 </div>
 
-                {["HIRED", "JOINED"].includes(application.status) ? (
+                <div className="mt-4">
+                  <JobInterviewRounds
+                    rounds={application.interviews}
+                    locale={locale}
+                    title={t("application.interviewRounds")}
+                    emptyLabel={t("application.noInterviewRounds")}
+                    canEditMeetingDetails={application.adminStatus === "ADMIN_APPROVED" && canManage}
+                    meetingDrafts={meetingDrafts}
+                    busyInterviewId={busyKey.startsWith("interview:") ? busyKey.replace("interview:", "") : ""}
+                    onMeetingDraftChange={(interviewId, field, value) =>
+                      setMeetingDrafts((current) => ({
+                        ...current,
+                        [interviewId]: {
+                          meetingProvider: current[interviewId]?.meetingProvider || "",
+                          meetingUrl: current[interviewId]?.meetingUrl || "",
+                          locationNote: current[interviewId]?.locationNote || "",
+                          [field]: value,
+                        },
+                      }))
+                    }
+                    onSaveMeetingDetails={(interviewId) =>
+                      void updateInterviewMeetingDetails(application.id, interviewId)
+                    }
+                    labels={{
+                      statusLabel: (status) => t(`interviewStatus.${status}`),
+                      toneForStatus: (status) =>
+                        status === "COMPLETED" ? "success" : status === "CANCELLED" ? "danger" : "info",
+                      roundLabel: (roundNumber, title) =>
+                        title ? t("application.roundWithTitle", { round: roundNumber, title }) : t("application.round", { round: roundNumber }),
+                      modeLabel: (mode) => t(`interviewModes.${mode}`),
+                      scheduledAt: (value) => t("application.interviewScheduledAt", { value: new Date(value).toLocaleString() }),
+                      durationLabel: (minutes) => t("application.duration", { minutes }),
+                      timezoneLabel: (value) => t("application.timezone", { value }),
+                      adminNote: t("application.adminNote"),
+                      interviewerNotes: t("application.interviewerNotes"),
+                      attendanceLabel: (status) => t("application.attendance", { status: t(`attendance.${status}`) }),
+                      meetingProvider: t("application.meetingProvider"),
+                      meetingLink: t("application.meetingLink"),
+                      locationNote: t("application.locationNote"),
+                      noMeetingLink: t("application.noMeetingLink"),
+                      rescheduledReason: t("application.rescheduledReason"),
+                      cancelledReason: t("application.cancelledReason"),
+                      completedAt: t("application.completedAt"),
+                      saveMeetingDetails: t("application.saveMeetingDetails"),
+                      savingMeetingDetails: t("application.savingMeetingDetails"),
+                      updateMeetingHelp: t("application.updateMeetingHelp"),
+                    }}
+                  />
+                </div>
+
+                {isJobApplicationChatOpen(application.status, application.adminStatus) ? (
                   <div className="mt-4">
                     <JobApplicationChatPanel
                       mode="business"

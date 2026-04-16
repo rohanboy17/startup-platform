@@ -153,14 +153,16 @@ export default function BusinessSettingsPanel() {
               <p className="text-sm text-foreground/60">{t("profile.eyebrow")}</p>
               <h3 className="text-xl font-semibold text-foreground">{t("profile.title")}</h3>
             </div>
-            <div className="flex flex-col gap-4 rounded-2xl border border-foreground/10 bg-background/60 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 rounded-[1.6rem] border border-foreground/10 bg-gradient-to-br from-foreground/[0.05] via-background/80 to-foreground/[0.02] p-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4">
-                <Avatar size="lg" className="size-16 border border-foreground/10">
-                  {data.settings.profileImageUrl ? <AvatarImage src={data.settings.profileImageUrl} alt={data.settings.brandName || data.profile.name} /> : null}
-                  <AvatarFallback className="bg-foreground/[0.08] text-base font-semibold text-foreground">
-                    {(data.settings.brandName || data.profile.name || "B").trim().charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="rounded-[1.35rem] bg-gradient-to-br from-emerald-400/18 via-sky-400/12 to-transparent p-[3px] shadow-[0_18px_38px_-30px_rgba(15,23,42,0.35)]">
+                  <Avatar size="lg" className="size-[4.5rem] border border-background/90 bg-background">
+                    {data.settings.profileImageUrl ? <AvatarImage src={data.settings.profileImageUrl} alt={data.settings.brandName || data.profile.name} /> : null}
+                    <AvatarFallback className="bg-foreground/[0.08] text-base font-semibold text-foreground">
+                      {(data.settings.brandName || data.profile.name || "B").trim().charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">{t("profile.photoTitle")}</p>
                   <p className="mt-1 text-xs text-foreground/65">{t("profile.photoSubtitle")}</p>
@@ -183,7 +185,7 @@ export default function BusinessSettingsPanel() {
                 <Button
                   type="button"
                   variant="secondary"
-                  className="gap-2"
+                  className="min-h-11 gap-2"
                   disabled={uploadingAvatar}
                   onClick={() => fileInputRef.current?.click()}
                 >
@@ -194,7 +196,7 @@ export default function BusinessSettingsPanel() {
                   <Button
                     type="button"
                     variant="ghost"
-                    className="gap-2"
+                    className="min-h-11 gap-2"
                     onClick={() => updateSettings("profileImageUrl", "")}
                   >
                     <X size={16} />

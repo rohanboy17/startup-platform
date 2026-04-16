@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendInAppNotification } from "@/lib/notify";
+import { normalizeInterviewText } from "@/lib/job-interviews";
 
 export async function PATCH(
   req: Request,
@@ -48,6 +49,14 @@ export async function PATCH(
       user: {
         select: { id: true },
       },
+      interviews: {
+        orderBy: { roundNumber: "desc" },
+        take: 1,
+        select: {
+          id: true,
+          roundNumber: true,
+        },
+      },
     },
   });
 
@@ -87,15 +96,64 @@ export async function PATCH(
                 status: "SHORTLISTED" as const,
                 interviewAt: null,
               }
-            : {
-                status: "INTERVIEW_SCHEDULED" as const,
-                interviewAt: parsedInterviewAt,
-              };
+          : {
+              status: "INTERVIEW_SCHEDULED" as const,
+              interviewAt: parsedInterviewAt,
+            };
 
     const next = await tx.jobApplication.update({
       where: { id: applicationId },
       data,
     });
+
+    if (action === "SCHEDULE_INTERVIEW" && parsedInterviewAt) {
+      if (application.interviews[0]) {
+        await tx.jobApplicationInterview.update({
+          where: { id: application.interviews[0].id },
+          data: {
+            status: "SCHEDULED",
+            scheduledAt: parsedInterviewAt,
+            durationMinutes: 30,
+            timezone: "Asia/Calcutta",
+            adminNote: normalizeInterviewText(reviewReason, 800) || null,
+            rescheduledAt: new Date(),
+            rescheduleReason: normalizeInterviewText(reviewReason, 500) || null,
+            cancelledAt: null,
+            cancelledReason: null,
+            reminderSentAt: null,
+            updatedByUserId: session.user.id,
+          },
+        });
+      } else {
+        await tx.jobApplicationInterview.create({
+          data: {
+            applicationId,
+            roundNumber: 1,
+            title: "Round 1",
+            status: "SCHEDULED",
+            mode: "VIRTUAL",
+            scheduledAt: parsedInterviewAt,
+            durationMinutes: 30,
+            timezone: "Asia/Calcutta",
+            adminNote: normalizeInterviewText(reviewReason, 800) || null,
+            createdByUserId: session.user.id,
+            updatedByUserId: session.user.id,
+          },
+        });
+      }
+    }
+
+    if (action === "REJECT") {
+      await tx.jobApplicationInterview.updateMany({
+        where: { applicationId, status: "SCHEDULED" },
+        data: {
+          status: "CANCELLED",
+          cancelledAt: new Date(),
+          cancelledReason: reviewReason || "Application rejected by admin",
+          updatedByUserId: session.user.id,
+        },
+      });
+    }
 
     await tx.activityLog.create({
       data: {

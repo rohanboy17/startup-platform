@@ -77,7 +77,7 @@ export default async function AdminCmsPage() {
     <div className="space-y-6">
       <h1 className="text-3xl font-semibold">Content & CMS</h1>
       <p className="text-sm text-foreground/70">
-        Control landing text, legal pages, announcement banners, and feature flags from one place.
+        Control landing text, legal pages, announcements, feature flags, and the universal work taxonomy from one place.
       </p>
       <AdminCmsPanel
         initialLandingHero={landing.heroTitle}
@@ -89,7 +89,16 @@ export default async function AdminCmsPage() {
         flags={flags}
         announcements={announcements}
         communityFeedback={communityFeedback}
-        initialTaskCategories={settings.taskCategories}
+        initialWorkTaxonomy={settings.workTaxonomy}
+        initialCampaignCategoryOptions={settings.campaignCategoryOptions}
+        initialTaxonomyOptionConfig={{
+          workModeOptions: settings.workModeOptions,
+          workTimeOptions: settings.workTimeOptions,
+          workingPreferenceOptions: settings.workingPreferenceOptions,
+          internshipPreferenceOptions: settings.internshipPreferenceOptions,
+          jobEmploymentTypeOptions: settings.jobEmploymentTypeOptions,
+          jobPayUnitOptions: settings.jobPayUnitOptions,
+        }}
       />
     </div>
   );

@@ -5,13 +5,7 @@ import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
 import { canManageBusinessCampaigns, getBusinessContext } from "@/lib/business-context";
 import { PHYSICAL_WORK_COMMISSION_RATE } from "@/lib/commission";
 import { getJobBudgetDelta } from "@/lib/job-budget";
-import {
-  DEFAULT_JOB_CATEGORIES,
-  JOB_EMPLOYMENT_TYPE_OPTIONS,
-  JOB_PAY_UNIT_OPTIONS,
-  JOB_WORK_MODE_OPTIONS,
-  normalizeJobSelection,
-} from "@/lib/job-categories";
+import { normalizeJobSelection } from "@/lib/job-categories";
 import {
   normalizeCoordinate,
   normalizeJobDate,
@@ -24,10 +18,8 @@ import {
 } from "@/lib/jobs";
 import { parseProfileDetails } from "@/lib/user-profile";
 import { getWorkExperienceMap } from "@/lib/work-experience";
-
-const WORK_MODES = new Set<string>(JOB_WORK_MODE_OPTIONS.map((item) => item.value));
-const EMPLOYMENT_TYPES = new Set<string>(JOB_EMPLOYMENT_TYPE_OPTIONS.map((item) => item.value));
-const PAY_UNITS = new Set<string>(JOB_PAY_UNIT_OPTIONS.map((item) => item.value));
+import { getAppSettings } from "@/lib/system-settings";
+import { getWorkTaxonomyLabelBySlug } from "@/lib/work-taxonomy";
 
 type JobAction = "PAUSE" | "REOPEN" | "CLOSE" | "FILL";
 
@@ -46,11 +38,15 @@ export async function GET(
   }
 
   const { jobId } = await params;
+  const settings = await getAppSettings();
   const job = await prisma.jobPosting.findFirst({
     where: { id: jobId, businessId: context.businessUserId },
     include: {
       applications: {
         include: {
+          interviews: {
+            orderBy: { roundNumber: "asc" },
+          },
           user: {
             select: {
               id: true,
@@ -84,10 +80,36 @@ export async function GET(
     job: {
       ...job,
       applications: job.applications.map((application) => {
-        const profile = parseProfileDetails(application.user.profileDetails);
+        const profile = parseProfileDetails(application.user.profileDetails, settings.workTaxonomy);
         const experience = experienceMap.get(application.user.id);
         return {
           ...application,
+          interviews: application.interviews.map((interview) => ({
+            id: interview.id,
+            roundNumber: interview.roundNumber,
+            title: interview.title,
+            status: interview.status,
+            mode: interview.mode,
+            scheduledAt: interview.scheduledAt.toISOString(),
+            durationMinutes: interview.durationMinutes,
+            timezone: interview.timezone,
+            locationNote: interview.locationNote,
+            meetingProvider: interview.meetingProvider,
+            meetingUrl: interview.meetingUrl,
+            adminNote: interview.adminNote,
+            interviewerNotes: interview.interviewerNotes,
+            scorecard: interview.scorecard,
+            rescheduledAt: interview.rescheduledAt?.toISOString() || null,
+            rescheduleReason: interview.rescheduleReason,
+            cancelledAt: interview.cancelledAt?.toISOString() || null,
+            cancelledReason: interview.cancelledReason,
+            completedAt: interview.completedAt?.toISOString() || null,
+            attendanceStatus: interview.attendanceStatus,
+            attendedAt: interview.attendedAt?.toISOString() || null,
+            attendanceMarkedAt: interview.attendanceMarkedAt?.toISOString() || null,
+            meetingSharedAt: interview.meetingSharedAt?.toISOString() || null,
+            reminderSentAt: interview.reminderSentAt?.toISOString() || null,
+          })),
           user: {
             id: application.user.id,
             name: application.user.name,
@@ -101,6 +123,10 @@ export async function GET(
               workTime: profile.workTime,
               workingPreference: profile.workingPreference,
               internshipPreference: profile.internshipPreference,
+              preferredWorkCategories: profile.preferredWorkCategories,
+              preferredWorkCategoryLabels: profile.preferredWorkCategories.map(
+                (slug) => getWorkTaxonomyLabelBySlug(slug, settings.workTaxonomy) || slug
+              ),
               educationQualification: profile.educationQualification,
               languages: profile.languages,
             },
@@ -110,7 +136,10 @@ export async function GET(
         };
       }),
     },
-    jobCategories: DEFAULT_JOB_CATEGORIES,
+    jobCategories: settings.jobCategories,
+    jobWorkModes: settings.jobWorkModeOptions,
+    jobEmploymentTypeOptions: settings.jobEmploymentTypeOptions,
+    jobPayUnitOptions: settings.jobPayUnitOptions,
   });
 }
 
@@ -258,6 +287,10 @@ export async function PUT(
   if (!body) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
+  const settings = await getAppSettings();
+  const workModes = new Set(settings.jobWorkModeOptions.map((item) => item.value));
+  const employmentTypes = new Set(settings.jobEmploymentTypeOptions.map((item) => item.value));
+  const payUnits = new Set(settings.jobPayUnitOptions.map((item) => item.value));
 
   const title = normalizeOptionalText(body.title, 120) || existing.title;
   const description = normalizeOptionalText(body.description, 2000) || existing.description;
@@ -270,7 +303,7 @@ export async function PUT(
           ? existing.customJobType
           : normalizeOptionalText(body.customJobType, 160),
     },
-    DEFAULT_JOB_CATEGORIES
+    settings.jobCategories
   );
   const workMode = normalizeOptionalText(body.workMode, 32) || existing.workMode;
   const employmentType = normalizeOptionalText(body.employmentType, 32) || existing.employmentType;
@@ -305,13 +338,13 @@ export async function PUT(
   if ("error" in selection) {
     return NextResponse.json({ error: selection.error }, { status: 400 });
   }
-  if (!WORK_MODES.has(String(workMode))) {
+  if (!workModes.has(String(workMode))) {
     return NextResponse.json({ error: "Invalid work mode" }, { status: 400 });
   }
-  if (!EMPLOYMENT_TYPES.has(String(employmentType))) {
+  if (!employmentTypes.has(String(employmentType))) {
     return NextResponse.json({ error: "Invalid employment type" }, { status: 400 });
   }
-  if (!PAY_UNITS.has(String(payUnit))) {
+  if (!payUnits.has(String(payUnit))) {
     return NextResponse.json({ error: "Invalid pay unit" }, { status: 400 });
   }
   if (Number.isNaN(Number(openings)) || Number(openings) < 1 || Number(openings) > 500) {

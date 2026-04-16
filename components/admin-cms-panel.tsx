@@ -1,11 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { emitDashboardLiveRefresh } from "@/lib/live-refresh";
-import type { TaskCategoryOption } from "@/lib/task-categories";
+import {
+  getJobWorkModeOptions,
+  getJobCategoryOptions,
+  getLaunchSafeWorkTaxonomy,
+  getProfileWorkModeOptions,
+  getTaskCategoryOptions,
+  INTERNSHIP_PREFERENCE_OPTIONS,
+  JOB_EMPLOYMENT_TYPE_OPTIONS,
+  JOB_PAY_UNIT_OPTIONS,
+  normalizeCampaignCategoryOptions,
+  normalizeTaxonomySelectOptions,
+  normalizeWorkModeOptions,
+  type CampaignCategoryOption,
+  type TaxonomySelectOption,
+  type WorkModeOption,
+  type WorkTaxonomyCategory,
+  WORK_TIME_OPTIONS,
+  WORKING_PREFERENCE_OPTIONS,
+} from "@/lib/work-taxonomy";
 
 type FeatureFlag = {
   key: string;
@@ -37,6 +55,15 @@ type CommunityFeedback = {
   };
 };
 
+type TaxonomyOptionConfig = {
+  workModeOptions: WorkModeOption[];
+  workTimeOptions: TaxonomySelectOption[];
+  workingPreferenceOptions: TaxonomySelectOption[];
+  internshipPreferenceOptions: TaxonomySelectOption[];
+  jobEmploymentTypeOptions: TaxonomySelectOption[];
+  jobPayUnitOptions: TaxonomySelectOption[];
+};
+
 export default function AdminCmsPanel({
   initialLandingHero,
   initialLandingSubtitle,
@@ -44,7 +71,9 @@ export default function AdminCmsPanel({
   initialPrivacyBody,
   initialRefundBody,
   initialFaqBody,
-  initialTaskCategories,
+  initialWorkTaxonomy,
+  initialCampaignCategoryOptions,
+  initialTaxonomyOptionConfig,
   flags,
   announcements,
   communityFeedback,
@@ -55,7 +84,9 @@ export default function AdminCmsPanel({
   initialPrivacyBody: string;
   initialRefundBody: string;
   initialFaqBody: string;
-  initialTaskCategories: TaskCategoryOption[];
+  initialWorkTaxonomy: WorkTaxonomyCategory[];
+  initialCampaignCategoryOptions: CampaignCategoryOption[];
+  initialTaxonomyOptionConfig: TaxonomyOptionConfig;
   flags: FeatureFlag[];
   announcements: Announcement[];
   communityFeedback: CommunityFeedback[];
@@ -67,8 +98,14 @@ export default function AdminCmsPanel({
   const [privacyBody, setPrivacyBody] = useState(initialPrivacyBody);
   const [refundBody, setRefundBody] = useState(initialRefundBody);
   const [faqBody, setFaqBody] = useState(initialFaqBody);
-  const [taskCategoryText, setTaskCategoryText] = useState(
-    initialTaskCategories.map((category) => `${category.name}\n${category.items.join("\n")}`).join("\n\n")
+  const [workTaxonomyText, setWorkTaxonomyText] = useState(
+    JSON.stringify(initialWorkTaxonomy, null, 2)
+  );
+  const [campaignCategoryText, setCampaignCategoryText] = useState(
+    JSON.stringify(initialCampaignCategoryOptions, null, 2)
+  );
+  const [taxonomyOptionText, setTaxonomyOptionText] = useState(
+    JSON.stringify(initialTaxonomyOptionConfig, null, 2)
   );
   const [newAnnTitle, setNewAnnTitle] = useState("");
   const [newAnnMessage, setNewAnnMessage] = useState("");
@@ -84,6 +121,72 @@ export default function AdminCmsPanel({
   );
   const [loading, setLoading] = useState<string | null>(null);
   const [message, setMessage] = useState("");
+
+  const taxonomyPreview = useMemo(() => {
+    try {
+      const parsedWorkTaxonomy = JSON.parse(workTaxonomyText) as unknown;
+      const parsedCampaignCategoryOptions = JSON.parse(campaignCategoryText) as unknown;
+      const parsedTaxonomyOptions = JSON.parse(taxonomyOptionText) as Partial<TaxonomyOptionConfig>;
+      const workTaxonomy = getLaunchSafeWorkTaxonomy(parsedWorkTaxonomy);
+      const campaignCategoryOptions = normalizeCampaignCategoryOptions(parsedCampaignCategoryOptions);
+      const taskCategories = getTaskCategoryOptions(workTaxonomy);
+      const jobCategories = getJobCategoryOptions(workTaxonomy);
+      const workModeOptions = normalizeWorkModeOptions(parsedTaxonomyOptions.workModeOptions);
+      const profileWorkModeOptions = getProfileWorkModeOptions(workModeOptions);
+      const jobWorkModeOptions = getJobWorkModeOptions(workModeOptions);
+      const workTimeOptions = normalizeTaxonomySelectOptions(
+        parsedTaxonomyOptions.workTimeOptions,
+        WORK_TIME_OPTIONS
+      );
+      const workingPreferenceOptions = normalizeTaxonomySelectOptions(
+        parsedTaxonomyOptions.workingPreferenceOptions,
+        WORKING_PREFERENCE_OPTIONS
+      );
+      const internshipPreferenceOptions = normalizeTaxonomySelectOptions(
+        parsedTaxonomyOptions.internshipPreferenceOptions,
+        INTERNSHIP_PREFERENCE_OPTIONS
+      );
+      const jobEmploymentTypeOptions = normalizeTaxonomySelectOptions(
+        parsedTaxonomyOptions.jobEmploymentTypeOptions,
+        JOB_EMPLOYMENT_TYPE_OPTIONS
+      );
+      const jobPayUnitOptions = normalizeTaxonomySelectOptions(
+        parsedTaxonomyOptions.jobPayUnitOptions,
+        JOB_PAY_UNIT_OPTIONS
+      );
+      return {
+        error: "",
+        workTaxonomy,
+        campaignCategoryOptions,
+        taskCategories,
+        jobCategories,
+        workModeOptions,
+        profileWorkModeOptions,
+        jobWorkModeOptions,
+        workTimeOptions,
+        workingPreferenceOptions,
+        internshipPreferenceOptions,
+        jobEmploymentTypeOptions,
+        jobPayUnitOptions,
+      };
+    } catch {
+      return {
+        error: "Taxonomy JSON is invalid. Fix the JSON before saving.",
+        workTaxonomy: [] as WorkTaxonomyCategory[],
+        campaignCategoryOptions: [] as CampaignCategoryOption[],
+        taskCategories: [] as ReturnType<typeof getTaskCategoryOptions>,
+        jobCategories: [] as ReturnType<typeof getJobCategoryOptions>,
+        workModeOptions: [] as WorkModeOption[],
+        profileWorkModeOptions: [] as TaxonomySelectOption[],
+        jobWorkModeOptions: [] as TaxonomySelectOption[],
+        workTimeOptions: [] as TaxonomySelectOption[],
+        workingPreferenceOptions: [] as TaxonomySelectOption[],
+        internshipPreferenceOptions: [] as TaxonomySelectOption[],
+        jobEmploymentTypeOptions: [] as TaxonomySelectOption[],
+        jobPayUnitOptions: [] as TaxonomySelectOption[],
+      };
+    }
+  }, [campaignCategoryText, taxonomyOptionText, workTaxonomyText]);
 
   function toggleAnnouncementChannel(channel: "IN_APP" | "EMAIL" | "SMS" | "PUSH" | "TELEGRAM") {
     setAnnouncementChannels((current) =>
@@ -299,24 +402,37 @@ export default function AdminCmsPanel({
     }
   }
 
-  async function saveTaskCategories() {
-    setLoading("task-categories");
+  async function saveTaxonomySettings() {
+    setLoading("taxonomy-settings");
     setMessage("");
-    const taskCategories = taskCategoryText
-      .split(/\n\s*\n/)
-      .map((block) => block.split("\n").map((item) => item.trim()).filter(Boolean))
-      .filter((block) => block.length > 0)
-      .map((block) => ({
-        name: block[0],
-        items: block.slice(1),
-      }))
-      .filter((block) => block.name && block.items.length > 0);
+
+    let workTaxonomy: unknown;
+    let campaignCategoryOptions: unknown;
+    let taxonomyOptions: Partial<TaxonomyOptionConfig>;
+    try {
+      workTaxonomy = JSON.parse(workTaxonomyText);
+      campaignCategoryOptions = JSON.parse(campaignCategoryText);
+      taxonomyOptions = JSON.parse(taxonomyOptionText) as Partial<TaxonomyOptionConfig>;
+    } catch {
+      setLoading(null);
+      setMessage("Taxonomy JSON is invalid. Fix the JSON before saving.");
+      return;
+    }
 
     const res = await fetch("/api/admin/settings", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ taskCategories }),
+      body: JSON.stringify({
+        workTaxonomy,
+        campaignCategoryOptions,
+        workModeOptions: taxonomyOptions.workModeOptions,
+        workTimeOptions: taxonomyOptions.workTimeOptions,
+        workingPreferenceOptions: taxonomyOptions.workingPreferenceOptions,
+        internshipPreferenceOptions: taxonomyOptions.internshipPreferenceOptions,
+        jobEmploymentTypeOptions: taxonomyOptions.jobEmploymentTypeOptions,
+        jobPayUnitOptions: taxonomyOptions.jobPayUnitOptions,
+      }),
     });
     const raw = await res.text();
     let data: { message?: string; error?: string } = {};
@@ -384,20 +500,246 @@ export default function AdminCmsPanel({
 
       <section className="space-y-3 rounded-2xl border border-foreground/10 bg-background/60 p-4 sm:p-5">
         <div className="space-y-1">
-          <h3 className="text-lg font-semibold">Task Categories & Types</h3>
+          <h3 className="text-lg font-semibold">Universal Work Taxonomy</h3>
           <p className="text-sm text-foreground/65">
-            Edit the safe service catalog used by business create/edit and admin campaign management.
-            Keep this list focused on testing, feedback, content, research, data work, moderation, and operational delivery.
-            Use one category block at a time. First line is the category name, next lines are task types. Leave one blank line between categories.
+            Edit the master taxonomy once and it flows into user profile preferences, business job creation,
+            campaign creation, and admin review screens. Keep task-side entries launch-safe and operational.
           </p>
         </div>
-        <textarea
-          value={taskCategoryText}
-          onChange={(e) => setTaskCategoryText(e.target.value)}
-          className="min-h-[360px] w-full rounded-xl border border-foreground/15 bg-background/60 px-4 py-3 text-sm text-foreground outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20"
-        />
-        <Button onClick={saveTaskCategories} disabled={loading !== null} className="w-full sm:w-auto">
-          {loading === "task-categories" ? "Saving..." : "Save Task Categories"}
+        <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/55">
+              Work taxonomy JSON
+            </p>
+            <textarea
+              value={workTaxonomyText}
+              onChange={(e) => setWorkTaxonomyText(e.target.value)}
+              className="min-h-[420px] w-full rounded-xl border border-foreground/15 bg-background/60 px-4 py-3 font-mono text-xs text-foreground outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20"
+            />
+          </div>
+          <div className="space-y-2">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/55">
+              Campaign category JSON
+            </p>
+            <textarea
+              value={campaignCategoryText}
+              onChange={(e) => setCampaignCategoryText(e.target.value)}
+              className="min-h-[220px] w-full rounded-xl border border-foreground/15 bg-background/60 px-4 py-3 font-mono text-xs text-foreground outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20"
+            />
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/55">
+              Job & profile option JSON
+            </p>
+            <textarea
+              value={taxonomyOptionText}
+              onChange={(e) => setTaxonomyOptionText(e.target.value)}
+              className="min-h-[240px] w-full rounded-xl border border-foreground/15 bg-background/60 px-4 py-3 font-mono text-xs text-foreground outline-none transition focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20"
+            />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+                  Derived job categories
+                </p>
+                <p className="mt-3 text-3xl font-semibold text-foreground">{taxonomyPreview.jobCategories.length}</p>
+                <p className="mt-2 text-sm text-foreground/60">
+                  Business job create/edit and job review use these groups and types.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+                  Derived task categories
+                </p>
+                <p className="mt-3 text-3xl font-semibold text-foreground">{taxonomyPreview.taskCategories.length}</p>
+                <p className="mt-2 text-sm text-foreground/60">
+                  Campaign task selection inherits these groups from the same master taxonomy.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+                  Job work modes
+                </p>
+                <p className="mt-3 text-3xl font-semibold text-foreground">
+                  {taxonomyPreview.jobWorkModeOptions.length}
+                </p>
+                <p className="mt-2 text-sm text-foreground/60">
+                  Live work-mode labels used across job create, edit, and admin review.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+                  Profile preferences
+                </p>
+                <p className="mt-3 text-3xl font-semibold text-foreground">
+                  {taxonomyPreview.workTimeOptions.length + taxonomyPreview.workingPreferenceOptions.length + taxonomyPreview.internshipPreferenceOptions.length}
+                </p>
+                <p className="mt-2 text-sm text-foreground/60">
+                  User profile selectors stay aligned with the same shared settings.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+                  Employment & pay
+                </p>
+                <p className="mt-3 text-3xl font-semibold text-foreground">
+                  {taxonomyPreview.jobEmploymentTypeOptions.length + taxonomyPreview.jobPayUnitOptions.length}
+                </p>
+                <p className="mt-2 text-sm text-foreground/60">
+                  Job employment types and pay-unit labels used in create/edit and read-only views.
+                </p>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+                Campaign options preview
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {taxonomyPreview.campaignCategoryOptions.map((option) => (
+                  <span
+                    key={option.value}
+                    className="rounded-full border border-foreground/10 px-3 py-1 text-xs text-foreground/80"
+                  >
+                    {option.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+                Job option preview
+              </p>
+              <div className="mt-3 space-y-3 text-xs text-foreground/80">
+                <div>
+                  <p className="font-medium text-foreground/60">Work modes</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {taxonomyPreview.jobWorkModeOptions.map((option) => (
+                      <span
+                        key={option.value}
+                        className="rounded-full border border-foreground/10 px-3 py-1"
+                      >
+                        {option.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="font-medium text-foreground/60">Employment types</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {taxonomyPreview.jobEmploymentTypeOptions.map((option) => (
+                      <span
+                        key={option.value}
+                        className="rounded-full border border-foreground/10 px-3 py-1"
+                      >
+                        {option.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="font-medium text-foreground/60">Pay units</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {taxonomyPreview.jobPayUnitOptions.map((option) => (
+                      <span
+                        key={option.value}
+                        className="rounded-full border border-foreground/10 px-3 py-1"
+                      >
+                        {option.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+                Profile category preview
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {taxonomyPreview.workTaxonomy
+                  .filter((category) => category.surfaces.includes("profile"))
+                  .map((category) => (
+                    <span
+                      key={category.slug}
+                      className="rounded-full border border-foreground/10 px-3 py-1 text-xs text-foreground/80"
+                    >
+                      {category.label}
+                    </span>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+                Profile option preview
+              </p>
+              <div className="mt-3 space-y-3 text-xs text-foreground/80">
+                <div>
+                  <p className="font-medium text-foreground/60">Work modes</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {taxonomyPreview.profileWorkModeOptions.map((option) => (
+                      <span
+                        key={option.value}
+                        className="rounded-full border border-foreground/10 px-3 py-1"
+                      >
+                        {option.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="font-medium text-foreground/60">Work time</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {taxonomyPreview.workTimeOptions.map((option) => (
+                      <span
+                        key={option.value}
+                        className="rounded-full border border-foreground/10 px-3 py-1"
+                      >
+                        {option.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="font-medium text-foreground/60">Working preference</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {taxonomyPreview.workingPreferenceOptions.map((option) => (
+                      <span
+                        key={option.value}
+                        className="rounded-full border border-foreground/10 px-3 py-1"
+                      >
+                        {option.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="font-medium text-foreground/60">Internships</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {taxonomyPreview.internshipPreferenceOptions.map((option) => (
+                      <span
+                        key={option.value}
+                        className="rounded-full border border-foreground/10 px-3 py-1"
+                      >
+                        {option.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p className="text-xs text-foreground/55">
+          Save only valid JSON. Categories and task/job types are fully shared from this taxonomy. Structured option
+          groups such as work mode, employment type, pay unit, and profile preferences use platform-supported values,
+          so invalid values fall back to the protected defaults.
+        </p>
+        {taxonomyPreview.error ? (
+          <p className="text-sm text-rose-600 dark:text-rose-300">{taxonomyPreview.error}</p>
+        ) : null}
+        <Button
+          onClick={saveTaxonomySettings}
+          disabled={loading !== null || Boolean(taxonomyPreview.error)}
+          className="w-full sm:w-auto"
+        >
+          {loading === "taxonomy-settings" ? "Saving..." : "Save Universal Taxonomy"}
         </Button>
       </section>
 

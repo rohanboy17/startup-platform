@@ -32,6 +32,7 @@ import LogoutButton from "@/components/logout-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTranslations } from "next-intl";
 import { useDashboardMobileNav } from "@/lib/dashboard-mobile-nav";
+import { cn } from "@/lib/utils";
 
 type DashboardRole = "USER" | "BUSINESS" | "MANAGER" | "ADMIN";
 type IconName =
@@ -210,85 +211,103 @@ export default function DashboardTabNav({
   const profileLabel = role === "USER" ? tNav("profile") : tNav("settings");
 
   return (
-    <div className="space-y-3 md:space-y-4">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h1 className="text-lg font-semibold tracking-tight md:text-xl">{greeting}</h1>
-          <p className="text-xs text-foreground/60 md:text-sm">{tGreeting("welcomeBack")}</p>
+    <div className="space-y-4 md:space-y-5">
+      <div className="rounded-[1.75rem] border border-foreground/10 bg-background/72 p-4 shadow-[0_18px_40px_-34px_rgba(15,23,42,0.35)] backdrop-blur-xl">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-foreground/45">
+              {tGreeting("welcomeBack")}
+            </p>
+            <h1 className="mt-1 truncate text-lg font-semibold tracking-tight md:text-xl">{greeting}</h1>
+            <p className="mt-1 text-xs text-foreground/60">{tShell("signedInAs")}</p>
+          </div>
+          <Link
+            href={profileHref}
+            className="flex min-w-[74px] items-center gap-3 rounded-2xl border border-foreground/10 bg-foreground/[0.04] px-3 py-2 text-right transition hover:bg-foreground/[0.07] sm:min-w-[142px]"
+          >
+            <div className="hidden min-w-0 flex-1 sm:block">
+              <p className="truncate text-[11px] uppercase tracking-[0.18em] text-foreground/45">{profileLabel}</p>
+              <p className="truncate text-sm font-medium text-foreground">{firstName}</p>
+            </div>
+            <div className="relative shrink-0">
+              <div className="rounded-full bg-gradient-to-br from-emerald-400/20 via-sky-400/16 to-transparent p-[2px]">
+                <Avatar size="lg" className="size-11 border border-background/80 bg-background shadow-sm">
+                  {avatarUrl ? <AvatarImage src={avatarUrl} alt={displayName} className="object-cover object-center" /> : null}
+                  <AvatarFallback className="bg-foreground/[0.08] font-semibold text-foreground">
+                    {firstName.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              {hasNavAlerts ? (
+                <span className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-background bg-emerald-400" />
+              ) : null}
+            </div>
+          </Link>
         </div>
-        <Link
-          href={profileHref}
-          className="flex items-center gap-3 rounded-2xl border border-foreground/10 bg-foreground/[0.04] px-3 py-2 text-right transition hover:bg-foreground/[0.07]"
-        >
-          <div className="hidden min-w-0 sm:block">
-            <p className="truncate text-[11px] uppercase tracking-[0.18em] text-foreground/45">{profileLabel}</p>
-            <p className="truncate text-sm font-medium text-foreground">{firstName}</p>
-          </div>
-          <div className="relative">
-            <Avatar size="lg" className="size-10 border border-foreground/10">
-              {avatarUrl ? <AvatarImage src={avatarUrl} alt={displayName} /> : null}
-              <AvatarFallback className="bg-foreground/[0.08] font-semibold text-foreground">
-                {firstName.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            {hasNavAlerts ? <span className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-background bg-emerald-400" /> : null}
-          </div>
-        </Link>
       </div>
 
       <div
-        className={`${mobileOpen ? "block" : "hidden"} space-y-5 rounded-lg border border-foreground/10 bg-foreground/[0.04] p-4 md:block md:space-y-6 md:rounded-none md:border-0 md:bg-transparent md:p-0`}
+        className={cn(
+          "grid overflow-hidden transition-[grid-template-rows,opacity,transform] duration-300 ease-out md:grid-rows-[1fr] md:overflow-visible md:opacity-100 md:translate-y-0",
+          mobileOpen
+            ? "pointer-events-auto grid-rows-[1fr] opacity-100 translate-y-0"
+            : "pointer-events-none grid-rows-[0fr] opacity-0 -translate-y-2 md:pointer-events-auto md:grid-rows-[1fr]"
+        )}
       >
-        <div className="rounded-lg border border-foreground/10 bg-foreground/[0.04] p-3 md:border md:bg-foreground/[0.04]">
-          <p className="text-xs text-foreground/50">{tShell("signedInAs")}</p>
-          <p className="text-sm font-medium text-foreground/90">{displayName}</p>
-        </div>
+        <div className="min-h-0">
+          <div className="space-y-5 rounded-[1.75rem] border border-foreground/10 bg-foreground/[0.04] p-4 shadow-[0_20px_48px_-38px_rgba(15,23,42,0.35)] backdrop-blur-xl md:space-y-6 md:rounded-[1.9rem] md:border md:bg-foreground/[0.03] md:p-5">
+            <div className="rounded-2xl border border-foreground/10 bg-background/70 p-3">
+              <p className="text-xs text-foreground/50">{tShell("signedInAs")}</p>
+              <p className="mt-1 text-sm font-medium text-foreground/90">{displayName}</p>
+            </div>
 
-        <nav className="max-h-[50svh] space-y-2 overflow-y-auto pr-1 text-sm md:max-h-none md:space-y-4 md:overflow-visible md:pr-0">
-          <Link
-            href="/"
-            onClick={() => setMobileOpen(false)}
-            className="flex min-h-11 items-center justify-between rounded-xl border border-foreground/10 bg-background/60 px-3 py-2 text-foreground/75 transition hover:bg-foreground/[0.06] hover:text-foreground md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:px-0 md:py-0"
-          >
-            <span className="flex items-center gap-3">
-              <House size={18} />
-              {tShell("mainHome")}
-            </span>
-          </Link>
-          {itemsWithState.map((item) => (
-            <Link
-              key={item.key}
-              href={item.href}
-              onClick={() => setMobileOpen(false)}
-              className="flex min-h-11 items-center justify-between rounded-xl border border-foreground/10 bg-background/60 px-3 py-2 text-foreground/75 transition hover:bg-foreground/[0.06] hover:text-foreground md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:px-0 md:py-0"
-            >
-              <span className="flex items-center gap-3">
-                <item.Icon size={18} />
-                {item.label}
-              </span>
-              {item.badgeCount > 0 ? (
-                <span className="rounded-full bg-emerald-400 px-2 py-0.5 text-xs font-semibold text-black">
-                  {item.badgeCount}
+            <nav className="max-h-[50svh] space-y-2 overflow-y-auto pr-1 text-sm md:max-h-none md:space-y-4 md:overflow-visible md:pr-0">
+              <Link
+                href="/"
+                onClick={() => setMobileOpen(false)}
+                className="flex min-h-11 items-center justify-between rounded-xl border border-foreground/10 bg-background/60 px-3 py-2 text-foreground/75 transition hover:bg-foreground/[0.06] hover:text-foreground md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:px-0 md:py-0"
+              >
+                <span className="flex items-center gap-3">
+                  <House size={18} />
+                  {tShell("mainHome")}
                 </span>
-              ) : item.showDot ? (
-                <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-              ) : null}
-            </Link>
-          ))}
-        </nav>
+              </Link>
+              {itemsWithState.map((item) => (
+                <Link
+                  key={item.key}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="flex min-h-11 items-center justify-between rounded-xl border border-foreground/10 bg-background/60 px-3 py-2 text-foreground/75 transition hover:bg-foreground/[0.06] hover:text-foreground md:min-h-0 md:rounded-none md:border-0 md:bg-transparent md:px-0 md:py-0"
+                >
+                  <span className="flex items-center gap-3">
+                    <item.Icon size={18} />
+                    {item.label}
+                  </span>
+                  {item.badgeCount > 0 ? (
+                    <span className="rounded-full bg-emerald-400 px-2 py-0.5 text-xs font-semibold text-black">
+                      {item.badgeCount}
+                    </span>
+                  ) : item.showDot ? (
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                  ) : null}
+                </Link>
+              ))}
+            </nav>
 
-        <div className="pt-1 md:pt-2">
-          {showForgotPasswordInNav ? (
-            <Link
-              href="/forgot-password"
-              onClick={() => setMobileOpen(false)}
-              className="mb-3 flex items-center gap-3 text-sm text-foreground/70 transition hover:text-foreground"
-            >
-              <KeyRound size={18} />
-              {tShell("forgotPassword")}
-            </Link>
-          ) : null}
-          <LogoutButton />
+            <div className="pt-1 md:pt-2">
+              {showForgotPasswordInNav ? (
+                <Link
+                  href="/forgot-password"
+                  onClick={() => setMobileOpen(false)}
+                  className="mb-3 flex items-center gap-3 text-sm text-foreground/70 transition hover:text-foreground"
+                >
+                  <KeyRound size={18} />
+                  {tShell("forgotPassword")}
+                </Link>
+              ) : null}
+              <LogoutButton />
+            </div>
+          </div>
         </div>
       </div>
     </div>

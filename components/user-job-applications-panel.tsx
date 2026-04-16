@@ -4,11 +4,13 @@ import { useCallback, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import JobApplicationChatPanel from "@/components/job-application-chat-panel";
+import JobInterviewRounds, { type JobInterviewRound } from "@/components/job-interview-rounds";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
+import { isJobApplicationChatOpen } from "@/lib/job-application-chat-access";
 
 type Application = {
   id: string;
@@ -23,6 +25,7 @@ type Application = {
   joinedAt: string | null;
   reviewedAt: string | null;
   createdAt: string;
+  interviews: JobInterviewRound[];
   workerAmount: number;
   commissionRate: number;
   job: {
@@ -268,6 +271,37 @@ export default function UserJobApplicationsPanel() {
                 </div>
               ) : null}
 
+              <JobInterviewRounds
+                rounds={application.interviews}
+                locale={locale}
+                title={t("interviewRounds")}
+                emptyLabel={t("noInterviewRounds")}
+                labels={{
+                  statusLabel: (status) => t(`interviewStatus.${status}`),
+                  toneForStatus: (status) =>
+                    status === "COMPLETED" ? "success" : status === "CANCELLED" ? "danger" : "info",
+                  roundLabel: (roundNumber, title) =>
+                    title ? t("roundWithTitle", { round: roundNumber, title }) : t("round", { round: roundNumber }),
+                  modeLabel: (mode) => t(`interviewModes.${mode}`),
+                  scheduledAt: (value) => t("scheduledAt", { value: new Date(value).toLocaleString(locale) }),
+                  durationLabel: (minutes) => t("duration", { minutes }),
+                  timezoneLabel: (value) => t("timezone", { value }),
+                  adminNote: t("adminInterviewNote"),
+                  interviewerNotes: t("interviewerNotes"),
+                  attendanceLabel: (status) => t("attendance", { status: t(`attendanceStatus.${status}`) }),
+                  meetingProvider: t("meetingProvider"),
+                  meetingLink: t("meetingLink"),
+                  locationNote: t("locationNote"),
+                  noMeetingLink: t("noMeetingLink"),
+                  rescheduledReason: t("rescheduledReason"),
+                  cancelledReason: t("cancelledReason"),
+                  completedAt: t("completedAt"),
+                  saveMeetingDetails: "",
+                  savingMeetingDetails: "",
+                  updateMeetingHelp: "",
+                }}
+              />
+
               {application.joinedAt ? (
                 <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
                   <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">{t("joinedAt")}</p>
@@ -275,7 +309,7 @@ export default function UserJobApplicationsPanel() {
                 </div>
               ) : null}
 
-              {["HIRED", "JOINED"].includes(application.status) ? (
+              {isJobApplicationChatOpen(application.status, application.adminStatus) ? (
                 <JobApplicationChatPanel mode="user" applicationId={application.id} />
               ) : null}
             </SectionCard>

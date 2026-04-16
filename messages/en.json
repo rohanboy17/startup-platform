@@ -1043,7 +1043,10 @@
       "uploadAvatar": "Upload photo",
       "uploadingAvatar": "Uploading...",
       "removeAvatar": "Remove photo",
-      "avatarUploaded": "Profile photo uploaded. Save to keep it."
+      "avatarUploaded": "Profile photo uploaded. Save to keep it.",
+      "preferredCategoriesTitle": "Preferred work categories",
+      "preferredCategoriesSubtitle": "Pick the work areas you want to see across jobs, internships, and campaign-style work.",
+      "preferredCategoriesCount": "Selected categories: {count}"
     },
     "notificationsPage": {
       "eyebrow": "Inbox",
@@ -1456,7 +1459,39 @@
       },
       "experienceLine": "Your platform experience: {label} ({days} days)",
       "managerReason": "Manager note",
-      "adminReason": "Admin note"
+      "adminReason": "Admin note",
+      "interviewRounds": "Interview rounds",
+      "noInterviewRounds": "No interview rounds yet.",
+      "round": "Round {round}",
+      "roundWithTitle": "Round {round}: {title}",
+      "interviewStatus": {
+        "SCHEDULED": "Scheduled",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
+      },
+      "interviewModes": {
+        "VIRTUAL": "Virtual",
+        "IN_PERSON": "In person",
+        "PHONE": "Phone"
+      },
+      "scheduledAt": "Scheduled at {value}",
+      "duration": "{minutes} minutes",
+      "timezone": "Timezone: {value}",
+      "adminInterviewNote": "Admin note",
+      "interviewerNotes": "Interviewer notes",
+      "attendance": "Attendance: {status}",
+      "attendanceStatus": {
+        "PENDING": "Pending",
+        "ATTENDED": "Attended",
+        "NO_SHOW": "No-show"
+      },
+      "meetingProvider": "Meeting provider",
+      "meetingLink": "Meeting link",
+      "locationNote": "Location note",
+      "noMeetingLink": "Meeting details have not been shared yet.",
+      "rescheduledReason": "Rescheduled reason",
+      "cancelledReason": "Cancelled reason",
+      "completedAt": "Completed at"
     }
   },
   "business": {
@@ -2589,7 +2624,27 @@
         "unnamed": "Unnamed applicant",
         "experienceLine": "Experience: {label} ({days} days)",
         "internship": "Internship preference",
-        "experienceBreakdown": "Digital days: {digital}, physical days: {physical}, approved tasks: {tasks}"
+        "experienceBreakdown": "Digital days: {digital}, physical days: {physical}, approved tasks: {tasks}",
+        "interviewRounds": "Interview rounds",
+        "noInterviewRounds": "No interview rounds yet.",
+        "round": "Round {round}",
+        "roundWithTitle": "Round {round}: {title}",
+        "duration": "{minutes} minutes",
+        "timezone": "Timezone: {value}",
+        "adminNote": "Admin note",
+        "interviewerNotes": "Interviewer notes",
+        "attendance": "Attendance: {status}",
+        "meetingProvider": "Meeting provider",
+        "meetingLink": "Meeting link",
+        "locationNote": "Location note",
+        "noMeetingLink": "The business has not shared a meeting link yet.",
+        "rescheduledReason": "Rescheduled reason",
+        "cancelledReason": "Cancelled reason",
+        "completedAt": "Completed at",
+        "saveMeetingDetails": "Save meeting details",
+        "savingMeetingDetails": "Saving...",
+        "updateMeetingHelp": "Add the virtual meeting link or location details here after admin enables business review.",
+        "preferredCategories": "Preferred work categories"
       },
       "messages": {
         "updated": "Update saved"
@@ -2605,6 +2660,21 @@
         "subtitle": "Adjust the role details, location, payout, and hiring requirements.",
         "save": "Save changes",
         "saving": "Saving..."
+      },
+      "interviewStatus": {
+        "SCHEDULED": "Scheduled",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
+      },
+      "interviewModes": {
+        "VIRTUAL": "Virtual",
+        "IN_PERSON": "In person",
+        "PHONE": "Phone"
+      },
+      "attendance": {
+        "PENDING": "Pending",
+        "ATTENDED": "Attended",
+        "NO_SHOW": "No-show"
       }
     },
     "campaignApplicantsPageEyebrow": "Campaign applicants",
@@ -2664,7 +2734,42 @@
         "coverNote": "Application note",
         "noExperience": "No recorded experience yet",
         "experienceLine": "Experience: {label} ({days} days)",
-        "experienceBreakdown": "Digital days: {digital}, physical days: {physical}, approved tasks: {tasks}"
+        "experienceBreakdown": "Digital days: {digital}, physical days: {physical}, approved tasks: {tasks}",
+        "interviewRounds": "Interview rounds",
+        "noInterviewRounds": "No interview rounds yet.",
+        "round": "Round {round}",
+        "roundWithTitle": "Round {round}: {title}",
+        "scheduledAt": "Scheduled at {value}",
+        "duration": "{minutes} minutes",
+        "timezone": "Timezone: {value}",
+        "adminNote": "Admin note",
+        "interviewerNotes": "Interviewer notes",
+        "attendance": "Attendance: {status}",
+        "meetingProvider": "Meeting provider",
+        "meetingLink": "Meeting link",
+        "locationNote": "Location note",
+        "noMeetingLink": "The business has not shared a meeting link yet.",
+        "rescheduledReason": "Rescheduled reason",
+        "cancelledReason": "Cancelled reason",
+        "completedAt": "Completed at",
+        "saveMeetingDetails": "Save meeting details",
+        "savingMeetingDetails": "Saving...",
+        "updateMeetingHelp": "Businesses can add the meeting link, provider, or in-person note for admin-approved interview rounds."
+      },
+      "interviewStatus": {
+        "SCHEDULED": "Scheduled",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
+      },
+      "interviewModes": {
+        "VIRTUAL": "Virtual",
+        "IN_PERSON": "In person",
+        "PHONE": "Phone"
+      },
+      "attendance": {
+        "PENDING": "Pending",
+        "ATTENDED": "Attended",
+        "NO_SHOW": "No-show"
       }
     }
   },
@@ -2717,7 +2822,8 @@
       "createJob": "Create Job",
       "jobApplications": "My Applications",
       "campaignApplicants": "Campaign Applicants",
-      "jobApplicants": "Job Applicants"
+      "jobApplicants": "Job Applicants",
+      "interviews": "Interviews"
     },
     "shell": {
       "signedInAs": "Signed in as",
@@ -3663,15 +3769,16 @@
         "applied": "Applied",
         "shortlisted": "Shortlisted",
         "hired": "Hired",
-        "joined": "Joined"
+        "joined": "Joined",
+        "unlocked": "Business review live"
       },
       "applicationStatus": {
         "HIRED": "Hired",
         "JOINED": "Joined"
       },
       "chat": {
-        "title": "Hired candidate messages",
-        "subtitle": "Admin can view every business-candidate chat linked to hired roles here."
+        "title": "Candidate messages",
+        "subtitle": "Admin can view every approved business-candidate chat here."
       },
       "fallback": {
         "business": "Business"
@@ -3744,21 +3851,173 @@
         "actionFailed": "Failed to update application",
         "unexpected": "Unexpected server response"
       }
+    },
+    "interviewsPage": {
+      "pageDescription": "Manage interview rounds, reminders, attendance, joined confirmation, and business meeting readiness from one admin desk.",
+      "eyebrow": "Interview operations",
+      "title": "Interview calendar and round control",
+      "subtitle": "Track scheduled rounds, reschedules, missing meeting links, and post-interview attendance. Reminders go out {minutes} minutes before each round.",
+      "kpis": {
+        "scheduled": "Scheduled rounds",
+        "next24h": "Next 24 hours",
+        "needsMeetingLink": "Needs meeting link",
+        "pendingAttendance": "Pending attendance"
+      },
+      "filters": {
+        "searchPlaceholder": "Search by job, candidate, business, title, or notes",
+        "status": {
+          "ALL": "All rounds",
+          "SCHEDULED": "Scheduled",
+          "COMPLETED": "Completed",
+          "CANCELLED": "Cancelled"
+        }
+      },
+      "create": {
+        "applicationIdPlaceholder": "Application ID for a new round",
+        "durationPlaceholder": "Duration in minutes",
+        "titlePlaceholder": "Round title (optional)",
+        "notePlaceholder": "Admin note for the round",
+        "creating": "Creating...",
+        "submit": "Add interview round",
+        "followupRoundTitle": "Round {round}"
+      },
+      "status": {
+        "SCHEDULED": "Scheduled",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
+      },
+      "attendance": {
+        "PENDING": "Attendance pending",
+        "ATTENDED": "Attended",
+        "NO_SHOW": "No-show"
+      },
+      "mode": {
+        "VIRTUAL": "Virtual",
+        "IN_PERSON": "In person",
+        "PHONE": "Phone"
+      },
+      "fallback": {
+        "candidate": "Candidate",
+        "business": "Business"
+      },
+      "card": {
+        "roundTitle": "Round {round}: {title}",
+        "defaultRoundTitle": "Interview",
+        "meetingLinkMissing": "Meeting link missing",
+        "threadLine": "{candidate} with {business}",
+        "duration": "{minutes} minutes",
+        "meetingDetails": "Meeting details",
+        "meetingProvider": "Provider: {value}",
+        "meetingLink": "Link: {value}",
+        "locationNote": "Location / note: {value}",
+        "reminderStatus": "Reminder: {value}",
+        "reminderPending": "Pending",
+        "notesAndScore": "Notes and scorecard",
+        "adminNote": "Admin note: {value}",
+        "interviewerNotes": "Interviewer notes: {value}",
+        "scoreLine": "Overall {overall} | Communication {communication} | Role fit {roleFit} | Reliability {reliability}",
+        "durationPlaceholder": "Duration in minutes",
+        "titlePlaceholder": "Interview title",
+        "adminNotePlaceholder": "Add or update the admin note for this round",
+        "rescheduleReasonPlaceholder": "Reason for reschedule",
+        "interviewerNotesPlaceholder": "Interviewer notes and outcome summary",
+        "cancelReasonPlaceholder": "Reason for cancellation"
+      },
+      "score": {
+        "overall": "Overall score (1-5)",
+        "communication": "Communication (1-5)",
+        "roleFit": "Role fit (1-5)",
+        "reliability": "Reliability (1-5)",
+        "summaryPlaceholder": "Short scorecard summary"
+      },
+      "actions": {
+        "prepareNextRound": "Prepare next round",
+        "reschedule": "Reschedule round",
+        "saving": "Saving...",
+        "saveReschedule": "Save reschedule",
+        "completeRound": "Complete round",
+        "markAttendance": "Mark attendance only",
+        "cancelRound": "Cancel round",
+        "confirmJoined": "Confirm joined"
+      },
+      "messages": {
+        "updated": "Interview round updated",
+        "roundCreated": "Interview round added"
+      },
+      "errors": {
+        "unexpected": "Unexpected server response",
+        "failedToLoad": "Failed to load interview rounds",
+        "failedToUpdate": "Failed to update this interview round",
+        "failedToCreate": "Failed to create interview round"
+      },
+      "empty": "No interview rounds match the current filters."
+    },
+    "chatFlagsPage": {
+      "eyebrow": "Chat moderation",
+      "title": "Flagged contact-sharing attempts",
+      "subtitle": "Review blocked chat attempts that tried to share phone numbers, email, UPI IDs, or external contact links.",
+      "kpis": {
+        "pending": "Pending review",
+        "reviewed": "Reviewed",
+        "dismissed": "Dismissed"
+      },
+      "filters": {
+        "searchPlaceholder": "Search by job, business, candidate, or message text",
+        "status": {
+          "PENDING": "Pending",
+          "REVIEWED": "Reviewed",
+          "DISMISSED": "Dismissed",
+          "ALL": "All"
+        }
+      },
+      "status": {
+        "PENDING": "Pending",
+        "REVIEWED": "Reviewed",
+        "DISMISSED": "Dismissed"
+      },
+      "senderRole": {
+        "USER": "Candidate",
+        "BUSINESS": "Business"
+      },
+      "fallback": {
+        "candidate": "Candidate",
+        "business": "Business"
+      },
+      "card": {
+        "threadLine": "{candidate} with {business}",
+        "message": "Blocked message",
+        "notePlaceholder": "Admin note for review outcome"
+      },
+      "actions": {
+        "reviewing": "Reviewing...",
+        "review": "Mark reviewed",
+        "dismissing": "Saving...",
+        "dismiss": "Dismiss flag"
+      },
+      "messages": {
+        "updated": "Chat flag updated"
+      },
+      "errors": {
+        "unexpected": "Unexpected server response",
+        "failedToLoad": "Failed to load chat flags",
+        "failedToUpdate": "Failed to update this chat flag"
+      },
+      "empty": "No flagged chat attempts match the current filters."
     }
   },
   "jobChat": {
     "loading": "Loading messages...",
     "title": "Direct messages",
-    "subtitleBusiness": "Chat with {candidate} about \"{job}\" once the candidate is hired.",
-    "subtitleUser": "Chat with {business} about \"{job}\" after you are hired.",
-    "subtitleAdmin": "Admin view of the message thread between {business} and {candidate}.",
+    "subtitleBusiness": "Chat with {candidate} about \"{job}\" after admin clears the application for business review.",
+    "subtitleUser": "Chat with {business} about \"{job}\" after admin clears your application for business review.",
+    "subtitleAdmin": "Admin can view the chat between {business} and {candidate}.",
     "adminVisible": "Visible to admin",
-    "empty": "No messages yet. Start the conversation here after hiring is confirmed.",
+    "empty": "No messages yet. Start the conversation once business review is active.",
     "placeholder": "Type your message here",
-    "note": "Messages stay inside FreeEarnHub and are visible to admin.",
+    "note": "Messages stay inside FreeEarnHub, remain visible to admin, and contact sharing is blocked.",
     "send": "Send message",
     "sending": "Sending...",
-    "availableAfterHire": "Messaging becomes available after the application is marked as hired.",
+    "availableAfterHire": "Messaging becomes available after admin approves the application for business review.",
     "roles": {
       "business": "Business",
       "candidate": "Candidate"

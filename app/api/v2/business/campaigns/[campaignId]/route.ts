@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { ensureBusinessWalletSynced } from "@/lib/business-wallet";
-import { CAMPAIGN_CATEGORY_OPTIONS } from "@/lib/campaign-options";
 import { validateCampaignPolicy } from "@/lib/campaign-policy";
 import {
   canManageBusinessCampaigns,
@@ -12,10 +11,6 @@ import { normalizeTaskSelection } from "@/lib/task-categories";
 import { getAppSettings } from "@/lib/system-settings";
 
 type CampaignAction = "PAUSE" | "RESUME" | "CLOSE";
-
-function isValidCategory(category: string) {
-  return CAMPAIGN_CATEGORY_OPTIONS.some((item) => item.value === category);
-}
 
 function parseInstructionLines(input: unknown) {
   if (!Array.isArray(input)) return [];
@@ -215,7 +210,7 @@ export async function PUT(
     return NextResponse.json({ error: "Title, description, and category are required" }, { status: 400 });
   }
 
-  if (!isValidCategory(category)) {
+  if (!appSettings.campaignCategoryOptions.some((item) => item.value === category)) {
     return NextResponse.json({ error: "Invalid category type" }, { status: 400 });
   }
 

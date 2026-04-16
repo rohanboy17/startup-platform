@@ -7,11 +7,13 @@ import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import JobApplicationChatPanel from "@/components/job-application-chat-panel";
+import JobInterviewRounds, { type JobInterviewRound } from "@/components/job-interview-rounds";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { toDateLocale } from "@/lib/date-locale";
 import { formatMoney } from "@/lib/format-money";
+import { isJobApplicationChatOpen } from "@/lib/job-application-chat-access";
 import { emitDashboardLiveRefresh, useLiveRefresh } from "@/lib/live-refresh";
 
 type ApplicationStatus =
@@ -52,6 +54,7 @@ type JobApplicantsResponse = {
     joinedAt: string | null;
     createdAt: string;
     updatedAt: string;
+    interviews: JobInterviewRound[];
     job: {
       id: string;
       title: string;
@@ -81,6 +84,8 @@ type JobApplicantsResponse = {
         workTime: string | null;
         workingPreference: string | null;
         internshipPreference: string | null;
+        preferredWorkCategories: string[];
+        preferredWorkCategoryLabels: string[];
         educationQualification: string | null;
         languages: string[];
       };
@@ -155,6 +160,7 @@ export default function BusinessJobApplicationsPanel() {
   const [limit, setLimit] = useState<"5" | "10" | "20" | "ALL">("10");
   const [busyKey, setBusyKey] = useState("");
   const [applicationNotes, setApplicationNotes] = useState<Record<string, string>>({});
+  const [meetingDrafts, setMeetingDrafts] = useState<Record<string, { meetingProvider: string; meetingUrl: string; locationNote: string }>>({});
 
   const filters: Array<{ value: FilterValue; label: string }> = [
     { value: "ALL", label: t("filters.ALL") },
@@ -189,6 +195,21 @@ export default function BusinessJobApplicationsPanel() {
       for (const item of parsed.applications) {
         if (typeof next[item.id] === "undefined") {
           next[item.id] = item.businessNote || "";
+        }
+      }
+      return next;
+    });
+    setMeetingDrafts((current) => {
+      const next = { ...current };
+      for (const application of parsed.applications) {
+        for (const interview of application.interviews) {
+          if (typeof next[interview.id] === "undefined") {
+            next[interview.id] = {
+              meetingProvider: interview.meetingProvider || "",
+              meetingUrl: interview.meetingUrl || "",
+              locationNote: interview.locationNote || "",
+            };
+          }
         }
       }
       return next;
@@ -269,6 +290,36 @@ export default function BusinessJobApplicationsPanel() {
       body: JSON.stringify(payload),
       credentials: "include",
     });
+    const raw = await res.text();
+    let parsed: { error?: string; message?: string } = {};
+    try {
+      parsed = raw ? (JSON.parse(raw) as typeof parsed) : {};
+    } catch {
+      parsed = { error: t("errors.unexpectedServerResponse") };
+    }
+    setBusyKey("");
+    if (!res.ok) {
+      setMessage(parsed.error || t("errors.actionFailed"));
+      return;
+    }
+    setMessage(parsed.message || t("messages.updated"));
+    emitDashboardLiveRefresh();
+    void load();
+  }
+
+  async function updateInterviewMeetingDetails(jobId: string, applicationId: string, interviewId: string) {
+    setBusyKey(`interview:${interviewId}`);
+    setMessage("");
+    const draft = meetingDrafts[interviewId] || { meetingProvider: "", meetingUrl: "", locationNote: "" };
+    const res = await fetch(
+      `/api/v2/business/jobs/${jobId}/applications/${applicationId}/interviews/${interviewId}`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(draft),
+        credentials: "include",
+      }
+    );
     const raw = await res.text();
     let parsed: { error?: string; message?: string } = {};
     try {
@@ -501,6 +552,26 @@ export default function BusinessJobApplicationsPanel() {
                   </div>
                 </div>
 
+                <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-foreground/55">
+                    {tDetail("application.preferredCategories")}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {application.user.profile.preferredWorkCategoryLabels.length === 0 ? (
+                      <span className="text-sm text-foreground/60">{tDetail("application.notProvided")}</span>
+                    ) : (
+                      application.user.profile.preferredWorkCategoryLabels.map((label, index) => (
+                        <span
+                          key={`${application.id}:preferred:${index}:${label}`}
+                          className="rounded-full border border-foreground/10 px-3 py-1 text-xs text-foreground/80"
+                        >
+                          {label}
+                        </span>
+                      ))
+                    )}
+                  </div>
+                </div>
+
                 {application.adminStatus !== "ADMIN_APPROVED" ? (
                   <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.03] p-4 text-sm text-foreground/70">
                     {moderationLabel(application)}
@@ -563,7 +634,55 @@ export default function BusinessJobApplicationsPanel() {
                   </div>
                 </div>
 
-                {["HIRED", "JOINED"].includes(application.status) ? (
+                <JobInterviewRounds
+                  rounds={application.interviews}
+                  locale={locale}
+                  title={t("card.interviewRounds")}
+                  emptyLabel={t("card.noInterviewRounds")}
+                  canEditMeetingDetails={canManage}
+                  meetingDrafts={meetingDrafts}
+                  busyInterviewId={busyKey.startsWith("interview:") ? busyKey.replace("interview:", "") : ""}
+                  onMeetingDraftChange={(interviewId, field, value) =>
+                    setMeetingDrafts((current) => ({
+                      ...current,
+                      [interviewId]: {
+                        meetingProvider: current[interviewId]?.meetingProvider || "",
+                        meetingUrl: current[interviewId]?.meetingUrl || "",
+                        locationNote: current[interviewId]?.locationNote || "",
+                        [field]: value,
+                      },
+                    }))
+                  }
+                  onSaveMeetingDetails={(interviewId) =>
+                    void updateInterviewMeetingDetails(application.job.id, application.id, interviewId)
+                  }
+                  labels={{
+                    statusLabel: (status) => t(`interviewStatus.${status}`),
+                    toneForStatus: (status) =>
+                      status === "COMPLETED" ? "success" : status === "CANCELLED" ? "danger" : "info",
+                    roundLabel: (roundNumber, title) =>
+                      title ? t("card.roundWithTitle", { round: roundNumber, title }) : t("card.round", { round: roundNumber }),
+                    modeLabel: (mode) => t(`interviewModes.${mode}`),
+                    scheduledAt: (value) => t("card.scheduledAt", { value: new Date(value).toLocaleString(dateLocale) }),
+                    durationLabel: (minutes) => t("card.duration", { minutes }),
+                    timezoneLabel: (value) => t("card.timezone", { value }),
+                    adminNote: t("card.adminNote"),
+                    interviewerNotes: t("card.interviewerNotes"),
+                    attendanceLabel: (status) => t("card.attendance", { status: t(`attendance.${status}`) }),
+                    meetingProvider: t("card.meetingProvider"),
+                    meetingLink: t("card.meetingLink"),
+                    locationNote: t("card.locationNote"),
+                    noMeetingLink: t("card.noMeetingLink"),
+                    rescheduledReason: t("card.rescheduledReason"),
+                    cancelledReason: t("card.cancelledReason"),
+                    completedAt: t("card.completedAt"),
+                    saveMeetingDetails: t("card.saveMeetingDetails"),
+                    savingMeetingDetails: t("card.savingMeetingDetails"),
+                    updateMeetingHelp: t("card.updateMeetingHelp"),
+                  }}
+                />
+
+                {isJobApplicationChatOpen(application.status, application.adminStatus) ? (
                   <JobApplicationChatPanel
                     mode="business"
                     jobId={application.job.id}

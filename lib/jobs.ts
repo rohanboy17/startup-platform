@@ -1,4 +1,5 @@
 import { parseProfileDetails } from "@/lib/user-profile";
+import { getWorkTaxonomyCategoryByLabel, type WorkTaxonomyCategory } from "@/lib/work-taxonomy";
 
 function normalizeText(input: unknown, max = 120) {
   if (typeof input !== "string") return "";
@@ -116,10 +117,12 @@ export function getUserJobMatch(input: {
   latitude?: number | null;
   longitude?: number | null;
   hiringRadiusKm?: number | null;
+  jobCategory: string;
   workMode: "WORK_FROM_OFFICE" | "WORK_IN_FIELD" | "HYBRID";
   employmentType?: string;
+  workTaxonomy?: WorkTaxonomyCategory[];
 }) {
-  const profile = parseProfileDetails(input.userProfile);
+  const profile = parseProfileDetails(input.userProfile, input.workTaxonomy);
   let score = 0;
   const reasons: string[] = [];
 
@@ -136,6 +139,12 @@ export function getUserJobMatch(input: {
   if (matchedLanguages.length > 0) {
     score += Math.min(2, matchedLanguages.length);
     reasons.push(`${matchedLanguages.length} language match`);
+  }
+
+  const jobCategorySlug = getWorkTaxonomyCategoryByLabel(input.jobCategory, input.workTaxonomy)?.slug ?? null;
+  if (jobCategorySlug && profile.preferredWorkCategories.includes(jobCategorySlug)) {
+    score += 2;
+    reasons.push("preferred work category");
   }
 
   if (profile.workMode) {

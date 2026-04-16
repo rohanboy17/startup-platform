@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import {
+  containsRestrictedContactDetails,
+  getRestrictedContactReasons,
   isJobApplicationChatOpen,
   jobApplicationChatMessageSelect,
   normalizeJobApplicationChatMessage,
@@ -19,6 +21,7 @@ async function getUserApplication(sessionUserId: string, applicationId: string) 
     select: {
       id: true,
       status: true,
+      adminStatus: true,
       jobId: true,
       job: {
         select: {
@@ -27,7 +30,6 @@ async function getUserApplication(sessionUserId: string, applicationId: string) 
           business: {
             select: {
               name: true,
-              email: true,
             },
           },
         },
@@ -61,14 +63,13 @@ export async function GET(
   });
 
   return NextResponse.json({
-    canSend: isJobApplicationChatOpen(resolved.application.status),
+    canSend: isJobApplicationChatOpen(resolved.application.status, resolved.application.adminStatus),
     visibleToAdmin: true,
     messages: messages.map(serializeJobApplicationChatMessage),
     thread: {
       applicationId: resolved.application.id,
       status: resolved.application.status,
-      businessName:
-        resolved.application.job.business.name || resolved.application.job.business.email || "Business",
+      businessName: resolved.application.job.business.name || "Business",
       jobTitle: resolved.application.job.title,
     },
   });
@@ -87,9 +88,9 @@ export async function POST(
   const resolved = await getUserApplication(session.user.id, applicationId);
   if ("error" in resolved) return resolved.error;
 
-  if (!isJobApplicationChatOpen(resolved.application.status)) {
+  if (!isJobApplicationChatOpen(resolved.application.status, resolved.application.adminStatus)) {
     return NextResponse.json(
-      { error: "Chat is available only after you are hired." },
+      { error: "Chat becomes available after admin approves your application for business review." },
       { status: 400 }
     );
   }
@@ -98,6 +99,32 @@ export async function POST(
   const message = normalizeJobApplicationChatMessage(body?.message);
   if (!message) {
     return NextResponse.json({ error: "Message is required" }, { status: 400 });
+  }
+  if (containsRestrictedContactDetails(message)) {
+    const reasons = getRestrictedContactReasons(message);
+    await prisma.$transaction([
+      prisma.jobApplicationChatFlag.create({
+        data: {
+          applicationId: resolved.application.id,
+          senderUserId: session.user.id,
+          senderRole: "USER",
+          message,
+          detectedReasons: reasons,
+        },
+      }),
+      prisma.activityLog.create({
+        data: {
+          userId: session.user.id,
+          action: "JOB_APPLICATION_CHAT_FLAGGED_BY_USER",
+          entity: "JobApplicationChatFlag",
+          details: `applicationId=${resolved.application.id}, reasons=${reasons.join("|")}`,
+        },
+      }),
+    ]);
+    return NextResponse.json(
+      { error: "Sharing phone numbers, email, UPI IDs, or external contact links is not allowed in chat." },
+      { status: 400 }
+    );
   }
 
   const created = await prisma.$transaction(async (tx) => {
@@ -125,8 +152,8 @@ export async function POST(
 
   await sendInAppNotification({
     userId: resolved.application.job.businessId,
-    title: "New message from a hired candidate",
-    message: `A hired candidate sent a message about "${resolved.application.job.title}": ${truncateJobChatPreview(message)}`,
+    title: "New message from an approved candidate",
+    message: `An approved candidate sent a message about "${resolved.application.job.title}": ${truncateJobChatPreview(message)}`,
     type: "INFO",
     templateKey: "job.application_chat_user_message",
     payload: {

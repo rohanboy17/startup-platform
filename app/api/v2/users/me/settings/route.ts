@@ -3,12 +3,12 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { EMPTY_PROFILE_DETAILS, parseProfileDetails } from "@/lib/user-profile";
 import { getWorkExperienceMap } from "@/lib/work-experience";
+import { getAppSettings } from "@/lib/system-settings";
+import {
+  normalizeProfileWorkCategorySlugs,
+} from "@/lib/work-taxonomy";
 
 const ALLOWED_GENDERS = ["MALE", "FEMALE", "OTHER", "PREFER_NOT_TO_SAY"] as const;
-const ALLOWED_WORK_MODES = ["WORK_FROM_HOME", "WORK_FROM_OFFICE", "WORK_IN_FIELD"] as const;
-const ALLOWED_WORK_TIMES = ["FULL_TIME", "PART_TIME"] as const;
-const ALLOWED_WORKING_PREFERENCES = ["SALARIED", "FREELANCE_CONTRACTUAL", "DAY_BASIS"] as const;
-const ALLOWED_INTERNSHIP_PREFERENCES = ["OPEN_TO_INTERNSHIP", "INTERNSHIP_ONLY", "NOT_INTERESTED"] as const;
 
 function normalizeMobile(input: unknown) {
   if (typeof input !== "string") return null;
@@ -25,10 +25,10 @@ function normalizeText(input: unknown, max = 120) {
   return trimmed.slice(0, max);
 }
 
-function normalizeOption<T extends readonly string[]>(input: unknown, allowed: T) {
+function normalizeOption(input: unknown, allowed: readonly string[]) {
   const value = normalizeText(input, 48);
   if (!value) return null;
-  return (allowed as readonly string[]).includes(value) ? value : "__INVALID__";
+  return allowed.includes(value) ? value : "__INVALID__";
 }
 
 function normalizeDate(input: unknown) {
@@ -61,6 +61,8 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
+  const settings = await getAppSettings();
+
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: {
@@ -89,7 +91,7 @@ export async function GET() {
 
   const currentMonthKey = new Date().toISOString().slice(0, 7);
   const emergencyUsed = user.emergencyWithdrawMonthKey === currentMonthKey ? user.monthlyEmergencyWithdrawCount : 0;
-  const profileDetails = parseProfileDetails(user.profileDetails);
+  const profileDetails = parseProfileDetails(user.profileDetails, settings.workTaxonomy);
   const experience = (await getWorkExperienceMap([session.user.id])).get(session.user.id);
 
   return NextResponse.json({
@@ -117,6 +119,7 @@ export async function GET() {
       workTime: profileDetails.workTime,
       workingPreference: profileDetails.workingPreference,
       internshipPreference: profileDetails.internshipPreference,
+      preferredWorkCategories: profileDetails.preferredWorkCategories,
       languages: profileDetails.languages,
     },
     experience,
@@ -166,6 +169,7 @@ export async function POST(req: Request) {
           workTime?: unknown;
           workingPreference?: unknown;
           internshipPreference?: unknown;
+          preferredWorkCategories?: unknown;
           languages?: unknown;
         };
         withdrawals?: { defaultUpiId?: unknown; defaultUpiName?: unknown };
@@ -176,6 +180,12 @@ export async function POST(req: Request) {
   if (!body) {
     return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
   }
+
+  const settings = await getAppSettings();
+  const allowedWorkModes = settings.profileWorkModeOptions.map((item) => item.value);
+  const allowedWorkTimes = settings.workTimeOptions.map((item) => item.value);
+  const allowedWorkingPreferences = settings.workingPreferenceOptions.map((item) => item.value);
+  const allowedInternshipPreferences = settings.internshipPreferenceOptions.map((item) => item.value);
 
   const updates: Record<string, unknown> = {};
   const shouldUpdateProfileDetails =
@@ -199,6 +209,7 @@ export async function POST(req: Request) {
           "workTime",
           "workingPreference",
           "internshipPreference",
+          "preferredWorkCategories",
           "languages",
         ].some((key) => typeof (body.profile as Record<string, unknown>)[key] !== "undefined")
     );
@@ -234,7 +245,7 @@ export async function POST(req: Request) {
       where: { id: session.user.id },
       select: { profileDetails: true },
     });
-    nextProfileDetails = parseProfileDetails(existingUser?.profileDetails);
+    nextProfileDetails = parseProfileDetails(existingUser?.profileDetails, settings.workTaxonomy);
 
     if (typeof body.profile?.address !== "undefined") {
       nextProfileDetails.address = normalizeText(body.profile.address, 240) || null;
@@ -292,7 +303,7 @@ export async function POST(req: Request) {
       nextProfileDetails.dateOfBirth = value;
     }
     if (typeof body.profile?.workMode !== "undefined") {
-      const value = normalizeOption(body.profile.workMode, ALLOWED_WORK_MODES);
+      const value = normalizeOption(body.profile.workMode, allowedWorkModes);
       if (value === "__INVALID__") {
         return NextResponse.json({ error: "Invalid work mode" }, { status: 400 });
       }
@@ -307,25 +318,32 @@ export async function POST(req: Request) {
         normalizeText(body.profile.courseAndCertificate, 240) || null;
     }
     if (typeof body.profile?.workTime !== "undefined") {
-      const value = normalizeOption(body.profile.workTime, ALLOWED_WORK_TIMES);
+      const value = normalizeOption(body.profile.workTime, allowedWorkTimes);
       if (value === "__INVALID__") {
         return NextResponse.json({ error: "Invalid work time" }, { status: 400 });
       }
       nextProfileDetails.workTime = value;
     }
     if (typeof body.profile?.workingPreference !== "undefined") {
-      const value = normalizeOption(body.profile.workingPreference, ALLOWED_WORKING_PREFERENCES);
+      const value = normalizeOption(body.profile.workingPreference, allowedWorkingPreferences);
       if (value === "__INVALID__") {
         return NextResponse.json({ error: "Invalid working preference" }, { status: 400 });
       }
       nextProfileDetails.workingPreference = value;
     }
     if (typeof body.profile?.internshipPreference !== "undefined") {
-      const value = normalizeOption(body.profile.internshipPreference, ALLOWED_INTERNSHIP_PREFERENCES);
+      const value = normalizeOption(body.profile.internshipPreference, allowedInternshipPreferences);
       if (value === "__INVALID__") {
         return NextResponse.json({ error: "Invalid internship preference" }, { status: 400 });
       }
       nextProfileDetails.internshipPreference = value;
+    }
+    if (typeof body.profile?.preferredWorkCategories !== "undefined") {
+      nextProfileDetails.preferredWorkCategories = normalizeProfileWorkCategorySlugs(
+        body.profile.preferredWorkCategories,
+        8,
+        settings.workTaxonomy
+      );
     }
     if (typeof body.profile?.languages !== "undefined") {
       nextProfileDetails.languages = normalizeStringArray(body.profile.languages, 10, 40);
@@ -402,7 +420,7 @@ export async function POST(req: Request) {
     const currentMonthKey = new Date().toISOString().slice(0, 7);
     const emergencyUsed =
       updated.emergencyWithdrawMonthKey === currentMonthKey ? updated.monthlyEmergencyWithdrawCount : 0;
-    const profileDetails = parseProfileDetails(updated.profileDetails);
+    const profileDetails = parseProfileDetails(updated.profileDetails, settings.workTaxonomy);
     const experience = (await getWorkExperienceMap([session.user.id])).get(session.user.id);
 
     return NextResponse.json({
@@ -430,6 +448,7 @@ export async function POST(req: Request) {
         workTime: profileDetails.workTime,
         workingPreference: profileDetails.workingPreference,
         internshipPreference: profileDetails.internshipPreference,
+        preferredWorkCategories: profileDetails.preferredWorkCategories,
         languages: profileDetails.languages,
       },
       experience,

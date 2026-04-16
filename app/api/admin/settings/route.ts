@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getAppSettings, updateAppSettings } from "@/lib/system-settings";
 import { prisma } from "@/lib/prisma";
-import type { TaskCategoryOption } from "@/lib/task-categories";
+import type {
+  CampaignCategoryOption,
+  TaxonomySelectOption,
+  WorkModeOption,
+  WorkTaxonomyCategory,
+} from "@/lib/work-taxonomy";
 
 export async function GET() {
   const session = await auth();
@@ -33,7 +38,14 @@ export async function PATCH(req: Request) {
     adMaxViewsPerDay?: number;
     adCooldownSeconds?: number;
     adWatchSeconds?: number;
-    taskCategories?: TaskCategoryOption[];
+    workTaxonomy?: WorkTaxonomyCategory[];
+    campaignCategoryOptions?: CampaignCategoryOption[];
+    workModeOptions?: WorkModeOption[];
+    workTimeOptions?: TaxonomySelectOption[];
+    workingPreferenceOptions?: TaxonomySelectOption[];
+    internshipPreferenceOptions?: TaxonomySelectOption[];
+    jobEmploymentTypeOptions?: TaxonomySelectOption[];
+    jobPayUnitOptions?: TaxonomySelectOption[];
   };
 
   const before = await getAppSettings();

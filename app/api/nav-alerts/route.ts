@@ -47,6 +47,8 @@ export async function GET() {
         legalEvidence,
         pendingJobs,
         pendingJobApplications,
+        pendingInterviews,
+        pendingJobChatFlags,
       ] =
         await Promise.all([
           prisma.campaign.findMany({
@@ -148,6 +150,23 @@ export async function GET() {
             orderBy: { createdAt: "desc" },
             take: 100,
           }),
+          prisma.jobApplicationInterview.findMany({
+            where: {
+              OR: [
+                { status: "SCHEDULED" },
+                { status: "COMPLETED", attendanceStatus: "PENDING" },
+              ],
+            },
+            select: { scheduledAt: true, completedAt: true, attendanceMarkedAt: true, createdAt: true },
+            orderBy: { scheduledAt: "asc" },
+            take: 100,
+          }),
+          prisma.jobApplicationChatFlag.findMany({
+            where: { status: "PENDING" },
+            select: { createdAt: true },
+            orderBy: { createdAt: "desc" },
+            take: 100,
+          }),
         ]);
 
       const tabs = {
@@ -165,6 +184,16 @@ export async function GET() {
         "admin.jobApplicants": token(
           pendingJobApplications.length,
           pendingJobApplications[0]?.managerReviewedAt || pendingJobApplications[0]?.createdAt
+        ),
+        "admin.interviews": token(
+          pendingInterviews.length + pendingJobChatFlags.length,
+          maxDate(
+            pendingInterviews[0]?.scheduledAt,
+            pendingInterviews[0]?.completedAt,
+            pendingInterviews[0]?.attendanceMarkedAt,
+            pendingInterviews[0]?.createdAt,
+            pendingJobChatFlags[0]?.createdAt
+          )
         ),
         "admin.jobs": token(pendingJobs.length, maxDate(pendingJobs[0]?.createdAt)),
         "admin.users": token(usersTotal.length, maxDate(usersTotal[0]?.createdAt, usersTotal[0]?.flaggedAt)),
@@ -200,6 +229,7 @@ export async function GET() {
             escalatedCampaigns.length + riskyWithdrawals.length + flaggedUsers.length + openSecurityEvents.length,
           "admin.campaignApplicants": reviewSubmissions.length,
           "admin.jobApplicants": pendingJobApplications.length,
+          "admin.interviews": pendingInterviews.length + pendingJobChatFlags.length,
           "admin.revenue": pendingAdjustments.length,
           "admin.notifications": unreadAdminNotifications,
           "admin.compliance": legalEvidence.length,

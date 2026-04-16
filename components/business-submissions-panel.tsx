@@ -1,13 +1,13 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Download, ExternalLink, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import ProofImageDialog from "@/components/proof-image-dialog";
-import { getCampaignCategoryLabel } from "@/lib/campaign-options";
+import { CAMPAIGN_CATEGORY_OPTIONS, getCampaignCategoryLabel, type CampaignCategoryOption } from "@/lib/campaign-options";
 import { toDateLocale } from "@/lib/date-locale";
 import { formatMoney } from "@/lib/format-money";
 import { useLiveRefresh } from "@/lib/live-refresh";
@@ -72,11 +72,11 @@ function isLikelyScreenshotUrl(value: string | null | undefined) {
 
 export default function BusinessSubmissionsPanel() {
   const t = useTranslations("business.submissionsPanel");
-  const tCategories = useTranslations("business.categories");
   const locale = useLocale();
   const dateLocale = toDateLocale(locale);
   const [data, setData] = useState<BusinessSubmissionsResponse | null>(null);
   const [error, setError] = useState("");
+  const [campaignCategoryOptions, setCampaignCategoryOptions] = useState<CampaignCategoryOption[]>(CAMPAIGN_CATEGORY_OPTIONS);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"ALL" | SubmissionStage>("ALL");
   const [limit, setLimit] = useState<"5" | "10" | "20" | "ALL">("10");
@@ -127,6 +127,27 @@ export default function BusinessSubmissionsPanel() {
   }, [t]);
 
   useLiveRefresh(load, 10000);
+
+  useEffect(() => {
+    let active = true;
+    async function loadTaxonomy() {
+      const res = await fetch("/api/work-taxonomy", { cache: "no-store" });
+      const raw = await res.text();
+      if (!active) return;
+      try {
+        const parsed = raw ? (JSON.parse(raw) as { campaignCategoryOptions?: CampaignCategoryOption[] }) : {};
+        if (parsed.campaignCategoryOptions?.length) {
+          setCampaignCategoryOptions(parsed.campaignCategoryOptions);
+        }
+      } catch {
+        // keep fallback options
+      }
+    }
+    void loadTaxonomy();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const filtered = useMemo(() => {
     const rows = data?.submissions || [];
@@ -276,7 +297,11 @@ export default function BusinessSubmissionsPanel() {
                       </span>
                     </div>
                     <p className="mt-1 text-sm text-foreground/60">
-                      {getCampaignCategoryLabel(submission.campaign?.category || "", tCategories)} | {t("row.reward", { amount: formatMoney(submission.rewardAmount || submission.campaign?.rewardPerTask || 0) })}
+                      {getCampaignCategoryLabel(
+                        submission.campaign?.category || "",
+                        undefined,
+                        campaignCategoryOptions
+                      )} | {t("row.reward", { amount: formatMoney(submission.rewardAmount || submission.campaign?.rewardPerTask || 0) })}
                     </p>
                   </div>
                   <p className="text-xs text-foreground/45">

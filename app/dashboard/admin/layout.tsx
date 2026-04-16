@@ -49,6 +49,7 @@ export default async function AdminLayout({
               { key: "admin.jobs", href: "/dashboard/admin/jobs", label: "Job Management", labelKey: "jobManagement", icon: "jobs" },
               { key: "admin.campaignApplicants", href: "/dashboard/admin/campaign-applicants", label: "Campaign Applicants", labelKey: "campaignApplicants", icon: "reviews" },
               { key: "admin.jobApplicants", href: "/dashboard/admin/job-applicants", label: "Job Applicants", labelKey: "jobApplicants", icon: "jobs" },
+              { key: "admin.interviews", href: "/dashboard/admin/interviews", label: "Interviews", labelKey: "interviews", icon: "jobs" },
               { key: "admin.users", href: "/dashboard/admin/users", label: "Users", labelKey: "users", icon: "users" },
               { key: "admin.businesses", href: "/dashboard/admin/businesses", label: "Businesses", labelKey: "businesses", icon: "users" },
               { key: "admin.funding", href: "/dashboard/admin/funding", label: "Funding", labelKey: "funding", icon: "funding" },

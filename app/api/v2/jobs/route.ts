@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getPhysicalWorkPayoutBreakdown } from "@/lib/commission";
 import { getUserJobMatch } from "@/lib/jobs";
 import { parseProfileDetails } from "@/lib/user-profile";
+import { getAppSettings } from "@/lib/system-settings";
 
 export async function GET(req: Request) {
   const session = await auth();
@@ -16,7 +17,7 @@ export async function GET(req: Request) {
   const radiusFilterValue = Number(searchParams.get("radiusKm") || "");
   const radiusFilter = Number.isFinite(radiusFilterValue) && radiusFilterValue > 0 ? radiusFilterValue : null;
 
-  const [user, skills, jobs, applications] = await Promise.all([
+  const [user, skills, jobs, applications, settings] = await Promise.all([
     prisma.user.findUnique({
       where: { id: session.user.id },
       select: {
@@ -53,13 +54,14 @@ export async function GET(req: Request) {
         status: true,
       },
     }),
+    getAppSettings(),
   ]);
 
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  const profile = parseProfileDetails(user.profileDetails);
+  const profile = parseProfileDetails(user.profileDetails, settings.workTaxonomy);
   const userSkillLabels = skills.map((item) => item.skill.label);
   const applicationMap = new Map(applications.map((item) => [item.jobId, item.status]));
 
@@ -76,8 +78,10 @@ export async function GET(req: Request) {
         latitude: job.latitude,
         longitude: job.longitude,
         hiringRadiusKm: job.hiringRadiusKm,
+        jobCategory: job.jobCategory,
         workMode: job.workMode,
         employmentType: job.employmentType,
+        workTaxonomy: settings.workTaxonomy,
       });
       const payout = getPhysicalWorkPayoutBreakdown(job.payAmount);
 

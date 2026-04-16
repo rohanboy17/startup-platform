@@ -4,7 +4,9 @@ import AdminBulkAssignBySkill from "@/components/admin-bulk-assign-by-skill";
 import AdminCampaignActions from "@/components/admin-campaign-actions";
 import AdminCampaignEscalationControls from "@/components/admin-campaign-escalation-controls";
 import AdminCampaignRepeatControls from "@/components/admin-campaign-repeat-controls";
+import { getCampaignCategoryLabel } from "@/lib/campaign-options";
 import { formatMoney } from "@/lib/format-money";
+import { getAppSettings } from "@/lib/system-settings";
 import { getEffectiveTaskLabel } from "@/lib/task-categories";
 import { KpiCard } from "@/components/ui/kpi-card";
 import { SectionCard } from "@/components/ui/section-card";
@@ -33,7 +35,8 @@ export default async function AdminCampaignsPage({
   const fourHoursAgo = new Date(now.getTime() - 4 * 60 * 60 * 1000);
   const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-  const [pendingOnTime, pendingAtRisk, pendingBreached, pendingEscalated] = await Promise.all([
+  const settingsPromise = getAppSettings();
+  const [pendingOnTime, pendingAtRisk, pendingBreached, pendingEscalated, settings] = await Promise.all([
     prisma.campaign.count({
       where: {
         status: "PENDING",
@@ -61,6 +64,7 @@ export default async function AdminCampaignsPage({
         escalatedAt: { not: null },
       },
     }),
+    settingsPromise,
   ]);
 
   const campaigns = await prisma.campaign.findMany({
@@ -207,7 +211,9 @@ export default async function AdminCampaignsPage({
                   <p className="font-semibold">{campaign.title}</p>
                   <StatusBadge label={campaign.status} tone={campaign.status === "LIVE" ? "success" : campaign.status === "REJECTED" ? "danger" : campaign.status === "PENDING" ? "warning" : "neutral"} />
                 </div>
-                <p className="text-sm text-foreground/70">Category: {campaign.category}</p>
+                <p className="text-sm text-foreground/70">
+                  Category: {getCampaignCategoryLabel(campaign.category, undefined, settings.campaignCategoryOptions)}
+                </p>
                 <p className="text-sm text-foreground/70">
                   Task category: {campaign.taskCategory} | Task type: {getEffectiveTaskLabel(campaign.taskType, campaign.customTask)}
                 </p>
