@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { sendInAppNotification } from "@/lib/notify";
 import { prisma } from "@/lib/prisma";
 import {
-  JOB_INTERVIEW_REMINDER_LEAD_MINUTES,
+  JOB_INTERVIEW_REMINDER_SWEEP_MINUTES,
   nextInterviewAtFromRounds,
   normalizeInterviewText,
 } from "@/lib/job-interviews";
@@ -110,7 +110,7 @@ export async function GET(req: Request) {
     pendingAttendance: interviews.filter(
       (item) => item.status === "COMPLETED" && item.attendanceStatus === "PENDING"
     ).length,
-    reminderWindowMinutes: JOB_INTERVIEW_REMINDER_LEAD_MINUTES,
+    reminderWindowMinutes: JOB_INTERVIEW_REMINDER_SWEEP_MINUTES,
   };
 
   return NextResponse.json({

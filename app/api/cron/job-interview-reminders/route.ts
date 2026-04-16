@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { sendInAppNotification } from "@/lib/notify";
 import { prisma } from "@/lib/prisma";
-import { JOB_INTERVIEW_REMINDER_LEAD_MINUTES } from "@/lib/job-interviews";
+import {
+  JOB_INTERVIEW_REMINDER_LEAD_MINUTES,
+  JOB_INTERVIEW_REMINDER_SWEEP_MINUTES,
+} from "@/lib/job-interviews";
 
 function isAuthorized(req: Request) {
   const configured = process.env.CRON_SECRET;
@@ -22,7 +25,7 @@ function isAuthorized(req: Request) {
 
 async function runReminderSweep() {
   const now = new Date();
-  const reminderBoundary = new Date(now.getTime() + JOB_INTERVIEW_REMINDER_LEAD_MINUTES * 60 * 1000);
+  const reminderBoundary = new Date(now.getTime() + JOB_INTERVIEW_REMINDER_SWEEP_MINUTES * 60 * 1000);
 
   const interviews = await prisma.jobApplicationInterview.findMany({
     where: {
@@ -97,6 +100,7 @@ async function runReminderSweep() {
     message: "Interview reminder sweep completed",
     processed: interviews.length,
     reminderLeadMinutes: JOB_INTERVIEW_REMINDER_LEAD_MINUTES,
+    reminderSweepMinutes: JOB_INTERVIEW_REMINDER_SWEEP_MINUTES,
   });
 }
 

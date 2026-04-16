@@ -171,7 +171,7 @@ export default function AdminInterviewsPanel() {
     const res = await fetch(`/api/v2/admin/interviews?${params.toString()}`, { credentials: "include" });
     const raw = await res.text();
     let parsed: InterviewPayload = {
-      summary: { scheduled: 0, next24h: 0, needsMeetingLink: 0, pendingAttendance: 0, reminderWindowMinutes: 60 },
+      summary: { scheduled: 0, next24h: 0, needsMeetingLink: 0, pendingAttendance: 0, reminderWindowMinutes: 1560 },
       interviews: [],
     };
     try {
@@ -314,7 +314,7 @@ export default function AdminInterviewsPanel() {
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-foreground/55">{t("eyebrow")}</p>
           <h3 className="mt-2 text-xl font-semibold tracking-tight text-foreground">{t("title")}</h3>
           <p className="mt-1 text-sm text-foreground/65">
-            {t("subtitle", { minutes: data?.summary.reminderWindowMinutes || 60 })}
+            {t("subtitle", { minutes: data?.summary.reminderWindowMinutes || 1560 })}
           </p>
         </div>
 

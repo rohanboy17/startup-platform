@@ -7,6 +7,10 @@ type ScorecardInput = {
 };
 
 export const JOB_INTERVIEW_REMINDER_LEAD_MINUTES = 60;
+export const JOB_INTERVIEW_REMINDER_SWEEP_MINUTES = Math.max(
+  JOB_INTERVIEW_REMINDER_LEAD_MINUTES,
+  Number(process.env.JOB_INTERVIEW_REMINDER_SWEEP_MINUTES ?? 26 * 60)
+);
 
 function clampScore(value: unknown) {
   const next = Number(value);

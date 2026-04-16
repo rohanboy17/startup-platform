@@ -3856,7 +3856,7 @@
       "pageDescription": "Manage interview rounds, reminders, attendance, joined confirmation, and business meeting readiness from one admin desk.",
       "eyebrow": "Interview operations",
       "title": "Interview calendar and round control",
-      "subtitle": "Track scheduled rounds, reschedules, missing meeting links, and post-interview attendance. Reminders go out {minutes} minutes before each round.",
+      "subtitle": "Track scheduled rounds, reschedules, missing meeting links, and post-interview attendance. On this deployment, the reminder sweep covers interviews scheduled in the next {minutes} minutes.",
       "kpis": {
         "scheduled": "Scheduled rounds",
         "next24h": "Next 24 hours",
