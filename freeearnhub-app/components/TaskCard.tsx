@@ -13,6 +13,9 @@ export type TaskCardData = {
   rewardNet: number;
   timeLabel?: string | null;
   leftSlots: number;
+  slotsTotal?: number | null;
+  slotsUsed?: number | null;
+  difficulty?: "Easy" | "Medium" | "Hard";
   blocked?: boolean;
 };
 
@@ -24,6 +27,14 @@ export function TaskCard({
   onPress: () => void;
 }) {
   const badgeColor = task.blocked ? colors.danger : colors.success;
+  const difficulty = task.difficulty ?? (task.rewardNet <= 20 ? "Easy" : task.rewardNet <= 50 ? "Medium" : "Hard");
+  const difficultyTone =
+    difficulty === "Easy" ? colors.success : difficulty === "Medium" ? colors.warning : colors.danger;
+
+  const total = Math.max(0, Number(task.slotsTotal ?? 0));
+  const used = Math.max(0, Number(task.slotsUsed ?? 0));
+  const left = Math.max(0, Number(task.leftSlots ?? 0));
+  const progress = total > 0 ? Math.max(0, Math.min(100, Math.round((used / total) * 100))) : 0;
 
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
@@ -41,6 +52,28 @@ export function TaskCard({
         </View>
         <Text style={styles.reward}>Rs {task.rewardNet.toFixed(2)}</Text>
       </View>
+
+      <View style={styles.mid}>
+        <View style={[styles.diffPill, { borderColor: `${difficultyTone}55`, backgroundColor: `${difficultyTone}16` }]}>
+          <Text style={[styles.diffText, { color: difficultyTone }]}>{difficulty}</Text>
+        </View>
+        <View style={styles.moderatedPill}>
+          <Text style={styles.moderatedText}>Moderated</Text>
+        </View>
+        {total > 0 ? (
+          <Text style={styles.slotsMeta}>
+            {left} left / {total}
+          </Text>
+        ) : (
+          <Text style={styles.slotsMeta}>{left} left</Text>
+        )}
+      </View>
+
+      {total > 0 ? (
+        <View style={styles.barTrack}>
+          <View style={[styles.barFill, { width: `${progress}%` }]} />
+        </View>
+      ) : null}
 
       <View style={styles.bottom}>
         <View style={[styles.pill, { borderColor: `${badgeColor}55` }]}>
@@ -90,6 +123,14 @@ const styles = StyleSheet.create({
   title: { color: colors.text, fontSize: 15, fontWeight: "900" },
   desc: { color: colors.textMuted, marginTop: 6, fontSize: 12, fontWeight: "600" },
   reward: { color: "#72FFB7", fontSize: 20, fontWeight: "900" },
+  mid: { flexDirection: "row", alignItems: "center", gap: 8, marginTop: 10 },
+  diffPill: { height: 26, paddingHorizontal: 10, borderRadius: 999, borderWidth: 1, alignItems: "center", justifyContent: "center" },
+  diffText: { fontSize: 11, fontWeight: "900" },
+  moderatedPill: { height: 26, paddingHorizontal: 10, borderRadius: 999, borderWidth: 1, borderColor: "#22304A", backgroundColor: "#0F1626", alignItems: "center", justifyContent: "center" },
+  moderatedText: { color: colors.textMuted, fontSize: 11, fontWeight: "800" },
+  slotsMeta: { marginLeft: "auto", color: colors.textMuted, fontSize: 11, fontWeight: "800" },
+  barTrack: { height: 8, borderRadius: 999, backgroundColor: "#202A40", overflow: "hidden", marginTop: 10 },
+  barFill: { height: "100%", borderRadius: 999, backgroundColor: colors.accent },
   bottom: { flexDirection: "row", alignItems: "center", marginTop: 12, gap: 8 },
   pill: {
     height: 28,

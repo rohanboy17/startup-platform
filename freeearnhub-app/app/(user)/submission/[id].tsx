@@ -10,6 +10,8 @@ import { colors } from "@/lib/theme";
 type SubmissionRow = {
   id: string;
   createdAt: string;
+  managerReviewedAt?: string | null;
+  adminReviewedAt?: string | null;
   managerStatus: string;
   adminStatus: string;
   stage: "APPROVED" | "ADMIN_REJECTED" | "MANAGER_REJECTED" | "PENDING_ADMIN" | "PENDING_MANAGER";
@@ -21,18 +23,40 @@ type SubmissionRow = {
 
 type SubmissionList = { submissions: SubmissionRow[] };
 
-function makeTimeline(stage: SubmissionRow["stage"], createdAt: string) {
-  const submittedMeta = new Date(createdAt).toLocaleString();
-  const managerStatus = stage === "PENDING_MANAGER" ? "ACTIVE" : stage === "MANAGER_REJECTED" ? "DONE" : "DONE";
+function makeTimeline(input: { stage: SubmissionRow["stage"]; createdAt: string; managerReviewedAt?: string | null; adminReviewedAt?: string | null }) {
+  const stage = input.stage;
+  const submittedMeta = new Date(input.createdAt).toLocaleString();
+  const managerMeta =
+    stage === "PENDING_MANAGER"
+      ? "Waiting for manager review."
+      : input.managerReviewedAt
+        ? new Date(input.managerReviewedAt).toLocaleString()
+        : "Manager stage completed.";
+  const adminMeta =
+    stage === "PENDING_ADMIN"
+      ? "Waiting for admin verification."
+      : input.adminReviewedAt
+        ? new Date(input.adminReviewedAt).toLocaleString()
+        : stage === "PENDING_MANAGER"
+          ? "Not reached yet."
+          : "Admin stage completed.";
+
+  const managerStatus = stage === "PENDING_MANAGER" ? "ACTIVE" : "DONE";
   const adminStatus =
     stage === "PENDING_ADMIN" ? "ACTIVE" : stage === "APPROVED" || stage === "ADMIN_REJECTED" ? "DONE" : "PENDING";
   const doneStatus = stage === "APPROVED" || stage === "ADMIN_REJECTED" || stage === "MANAGER_REJECTED" ? "ACTIVE" : "PENDING";
 
   return [
-    { key: "submitted", label: "Submitted", status: "DONE" as const, meta: submittedMeta },
-    { key: "manager", label: "Manager Review", status: managerStatus as "DONE" | "ACTIVE" | "PENDING" },
-    { key: "admin", label: "Admin Review", status: adminStatus as "DONE" | "ACTIVE" | "PENDING" },
-    { key: "final", label: "Final Outcome", status: doneStatus as "DONE" | "ACTIVE" | "PENDING", meta: stage.replaceAll("_", " ") },
+    { key: "submitted", label: "Submitted", status: "DONE" as const, meta: submittedMeta, tone: "success" as const },
+    { key: "manager", label: "Manager Review", status: managerStatus as "DONE" | "ACTIVE" | "PENDING", meta: managerMeta, tone: "warning" as const },
+    { key: "admin", label: "Admin Review", status: adminStatus as "DONE" | "ACTIVE" | "PENDING", meta: adminMeta, tone: "info" as const },
+    {
+      key: "final",
+      label: "Final Outcome",
+      status: doneStatus as "DONE" | "ACTIVE" | "PENDING",
+      meta: stage.replaceAll("_", " "),
+      tone: stage === "APPROVED" ? ("success" as const) : stage.includes("REJECTED") ? ("danger" as const) : ("muted" as const),
+    },
   ];
 }
 
@@ -65,7 +89,12 @@ export default function SubmissionDetailsScreen() {
 
   const stages = useMemo(() => {
     if (!row) return [];
-    return makeTimeline(row.stage, row.createdAt);
+    return makeTimeline({
+      stage: row.stage,
+      createdAt: row.createdAt,
+      managerReviewedAt: row.managerReviewedAt ?? null,
+      adminReviewedAt: row.adminReviewedAt ?? null,
+    });
   }, [row]);
 
   return (

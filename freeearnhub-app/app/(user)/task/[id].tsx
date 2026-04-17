@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { Stack, router, useLocalSearchParams } from "expo-router";
-import { Clipboard, ExternalLink, ImagePlus, Link as LinkIcon, ShieldCheck } from "lucide-react-native";
+import { BadgeCheck, Clipboard, ExternalLink, ImagePlus, Link as LinkIcon, Send, Shield, ShieldCheck, Wallet } from "lucide-react-native";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 
@@ -130,6 +130,42 @@ export default function UserTaskDetailsScreen() {
             </LinearGradient>
 
             <View style={styles.section}>
+              <Text style={styles.sectionTitle}>How this task works</Text>
+              <View style={styles.flowRow}>
+                <View style={styles.flowStep}>
+                  <View style={styles.flowIcon}>
+                    <Send color={colors.accent} size={16} />
+                  </View>
+                  <Text style={styles.flowLabel}>Submit</Text>
+                </View>
+                <View style={styles.flowLine} />
+                <View style={styles.flowStep}>
+                  <View style={[styles.flowIcon, styles.flowIconManager]}>
+                    <Shield color={colors.warning} size={16} />
+                  </View>
+                  <Text style={styles.flowLabel}>Manager</Text>
+                </View>
+                <View style={styles.flowLine} />
+                <View style={styles.flowStep}>
+                  <View style={[styles.flowIcon, styles.flowIconAdmin]}>
+                    <BadgeCheck color={colors.accentAlt} size={16} />
+                  </View>
+                  <Text style={styles.flowLabel}>Admin</Text>
+                </View>
+                <View style={styles.flowLine} />
+                <View style={styles.flowStep}>
+                  <View style={[styles.flowIcon, styles.flowIconPay]}>
+                    <Wallet color={colors.success} size={16} />
+                  </View>
+                  <Text style={styles.flowLabel}>Payment</Text>
+                </View>
+              </View>
+              <Text style={styles.flowHint}>
+                Submit proof first. Manager review happens before admin verification. Wallet credit is added only after approval.
+              </Text>
+            </View>
+
+            <View style={styles.section}>
               <Text style={styles.sectionTitle}>Instructions</Text>
               {(data.campaign.currentInstruction ? [data.campaign.currentInstruction] : data.campaign.instructions).map(
                 (ins) => (
@@ -234,6 +270,15 @@ const styles = StyleSheet.create({
   linkBtnSecondary: { height: 44, borderRadius: 14, borderWidth: 1, borderColor: "rgba(69,225,255,0.35)", backgroundColor: "rgba(69,225,255,0.14)", alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8 },
   linkTextSecondary: { color: colors.text, fontWeight: "900", fontSize: 13 },
   safetyRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  flowRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10 },
+  flowStep: { alignItems: "center", justifyContent: "center", gap: 8 },
+  flowIcon: { width: 34, height: 34, borderRadius: 14, borderWidth: 1, borderColor: "rgba(124,58,237,0.35)", backgroundColor: "rgba(124,58,237,0.18)", alignItems: "center", justifyContent: "center" },
+  flowIconManager: { borderColor: "rgba(245,158,11,0.35)", backgroundColor: "rgba(245,158,11,0.14)" },
+  flowIconAdmin: { borderColor: "rgba(79,70,229,0.35)", backgroundColor: "rgba(79,70,229,0.14)" },
+  flowIconPay: { borderColor: "rgba(34,197,94,0.35)", backgroundColor: "rgba(34,197,94,0.14)" },
+  flowLabel: { color: colors.text, fontWeight: "900", fontSize: 11 },
+  flowLine: { flex: 1, height: 2, borderRadius: 999, backgroundColor: "#22304A" },
+  flowHint: { color: colors.textMuted, fontWeight: "600", fontSize: 12, lineHeight: 18 },
   blocked: { color: colors.danger, fontWeight: "800" },
   inputWrap: { height: 46, borderRadius: 14, borderWidth: 1, borderColor: "#22304A", backgroundColor: "#0F1626", paddingHorizontal: 12, flexDirection: "row", alignItems: "center", gap: 10 },
   input: { flex: 1, height: "100%", color: colors.text, fontWeight: "700" },

@@ -12,13 +12,8 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(user)" />
-          <Stack.Screen name="(business)" />
-          <Stack.Screen name="(common)" />
-        </Stack>
+        {/* Let expo-router derive the route tree. Explicit screen names can drift and cause warnings. */}
+        <Stack screenOptions={{ headerShown: false }} />
         <StatusBar style="light" />
       </ThemeProvider>
     </AuthProvider>

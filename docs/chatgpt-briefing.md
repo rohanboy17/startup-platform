@@ -227,10 +227,17 @@ Folder: `freeearnhub-app/`
 
 - USER screens (wired to real backend):
   - Home dashboard: `GET /api/v2/users/me/overview` + submissions for status counts
+    - Includes a "Work Pipeline Status" section (Under review, Manager stage, Admin stage, Approved, Rejected) so users always see what happens next.
   - Work list: `GET /api/v2/campaigns` (search + category chips + skeleton)
+    - Task cards show trust cues: business name, difficulty badge (color coded), and remaining slots (visual).
   - Task details + submit: `GET/POST /api/v2/campaigns/:id/submissions`
+    - Includes a "How this task works" step flow: Submit -> Manager review -> Admin review -> Wallet credit.
   - Jobs list + apply: `GET /api/v2/jobs`, `POST /api/v2/jobs/:id/apply`
+  - Submission status:
+    - List: `GET /api/v2/users/me/submissions` with a mini timeline per row.
+    - Details: timeline UI with timestamps + stage notes (manager/admin/final outcome).
   - Wallet + withdraw request: `GET /api/v2/users/me/wallet`, `POST /api/wallet/withdraw`
+    - Includes "Recent Earnings Sources" (recent credit transactions) to make credits explainable.
 
 - BUSINESS screens (wired to real backend):
   - Dashboard: `GET /api/v2/business/overview`

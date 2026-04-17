@@ -32,7 +32,13 @@ export default function UserHomeScreen() {
 
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<Overview | null>(null);
-  const [subCounts, setSubCounts] = useState({ pending: 0, approved: 0, rejected: 0 });
+  const [subCounts, setSubCounts] = useState({
+    pending: 0,
+    pendingManager: 0,
+    pendingAdmin: 0,
+    approved: 0,
+    rejected: 0,
+  });
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -51,8 +57,10 @@ export default function UserHomeScreen() {
       const submissions = submissionsResp.data.submissions || [];
       const approved = submissions.filter((s) => s.stage === "APPROVED").length;
       const rejected = submissions.filter((s) => s.stage === "ADMIN_REJECTED" || s.stage === "MANAGER_REJECTED").length;
-      const pending = submissions.filter((s) => s.stage === "PENDING_ADMIN" || s.stage === "PENDING_MANAGER").length;
-      setSubCounts({ pending, approved, rejected });
+      const pendingManager = submissions.filter((s) => s.stage === "PENDING_MANAGER").length;
+      const pendingAdmin = submissions.filter((s) => s.stage === "PENDING_ADMIN").length;
+      const pending = pendingManager + pendingAdmin;
+      setSubCounts({ pending, pendingManager, pendingAdmin, approved, rejected });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load dashboard");
     } finally {
@@ -136,6 +144,35 @@ export default function UserHomeScreen() {
             <Pressable onPress={() => router.push("/(user)/submissions")} style={({ pressed }) => [styles.quickItem, pressed && styles.pressed]}>
               <ClipboardCheck color={colors.accent} size={18} />
               <Text style={styles.quickText}>Reviews</Text>
+            </Pressable>
+          </View>
+
+          <View style={styles.pipeline}>
+            <Text style={styles.pipelineTitle}>Work Pipeline Status</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.pipelineRow}>
+              <View style={[styles.pipeCard, styles.pipeUnderReview]}>
+                <Text style={styles.pipeValue}>{subCounts.pending}</Text>
+                <Text style={styles.pipeLabel}>Under Review</Text>
+              </View>
+              <View style={[styles.pipeCard, styles.pipeManager]}>
+                <Text style={styles.pipeValue}>{subCounts.pendingManager}</Text>
+                <Text style={styles.pipeLabel}>Manager Stage</Text>
+              </View>
+              <View style={[styles.pipeCard, styles.pipeAdmin]}>
+                <Text style={styles.pipeValue}>{subCounts.pendingAdmin}</Text>
+                <Text style={styles.pipeLabel}>Admin Stage</Text>
+              </View>
+              <View style={[styles.pipeCard, styles.pipeApproved]}>
+                <Text style={styles.pipeValue}>{subCounts.approved}</Text>
+                <Text style={styles.pipeLabel}>Approved</Text>
+              </View>
+              <View style={[styles.pipeCard, styles.pipeRejected]}>
+                <Text style={styles.pipeValue}>{subCounts.rejected}</Text>
+                <Text style={styles.pipeLabel}>Rejected</Text>
+              </View>
+            </ScrollView>
+            <Pressable onPress={() => router.push("/(user)/submissions")} style={({ pressed }) => [styles.pipeCta, pressed && styles.pressed]}>
+              <Text style={styles.pipeCtaText}>Open Reviews</Text>
             </Pressable>
           </View>
 
@@ -241,6 +278,20 @@ const styles = StyleSheet.create({
   quickItem: { width: "48%", height: 70, borderRadius: 18, borderWidth: 1, borderColor: "#22304A", backgroundColor: colors.card, alignItems: "center", justifyContent: "center", gap: 8 },
   quickText: { color: colors.text, fontWeight: "800", fontSize: 12 },
 
+  pipeline: { borderRadius: 18, borderWidth: 1, borderColor: "#22304A", backgroundColor: colors.card, padding: 14, gap: 12 },
+  pipelineTitle: { color: colors.text, fontWeight: "900" },
+  pipelineRow: { gap: 10, paddingRight: 10 },
+  pipeCard: { width: 128, height: 74, borderRadius: 18, borderWidth: 1, padding: 12, justifyContent: "center", gap: 4 },
+  pipeValue: { color: colors.text, fontSize: 18, fontWeight: "900" },
+  pipeLabel: { color: colors.textMuted, fontSize: 11, fontWeight: "800" },
+  pipeUnderReview: { backgroundColor: "rgba(245,158,11,0.10)", borderColor: "rgba(245,158,11,0.30)" },
+  pipeManager: { backgroundColor: "rgba(245,158,11,0.08)", borderColor: "rgba(245,158,11,0.22)" },
+  pipeAdmin: { backgroundColor: "rgba(79,70,229,0.10)", borderColor: "rgba(79,70,229,0.28)" },
+  pipeApproved: { backgroundColor: "rgba(34,197,94,0.10)", borderColor: "rgba(34,197,94,0.28)" },
+  pipeRejected: { backgroundColor: "rgba(239,68,68,0.10)", borderColor: "rgba(239,68,68,0.28)" },
+  pipeCta: { height: 40, borderRadius: 14, borderWidth: 1, borderColor: "#22304A", backgroundColor: "#0F1626", alignItems: "center", justifyContent: "center" },
+  pipeCtaText: { color: colors.textMuted, fontWeight: "900" },
+
   statusRow: { flexDirection: "row", gap: 10 },
   statusCard: { flex: 1, height: 64, borderRadius: 18, padding: 12, justifyContent: "center", gap: 4, borderWidth: 1 },
   statusValue: { color: colors.text, fontSize: 18, fontWeight: "900" },
@@ -269,4 +320,3 @@ const styles = StyleSheet.create({
   muted: { color: colors.textMuted, fontWeight: "700" },
   error: { color: colors.danger, fontWeight: "800" },
 });
-

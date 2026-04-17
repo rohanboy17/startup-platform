@@ -104,6 +104,28 @@ export default function UserWalletScreen() {
         </View>
 
         <View style={styles.card}>
+          <Text style={styles.sectionTitle}>Recent Earnings Sources</Text>
+          {(data?.transactions ?? [])
+            .filter((t) => t.type === "CREDIT")
+            .slice(0, 3)
+            .map((t) => (
+              <View key={t.id} style={styles.sourceRow}>
+                <Text style={styles.sourceAmt}>+Rs {t.amount.toFixed(2)}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.sourceNote} numberOfLines={1}>
+                    {t.note || "Wallet credit"}
+                  </Text>
+                  <Text style={styles.sourceMeta}>{new Date(t.createdAt).toLocaleString()}</Text>
+                </View>
+              </View>
+            ))}
+          {!loading &&
+          ((data?.transactions ?? []).filter((t) => t.type === "CREDIT").length === 0) ? (
+            <Text style={styles.muted}>No credits yet.</Text>
+          ) : null}
+        </View>
+
+        <View style={styles.card}>
           <Text style={styles.sectionTitle}>Recent Transactions</Text>
           {(data?.transactions ?? []).map((t) => (
             <View key={t.id} style={styles.txRow}>
@@ -144,5 +166,8 @@ const styles = StyleSheet.create({
   txDebit: { color: colors.danger },
   txNote: { color: colors.text, fontWeight: "800", fontSize: 12 },
   txMeta: { color: colors.textMuted, fontWeight: "700", fontSize: 11, marginTop: 4 },
+  sourceRow: { flexDirection: "row", alignItems: "center", gap: 10, paddingVertical: 10, borderTopWidth: 1, borderTopColor: "#22304A" },
+  sourceAmt: { width: 96, fontWeight: "900", color: colors.success },
+  sourceNote: { color: colors.text, fontWeight: "800", fontSize: 12 },
+  sourceMeta: { color: colors.textMuted, fontWeight: "700", fontSize: 11, marginTop: 4 },
 });
-

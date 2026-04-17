@@ -18,14 +18,7 @@ export default function UserLayout() {
   if (!isAuthenticated || !user) return <Redirect href="/(auth)/login" />;
   if (user.role !== "USER") return <Redirect href="/" />;
 
-  return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="submissions" />
-      <Stack.Screen name="submission/[id]" />
-      <Stack.Screen name="task/[id]" />
-      <Stack.Screen name="job/[id]" />
-    </Stack>
-  );
+  // Avoid explicit Stack.Screen registrations here. With route groups + dynamic routes, manual names
+  // can easily drift and cause noisy "[Layout children]" warnings.
+  return <Stack screenOptions={{ headerShown: false }} />;
 }
-

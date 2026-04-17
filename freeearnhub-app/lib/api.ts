@@ -21,6 +21,13 @@ let bearerToken: string | null = null;
 
 export function setApiToken(token: string | null) {
   bearerToken = token;
+  // Also update axios defaults so the header is always present even if an interceptor
+  // is skipped (rare, but observed on some native/dev flows).
+  if (token) {
+    api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  } else {
+    delete api.defaults.headers.common.Authorization;
+  }
 }
 
 export function createApiClient(): AxiosInstance {

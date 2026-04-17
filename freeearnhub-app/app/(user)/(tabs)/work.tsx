@@ -16,6 +16,8 @@ type CampaignRow = {
   taskType: string;
   netRewardPerTask: number;
   leftSubmissions: number;
+  allowedSubmissions?: number;
+  usedSubmissions?: number;
   blockedBySubmissionMode: boolean;
   blockedByRepeatRule: boolean;
 };
@@ -95,6 +97,8 @@ export default function UserWorkScreen() {
         taskType: c.taskType,
         rewardNet: Number(c.netRewardPerTask || 0),
         leftSlots: c.leftSubmissions ?? 0,
+        slotsTotal: typeof c.allowedSubmissions === "number" ? c.allowedSubmissions : null,
+        slotsUsed: typeof c.usedSubmissions === "number" ? c.usedSubmissions : null,
         blocked: Boolean(c.blockedBySubmissionMode || c.blockedByRepeatRule),
       }));
   }, [query, rows, selectedCategory]);
@@ -186,4 +190,3 @@ const styles = StyleSheet.create({
   skelBottom: { flexDirection: "row", alignItems: "center", gap: 8 },
   skelPill: { height: 28, borderRadius: 999, backgroundColor: "#0F1626", borderWidth: 1, borderColor: "#22304A" },
 });
-

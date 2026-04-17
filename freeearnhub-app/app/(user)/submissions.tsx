@@ -33,6 +33,28 @@ function stageColor(stage: SubmissionRow["stage"]) {
   return colors.accent;
 }
 
+type MiniState = "DONE" | "ACTIVE" | "PENDING";
+
+function timelineState(stage: SubmissionRow["stage"]): {
+  submitted: MiniState;
+  manager: MiniState;
+  admin: MiniState;
+  final: MiniState;
+} {
+  const manager: MiniState = stage === "PENDING_MANAGER" ? "ACTIVE" : "DONE";
+  const admin: MiniState =
+    stage === "PENDING_ADMIN"
+      ? "ACTIVE"
+      : stage === "APPROVED" || stage === "ADMIN_REJECTED"
+        ? "DONE"
+        : stage === "PENDING_MANAGER"
+          ? "PENDING"
+          : "DONE";
+  const final: MiniState =
+    stage === "APPROVED" || stage === "ADMIN_REJECTED" || stage === "MANAGER_REJECTED" ? "ACTIVE" : "PENDING";
+  return { submitted: "DONE", manager, admin, final };
+}
+
 export default function UserSubmissionsScreen() {
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<SubmissionRow[]>([]);
@@ -92,6 +114,31 @@ export default function UserSubmissionsScreen() {
               <Text style={styles.cardMeta} numberOfLines={1}>
                 {new Date(s.createdAt).toLocaleString()}
               </Text>
+              <View style={styles.miniTimeline}>
+                {(() => {
+                  const t = timelineState(s.stage);
+                  const dotColor = (state: MiniState) =>
+                    state === "DONE"
+                      ? colors.success
+                      : state === "ACTIVE"
+                        ? colors.accentAlt
+                        : "#22304A";
+                  const lineColor = (state: MiniState) =>
+                    state === "PENDING" ? "#22304A" : "rgba(124,58,237,0.40)";
+
+                  return (
+                    <>
+                      <View style={[styles.dot, { backgroundColor: dotColor(t.submitted) }]} />
+                      <View style={[styles.line, { backgroundColor: lineColor(t.manager) }]} />
+                      <View style={[styles.dot, { backgroundColor: dotColor(t.manager) }]} />
+                      <View style={[styles.line, { backgroundColor: lineColor(t.admin) }]} />
+                      <View style={[styles.dot, { backgroundColor: dotColor(t.admin) }]} />
+                      <View style={[styles.line, { backgroundColor: lineColor(t.final) }]} />
+                      <View style={[styles.dot, { backgroundColor: dotColor(t.final) }]} />
+                    </>
+                  );
+                })()}
+              </View>
             </Pressable>
           ))}
         </View>
@@ -117,4 +164,7 @@ const styles = StyleSheet.create({
   cardTitle: { flex: 1, color: colors.text, fontWeight: "900" },
   badge: { fontWeight: "900", fontSize: 12 },
   cardMeta: { color: colors.textMuted, fontWeight: "700", fontSize: 12 },
+  miniTimeline: { flexDirection: "row", alignItems: "center", gap: 6, marginTop: 4 },
+  dot: { width: 8, height: 8, borderRadius: 999 },
+  line: { height: 2, borderRadius: 999, flex: 1 },
 });
