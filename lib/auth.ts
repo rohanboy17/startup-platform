@@ -1,9 +1,11 @@
 import bcrypt from "bcryptjs";
-import NextAuth, { getServerSession, type NextAuthOptions } from "next-auth";
+import NextAuth, { getServerSession, type NextAuthOptions, type Session } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { headers } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { checkIpAccess, createSecurityEvent } from "@/lib/security";
 import { verifyAdminOtp, verifyAdminRecoveryCode } from "@/lib/admin-2fa";
+import { verifyMobileAuthToken } from "@/lib/mobile-auth-token";
 
 function pickHeader(headers: unknown, name: string) {
   if (!headers || typeof headers !== "object") return null;
@@ -305,4 +307,67 @@ export const authOptions: NextAuthOptions = {
 };
 
 export const handlers = NextAuth(authOptions);
-export const auth = () => getServerSession(authOptions);
+
+async function readBearerTokenFromHeaders() {
+  try {
+    const h = await headers();
+    const authHeader = h.get("authorization") || "";
+    const [scheme, token] = authHeader.split(" ");
+    if (scheme?.toLowerCase() !== "bearer" || !token) return "";
+    return token.trim();
+  } catch {
+    return "";
+  }
+}
+
+/**
+ * Web app uses NextAuth session cookies. Mobile uses a signed bearer token.
+ * This helper supports both so mobile can call the existing `/api/v2/*` routes.
+ */
+export async function auth(): Promise<Session | null> {
+  const session = (await getServerSession(authOptions)) as Session | null;
+  if (session?.user?.id && session.user.role) {
+    return session;
+  }
+
+  const bearer = await readBearerTokenFromHeaders();
+  if (!bearer) {
+    return session;
+  }
+
+  const payload = verifyMobileAuthToken(bearer);
+  if (!payload) {
+    return null;
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: payload.sub },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      accountStatus: true,
+      sessionVersion: true,
+    },
+  });
+
+  if (!user || user.accountStatus !== "ACTIVE") {
+    return null;
+  }
+
+  if (user.sessionVersion !== payload.sessionVersion) {
+    return null;
+  }
+
+  return {
+    user: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      accountStatus: user.accountStatus,
+    },
+    expires: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+  } as Session;
+}
