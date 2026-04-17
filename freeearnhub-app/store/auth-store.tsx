@@ -1,6 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
-import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { api, ApiError, setApiToken, setUnauthorizedHandler } from "@/lib/api";
 
@@ -94,7 +94,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return () => setUnauthorizedHandler(null);
   }, []);
 
-  const refreshProfile = async () => {
+  const refreshProfile = useCallback(async () => {
     const currentToken = token ?? (await readToken());
     if (!currentToken) {
       setApiToken(null);
@@ -115,7 +115,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setUser(null);
       await clearToken();
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     async function hydrate() {
@@ -189,7 +189,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       logout,
       refreshProfile,
     }),
-    [isHydrating, token, user, isBusy]
+    [isHydrating, token, user, isBusy, refreshProfile]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
