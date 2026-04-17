@@ -15,7 +15,7 @@ The web app is built with:
 - Prisma + PostgreSQL (Neon)
 - next-intl i18n (en/hi/bn in `messages/`)
 
-There is also a separate Expo mobile app scaffold under `freeearnhub-app/` that connects to this same backend.
+There is also a separate Expo (React Native) mobile app under `freeearnhub-app/` that connects to this same backend using a signed bearer token.
 
 ## 2) Repo Structure (High Level)
 
@@ -26,7 +26,7 @@ There is also a separate Expo mobile app scaffold under `freeearnhub-app/` that 
 - `messages/`: i18n message catalogs (`en.json`, `hi.json`, `bn.json`).
 - `i18n/`: next-intl request config and locale handling.
 - `docs/`: operational docs (notably `docs/route-inventory.md`).
-- `freeearnhub-app/`: Expo (React Native) app prototype (dashboard + tasks UX).
+- `freeearnhub-app/`: Expo Router mobile app (role routing + USER/BUSINESS flows).
 
 ## 3) Roles and Apps (Who Sees What)
 
@@ -158,11 +158,15 @@ Key models (simplified, not exhaustive):
 - `POST /api/community-feedback` (feedback collection)
 
 ### Mobile token auth (for Expo app)
-The web app is cookie/JWT-session based, but mobile needs a bearer token.
+The web app is cookie/JWT-session based, but mobile uses a signed bearer token.
 - `POST /api/mobile/auth/login` -> returns `{ token, user }`
 - `GET /api/mobile/auth/me` -> validates token, checks sessionVersion
 Secret:
 - `MOBILE_AUTH_SECRET` (recommended) or fallback `NEXTAUTH_SECRET`
+
+Important: `lib/auth.ts` has been extended so `auth()` supports BOTH:
+- NextAuth cookie session (web)
+- Mobile bearer token (so mobile can call existing `/api/v2/*` routes)
 
 ## 7) Security and Compliance
 
@@ -194,7 +198,7 @@ Configured in `vercel.json`:
 - `/api/cron/reset-levels` at `30 18 * * *`
 - `/api/cron/job-interview-reminders` at `0 2 * * *`
 
-Note: Vercel Hobby cron has “once per day” limitations; schedules more frequent can fail deployment.
+Note: Vercel Hobby cron has "once per day" limitations; schedules more frequent can fail deployment.
 
 ## 10) Deployment Notes (Vercel + Neon)
 
@@ -210,11 +214,32 @@ Migrations:
 ## 11) Mobile App (Expo) - Current State
 
 Folder: `freeearnhub-app/`
-- Expo Router app with auth + tabs.
-- Premium screens implemented:
-  - Dashboard: `/app/(tabs)/dashboard.tsx`
-  - Tasks list: `/app/(tabs)/tasks/index.tsx`
-  - Task details: `/app/(tabs)/tasks/[taskId].tsx`
+- Expo Router app with role-based routing (USER/BUSINESS; ADMIN/MANAGER are web-only on mobile).
+- Auth:
+  - `POST /api/mobile/auth/login` -> token
+  - token stored via SecureStore (native) / localStorage (web) and attached to axios requests
+- Navigation:
+  - Root: `app/index.tsx` redirects based on role.
+  - USER tabs: `app/(user)/(tabs)/*` -> `home`, `work`, `jobs`, `wallet`, `profile`
+  - USER non-tabs: `app/(user)/task/[id]`, `app/(user)/job/[id]`, `app/(user)/submissions`, `app/(user)/submission/[id]`
+  - BUSINESS tabs: `app/(business)/*` -> `dashboard`, `campaigns`, `jobs`, `wallet`, `analytics`
+  - BUSINESS create campaign: `app/(business)/create-campaign`
+
+- USER screens (wired to real backend):
+  - Home dashboard: `GET /api/v2/users/me/overview` + submissions for status counts
+  - Work list: `GET /api/v2/campaigns` (search + category chips + skeleton)
+  - Task details + submit: `GET/POST /api/v2/campaigns/:id/submissions`
+  - Jobs list + apply: `GET /api/v2/jobs`, `POST /api/v2/jobs/:id/apply`
+  - Wallet + withdraw request: `GET /api/v2/users/me/wallet`, `POST /api/wallet/withdraw`
+
+- BUSINESS screens (wired to real backend):
+  - Dashboard: `GET /api/v2/business/overview`
+  - Campaign list: `GET /api/v2/business/campaigns`
+  - Create campaign:
+    - loads allowed categories/types from `GET /api/work-taxonomy`
+    - submits to `POST /api/v2/business/campaigns`
+  - Job management list: `GET /api/v2/business/jobs`
+  - Wallet + Analytics: read from `/api/v2/business/overview`
 
 Mobile env:
 - `EXPO_PUBLIC_API_BASE_URL` points the mobile app to the backend base URL.
@@ -222,6 +247,5 @@ Mobile env:
 
 ## 12) Authoritative Route List
 
-For a curated list of “production surface” routes, refer to:
+For a curated list of "production surface" routes, refer to:
 - `docs/route-inventory.md`
-
