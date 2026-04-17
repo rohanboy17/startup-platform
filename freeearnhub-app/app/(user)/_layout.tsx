@@ -60,9 +60,9 @@ export default function UserLayout() {
       {/* Hide non-tab routes inside this group */}
       <Tabs.Screen name="jobs" options={{ href: null }} />
       <Tabs.Screen name="submissions" options={{ href: null }} />
-      <Tabs.Screen name="job" options={{ href: null }} />
-      <Tabs.Screen name="task" options={{ href: null }} />
-      <Tabs.Screen name="submission" options={{ href: null }} />
+      <Tabs.Screen name="job/[id]" options={{ href: null }} />
+      <Tabs.Screen name="task/[id]" options={{ href: null }} />
+      <Tabs.Screen name="submission/[id]" options={{ href: null }} />
     </Tabs>
   );
 }
