@@ -20,7 +20,7 @@ export default function IndexScreen() {
   }
 
   if (user.role === "USER") {
-    return <Redirect href="/(user)/home" />;
+    return <Redirect href="/(user)/(tabs)/home" />;
   }
 
   if (user.role === "BUSINESS") {

@@ -91,7 +91,7 @@ export default function UserHomeScreen() {
                 <Text style={styles.subtitle}>Work stages and hiring updates</Text>
               </View>
             </View>
-            <Pressable onPress={() => router.push("/(user)/profile")} style={({ pressed }) => [styles.notify, pressed && styles.pressed]}>
+            <Pressable onPress={() => router.push("/(user)/(tabs)/profile")} style={({ pressed }) => [styles.notify, pressed && styles.pressed]}>
               <Bell color={colors.text} size={17} />
               {data?.metrics?.unreadNotifications ? <View style={styles.dot} /> : null}
             </Pressable>
@@ -104,11 +104,11 @@ export default function UserHomeScreen() {
             <Text style={styles.walletLabel}>Available Balance</Text>
             <Text style={styles.walletAmount}>Rs {Number(data?.metrics?.availableBalance ?? 0).toFixed(2)}</Text>
             <View style={styles.walletActions}>
-              <Pressable onPress={() => router.push("/(user)/wallet")} style={({ pressed }) => [styles.walletBtn, pressed && styles.pressed]}>
+              <Pressable onPress={() => router.push("/(user)/(tabs)/wallet")} style={({ pressed }) => [styles.walletBtn, pressed && styles.pressed]}>
                 <Wallet color="#0B0F1A" size={16} />
                 <Text style={styles.walletBtnText}>Withdraw</Text>
               </Pressable>
-              <Pressable onPress={() => router.push("/(user)/work")} style={({ pressed }) => [styles.walletBtnSecondary, pressed && styles.pressed]}>
+              <Pressable onPress={() => router.push("/(user)/(tabs)/work")} style={({ pressed }) => [styles.walletBtnSecondary, pressed && styles.pressed]}>
                 <BriefcaseBusiness color="#FFFFFF" size={16} />
                 <Text style={styles.walletBtnTextSecondary}>Find Work</Text>
               </Pressable>
@@ -121,15 +121,15 @@ export default function UserHomeScreen() {
           </LinearGradient>
 
           <View style={styles.quickGrid}>
-            <Pressable onPress={() => router.push("/(user)/work")} style={({ pressed }) => [styles.quickItem, pressed && styles.pressed]}>
+            <Pressable onPress={() => router.push("/(user)/(tabs)/work")} style={({ pressed }) => [styles.quickItem, pressed && styles.pressed]}>
               <BriefcaseBusiness color={colors.accent} size={18} />
               <Text style={styles.quickText}>Work</Text>
             </Pressable>
-            <Pressable onPress={() => router.push("/(user)/jobs")} style={({ pressed }) => [styles.quickItem, pressed && styles.pressed]}>
+            <Pressable onPress={() => router.push("/(user)/(tabs)/jobs")} style={({ pressed }) => [styles.quickItem, pressed && styles.pressed]}>
               <MapPin color={colors.accent} size={18} />
               <Text style={styles.quickText}>Jobs</Text>
             </Pressable>
-            <Pressable onPress={() => router.push("/(user)/wallet")} style={({ pressed }) => [styles.quickItem, pressed && styles.pressed]}>
+            <Pressable onPress={() => router.push("/(user)/(tabs)/wallet")} style={({ pressed }) => [styles.quickItem, pressed && styles.pressed]}>
               <Wallet color={colors.accent} size={18} />
               <Text style={styles.quickText}>Wallet</Text>
             </Pressable>

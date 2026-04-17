@@ -22,15 +22,7 @@ type CampaignRow = {
 
 type CampaignList = { campaigns: CampaignRow[] };
 
-function Chip({
-  label,
-  active,
-  onPress,
-}: {
-  label: string;
-  active: boolean;
-  onPress: () => void;
-}) {
+function Chip({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.chip, active && styles.chipActive, pressed && styles.pressed]}>
       <Text style={[styles.chipText, active && styles.chipTextActive]} numberOfLines={1}>
@@ -130,12 +122,7 @@ export default function UserWorkScreen() {
 
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
           {categoryChips.map((label) => (
-            <Chip
-              key={label}
-              label={label}
-              active={label === selectedCategory}
-              onPress={() => setSelectedCategory(label)}
-            />
+            <Chip key={label} label={label} active={label === selectedCategory} onPress={() => setSelectedCategory(label)} />
           ))}
         </ScrollView>
 

@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   pressed: { transform: [{ scale: 0.98 }], opacity: 0.92 },
   card: { borderRadius: 18, borderWidth: 1, borderColor: "#22304A", backgroundColor: "#121826", padding: 14, gap: 10 },
   head: { flexDirection: "row", alignItems: "center", gap: 12 },
-  avatar: { width: 40, height: 40, borderRadius: 14, borderWidth: 1, borderColor: "rgba(69,225,255,0.25)", backgroundColor: "rgba(69,225,255,0.10)", alignItems: "center", justifyContent: "center" },
+  avatar: { width: 40, height: 40, borderRadius: 14, borderWidth: 1, borderColor: "rgba(124,58,237,0.35)", backgroundColor: "rgba(124,58,237,0.18)", alignItems: "center", justifyContent: "center" },
   name: { color: colors.text, fontSize: 16, fontWeight: "900" },
   meta: { color: colors.textMuted, fontWeight: "700", marginTop: 4 },
   row: { flexDirection: "row", alignItems: "center", gap: 8 },

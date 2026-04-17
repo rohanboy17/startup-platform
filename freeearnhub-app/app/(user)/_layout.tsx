@@ -1,11 +1,8 @@
-import { Redirect, Tabs } from "expo-router";
-import { BriefcaseBusiness, Home, MapPin, User, Wallet } from "lucide-react-native";
+import { Redirect, Stack } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
 
 import { colors } from "@/lib/theme";
 import { useAuth } from "@/store/auth-store";
-
-const iconProps = { size: 20, strokeWidth: 2 };
 
 export default function UserLayout() {
   const { isHydrating, isAuthenticated, user } = useAuth();
@@ -22,53 +19,13 @@ export default function UserLayout() {
   if (user.role !== "USER") return <Redirect href="/" />;
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: colors.card,
-          borderTopColor: "#20283A",
-          height: 64,
-          paddingBottom: 8,
-          paddingTop: 8,
-        },
-        tabBarActiveTintColor: colors.accent,
-        tabBarInactiveTintColor: "#7B859D",
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: "600",
-        },
-      }}
-    >
-      <Tabs.Screen name="home" options={{ title: "Home", tabBarIcon: ({ color }) => <Home color={color} {...iconProps} /> }} />
-      <Tabs.Screen
-        name="work"
-        options={{
-          title: "Work",
-          tabBarIcon: ({ color }) => <BriefcaseBusiness color={color} {...iconProps} />,
-        }}
-      />
-      <Tabs.Screen
-        name="jobs"
-        options={{
-          title: "Jobs",
-          tabBarIcon: ({ color }) => <MapPin color={color} {...iconProps} />,
-        }}
-      />
-      <Tabs.Screen
-        name="wallet"
-        options={{
-          title: "Wallet",
-          tabBarIcon: ({ color }) => <Wallet color={color} {...iconProps} />,
-        }}
-      />
-      <Tabs.Screen name="profile" options={{ title: "Profile", tabBarIcon: ({ color }) => <User color={color} {...iconProps} /> }} />
-
-      {/* Hide non-tab routes inside this group */}
-      <Tabs.Screen name="submissions" options={{ href: null }} />
-      <Tabs.Screen name="job/[id]" options={{ href: null }} />
-      <Tabs.Screen name="task/[id]" options={{ href: null }} />
-      <Tabs.Screen name="submission/[id]" options={{ href: null }} />
-    </Tabs>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="submissions" />
+      <Stack.Screen name="submission/[id]" />
+      <Stack.Screen name="task/[id]" />
+      <Stack.Screen name="job/[id]" />
+    </Stack>
   );
 }
+

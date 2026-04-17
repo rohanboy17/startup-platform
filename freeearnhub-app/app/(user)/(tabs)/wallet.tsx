@@ -145,3 +145,4 @@ const styles = StyleSheet.create({
   txNote: { color: colors.text, fontWeight: "800", fontSize: 12 },
   txMeta: { color: colors.textMuted, fontWeight: "700", fontSize: 11, marginTop: 4 },
 });
+
