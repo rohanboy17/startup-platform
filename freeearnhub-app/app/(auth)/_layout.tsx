@@ -5,7 +5,7 @@ import { colors } from '@/lib/theme';
 import { useAuth } from '@/store/auth-store';
 
 export default function AuthLayout() {
-  const { isHydrating, isAuthenticated } = useAuth();
+  const { isHydrating, isAuthenticated, user } = useAuth();
 
   if (isHydrating) {
     return (
@@ -15,8 +15,10 @@ export default function AuthLayout() {
     );
   }
 
-  if (isAuthenticated) {
-    return <Redirect href="/(tabs)/dashboard" />;
+  if (isAuthenticated && user) {
+    if (user.role === "USER") return <Redirect href="/(user)/home" />;
+    if (user.role === "BUSINESS") return <Redirect href="/(business)/dashboard" />;
+    return <Redirect href="/(common)/web-only" />;
   }
 
   return <Stack screenOptions={{ headerShown: false }} />;

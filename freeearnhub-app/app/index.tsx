@@ -5,7 +5,7 @@ import { colors } from '@/lib/theme';
 import { useAuth } from '@/store/auth-store';
 
 export default function IndexScreen() {
-  const { isHydrating, isAuthenticated } = useAuth();
+  const { isHydrating, isAuthenticated, user } = useAuth();
 
   if (isHydrating) {
     return (
@@ -15,5 +15,17 @@ export default function IndexScreen() {
     );
   }
 
-  return <Redirect href={isAuthenticated ? '/(tabs)/dashboard' : '/(auth)/login'} />;
+  if (!isAuthenticated || !user) {
+    return <Redirect href="/(auth)/login" />;
+  }
+
+  if (user.role === "USER") {
+    return <Redirect href="/(user)/home" />;
+  }
+
+  if (user.role === "BUSINESS") {
+    return <Redirect href="/(business)/dashboard" />;
+  }
+
+  return <Redirect href="/(common)/web-only" />;
 }

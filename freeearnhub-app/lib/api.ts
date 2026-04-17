@@ -1,47 +1,54 @@
-const API_BASE_URL = (process.env.EXPO_PUBLIC_API_BASE_URL ?? "https://startup-platform-eight.vercel.app").replace(/\/$/, "");
+import axios, { AxiosError, AxiosInstance } from "axios";
+
+const API_BASE_URL = (process.env.EXPO_PUBLIC_API_BASE_URL ?? "https://startup-platform-eight.vercel.app").replace(
+  /\/$/,
+  ""
+);
 
 export class ApiError extends Error {
   status: number;
+  details?: unknown;
 
-  constructor(message: string, status: number) {
+  constructor(message: string, status: number, details?: unknown) {
     super(message);
     this.name = "ApiError";
     this.status = status;
+    this.details = details;
   }
 }
 
-type ApiRequestOptions = RequestInit & {
-  token?: string;
-};
+let bearerToken: string | null = null;
 
-export async function apiRequest<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
-  const { token, headers, ...rest } = options;
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...rest,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(headers ?? {}),
-    },
+export function setApiToken(token: string | null) {
+  bearerToken = token;
+}
+
+export function createApiClient(): AxiosInstance {
+  const client = axios.create({
+    baseURL: API_BASE_URL,
+    timeout: 20000,
+    headers: { "Content-Type": "application/json" },
   });
 
-  const text = await response.text();
-  let data: T | { error?: string } | null = null;
-  if (text) {
-    try {
-      data = JSON.parse(text) as T | { error?: string };
-    } catch {
-      data = null;
+  client.interceptors.request.use((config) => {
+    if (bearerToken) {
+      config.headers = config.headers ?? {};
+      config.headers.Authorization = `Bearer ${bearerToken}`;
     }
-  }
+    return config;
+  });
 
-  if (!response.ok) {
-    const errorMessage =
-      typeof data === "object" && data && "error" in data && data.error
-        ? data.error
-        : response.statusText || "Request failed";
-    throw new ApiError(errorMessage, response.status);
-  }
+  client.interceptors.response.use(
+    (resp) => resp,
+    (err: AxiosError) => {
+      const status = err.response?.status ?? 0;
+      const data = err.response?.data as { error?: string } | undefined;
+      const message = data?.error || err.message || "Request failed";
+      throw new ApiError(message, status, err.response?.data);
+    }
+  );
 
-  return (data ?? {}) as T;
+  return client;
 }
+
+export const api = createApiClient();

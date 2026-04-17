@@ -19,7 +19,7 @@ export default function LoginScreen() {
     setError("");
     try {
       await login(identifier, password);
-      router.replace("/(tabs)/dashboard");
+      router.replace("/");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Login failed");
     }

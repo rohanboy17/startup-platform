@@ -2,7 +2,7 @@ import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 
-import { apiRequest, ApiError } from "@/lib/api";
+import { api, ApiError, setApiToken } from "@/lib/api";
 
 const TOKEN_KEY = "feh_mobile_token";
 
@@ -86,20 +86,20 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const refreshProfile = async () => {
     const currentToken = token ?? (await readToken());
     if (!currentToken) {
+      setApiToken(null);
       setToken(null);
       setUser(null);
       return;
     }
 
     try {
-      const data = await apiRequest<{ user: MobileUser }>("/api/mobile/auth/me", {
-        method: "GET",
-        token: currentToken,
-      });
+      setApiToken(currentToken);
+      const { data } = await api.get<{ user: MobileUser }>("/api/mobile/auth/me");
       setToken(currentToken);
       setUser(data.user);
       await saveToken(currentToken);
     } catch {
+      setApiToken(null);
       setToken(null);
       setUser(null);
       await clearToken();
@@ -111,10 +111,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
       try {
         const existingToken = await readToken();
         if (!existingToken) return;
-        const data = await apiRequest<{ user: MobileUser }>("/api/mobile/auth/me", {
-          method: "GET",
-          token: existingToken,
-        });
+        setApiToken(existingToken);
+        const { data } = await api.get<{ user: MobileUser }>("/api/mobile/auth/me");
         setToken(existingToken);
         setUser(data.user);
       } finally {
@@ -127,10 +125,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const login = async (identifier: string, password: string) => {
     setIsBusy(true);
     try {
-      const data = await apiRequest<{ token: string; user: MobileUser }>("/api/mobile/auth/login", {
-        method: "POST",
-        body: JSON.stringify({ identifier: identifier.trim(), password }),
+      const { data } = await api.post<{ token: string; user: MobileUser }>("/api/mobile/auth/login", {
+        identifier: identifier.trim(),
+        password,
       });
+      setApiToken(data.token);
       setToken(data.token);
       setUser(data.user);
       await saveToken(data.token);
@@ -144,14 +143,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const register = async (input: RegisterInput) => {
     setIsBusy(true);
     try {
-      await apiRequest<{ message: string; userId: string }>("/api/register", {
-        method: "POST",
-        body: JSON.stringify(input),
+      await api.post<{ message: string; userId: string }>("/api/register", input);
+      const { data } = await api.post<{ token: string; user: MobileUser }>("/api/mobile/auth/login", {
+        identifier: input.email,
+        password: input.password,
       });
-      const data = await apiRequest<{ token: string; user: MobileUser }>("/api/mobile/auth/login", {
-        method: "POST",
-        body: JSON.stringify({ identifier: input.email, password: input.password }),
-      });
+      setApiToken(data.token);
       setToken(data.token);
       setUser(data.user);
       await saveToken(data.token);
@@ -163,6 +160,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   };
 
   const logout = async () => {
+    setApiToken(null);
     setToken(null);
     setUser(null);
     await clearToken();

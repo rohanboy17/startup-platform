@@ -30,7 +30,7 @@ export default function RegisterScreen() {
         role,
         referralCode: referralCode || undefined,
       });
-      router.replace("/(tabs)/dashboard");
+      router.replace("/");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unable to create account");
     }
