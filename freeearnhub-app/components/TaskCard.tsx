@@ -2,7 +2,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { BadgeCheck, Link as LinkIcon, Timer } from "lucide-react-native";
 
-import { colors } from "@/lib/theme";
+import { colors, gradients } from "@/lib/theme";
 
 export type TaskCardData = {
   id: string;
@@ -23,7 +23,7 @@ export function TaskCard({
   task: TaskCardData;
   onPress: () => void;
 }) {
-  const badgeColor = task.blocked ? "#FF6B8A" : "#3EE99A";
+  const badgeColor = task.blocked ? colors.danger : colors.success;
 
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
@@ -53,8 +53,8 @@ export function TaskCard({
           <Timer color={colors.textMuted} size={13} />
           <Text style={styles.pillText}>{task.timeLabel || `${task.taskCategory}`}</Text>
         </View>
-        <LinearGradient colors={["#31C2FF", "#6A6BFF"]} style={styles.start}>
-          <Text style={styles.startText}>Open</Text>
+        <LinearGradient colors={gradients.primary} style={styles.start}>
+          <Text style={styles.startText}>Start</Text>
         </LinearGradient>
       </View>
     </Pressable>
@@ -106,4 +106,3 @@ const styles = StyleSheet.create({
   start: { marginLeft: "auto", height: 32, paddingHorizontal: 12, borderRadius: 12, alignItems: "center", justifyContent: "center" },
   startText: { color: "#09101F", fontWeight: "900", fontSize: 12 },
 });
-

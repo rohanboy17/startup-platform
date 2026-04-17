@@ -1,5 +1,5 @@
 import { Redirect, Tabs } from "expo-router";
-import { BriefcaseBusiness, Home, User, Wallet } from "lucide-react-native";
+import { BriefcaseBusiness, Home, MapPin, User, Wallet } from "lucide-react-native";
 import { ActivityIndicator, View } from "react-native";
 
 import { colors } from "@/lib/theme";
@@ -49,6 +49,13 @@ export default function UserLayout() {
         }}
       />
       <Tabs.Screen
+        name="jobs"
+        options={{
+          title: "Jobs",
+          tabBarIcon: ({ color }) => <MapPin color={color} {...iconProps} />,
+        }}
+      />
+      <Tabs.Screen
         name="wallet"
         options={{
           title: "Wallet",
@@ -58,7 +65,6 @@ export default function UserLayout() {
       <Tabs.Screen name="profile" options={{ title: "Profile", tabBarIcon: ({ color }) => <User color={color} {...iconProps} /> }} />
 
       {/* Hide non-tab routes inside this group */}
-      <Tabs.Screen name="jobs" options={{ href: null }} />
       <Tabs.Screen name="submissions" options={{ href: null }} />
       <Tabs.Screen name="job/[id]" options={{ href: null }} />
       <Tabs.Screen name="task/[id]" options={{ href: null }} />

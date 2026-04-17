@@ -7,7 +7,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-
 import { ScreenShell } from "@/components/ScreenShell";
 import { StatusTimeline } from "@/components/StatusTimeline";
 import { api } from "@/lib/api";
-import { colors } from "@/lib/theme";
+import { colors, gradients } from "@/lib/theme";
 
 type CampaignInstruction = { id: string; instructionText: string; sequence: number };
 
@@ -121,7 +121,7 @@ export default function UserTaskDetailsScreen() {
 
         {data?.campaign ? (
           <>
-            <LinearGradient colors={["#2C73FF", "#6D55FF"]} style={styles.rewardCard}>
+            <LinearGradient colors={gradients.primary} style={styles.rewardCard}>
               <Text style={styles.rewardLabel}>Reward</Text>
               <Text style={styles.rewardValue}>Rs {Number(data.campaign.rewardPerTask || 0).toFixed(2)}</Text>
               <Text style={styles.rewardMeta}>

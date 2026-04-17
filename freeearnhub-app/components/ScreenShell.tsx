@@ -7,7 +7,7 @@ import { colors } from "@/lib/theme";
 export function ScreenShell({ children }: PropsWithChildren) {
   return (
     <View style={styles.screen}>
-      <LinearGradient colors={["#0B0F1A", "#10182B", "#0B0F1A"]} style={styles.gradient} />
+      <LinearGradient colors={[colors.background, "#111827", colors.background]} style={styles.gradient} />
       <View style={styles.glowTop} />
       <View style={styles.glowBottom} />
       {children}
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     width: 210,
     height: 210,
     borderRadius: 999,
-    backgroundColor: "rgba(69,225,255,0.14)",
+    backgroundColor: "rgba(124,58,237,0.18)",
   },
   glowBottom: {
     position: "absolute",
@@ -39,7 +39,6 @@ const styles = StyleSheet.create({
     width: 240,
     height: 240,
     borderRadius: 999,
-    backgroundColor: "rgba(106,107,255,0.16)",
+    backgroundColor: "rgba(79,70,229,0.16)",
   },
 });
-

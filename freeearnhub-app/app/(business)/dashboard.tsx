@@ -5,7 +5,7 @@ import { Activity, BadgeCheck, BriefcaseBusiness, ClipboardList, RefreshCw, Wall
 
 import { ScreenShell } from "@/components/ScreenShell";
 import { api } from "@/lib/api";
-import { colors } from "@/lib/theme";
+import { colors, gradients } from "@/lib/theme";
 
 type BusinessOverview = {
   kycStatus: string;
@@ -58,7 +58,7 @@ export default function BusinessDashboardScreen() {
         {error ? <Text style={styles.error}>{error}</Text> : null}
         {loading ? <Text style={styles.muted}>Loading...</Text> : null}
 
-        <LinearGradient colors={["#2C73FF", "#6D55FF"]} style={styles.walletCard}>
+        <LinearGradient colors={gradients.primary} style={styles.walletCard}>
           <Text style={styles.walletLabel}>Business Wallet</Text>
           <Text style={styles.walletAmount}>Rs {Number(data?.wallet?.balance ?? 0).toFixed(2)}</Text>
           <Text style={styles.walletMeta}>KYC: {data?.kycStatus || "PENDING"}</Text>

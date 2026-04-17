@@ -1,6 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, Text, View } from "react-native";
 
+import { gradients } from "@/lib/theme";
+
 export function WalletCard({
   balance,
   earned,
@@ -13,7 +15,7 @@ export function WalletCard({
   pendingWithdrawal: number;
 }) {
   return (
-    <LinearGradient colors={["#2C73FF", "#6D55FF"]} style={styles.card}>
+    <LinearGradient colors={gradients.primary} style={styles.card}>
       <Text style={styles.label}>Wallet Balance</Text>
       <Text style={styles.balance}>Rs {Number(balance || 0).toFixed(2)}</Text>
       <View style={styles.row}>
