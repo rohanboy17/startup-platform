@@ -19,6 +19,10 @@ model User {
   password    String
   role        Role         @default(USER)
   timezone    String       @default("Asia/Calcutta")
+  lastActiveAt DateTime?
+  streakDayKey String?
+  streakCount  Int         @default(0)
+  approvedSeenTotal Int    @default(0)
   sessionVersion Int       @default(0)
   businessOwnerId String?
   businessAccessRole BusinessAccessRole?

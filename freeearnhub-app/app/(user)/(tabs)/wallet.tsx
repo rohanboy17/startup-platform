@@ -12,6 +12,16 @@ type WalletResp = {
   transactions: { id: string; note: string | null; createdAt: string; type: "CREDIT" | "DEBIT"; amount: number }[];
 };
 
+function txHeadline(t: { type: "CREDIT" | "DEBIT"; note: string | null }) {
+  if (t.type === "CREDIT") return "Credited from task";
+  return t.note || "Wallet debit";
+}
+
+function txDetail(t: { type: "CREDIT" | "DEBIT"; note: string | null }) {
+  if (t.type === "CREDIT") return t.note || "Approved by admin";
+  return "Recorded in wallet ledger";
+}
+
 export default function UserWalletScreen() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<WalletResp | null>(null);
@@ -113,9 +123,11 @@ export default function UserWalletScreen() {
                 <Text style={styles.sourceAmt}>+Rs {t.amount.toFixed(2)}</Text>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.sourceNote} numberOfLines={1}>
-                    {t.note || "Wallet credit"}
+                    {txHeadline(t)}
                   </Text>
-                  <Text style={styles.sourceMeta}>{new Date(t.createdAt).toLocaleString()}</Text>
+                  <Text style={styles.sourceMeta}>
+                    {txDetail(t)} | {new Date(t.createdAt).toLocaleString()}
+                  </Text>
                 </View>
               </View>
             ))}
@@ -134,9 +146,11 @@ export default function UserWalletScreen() {
               </Text>
               <View style={{ flex: 1 }}>
                 <Text style={styles.txNote} numberOfLines={1}>
-                  {t.note || "Transaction"}
+                  {txHeadline(t)}
                 </Text>
-                <Text style={styles.txMeta}>{new Date(t.createdAt).toLocaleString()}</Text>
+                <Text style={styles.txMeta}>
+                  {txDetail(t)} | {new Date(t.createdAt).toLocaleString()}
+                </Text>
               </View>
             </View>
           ))}

@@ -18,6 +18,7 @@ export class ApiError extends Error {
 }
 
 let bearerToken: string | null = null;
+let onUnauthorized: (() => void) | null = null;
 
 export function setApiToken(token: string | null) {
   bearerToken = token;
@@ -28,6 +29,10 @@ export function setApiToken(token: string | null) {
   } else {
     delete api.defaults.headers.common.Authorization;
   }
+}
+
+export function setUnauthorizedHandler(handler: (() => void) | null) {
+  onUnauthorized = handler;
 }
 
 export function createApiClient(): AxiosInstance {
@@ -51,6 +56,14 @@ export function createApiClient(): AxiosInstance {
       const status = err.response?.status ?? 0;
       const data = err.response?.data as { error?: string } | undefined;
       const message = data?.error || err.message || "Request failed";
+      if (status === 401 || status === 403) {
+        // Token might be expired or revoked. Let the auth store clear state and redirect to login.
+        try {
+          onUnauthorized?.();
+        } catch {
+          // ignore
+        }
+      }
       throw new ApiError(message, status, err.response?.data);
     }
   );

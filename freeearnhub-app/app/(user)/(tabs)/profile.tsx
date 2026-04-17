@@ -1,5 +1,6 @@
+import { router } from "expo-router";
 import { StyleSheet, Text, View, Pressable } from "react-native";
-import { LogOut, ShieldCheck, UserRound } from "lucide-react-native";
+import { Bell, BriefcaseBusiness, CreditCard, Gift, LogOut, Settings, ShieldCheck, Sparkles, UserRound } from "lucide-react-native";
 
 import { ScreenShell } from "@/components/ScreenShell";
 import { colors } from "@/lib/theme";
@@ -28,14 +29,44 @@ export default function UserProfileScreen() {
         </View>
 
         <View style={styles.card}>
+          <Text style={styles.sectionTitle}>Quick Links</Text>
+          <View style={styles.grid}>
+            <Pressable onPress={() => router.push("/(user)/notifications")} style={({ pressed }) => [styles.tile, pressed && styles.pressed]}>
+              <Bell color={colors.accent} size={18} />
+              <Text style={styles.tileText}>Notifications</Text>
+            </Pressable>
+            <Pressable onPress={() => router.push("/(user)/withdrawals")} style={({ pressed }) => [styles.tile, pressed && styles.pressed]}>
+              <CreditCard color={colors.accent} size={18} />
+              <Text style={styles.tileText}>Withdrawals</Text>
+            </Pressable>
+            <Pressable onPress={() => router.push("/(user)/job-applications")} style={({ pressed }) => [styles.tile, pressed && styles.pressed]}>
+              <BriefcaseBusiness color={colors.accent} size={18} />
+              <Text style={styles.tileText}>Applications</Text>
+            </Pressable>
+            <Pressable onPress={() => router.push("/(user)/referrals")} style={({ pressed }) => [styles.tile, pressed && styles.pressed]}>
+              <Gift color={colors.accent} size={18} />
+              <Text style={styles.tileText}>Referrals</Text>
+            </Pressable>
+            <Pressable onPress={() => router.push("/(user)/skills")} style={({ pressed }) => [styles.tile, pressed && styles.pressed]}>
+              <Sparkles color={colors.accent} size={18} />
+              <Text style={styles.tileText}>Skills</Text>
+            </Pressable>
+            <Pressable onPress={() => router.push("/(user)/settings")} style={({ pressed }) => [styles.tile, pressed && styles.pressed]}>
+              <Settings color={colors.accent} size={18} />
+              <Text style={styles.tileText}>Settings</Text>
+            </Pressable>
+          </View>
+          <Text style={styles.hint}>
+            Big buttons for fast access. Full profile editing stays on web for now.
+          </Text>
+        </View>
+
+        <View style={styles.card}>
           <Text style={styles.sectionTitle}>Account</Text>
           <Pressable onPress={logout} style={({ pressed }) => [styles.logout, pressed && styles.pressed]}>
             <LogOut color="#09101F" size={16} />
             <Text style={styles.logoutText}>Logout</Text>
           </Pressable>
-          <Text style={styles.hint}>
-            Profile editing, skills, and preferences can be managed from the web dashboard (for now).
-          </Text>
         </View>
       </View>
     </ScreenShell>
@@ -52,8 +83,10 @@ const styles = StyleSheet.create({
   meta: { color: colors.textMuted, fontWeight: "700", marginTop: 4 },
   row: { flexDirection: "row", alignItems: "center", gap: 8 },
   sectionTitle: { color: colors.text, fontWeight: "900" },
+  grid: { flexDirection: "row", flexWrap: "wrap", gap: 10 },
+  tile: { width: "48%", height: 70, borderRadius: 18, borderWidth: 1, borderColor: "#22304A", backgroundColor: "#0F1626", alignItems: "center", justifyContent: "center", gap: 8 },
+  tileText: { color: colors.text, fontWeight: "900", fontSize: 12 },
   logout: { height: 46, borderRadius: 14, backgroundColor: colors.accent, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8 },
   logoutText: { color: "#09101F", fontWeight: "900", fontSize: 14 },
   hint: { color: colors.textMuted, fontWeight: "600", fontSize: 12, lineHeight: 18 },
 });
-

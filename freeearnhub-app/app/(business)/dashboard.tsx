@@ -1,7 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { Activity, BadgeCheck, BriefcaseBusiness, ClipboardList, RefreshCw, Wallet } from "lucide-react-native";
+import { router } from "expo-router";
+import { Activity, BadgeCheck, BriefcaseBusiness, ClipboardCheck, RefreshCw, Users, Wallet } from "lucide-react-native";
 
 import { ScreenShell } from "@/components/ScreenShell";
 import { api } from "@/lib/api";
@@ -80,7 +81,7 @@ export default function BusinessDashboardScreen() {
 
         <View style={styles.statsRow}>
           <View style={styles.statCard}>
-            <ClipboardList color={colors.accent} size={16} />
+            <ClipboardCheck color={colors.accent} size={16} />
             <Text style={styles.statValue}>{data?.liveCampaigns ?? 0}</Text>
             <Text style={styles.statLabel}>Live Campaigns</Text>
           </View>
@@ -94,6 +95,17 @@ export default function BusinessDashboardScreen() {
             <Text style={styles.statValue}>{data?.approvedSubmissions ?? 0}</Text>
             <Text style={styles.statLabel}>Approvals</Text>
           </View>
+        </View>
+
+        <View style={styles.quickRow}>
+          <Pressable onPress={() => router.push("/(business)/campaign-applicants")} style={({ pressed }) => [styles.quick, pressed && styles.pressed]}>
+            <ClipboardCheck color={colors.accent} size={18} />
+            <Text style={styles.quickText}>Campaign Applicants</Text>
+          </Pressable>
+          <Pressable onPress={() => router.push("/(business)/job-applicants")} style={({ pressed }) => [styles.quick, pressed && styles.pressed]}>
+            <Users color={colors.accent} size={18} />
+            <Text style={styles.quickText}>Job Applicants</Text>
+          </Pressable>
         </View>
 
         <View style={styles.section}>
@@ -142,6 +154,9 @@ const styles = StyleSheet.create({
   statCard: { flex: 1, borderRadius: 16, borderWidth: 1, borderColor: "#22304A", backgroundColor: "#121826", padding: 12, gap: 6 },
   statValue: { color: colors.text, fontSize: 18, fontWeight: "900" },
   statLabel: { color: colors.textMuted, fontSize: 11, fontWeight: "800" },
+  quickRow: { flexDirection: "row", gap: 10 },
+  quick: { flex: 1, height: 74, borderRadius: 18, borderWidth: 1, borderColor: "#22304A", backgroundColor: "#121826", padding: 12, justifyContent: "center", gap: 8 },
+  quickText: { color: colors.text, fontWeight: "900", fontSize: 12 },
   section: { borderRadius: 18, borderWidth: 1, borderColor: "#22304A", backgroundColor: "#121826", padding: 14, gap: 10 },
   sectionHead: { flexDirection: "row", alignItems: "center", gap: 8 },
   sectionTitle: { color: colors.text, fontWeight: "900" },

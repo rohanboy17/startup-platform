@@ -63,6 +63,9 @@ export default function BusinessLayout() {
 
       {/* Hide push-only routes inside this group */}
       <Tabs.Screen name="create-campaign" options={{ href: null }} />
+      <Tabs.Screen name="campaign-applicants" options={{ href: null }} />
+      <Tabs.Screen name="job-applicants" options={{ href: null }} />
+      <Tabs.Screen name="job/[id]" options={{ href: null }} />
     </Tabs>
   );
 }

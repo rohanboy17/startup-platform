@@ -1,7 +1,7 @@
-import { router } from "expo-router";
+import { Stack, router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { ClipboardCheck, RefreshCw } from "lucide-react-native";
+import { RefreshCw } from "lucide-react-native";
 
 import { ScreenShell } from "@/components/ScreenShell";
 import { api } from "@/lib/api";
@@ -81,13 +81,15 @@ export default function UserSubmissionsScreen() {
 
   return (
     <ScreenShell>
+      <Stack.Screen options={{ headerShown: false }} />
       <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
         <View style={styles.topRow}>
-          <View style={styles.titleRow}>
-            <View style={styles.iconWrap}>
-              <ClipboardCheck color={colors.accent} size={18} />
-            </View>
+          <Pressable onPress={() => router.back()} style={({ pressed }) => [styles.backBtn, pressed && styles.pressed]}>
+            <Text style={styles.backText}>Back</Text>
+          </Pressable>
+          <View style={{ flex: 1 }}>
             <Text style={styles.title}>Reviews</Text>
+            <Text style={styles.sub}>Submission pipeline</Text>
           </View>
           <Pressable onPress={load} style={({ pressed }) => [styles.iconBtn, pressed && styles.pressed]}>
             <RefreshCw color={colors.text} size={18} />
@@ -152,9 +154,10 @@ const styles = StyleSheet.create({
   content: { padding: 16, paddingBottom: 28 },
   pressed: { transform: [{ scale: 0.98 }], opacity: 0.92 },
   topRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 12 },
-  titleRow: { flexDirection: "row", alignItems: "center", gap: 10 },
-  iconWrap: { width: 36, height: 36, borderRadius: 12, borderWidth: 1, borderColor: "rgba(69,225,255,0.25)", backgroundColor: "rgba(69,225,255,0.10)", alignItems: "center", justifyContent: "center" },
+  backBtn: { height: 36, paddingHorizontal: 12, borderRadius: 12, borderWidth: 1, borderColor: "#22304A", backgroundColor: "#121826", alignItems: "center", justifyContent: "center" },
+  backText: { color: colors.textMuted, fontWeight: "900", fontSize: 12 },
   title: { color: colors.text, fontSize: 22, fontWeight: "900" },
+  sub: { color: colors.textMuted, fontWeight: "700", marginTop: 4, fontSize: 12 },
   iconBtn: { width: 40, height: 40, borderRadius: 14, borderWidth: 1, borderColor: "#22304A", backgroundColor: "#121826", alignItems: "center", justifyContent: "center" },
   error: { color: colors.danger, fontWeight: "800", marginBottom: 10 },
   muted: { color: colors.textMuted, fontWeight: "700", marginBottom: 10 },

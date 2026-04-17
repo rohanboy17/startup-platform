@@ -66,4 +66,3 @@ export default function UserTabsLayout() {
     </Tabs>
   );
 }
-

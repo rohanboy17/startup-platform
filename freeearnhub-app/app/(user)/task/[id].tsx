@@ -46,6 +46,7 @@ export default function UserTaskDetailsScreen() {
   const [proofImage, setProofImage] = useState("");
   const [submitBusy, setSubmitBusy] = useState(false);
   const [submitMsg, setSubmitMsg] = useState("");
+  const [successOpen, setSuccessOpen] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -87,7 +88,7 @@ export default function UserTaskDetailsScreen() {
       setProofLink("");
       setProofText("");
       setProofImage("");
-      router.push("/(user)/submissions");
+      setSuccessOpen(true);
     } catch (e) {
       setSubmitMsg(e instanceof Error ? e.message : "Submission failed");
     } finally {
@@ -244,6 +245,36 @@ export default function UserTaskDetailsScreen() {
           </>
         ) : null}
       </ScrollView>
+
+      {successOpen ? (
+        <View style={styles.toastWrap}>
+            <View style={styles.toast}>
+              <View style={styles.toastIcon}>
+              <Send color={colors.success} size={18} />
+              </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.toastTitle}>Submitted</Text>
+              <Text style={styles.toastSub} numberOfLines={2}>
+                Your proof is now in review. You can track the manager and admin stages in Reviews.
+              </Text>
+            </View>
+          </View>
+          <View style={styles.toastActions}>
+            <Pressable
+              onPress={() => {
+                setSuccessOpen(false);
+                router.push("/(user)/submissions");
+              }}
+              style={({ pressed }) => [styles.toastBtn, pressed && styles.pressed]}
+            >
+              <Text style={styles.toastBtnText}>Track Review</Text>
+            </Pressable>
+            <Pressable onPress={() => setSuccessOpen(false)} style={({ pressed }) => [styles.toastBtnSecondary, pressed && styles.pressed]}>
+              <Text style={styles.toastBtnTextSecondary}>Close</Text>
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
     </ScreenShell>
   );
 }
@@ -288,4 +319,15 @@ const styles = StyleSheet.create({
   submitText: { color: "#09101F", fontWeight: "900", fontSize: 14 },
   muted: { color: colors.textMuted, fontWeight: "700" },
   error: { color: colors.danger, fontWeight: "800" },
+
+  toastWrap: { position: "absolute", left: 16, right: 16, bottom: 16, gap: 10 },
+  toast: { flexDirection: "row", alignItems: "center", gap: 10, borderRadius: 18, borderWidth: 1, borderColor: "rgba(34,197,94,0.28)", backgroundColor: "rgba(34,197,94,0.10)", padding: 12 },
+  toastIcon: { width: 34, height: 34, borderRadius: 14, borderWidth: 1, borderColor: "rgba(34,197,94,0.35)", backgroundColor: "rgba(34,197,94,0.12)", alignItems: "center", justifyContent: "center" },
+  toastTitle: { color: colors.text, fontWeight: "900" },
+  toastSub: { color: colors.textMuted, marginTop: 4, fontWeight: "700", fontSize: 12, lineHeight: 18 },
+  toastActions: { flexDirection: "row", gap: 10 },
+  toastBtn: { flex: 1, height: 44, borderRadius: 14, backgroundColor: colors.accent, alignItems: "center", justifyContent: "center" },
+  toastBtnText: { color: "#09101F", fontWeight: "900" },
+  toastBtnSecondary: { flex: 1, height: 44, borderRadius: 14, borderWidth: 1, borderColor: "#22304A", backgroundColor: "#121826", alignItems: "center", justifyContent: "center" },
+  toastBtnTextSecondary: { color: colors.text, fontWeight: "900" },
 });

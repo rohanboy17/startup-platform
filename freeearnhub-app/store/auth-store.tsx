@@ -2,7 +2,7 @@ import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
 
-import { api, ApiError, setApiToken } from "@/lib/api";
+import { api, ApiError, setApiToken, setUnauthorizedHandler } from "@/lib/api";
 
 const TOKEN_KEY = "feh_mobile_token";
 
@@ -82,6 +82,17 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [isBusy, setIsBusy] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<MobileUser | null>(null);
+
+  useEffect(() => {
+    // Centralized handling for expired/revoked tokens to avoid "Unauthorized" stuck UI states.
+    setUnauthorizedHandler(() => {
+      setApiToken(null);
+      setToken(null);
+      setUser(null);
+      void clearToken();
+    });
+    return () => setUnauthorizedHandler(null);
+  }, []);
 
   const refreshProfile = async () => {
     const currentToken = token ?? (await readToken());

@@ -7,6 +7,19 @@ import { LEVEL_BENEFIT_STEPS, getDailyResetState } from "@/lib/level";
 import { getAppSettings } from "@/lib/system-settings";
 import { getWorkExperienceMap } from "@/lib/work-experience";
 
+function getDayKey(date: Date, timeZone: string) {
+  const parts = new Intl.DateTimeFormat("en", {
+    timeZone,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+  const year = parts.find((p) => p.type === "year")?.value ?? "1970";
+  const month = parts.find((p) => p.type === "month")?.value ?? "01";
+  const day = parts.find((p) => p.type === "day")?.value ?? "01";
+  return `${year}-${month}-${day}`;
+}
+
 function levelTarget(level: string) {
   switch (level) {
     case "L1":
@@ -169,12 +182,13 @@ export async function GET() {
     recentSubmissions,
     recentJobApplications,
   ] = await Promise.all([
-    prisma.user.findUnique({
+    (prisma as unknown as { user: { findUnique: (args: unknown) => Promise<unknown> } }).user.findUnique({
       where: { id: userId },
       select: {
         id: true,
         name: true,
         email: true,
+        timezone: true,
         balance: true,
         coinBalance: true,
         perkCreditBalance: true,
@@ -182,9 +196,28 @@ export async function GET() {
         dailyApproved: true,
         lastLevelResetAt: true,
         totalApproved: true,
+        approvedSeenTotal: true,
+        streakDayKey: true,
+        streakCount: true,
         dailySubmits: true,
       },
-    }),
+    }) as Promise<{
+      id: string;
+      name: string | null;
+      email: string;
+      timezone: string | null;
+      balance: number;
+      coinBalance: number;
+      perkCreditBalance: number;
+      level: string;
+      dailyApproved: number;
+      lastLevelResetAt: Date;
+      totalApproved: number;
+      approvedSeenTotal: number;
+      streakDayKey: string | null;
+      streakCount: number;
+      dailySubmits: number;
+    } | null>,
     getAppSettings(),
     prisma.withdrawal.aggregate({
       where: { userId, status: "PENDING" },
@@ -261,6 +294,37 @@ export async function GET() {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
+  const tz = user.timezone || "Asia/Calcutta";
+  const now = new Date();
+  const todayKey = getDayKey(now, tz);
+  const yesterdayKey = getDayKey(new Date(now.getTime() - 24 * 60 * 60 * 1000), tz);
+
+  const prevDayKey = user.streakDayKey || "";
+  const prevStreak = user.streakCount || 0;
+  const nextStreak =
+    !prevDayKey
+      ? 1
+      : prevDayKey === todayKey
+        ? Math.max(1, prevStreak || 1)
+        : prevDayKey === yesterdayKey
+          ? Math.max(1, prevStreak || 1) + 1
+          : 1;
+
+  const prevSeenTotal = user.approvedSeenTotal || 0;
+  const newApprovals = Math.max(0, (user.totalApproved || 0) - prevSeenTotal);
+
+  // Persist engagement state for cross-device consistency (used by mobile retention UI).
+  // We intentionally mark approvals "seen" on overview load so the delta only appears once per user.
+  await (prisma as unknown as { user: { update: (args: unknown) => Promise<unknown> } }).user.update({
+    where: { id: userId },
+    data: {
+      lastActiveAt: now,
+      streakDayKey: todayKey,
+      streakCount: nextStreak,
+      approvedSeenTotal: user.totalApproved || 0,
+    },
+  });
+
   const { resetNeeded } = getDailyResetState(user.lastLevelResetAt);
   const effectiveLevel = resetNeeded ? "L1" : user.level;
   const effectiveDailyApproved = resetNeeded ? 0 : user.dailyApproved;
@@ -288,6 +352,12 @@ export async function GET() {
       totalApproved: user.totalApproved,
       dailyApproved: effectiveDailyApproved,
       dailySubmits: effectiveDailySubmits,
+    },
+    engagement: {
+      timezone: tz,
+      streakCount: nextStreak,
+      newApprovals,
+      dayKey: todayKey,
     },
     metrics: {
       availableBalance: user.balance,
